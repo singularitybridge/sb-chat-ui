@@ -6,7 +6,7 @@ import tw from "twin.macro";
 import GlobalStyles from "styles/GlobalStyles";
 import { css } from "styled-components/macro"; //eslint-disable-line
 import { slide as Menu } from 'react-burger-menu';
-
+import Footer from "components/footers/SimpleFiveColumn.js";
 import { Features, PlansContainer } from "components/pricing/ThreePlans";
 import { ReactComponent as CheckboxIcon } from "images/checkbox-circle.svg";
 /*
@@ -116,6 +116,10 @@ import Signup from "pages/Signup";
 import VerticalWithAlternateImageAndText from "components/features/VerticalWithAlternateImageAndText";
 import ServiceLandingPage from "demos/ServiceLandingPage";
 import HeaderBase, { NavLinks, NavLink, PrimaryLink } from "components/headers/light.js";
+import Articles from "pages/Articles";
+import Profile from "pages/Profile";
+import Loading from "pages/Loading";
+import AnimationRevealPage from "helpers/AnimationRevealPage";
 
 const PlanFeatures = styled.ul`
   ${tw`mt-2 flex-1 lg:-mx-6 -mx-6 sm:-mx-10 py-10 px-6 sm:px-10 lg:p-6 xl:-mx-10 xl:p-10`}
@@ -192,11 +196,9 @@ export default function App() {
 
   const navLinks = [
     <NavLinks key={1}>
-      <NavLink href="/#">About</NavLink>
-      <NavLink href="/#">Blog</NavLink>
-      <NavLink href="/#">Pricing</NavLink>
-      <NavLink href="/#">Contact Us</NavLink>
-      <NavLink href="/#">Testimonials</NavLink>
+      <NavLink href="/">Learn & Grow</NavLink>
+      <NavLink href="/chat">Chat</NavLink>
+      <NavLink href="/profile">Profile</NavLink>
     </NavLinks>,
     <NavLinks key={2}>
       <NavLink href="/#" tw="lg:ml-12!">
@@ -220,6 +222,20 @@ export default function App() {
     }
   }, [isLoading, error, isAuthenticated]);
 
+
+
+  let component;
+  switch (loginStatus) {
+    case 'authenticated':
+      component = <Articles />;
+      break;
+    case 'unauthenticated':
+      component = <Signup />;
+      break;
+    default:
+      component = <Loading />;
+  }
+
   return (
     // <>    
       // {loginStatus === "loading" && "Loading"}
@@ -239,7 +255,11 @@ export default function App() {
     <>
       <GlobalStyles />
       
-      <Header links={navLinks} />
+      
+
+      <AnimationRevealPage>
+      
+        <Header links={navLinks} />
 {/*       
       <Menu styles={styles}>
         <PlansContainer>
@@ -258,18 +278,17 @@ export default function App() {
                     ))}
           </PlanFeatures>
         </PlansContainer>
-      </Menu> */}
-      <p>test : {loginStatus}</p>
+      </Menu> */}      
       <Router>
         <Routes>
-          <Route path="/profile" element={ <ServiceLandingPage />  } />
+          <Route path="/profile" element={ <Profile /> } />
           <Route path="/components/:type/:subtype/:name" element={<ComponentRenderer />} />
           <Route path="/components/:type/:name" element={<ComponentRenderer />} />
           <Route path="/thank-you" element={<ThankYouPage />} />
           {/* <Route path="/" element={<MainLandingPage />} /> */}
 
-          <Route path="/" element={ loginStatus==="authenticated" ? <VerticalWithAlternateImageAndText /> : <Signup /> } />
-
+          <Route path="/" element={ component } />
+          {/* <Route path="/" element={ loginStatus==="authenticated" ? <Articles />  : <Signup /> } /> */}
           
             
               {/* {loginStatus === "authenticated" && (
@@ -284,6 +303,8 @@ export default function App() {
 
         </Routes>
       </Router>
+      <Footer />
+      </AnimationRevealPage>
     </>
   );
 }
