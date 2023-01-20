@@ -27,7 +27,7 @@ export default () => {
   return (
     <>
       <Container>
-        <h3>Loading ...</h3>
+        
 
         <SingleColumn>
           <HeadingInfoContainer>

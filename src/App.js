@@ -119,6 +119,7 @@ import HeaderBase, { NavLinks, NavLink, PrimaryLink } from "components/headers/l
 import Articles from "pages/Articles";
 import Profile from "pages/Profile";
 import Loading from "pages/Loading";
+import Chat from "pages/Chat";
 import AnimationRevealPage from "helpers/AnimationRevealPage";
 
 const PlanFeatures = styled.ul`
@@ -282,6 +283,7 @@ export default function App() {
       <Router>
         <Routes>
           <Route path="/profile" element={ <Profile /> } />
+          <Route path="/chat" element={ <Chat /> } />
           <Route path="/components/:type/:subtype/:name" element={<ComponentRenderer />} />
           <Route path="/components/:type/:name" element={<ComponentRenderer />} />
           <Route path="/thank-you" element={<ThankYouPage />} />
@@ -303,7 +305,7 @@ export default function App() {
 
         </Routes>
       </Router>
-      <Footer />
+      {/* <Footer /> */}
       </AnimationRevealPage>
     </>
   );
