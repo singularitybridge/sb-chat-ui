@@ -4,7 +4,7 @@ import tw from "twin.macro";
 import styled from "styled-components";
 
 const ChatUIContainer = styled.div`
-  ${tw`flex flex-col-reverse overflow-y-auto`}
+  ${tw`flex flex-col overflow-y-auto`}
   height: 490px;
 `;
 
@@ -13,7 +13,8 @@ function ChatUI(props) {
   const chatContainerRef = useRef(null);
 
   useEffect(() => {
-    chatContainerRef.current.scrollIntoView({ behavior: "smooth" });
+    const container = chatContainerRef.current;
+    container.scrollTo(0, container.scrollHeight - container.clientHeight);
   }, [chatData]);
 
   return (
