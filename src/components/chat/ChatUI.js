@@ -14,12 +14,13 @@ function ChatUI(props) {
 
   useEffect(() => {
     const container = chatContainerRef.current;
-    container.scrollTo(0, container.scrollHeight - container.clientHeight);
+    container.style.scrollBehavior = "smooth";
+    container.scrollTop = container.scrollHeight;
   }, [chatData]);
 
   return (
     <ChatUIContainer ref={chatContainerRef}>
-      {chatData.slice(0, messageLimit).map((row, index) => (
+      {chatData.slice(-1 * messageLimit).map((row, index) => (
         <ChatUIRow
           key={index}
           author={row.author}
@@ -32,3 +33,4 @@ function ChatUI(props) {
 }
 
 export default ChatUI;
+
