@@ -3,6 +3,7 @@ import tw from "twin.macro";
 import { SectionHeading as HeadingTitle } from "../components/misc/Headings.js";
 import ChatUI from "components/chat/ChatUI.js";
 import { PrimaryButton as PrimaryButtonBase } from "components/misc/Buttons.js";
+import { getGPTCompletion } from "helpers/ChatService.js";
 
 
 const Container = tw.div`relative`;
@@ -27,17 +28,33 @@ export default () => {
 
   const [chatData, setChatData] = React.useState([]);
 
-  const handleSendMessage = (message) => {
-    setChatData([
-      ...chatData,
+  const handleSendMessage = async (message) => {
+
+    setChatData((prevChatData) => [
+      ...prevChatData,
       {
         key: Math.random().toString(36).substr(2, 9),
-        author: "Jerry",
+        author: "avi",
         text: message,
-        profilePic: "https://i.ibb.co/8gHqSLN/av1.png",
+        profilePic: "https://i.ibb.co/98s9Fj2/Screenshot-2023-01-21-at-17-39-25.png",
+      },
+    ]);    
+
+    setMessageInput("");
+
+    const gptResponse = await getGPTCompletion('arthur', message, chatData);
+
+    setChatData((prevChatData) => [
+      ...prevChatData,
+      {
+        key: Math.random().toString(36).substr(2, 9),
+        author: 'arthur',
+        text: gptResponse,
+        profilePic: 'https://i.ibb.co/qJM6ZgY/Screenshot-2023-01-21-at-17-38-58.png',
       },
     ]);
-    setMessageInput("");
+
+
   };
 
   const handleKeyDown = (event) => {
@@ -51,9 +68,9 @@ export default () => {
     <>
       <Container>
         <SingleColumn>
-          <HeadingInfoContainer>
-            <HeadingTitle>Behavioral Challenges</HeadingTitle>
-          </HeadingInfoContainer>
+          {/* <HeadingInfoContainer> */}
+            {/* <HeadingTitle>Behavioral Challenges</HeadingTitle> */}
+          {/* </HeadingInfoContainer> */}
 
           <Content>
             <ChatUI chatData={chatData} messageLimit={150} />
