@@ -12,7 +12,7 @@ root.render(
   <Auth0Provider
     domain="dev-7gvrq56iomebax8m.us.auth0.com"
     clientId="rcHr9i7LUpbytsybNlRrrk14mTUAadDt"
-    redirectUri={`${window.location.origin}/components/blocks/Features/VerticalWithAlternateImageAndText`}
+    redirectUri={`${window.location.origin}/`}
   >
     <App />
   </Auth0Provider>
