@@ -68,9 +68,9 @@ export default () => {
     <>
       <Container>
         <SingleColumn>
-          {/* <HeadingInfoContainer> */}
-            {/* <HeadingTitle>Behavioral Challenges</HeadingTitle> */}
-          {/* </HeadingInfoContainer> */}
+          <HeadingInfoContainer>
+            <HeadingTitle>Behavioral Challenges</HeadingTitle>
+          </HeadingInfoContainer>
 
           <Content>
             <ChatUI chatData={chatData} messageLimit={150} />

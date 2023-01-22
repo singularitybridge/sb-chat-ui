@@ -121,6 +121,7 @@ import Profile from "pages/Profile";
 import Loading from "pages/Loading";
 import Chat from "pages/Chat";
 import AnimationRevealPage from "helpers/AnimationRevealPage";
+import ChatBots from "pages/ChatBots";
 
 const PlanFeatures = styled.ul`
   ${tw`mt-2 flex-1 lg:-mx-6 -mx-6 sm:-mx-10 py-10 px-6 sm:px-10 lg:p-6 xl:-mx-10 xl:p-10`}
@@ -199,6 +200,7 @@ export default function App() {
     <NavLinks key={1}>
       <NavLink href="/">Learn & Grow</NavLink>
       <NavLink href="/chat">Chat</NavLink>
+      <NavLink href="/chat-bots">Chat Bots</NavLink>
       <NavLink href="/profile">Profile</NavLink>
     </NavLinks>,
     <NavLinks key={2}>
@@ -284,6 +286,7 @@ export default function App() {
         <Routes>
           <Route path="/profile" element={ <Profile /> } />
           <Route path="/chat" element={ <Chat /> } />
+          <Route path="/chat-bots" element={ <ChatBots /> } />
           <Route path="/components/:type/:subtype/:name" element={<ComponentRenderer />} />
           <Route path="/components/:type/:name" element={<ComponentRenderer />} />
           <Route path="/thank-you" element={<ThankYouPage />} />
