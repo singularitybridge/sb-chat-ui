@@ -11,7 +11,7 @@ import twitterIconImageSrc from "images/twitter-icon.png";
 import loginImage from 'images/login-image.png'
 import { ReactComponent as SignUpIcon } from "feather-icons/dist/icons/user-plus.svg";
 import { useAuth0 } from "@auth0/auth0-react";
-import MainFeature1 from "components/features/TwoColWithButton.js";
+import HomeGuest from "components/pages/homeGuest";
 const Subheading = tw.span`uppercase tracking-wider text-sm`;
 
 
@@ -101,11 +101,11 @@ export default ({
 
   <>
 
- <MainFeature1
+ <HomeGuest
         subheading={<Subheading>we're</Subheading>}
         heading="Happy Together."
         buttonRounded={true}
-        primaryButtonText="Join Happy Together Now"
+        primaryButtonText="Join Us Now!"
         imageSrc={loginImage}
       />
       
