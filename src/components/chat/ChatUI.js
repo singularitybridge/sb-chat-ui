@@ -11,11 +11,10 @@ const ChatUIContainer = styled.div`
 function ChatUI(props) {
   const { chatData, messageLimit } = props;
   const chatContainerRef = useRef(null);
-  const lastMessageRef = useRef(null);
 
   useEffect(() => {
-    if (lastMessageRef.current) {
-      lastMessageRef.current.scrollIntoView({ behavior: "smooth" });
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
   }, [chatData]);
 
@@ -29,11 +28,6 @@ function ChatUI(props) {
             author={row.author}
             text={row.text}
             profilePic={row.profilePic}
-            ref={
-              index === chatData.slice(-1 * messageLimit).length - 1
-                ? lastMessageRef
-                : null
-            }
           />
         ))}
     </ChatUIContainer>
