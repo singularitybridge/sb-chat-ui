@@ -23,38 +23,36 @@ const MessageInputContainer = tw.div`
 
 const SubmitButton = tw(PrimaryButtonBase)`inline-block lg:ml-6 mt-6 lg:mt-0`;
 
-export default () => {
+const Chat = () => {
   const [messageInput, setMessageInput] = React.useState("");
-
   const [chatData, setChatData] = React.useState([]);
 
   const handleSendMessage = async (message) => {
-
     setChatData((prevChatData) => [
       ...prevChatData,
       {
         key: Math.random().toString(36).substr(2, 9),
         author: "avi",
         text: message,
-        profilePic: "https://i.ibb.co/98s9Fj2/Screenshot-2023-01-21-at-17-39-25.png",
+        profilePic:
+          "https://i.ibb.co/98s9Fj2/Screenshot-2023-01-21-at-17-39-25.png",
       },
-    ]);    
+    ]);
 
     setMessageInput("");
 
-    const gptResponse = await getGPTCompletion('arthur', message, chatData);
+    const gptResponse = await getGPTCompletion("arthur", message, chatData);
 
     setChatData((prevChatData) => [
       ...prevChatData,
       {
         key: Math.random().toString(36).substr(2, 9),
-        author: 'arthur',
+        author: "arthur",
         text: gptResponse,
-        profilePic: 'https://i.ibb.co/qJM6ZgY/Screenshot-2023-01-21-at-17-38-58.png',
+        profilePic:
+          "https://i.ibb.co/qJM6ZgY/Screenshot-2023-01-21-at-17-38-58.png",
       },
     ]);
-
-
   };
 
   const handleKeyDown = (event) => {
@@ -98,3 +96,5 @@ export default () => {
     </>
   );
 };
+
+export { Chat };

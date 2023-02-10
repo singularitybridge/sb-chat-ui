@@ -24,7 +24,7 @@ import HeaderBase, {
 import Articles from "pages/Articles";
 import Profile from "pages/Profile";
 import Loading from "pages/Loading";
-import Chat from "pages/Chat";
+import { Chat } from "pages/Chat";
 import AnimationRevealPage from "helpers/AnimationRevealPage";
 import ChatBots from "pages/ChatBots";
 

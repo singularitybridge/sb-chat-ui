@@ -11,26 +11,33 @@ const ChatUIContainer = styled.div`
 function ChatUI(props) {
   const { chatData, messageLimit } = props;
   const chatContainerRef = useRef(null);
+  const lastMessageRef = useRef(null);
 
   useEffect(() => {
-    const container = chatContainerRef.current;
-    container.style.scrollBehavior = "smooth";
-    container.scrollTop = container.scrollHeight;
+    if (lastMessageRef.current) {
+      lastMessageRef.current.scrollIntoView({ behavior: "smooth" });
+    }
   }, [chatData]);
 
   return (
     <ChatUIContainer ref={chatContainerRef}>
-      {chatData.slice(-1 * messageLimit).map((row, index) => (
-        <ChatUIRow
-          key={index}
-          author={row.author}
-          text={row.text}
-          profilePic={row.profilePic}
-        />
-      ))}
+      {chatData
+        .slice(-1 * messageLimit)
+        .map((row, index) => (
+          <ChatUIRow
+            key={index}
+            author={row.author}
+            text={row.text}
+            profilePic={row.profilePic}
+            ref={
+              index === chatData.slice(-1 * messageLimit).length - 1
+                ? lastMessageRef
+                : null
+            }
+          />
+        ))}
     </ChatUIContainer>
   );
 }
 
 export default ChatUI;
-
