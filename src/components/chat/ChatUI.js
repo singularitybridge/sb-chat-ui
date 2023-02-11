@@ -4,9 +4,10 @@ import tw from "twin.macro";
 import styled from "styled-components";
 
 const ChatUIContainer = styled.div`
-  ${tw`flex flex-col overflow-y-auto`}
-  height: 490px;
+  ${tw`flex flex-col overflow-y-scroll`}
+  height: 400px; // set based on desired height on mobile devices
 `;
+
 
 function ChatUI(props) {
   const { chatData, messageLimit } = props;

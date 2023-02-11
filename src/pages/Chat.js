@@ -4,12 +4,10 @@ import { SectionHeading as HeadingTitle } from "../components/misc/Headings.js";
 import ChatUI from "components/chat/ChatUI.js";
 import { PrimaryButton as PrimaryButtonBase } from "components/misc/Buttons.js";
 import { getGPTCompletion } from "helpers/ChatService.js";
-
-
 const Container = tw.div`relative`;
-const SingleColumn = tw.div`max-w-screen-xl mx-auto py-20 lg:py-24`;
+const SingleColumn = tw.div`max-w-screen-xl mx-auto py-8 lg:py-24`;
 const HeadingInfoContainer = tw.div`flex flex-col items-center`;
-const Content = tw.div`mt-16`;
+const Content = tw.div`mt-5`;
 const Form = tw.form`mt-8 md:mt-10 text-sm flex flex-col lg:flex-row`;
 const Input = tw.input`border-2 px-5 py-3 rounded focus:outline-none font-medium transition duration-300 hocus:border-primary-500`;
 
@@ -21,9 +19,11 @@ const MessageInputContainer = tw.div`
   p-4  
 `;
 
+
 const SubmitButton = tw(PrimaryButtonBase)`inline-block lg:ml-6 mt-6 lg:mt-0`;
 
 const Chat = () => {
+
   const [messageInput, setMessageInput] = React.useState("");
   const [chatData, setChatData] = React.useState([]);
 
@@ -71,7 +71,9 @@ const Chat = () => {
           </HeadingInfoContainer>
 
           <Content>
+          
             <ChatUI chatData={chatData} messageLimit={150} />
+          
 
             <MessageInputContainer>
               <Form>
