@@ -1,17 +1,22 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import ChatUIRow from "./ChatUIRow";
 import tw from "twin.macro";
 import styled from "styled-components";
 
 const ChatUIContainer = styled.div`
   ${tw`flex flex-col overflow-y-scroll`}
-  height: 400px; // set based on desired height on mobile devices
+  height: 55%;
 `;
 
 
 function ChatUI(props) {
   const { chatData, messageLimit } = props;
   const chatContainerRef = useRef(null);
+  const [height, setHeight] = useState(0);
+
+  useEffect(() => {
+    setHeight(window.innerHeight * 0.55);
+  }, []);
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -20,7 +25,7 @@ function ChatUI(props) {
   }, [chatData]);
 
   return (
-    <ChatUIContainer ref={chatContainerRef}>
+    <ChatUIContainer ref={chatContainerRef} style={{ height: `${height}px` }}>
       {chatData
         .slice(-1 * messageLimit)
         .map((row, index) => (
