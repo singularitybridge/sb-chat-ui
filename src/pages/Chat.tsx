@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Avatar, AvatarStyles } from "../components/Avatar";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
@@ -7,16 +7,18 @@ import {
   messagesState,
   therapistsState,
   userProfileState,
-  contextData
+  contextData,
 } from "../atoms/dataStore";
 import { ChatFooter } from "../components/ChatFooter";
-import { useParams } from 'react-router-dom';
+import { useParams } from "react-router-dom";
 import { fetchContextData, fetchTherapists } from "../services/BaseRowService";
 import { getGPTCompletion } from "../services/ChatService";
+import { translateText } from "../services/TranslationService";
 
 interface ChatMessageProps {
   message: string;
   userType: "user" | "bot";
+  autoTranslate?: boolean;
 }
 
 const ChatMessageStyles = {
@@ -32,13 +34,28 @@ const ChatMessageStyles = {
   },
 };
 
-const ChatMessage: React.FC<ChatMessageProps> = ({ message, userType }) => {
+const ChatMessage: React.FC<ChatMessageProps> = ({
+  message,
+  userType,
+  autoTranslate = false,
+}) => {
+  const [translatedMessage, setTranslatedMessage] = useState(message);
+
+  useEffect(() => {
+    if (autoTranslate) {
+      translateText(message, "he").then((result) => {
+        setTranslatedMessage(result);
+      });
+    } else {
+      setTranslatedMessage(message);
+    }
+  }, [message, autoTranslate]);
 
   const userProfile = useRecoilValue(userProfileState);
   const therapists = useRecoilValue(therapistsState);
 
-  const { id } = useParams<{ id: string }>() ;
-  const therapist = getTherapist( therapists , id || "xjdas87y");
+  const { id } = useParams<{ id: string }>();
+  const therapist = getTherapist(therapists, id || "xjdas87y");
 
   const messageStyles =
     userType === "user" ? ChatMessageStyles.user : ChatMessageStyles.bot;
@@ -53,8 +70,11 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, userType }) => {
             imageUrl={avatarImage || "images/avatars/av1.png"}
             avatarStyle={AvatarStyles.avatar}
           />
-          <div className={messageStyles.message}>
-            <div>{message}</div>
+          <div
+            className={messageStyles.message}
+            style={{ direction: autoTranslate ? "rtl" : "ltr" }}
+          >
+            <div>{translatedMessage}</div>
           </div>
         </div>
       </div>
@@ -72,15 +92,16 @@ const ContentContainer: React.FC<ContentContainerProps> = ({ children }) => {
   );
 };
 
-const Chat = () => {  
-
-  
+const Chat = () => {
   const [context, setContext] = useRecoilState(contextData);
   const [chatData, setChatData] = useRecoilState(messagesState);
   const [therapists, setTherapists] = useRecoilState(therapistsState);
   const userProfile = useRecoilValue(userProfileState);
   const chatContainerRef = useRef(null);
-  const therapist = getTherapist( therapists ,  userProfile.activeChat || "xjdas87y");
+  const therapist = getTherapist(
+    therapists,
+    userProfile.activeChat || "xjdas87y"
+  );
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -91,27 +112,27 @@ const Chat = () => {
     }
   }, [chatData]);
 
-
   const onSendMessage = async (message: string) => {
+
+    const translatedMessage = await translateText(message, "en");
+
     setChatData((prevChatData) => [
       ...prevChatData,
-      { text: message, sender: "user", senderType: "user" },
+      { text: translatedMessage, sender: userProfile?.name, senderType: "user" },
     ]);
-
-
-    console.log('before getGPTCompletion', context);
 
     const response = await getGPTCompletion(
       therapist?.prompt,
       therapist?.name,
       userProfile.name,
-      message,
+      // message,
+      translatedMessage,
       chatData || [],
       context
     );
     setChatData((prevChatData) => [
       ...prevChatData,
-      { text: response || "", sender: "bot", senderType: "bot" },
+      { text: response || "", sender: therapist.name, senderType: "bot" },
     ]);
   };
 
@@ -139,6 +160,7 @@ const Chat = () => {
                           key={index}
                           message={message.text}
                           userType={message.senderType || "user"}
+                          autoTranslate={true}
                         />
                       );
                     })}
