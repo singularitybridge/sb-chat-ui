@@ -5,6 +5,7 @@ interface ChatBotAPIResponse {
   name: string;
   description: string;
   autoTranslate: boolean;
+  autoTranslateTarget: string;
   avatar: {
     url: string;
     thumbnails: {
@@ -102,6 +103,7 @@ const mapChatBot = (chatBot: ChatBotAPIResponse) => {
     prompt: chatBot.prompt,
     logo: chatBot.logo[0].url,
     autoTranslate: chatBot.autoTranslate,
+    autoTranslateTarget: chatBot.autoTranslateTarget,
   };
 };
 

@@ -1,11 +1,20 @@
 import { atom, useRecoilValue } from "recoil";
 
+// enum for message sender type
+export enum SenderType {
+  user = "user",
+  bot = "bot",
+}
+
+
+
+
 export interface Message {
   id?: string;
   text: string;
   sender?: string;
   timestamp?: number;
-  senderType?: "user" | "bot";
+  senderType?: SenderType.user | SenderType.bot;
 }
 
 export interface UserProfile {
@@ -22,6 +31,8 @@ export interface ChatBot {
   bgImage: string;
   prompt: string;
   logo: string;
+  autoTranslate: boolean;
+  autoTranslateTarget: string;
 }
 
 export interface ContextData {
@@ -48,6 +59,8 @@ export const defaultChatBot: ChatBot = {
   prompt:
     "The following is a conversation between {{userName}} and an AI therapist named {{agentName}}. The therapist is calm, patient and emphatic. his goal is to help {{userName}} feel better and act in positive ways.\n {{prevChatAsText}}\n {{userName}}: {{message}}\n {{agentName}}: ",
   logo: "/parent-coach-logo.png",
+  autoTranslate: false,
+  autoTranslateTarget: "en",
 };
 
 export const chatBotsState = atom<ChatBot[]>({

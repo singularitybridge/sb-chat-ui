@@ -40,11 +40,6 @@ const SideMenuItem: React.FC<SideMenuItemProps> = ({
   </div>
 );
 
-const AutoTranslateSwitch = {
-  active : 'flex items-center justify-center w-full h-1 bg-lime-100  hover:bg-slate-500 p-6  text-slate-600',
-  inactive : 'bg-gray-flex items-center justify-center w-full h-1 bg-lime-400  hover:bg-slate-500 p-6  text-slate-600'
-};
-
 const SideMenu: React.FC<SideMenuProps> = ({ isOpen, closeMenu }) => {
   const userProfile = useRecoilValue(userProfileState);
   const chatBots = useRecoilValue(chatBotsState);
@@ -55,13 +50,6 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, closeMenu }) => {
       getChatBot(chatBots, userProfile.activeChat || "") || defaultChatBot
     );
   }, [chatBots]);
-
-  const [autoTranslate, setAutoTranslate] = useState(false);
-
-  const autoTranslateHandler = (e: { preventDefault: () => void; }) => {
-    e.preventDefault();
-    setAutoTranslate(!autoTranslate);    
-  };
 
   return (
     <aside
@@ -84,16 +72,6 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, closeMenu }) => {
           <SideMenuItem icon={Cog8ToothIcon} text="Profile" />
         </ul>
       </nav>
-
-      <hr className="mt-5" />
-      
-      <button
-        className={autoTranslate ? AutoTranslateSwitch.active : AutoTranslateSwitch.inactive}
-        onClick={autoTranslateHandler}
-      >
-        <span>עברית</span>
-      </button>
-
     </aside>
   );
 };

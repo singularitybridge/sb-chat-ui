@@ -8,6 +8,7 @@ import {
   contextData,
   chatBotsState,
   getChatBot,
+  SenderType,
 } from "../atoms/dataStore";
 import { ChatFooter } from "../components/ChatFooter";
 import { useParams } from "react-router-dom";
@@ -16,7 +17,7 @@ import { translateText } from "../services/TranslationService";
 
 interface ChatMessageProps {
   message: string;
-  userType: "user" | "bot";
+  userType: SenderType;
   autoTranslate?: boolean;
 }
 
@@ -57,9 +58,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   const chatBot = getChatBot(chatBots, id || "xjdas87y");
 
   const messageStyles =
-    userType === "user" ? ChatMessageStyles.user : ChatMessageStyles.bot;
+    userType === SenderType.user ? ChatMessageStyles.user : ChatMessageStyles.bot;
   const avatarImage =
-    userType === "user" ? userProfile.avatar : chatBot?.avatar;
+    userType === SenderType.user ? userProfile.avatar : chatBot?.avatar;
 
   return (
     <>
@@ -117,7 +118,7 @@ const Chat = () => {
 
     setChatData((prevChatData) => [
       ...prevChatData,
-      { text: translatedMessage, sender: userProfile?.name, senderType: "user" },
+      { text: translatedMessage, sender: userProfile?.name, senderType: SenderType.user },
     ]);
 
     const response = await getGPTCompletion(
@@ -131,7 +132,7 @@ const Chat = () => {
     );
     setChatData((prevChatData) => [
       ...prevChatData,
-      { text: response || "", sender: chatBot.name, senderType: "bot" },
+      { text: response || "", sender: chatBot.name, senderType: SenderType.bot },
     ]);
   };
 
@@ -158,7 +159,7 @@ const Chat = () => {
                         <ChatMessage
                           key={index}
                           message={message.text}
-                          userType={message.senderType || "user"}
+                          userType={message.senderType || SenderType.user }
                           autoTranslate={true}
                         />
                       );
