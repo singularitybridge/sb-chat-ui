@@ -2,16 +2,15 @@ import React, { useEffect, useRef, useState } from "react";
 import { Avatar, AvatarStyles } from "../components/Avatar";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
-  getTherapist,
   Message,
   messagesState,
-  therapistsState,
   userProfileState,
   contextData,
+  chatBotsState,
+  getChatBot,
 } from "../atoms/dataStore";
 import { ChatFooter } from "../components/ChatFooter";
 import { useParams } from "react-router-dom";
-import { fetchContextData, fetchTherapists } from "../services/BaseRowService";
 import { getGPTCompletion } from "../services/ChatService";
 import { translateText } from "../services/TranslationService";
 
@@ -52,15 +51,15 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   }, [message, autoTranslate]);
 
   const userProfile = useRecoilValue(userProfileState);
-  const therapists = useRecoilValue(therapistsState);
+  const chatBots = useRecoilValue(chatBotsState);
 
   const { id } = useParams<{ id: string }>();
-  const therapist = getTherapist(therapists, id || "xjdas87y");
+  const chatBot = getChatBot(chatBots, id || "xjdas87y");
 
   const messageStyles =
     userType === "user" ? ChatMessageStyles.user : ChatMessageStyles.bot;
   const avatarImage =
-    userType === "user" ? userProfile.avatar : therapist?.avatar;
+    userType === "user" ? userProfile.avatar : chatBot?.avatar;
 
   return (
     <>
@@ -95,11 +94,11 @@ const ContentContainer: React.FC<ContentContainerProps> = ({ children }) => {
 const Chat = () => {
   const [context, setContext] = useRecoilState(contextData);
   const [chatData, setChatData] = useRecoilState(messagesState);
-  const [therapists, setTherapists] = useRecoilState(therapistsState);
+  const [chatBots, setChatBots] = useRecoilState(chatBotsState);
   const userProfile = useRecoilValue(userProfileState);
   const chatContainerRef = useRef(null);
-  const therapist = getTherapist(
-    therapists,
+  const chatBot = getChatBot(
+    chatBots,
     userProfile.activeChat || "xjdas87y"
   );
 
@@ -122,8 +121,8 @@ const Chat = () => {
     ]);
 
     const response = await getGPTCompletion(
-      therapist?.prompt,
-      therapist?.name,
+      chatBot?.prompt,
+      chatBot?.name,
       userProfile.name,
       // message,
       translatedMessage,
@@ -132,7 +131,7 @@ const Chat = () => {
     );
     setChatData((prevChatData) => [
       ...prevChatData,
-      { text: response || "", sender: therapist.name, senderType: "bot" },
+      { text: response || "", sender: chatBot.name, senderType: "bot" },
     ]);
   };
 
@@ -142,7 +141,7 @@ const Chat = () => {
         <div
           className="flex flex-row h-full w-full overflow-x-hidden"
           style={{
-            backgroundImage: `linear-gradient(rgba(200, 200, 200, 0.6), rgba(200, 200, 200, 0.6)), url(${therapist?.bgImage})`,
+            backgroundImage: `linear-gradient(rgba(200, 200, 200, 0.6), rgba(200, 200, 200, 0.6)), url(${chatBot?.bgImage})`,
             backgroundSize: "cover",
           }}
         >

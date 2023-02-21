@@ -1,9 +1,9 @@
 import { Bars2Icon } from "@heroicons/react/24/solid";
 import {
-  defaultTherapist,
-  getTherapist,
-  Therapist,
-  therapistsState,
+  ChatBot,
+  chatBotsState,
+  defaultChatBot,
+  getChatBot,
   userProfileState,
 } from "../atoms/dataStore";
 import { Avatar, AvatarStyles } from "./Avatar";
@@ -17,15 +17,15 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const userProfile = useRecoilValue(userProfileState);
-  const therapists = useRecoilValue(therapistsState);
-  const [therapist, setTherapist] = useState<Therapist>();
+  const chatBots = useRecoilValue(chatBotsState);
+  const [chatBot, setChatBot] = useState<ChatBot>();
 
   useEffect(() => {
-    console.log("header, set therapist", therapists, userProfile.activeChat);
-    setTherapist(
-      getTherapist(therapists, userProfile.activeChat || "") || defaultTherapist
+    console.log("header, set chatBot", chatBots, userProfile.activeChat);
+    setChatBot(
+      getChatBot(chatBots, userProfile.activeChat || "") || defaultChatBot
     );
-  }, [therapists]);
+  }, [chatBots]);
 
   return (
     <header className="p-4 flex justify-between items-center">
@@ -37,12 +37,12 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
       </div>
       <div className="headerImageAndText flex flex-row items-center w-full text-left pl-5">
         <Avatar
-          imageUrl={therapist?.avatar || ""}
+          imageUrl={chatBot?.avatar || ""}
           avatarStyle={AvatarStyles.logo}
         />
         <div className="ml-3">
-          <div className="text-2xl font-normal">{therapist?.name}</div>
-          <div className="text-xs font-light">{therapist?.description}</div>
+          <div className="text-2xl font-normal">{chatBot?.name}</div>
+          <div className="text-xs font-light">{chatBot?.description}</div>
         </div>
       </div>
 

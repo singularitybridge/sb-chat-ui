@@ -8,10 +8,10 @@ import {
 
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import {
-  defaultTherapist,
-  getTherapist,
-  Therapist,
-  therapistsState,
+  ChatBot,
+  chatBotsState,
+  defaultChatBot,
+  getChatBot,
   userProfileState,
 } from "../atoms/dataStore";
 import { useRecoilValue } from "recoil";
@@ -47,14 +47,14 @@ const AutoTranslateSwitch = {
 
 const SideMenu: React.FC<SideMenuProps> = ({ isOpen, closeMenu }) => {
   const userProfile = useRecoilValue(userProfileState);
-  const therapists = useRecoilValue(therapistsState);
-  const [therapist, setTherapist] = useState<Therapist>();
+  const chatBots = useRecoilValue(chatBotsState);
+  const [chatBot, setChatBot] = useState<ChatBot>();
 
   useEffect(() => {
-    setTherapist(
-      getTherapist(therapists, userProfile.activeChat || "") || defaultTherapist
+    setChatBot(
+      getChatBot(chatBots, userProfile.activeChat || "") || defaultChatBot
     );
-  }, [therapists]);
+  }, [chatBots]);
 
   const [autoTranslate, setAutoTranslate] = useState(false);
 
@@ -70,7 +70,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, closeMenu }) => {
       } duration-300`}
     >
       <header className="flex items-center justify-between p-4 mt-4">
-        <img src={therapist?.logo} className="w-[8rem] object-contain" />
+        <img src={chatBot?.logo} className="w-[8rem] object-contain" />
         <button className="p-1 rounded-full hover:text-gray-400 w-10 h-10">
           <XMarkIcon className="h-6 w-6 text-slate-400" />
         </button>

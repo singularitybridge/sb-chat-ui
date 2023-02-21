@@ -1,9 +1,10 @@
 import axios from "axios"
 
-interface TherapistAPIResponse {
+interface ChatBotAPIResponse {
   key: string;
   name: string;
   description: string;
+  autoTranslate: boolean;
   avatar: {
     url: string;
     thumbnails: {
@@ -91,15 +92,16 @@ interface TherapistAPIResponse {
   }[];
 }
 
-const mapTherapist = (therapist: TherapistAPIResponse) => {
+const mapChatBot = (chatBot: ChatBotAPIResponse) => {
   return {
-    key: therapist.key,
-    name: therapist.name,
-    description: therapist.description,
-    avatar: therapist.avatar[0].url,
-    bgImage: therapist.bgImage[0].url,
-    prompt: therapist.prompt,
-    logo: therapist.logo[0].url,
+    key: chatBot.key,
+    name: chatBot.name,
+    description: chatBot.description,
+    avatar: chatBot.avatar[0].url,
+    bgImage: chatBot.bgImage[0].url,
+    prompt: chatBot.prompt,
+    logo: chatBot.logo[0].url,
+    autoTranslate: chatBot.autoTranslate,
   };
 };
 
@@ -120,7 +122,7 @@ const fetchContextData = async (key: string) => {
   }
 };
 
-const fetchTherapists = async () => {
+const fetchChatBots = async () => {
   try {
     const response = await axios({
       method: "GET",
@@ -129,11 +131,11 @@ const fetchTherapists = async () => {
         Authorization: "Token xYNbZuE6CN4KarOStEiUnMqQTU920uw6",
       },
     });
-    return response.data.results.map(mapTherapist);
+    return response.data.results.map(mapChatBot);
   } catch (error) {
     console.error(error);
     return [];
   }
 };
 
-export { fetchTherapists, fetchContextData };
+export { fetchChatBots, fetchContextData };

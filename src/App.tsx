@@ -3,9 +3,9 @@ import { Chat } from "./pages/Chat";
 import { Header } from "./components/Header";
 import { SideMenu } from "./components/SideMenu";
 import { Outlet, useParams } from "react-router-dom";
-import { contextData, therapistsState, userProfileState } from "./atoms/dataStore";
+import { contextData, chatBotsState, userProfileState } from "./atoms/dataStore";
 import { useRecoilState } from "recoil";
-import { fetchContextData, fetchTherapists } from "./services/BaseRowService";
+import { fetchContextData, fetchChatBots } from "./services/BaseRowService";
 
 const App = () => {
 
@@ -13,7 +13,7 @@ const App = () => {
   const [screenHeight, setScreenHeight] = useState(0);
   const { id } = useParams<{ id: string }>();
   const [userProfile, setUserProfile] = useRecoilState(userProfileState);
-  const [therapists, setTherapists] = useRecoilState(therapistsState);
+  const [chatBots, setChatsBots] = useRecoilState(chatBotsState);
   const [context, setContext] = useRecoilState(contextData);
 
   useEffect(() => {
@@ -27,8 +27,8 @@ const App = () => {
       activeChat: id ,
     });
 
-    fetchTherapists().then((data) => {
-      setTherapists(data);
+    fetchChatBots().then((data) => {
+      setChatsBots(data);
     });
 
     fetchContextData(id).then((data) => {

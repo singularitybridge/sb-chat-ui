@@ -14,7 +14,7 @@ export interface UserProfile {
   activeChat: string;
 }
 
-export interface Therapist {
+export interface ChatBot {
   key: string;
   name: string;
   description: string;
@@ -38,7 +38,7 @@ export const messagesState = atom<Message[]>({
   default: [],
 });
 
-export const defaultTherapist: Therapist = {
+export const defaultChatBot: ChatBot = {
   key: "xjdas87y",
   name: "Dr. John",
   description:
@@ -50,13 +50,13 @@ export const defaultTherapist: Therapist = {
   logo: "/parent-coach-logo.png",
 };
 
-export const therapistsState = atom<Therapist[]>({
-  key: "therapists",
-  default: [defaultTherapist],
+export const chatBotsState = atom<ChatBot[]>({
+  key: "chatBots",
+  default: [defaultChatBot],
 });
 
-export const getTherapist = (therapists : Therapist[], id : string) => {  
-  return therapists?.find((therapist) => therapist.key === id) || therapists[0];
+export const getChatBot = (chatBots : ChatBot[], id : string) => {  
+  return chatBots?.find((chatBot) => chatBot.key === id) || chatBots[0];
 };
 
 export const userProfileState = atom<UserProfile>({
