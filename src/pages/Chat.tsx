@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from "react";
 import { Avatar, AvatarStyles } from "../components/Avatar";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -9,6 +10,7 @@ import {
   chatBotsState,
   getChatBot,
   SenderType,
+  getMessageText,
 } from "../atoms/dataStore";
 import { ChatFooter } from "../components/ChatFooter";
 import { useParams } from "react-router-dom";
@@ -16,8 +18,7 @@ import { getGPTCompletion } from "../services/ChatService";
 import { translateText } from "../services/TranslationService";
 
 interface ChatMessageProps {
-  message: string;
-  userType: SenderType;
+  message: Message;
   autoTranslate?: boolean;
 }
 
@@ -35,21 +36,8 @@ const ChatMessageStyles = {
 };
 
 const ChatMessage: React.FC<ChatMessageProps> = ({
-  message,
-  userType,
-  autoTranslate = false,
+  message,  
 }) => {
-  const [translatedMessage, setTranslatedMessage] = useState(message);
-
-  useEffect(() => {
-    if (autoTranslate) {
-      translateText(message, "he").then((result) => {
-        setTranslatedMessage(result);
-      });
-    } else {
-      setTranslatedMessage(message);
-    }
-  }, [message, autoTranslate]);
 
   const userProfile = useRecoilValue(userProfileState);
   const chatBots = useRecoilValue(chatBotsState);
@@ -58,9 +46,11 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   const chatBot = getChatBot(chatBots, id || "xjdas87y");
 
   const messageStyles =
-    userType === SenderType.user ? ChatMessageStyles.user : ChatMessageStyles.bot;
+    message.senderType === SenderType.user
+      ? ChatMessageStyles.user
+      : ChatMessageStyles.bot;
   const avatarImage =
-    userType === SenderType.user ? userProfile.avatar : chatBot?.avatar;
+    message.senderType === SenderType.user ? userProfile.avatar : chatBot?.avatar;
 
   return (
     <>
@@ -72,9 +62,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
           />
           <div
             className={messageStyles.message}
-            style={{ direction: autoTranslate ? "rtl" : "ltr" }}
+            style={{ direction: chatBot.autoTranslate && chatBot.autoTranslateTarget === 'he'  ? "rtl" : "ltr" }}
           >
-            <div>{translatedMessage}</div>
+            <div>{getMessageText(message)}</div>
           </div>
         </div>
       </div>
@@ -93,15 +83,14 @@ const ContentContainer: React.FC<ContentContainerProps> = ({ children }) => {
 };
 
 const Chat = () => {
+
   const [context, setContext] = useRecoilState(contextData);
   const [chatData, setChatData] = useRecoilState(messagesState);
   const [chatBots, setChatBots] = useRecoilState(chatBotsState);
   const userProfile = useRecoilValue(userProfileState);
   const chatContainerRef = useRef(null);
-  const chatBot = getChatBot(
-    chatBots,
-    userProfile.activeChat || "xjdas87y"
-  );
+  const chatBot = getChatBot(chatBots, userProfile.activeChat || "xjdas87y");
+
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -114,25 +103,37 @@ const Chat = () => {
 
   const onSendMessage = async (message: string) => {
 
-    const translatedMessage = await translateText(message, "en");
+    const translatedMessage = chatBot.autoTranslate ?  await translateText(message, "en") : '';
 
     setChatData((prevChatData) => [
       ...prevChatData,
-      { text: translatedMessage, sender: userProfile?.name, senderType: SenderType.user },
+      {
+        text: message,
+        textTranslated: translatedMessage,
+        sender: userProfile.name,
+        senderType: SenderType.user,
+      },
     ]);
 
     const response = await getGPTCompletion(
-      chatBot?.prompt,
-      chatBot?.name,
+      chatBot.prompt,
+      chatBot.name,
       userProfile.name,
-      // message,
-      translatedMessage,
+      translatedMessage || message,
       chatData || [],
       context
     );
+
+    const translatedResponse = chatBot.autoTranslate ?  await translateText(response, chatBot.autoTranslateTarget) : '';
+
     setChatData((prevChatData) => [
       ...prevChatData,
-      { text: response || "", sender: chatBot.name, senderType: SenderType.bot },
+      {
+        text: response,
+        textTranslated: translatedResponse,
+        sender: chatBot.name,
+        senderType: SenderType.bot,
+      },
     ]);
   };
 
@@ -158,9 +159,7 @@ const Chat = () => {
                       return (
                         <ChatMessage
                           key={index}
-                          message={message.text}
-                          userType={message.senderType || SenderType.user }
-                          autoTranslate={true}
+                          message={message}                          
                         />
                       );
                     })}

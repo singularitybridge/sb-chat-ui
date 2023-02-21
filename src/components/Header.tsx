@@ -10,6 +10,7 @@ import { Avatar, AvatarStyles } from "./Avatar";
 import { useParams } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import { useEffect, useState } from "react";
+import { translateText } from "../services/TranslationService";
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -20,12 +21,39 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const chatBots = useRecoilValue(chatBotsState);
   const [chatBot, setChatBot] = useState<ChatBot>();
 
+
+  const [ chatBotName, setChatBotName ] = useState<string>("");
+  const [ chatBotDescription, setChatBotDescription ] = useState<string>("");
+  
+
   useEffect(() => {
     console.log("header, set chatBot", chatBots, userProfile.activeChat);
     setChatBot(
       getChatBot(chatBots, userProfile.activeChat || "") || defaultChatBot
     );
-  }, [chatBots]);
+
+    if (!chatBot) {
+      return;
+    } 
+
+    if (chatBot.autoTranslate)  {
+
+      translateText(chatBot.name, chatBot.autoTranslateTarget)
+      .then(translatedText => {
+        setChatBotName(translatedText);
+      });
+
+      translateText(chatBot.description, chatBot.autoTranslateTarget)
+      .then((translatedText) => {
+        setChatBotDescription(translatedText);
+      });
+
+    } else {
+      setChatBotName(chatBot.name);
+      setChatBotDescription(chatBot.description);
+    }
+
+  }, [chatBots, chatBot]);
 
   return (
     <header className="p-4 flex justify-between items-center">
@@ -41,8 +69,8 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
           avatarStyle={AvatarStyles.logo}
         />
         <div className="ml-3">
-          <div className="text-2xl font-normal">{chatBot?.name}</div>
-          <div className="text-xs font-light">{chatBot?.description}</div>
+          <div className="text-2xl font-normal">{chatBotName}</div>
+          <div className="text-xs font-light">{chatBotDescription}</div>
         </div>
       </div>
 

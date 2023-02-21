@@ -1,5 +1,5 @@
 import { Configuration, OpenAIApi, CreateCompletionRequest } from "openai";
-import { ContextData, Message } from "../atoms/dataStore";
+import { ContextData, getMessageTextGPT, Message } from "../atoms/dataStore";
 import Mustache from "mustache";
 
 const configuration = new Configuration({
@@ -11,7 +11,7 @@ const openai = new OpenAIApi(configuration);
 const mapChatToPrompt = (chat: Message[]) => {
   let prompt = "\n";
   chat.forEach((message) => {
-    prompt += `${message.sender}: ${message.text}\n`;
+    prompt += `${message.sender}: ${getMessageTextGPT(message)}\n`;
   });
   return prompt;
 };

@@ -6,16 +6,28 @@ export enum SenderType {
   bot = "bot",
 }
 
-
-
-
 export interface Message {
   id?: string;
   text: string;
+  textTranslated: string;
   sender?: string;
   timestamp?: number;
   senderType?: SenderType.user | SenderType.bot;
 }
+
+export const getMessageText = (message: Message) => {
+  if (message.senderType === SenderType.user) {
+    return message.text;
+  }
+  return message.textTranslated || message.text;
+};
+
+export const getMessageTextGPT = (message: Message) => {
+  if (message.senderType === SenderType.user) {
+    return message.textTranslated || message.text;
+  }
+  return message.text;
+};
 
 export interface UserProfile {
   name: string;
@@ -36,13 +48,12 @@ export interface ChatBot {
 }
 
 export interface ContextData {
-  title: string;  
+  title: string;
   intro: string;
   description: string;
   image: string;
   video: string;
 }
-
 
 export const messagesState = atom<Message[]>({
   key: "messages",
@@ -68,7 +79,7 @@ export const chatBotsState = atom<ChatBot[]>({
   default: [defaultChatBot],
 });
 
-export const getChatBot = (chatBots : ChatBot[], id : string) => {  
+export const getChatBot = (chatBots: ChatBot[], id: string) => {
   return chatBots?.find((chatBot) => chatBot.key === id) || chatBots[0];
 };
 
@@ -83,5 +94,5 @@ export const userProfileState = atom<UserProfile>({
 
 export const contextData = atom<ContextData[]>({
   key: "contextData",
-  default: []
+  default: [],
 });
