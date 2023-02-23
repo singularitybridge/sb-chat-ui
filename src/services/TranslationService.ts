@@ -1,5 +1,10 @@
 import axios from 'axios';
 
+const  decodeText = (encodedText: string) =>  {
+  return decodeURIComponent(encodedText.replace(/\&#39;/g, "'"));
+}; 
+
+
 interface TranslateResponse {
   data: {
     translations: [
@@ -23,5 +28,5 @@ export const translateText = async (text: string, targetLanguage: string): Promi
     }
   );
 
-  return response.data.data.translations[0].translatedText;
+  return decodeText(response.data.data.translations[0].translatedText);
 };

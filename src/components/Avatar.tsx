@@ -9,5 +9,4 @@ const Avatar = ({ imageUrl, avatarStyle }: { imageUrl: string; avatarStyle : Ava
   );
 };
 
-
 export { Avatar };

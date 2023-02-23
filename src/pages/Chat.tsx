@@ -22,9 +22,6 @@ interface ChatMessageProps {
   autoTranslate?: boolean;
 }
 
-const  decodeText = (encodedText: string) =>  {
-  return decodeURIComponent(encodedText.replace(/\&#39;/g, "'"));
-}; 
 
 const ChatMessageStyles = {
   user: {
@@ -79,7 +76,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
                   : "ltr",
             }}
           >
-            <div>{decodeText(getMessageText(message))}</div>
+            <div>{getMessageText(message)}</div>
           </div>
         </div>
       </div>
