@@ -47,7 +47,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, closeMenu }) => {
 
   useEffect(() => {
     setChatBot(
-      getChatBot(chatBots, userProfile.activeChat || "") || defaultChatBot
+      getChatBot(chatBots, userProfile.activeChatBot) || defaultChatBot
     );
   }, [chatBots]);
 

@@ -24,7 +24,7 @@ const App = () => {
 
     setUserProfile({
       ...userProfile,
-      activeChat: id ,
+      activeChatBot: id ,
     });
 
     fetchChatBots().then((data) => {

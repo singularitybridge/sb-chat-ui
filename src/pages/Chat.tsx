@@ -103,7 +103,7 @@ const Chat = () => {
   const [chatBots, setChatBots] = useRecoilState(chatBotsState);
   const userProfile = useRecoilValue(userProfileState);
   const chatContainerRef = useRef(null);
-  const chatBot = getChatBot(chatBots, userProfile.activeChat);
+  const chatBot = getChatBot(chatBots, userProfile.activeChatBot);
 
   useEffect(() => {
     if (chatBot?.key === ChatBotNotLoaded || chatBot === undefined) {

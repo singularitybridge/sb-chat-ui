@@ -5,8 +5,9 @@ export enum AvatarStyles {
 
 const Avatar = ({ imageUrl, avatarStyle }: { imageUrl: string; avatarStyle : AvatarStyles }) => {
   return (
-    <img src={imageUrl} className={avatarStyle} />
+    <img src={imageUrl} className={`${avatarStyle} rounded-full`} />
   );
 };
+
 
 export { Avatar };

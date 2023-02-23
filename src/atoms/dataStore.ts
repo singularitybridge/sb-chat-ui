@@ -34,7 +34,7 @@ export const getMessageTextGPT = (message: Message) => {
 export interface UserProfile {
   name: string;
   avatar: string;
-  activeChat: string;
+  activeChatBot: string;
 }
 
 export interface ChatBot {
@@ -92,7 +92,7 @@ export const userProfileState = atom<UserProfile>({
   default: {
     name: "Avi",
     avatar: "/images/avatars/av3.png",
-    activeChat: ChatBotNotLoaded,
+    activeChatBot: ChatBotNotLoaded,
   },
 });
 

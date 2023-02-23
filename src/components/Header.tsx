@@ -18,24 +18,34 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
+
   const userProfile = useRecoilValue(userProfileState);
   const chatBots = useRecoilValue(chatBotsState);
-  const [chatBot, setChatBot] = useState<ChatBot>();
+  
   const [chatBotName, setChatBotName] = useState<string>("");
   const [chatBotDescription, setChatBotDescription] = useState<string>("");
+  const [chatBotAvatar, setChatBotAvatar] = useState<string>("");
 
   useEffect(() => {
+
+    if (chatBots.length === 0 || !userProfile.activeChatBot) {
+      return;
+    }
+
+    const chatBot = getChatBot(chatBots, userProfile.activeChatBot);
+    
     if (chatBot && chatBot.key === ChatBotNotLoaded) {
       return;
-    }
+    }  
 
-    setChatBot(
-      getChatBot(chatBots, userProfile.activeChat || "") || defaultChatBot
-    );
-
-    if (!chatBot) {
+    if (chatBot.key === ChatBotNotLoaded) {
       return;
     }
+
+    console.log("Header: ", chatBot);
+
+    setChatBotAvatar(chatBot.avatar);
+
 
     if (chatBot.autoTranslate) {
       translateText(chatBot.name, chatBot.autoTranslateTarget).then(
@@ -53,6 +63,9 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
       setChatBotName(chatBot.name);
       setChatBotDescription(chatBot.description);
     }
+
+
+
   }, [chatBots]);
 
   return (
@@ -65,7 +78,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
       </div>
       <div className="headerImageAndText flex flex-row items-center w-full text-left pl-5">
         <Avatar
-          imageUrl={chatBot?.avatar || ""}
+          imageUrl={chatBotAvatar}
           avatarStyle={AvatarStyles.logo}
         />
         <div className="ml-3">
