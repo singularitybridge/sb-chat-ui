@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from "react";
 import { Avatar, AvatarStyles } from "../components/Avatar";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -11,6 +10,7 @@ import {
   getChatBot,
   SenderType,
   getMessageText,
+  ChatBotNotLoaded,
 } from "../atoms/dataStore";
 import { ChatFooter } from "../components/ChatFooter";
 import { useParams } from "react-router-dom";
@@ -21,6 +21,10 @@ interface ChatMessageProps {
   message: Message;
   autoTranslate?: boolean;
 }
+
+const  decodeText = (encodedText: string) =>  {
+  return decodeURIComponent(encodedText.replace(/\&#39;/g, "'"));
+}; 
 
 const ChatMessageStyles = {
   user: {
@@ -35,22 +39,26 @@ const ChatMessageStyles = {
   },
 };
 
-const ChatMessage: React.FC<ChatMessageProps> = ({
-  message,  
-}) => {
-
+const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   const userProfile = useRecoilValue(userProfileState);
   const chatBots = useRecoilValue(chatBotsState);
 
   const { id } = useParams<{ id: string }>();
-  const chatBot = getChatBot(chatBots, id || "xjdas87y");
+
+  if (!id) {
+    return null;
+  }
+
+  const chatBot = getChatBot(chatBots, id);
 
   const messageStyles =
     message.senderType === SenderType.user
       ? ChatMessageStyles.user
       : ChatMessageStyles.bot;
   const avatarImage =
-    message.senderType === SenderType.user ? userProfile.avatar : chatBot?.avatar;
+    message.senderType === SenderType.user
+      ? userProfile.avatar
+      : chatBot?.avatar;
 
   return (
     <>
@@ -62,9 +70,16 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
           />
           <div
             className={messageStyles.message}
-            style={{ direction: chatBot.autoTranslate && chatBot.autoTranslateTarget === 'he'  ? "rtl" : "ltr" }}
+            style={{
+              direction:
+                chatBot &&
+                chatBot.autoTranslate &&
+                chatBot.autoTranslateTarget === "he"
+                  ? "rtl"
+                  : "ltr",
+            }}
           >
-            <div>{getMessageText(message)}</div>
+            <div>{decodeText(getMessageText(message))}</div>
           </div>
         </div>
       </div>
@@ -83,14 +98,22 @@ const ContentContainer: React.FC<ContentContainerProps> = ({ children }) => {
 };
 
 const Chat = () => {
-
   const [context, setContext] = useRecoilState(contextData);
   const [chatData, setChatData] = useRecoilState(messagesState);
   const [chatBots, setChatBots] = useRecoilState(chatBotsState);
   const userProfile = useRecoilValue(userProfileState);
   const chatContainerRef = useRef(null);
-  const chatBot = getChatBot(chatBots, userProfile.activeChat || "xjdas87y");
+  const chatBot = getChatBot(chatBots, userProfile.activeChat);
 
+  useEffect(() => {
+    if (chatBot?.key === ChatBotNotLoaded || chatBot === undefined) {
+      return;
+    }
+
+    if (chatData.length === 0) {
+      onSendMessage("");
+    }
+  }, [chatBot]);
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -102,18 +125,22 @@ const Chat = () => {
   }, [chatData]);
 
   const onSendMessage = async (message: string) => {
+    const translatedMessage =
+      chatBot && chatBot.autoTranslate
+        ? await translateText(message, "en")
+        : "";
 
-    const translatedMessage = chatBot.autoTranslate ?  await translateText(message, "en") : '';
-
-    setChatData((prevChatData) => [
-      ...prevChatData,
-      {
-        text: message,
-        textTranslated: translatedMessage,
-        sender: userProfile.name,
-        senderType: SenderType.user,
-      },
-    ]);
+    if (message !== "") {
+      setChatData((prevChatData) => [
+        ...prevChatData,
+        {
+          text: message,
+          textTranslated: translatedMessage,
+          sender: userProfile.name,
+          senderType: SenderType.user,
+        },
+      ]);
+    }
 
     const response = await getGPTCompletion(
       chatBot.prompt,
@@ -121,10 +148,13 @@ const Chat = () => {
       userProfile.name,
       translatedMessage || message,
       chatData || [],
-      context
+      context,
+      chatBot.temperature
     );
 
-    const translatedResponse = chatBot.autoTranslate ?  await translateText(response, chatBot.autoTranslateTarget) : '';
+    const translatedResponse = chatBot.autoTranslate
+      ? await translateText(response, chatBot.autoTranslateTarget)
+      : "";
 
     setChatData((prevChatData) => [
       ...prevChatData,
@@ -156,12 +186,7 @@ const Chat = () => {
                 <div className="flex flex-col h-full">
                   <div className="grid grid-cols-12 gap-y-2">
                     {chatData.map((message: Message, index: number) => {
-                      return (
-                        <ChatMessage
-                          key={index}
-                          message={message}                          
-                        />
-                      );
+                      return <ChatMessage key={index} message={message} />;
                     })}
                   </div>
                 </div>

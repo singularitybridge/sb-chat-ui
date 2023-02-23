@@ -6,6 +6,8 @@ export enum SenderType {
   bot = "bot",
 }
 
+export const ChatBotNotLoaded = "ChatBotNotLoaded";
+
 export interface Message {
   id?: string;
   text: string;
@@ -45,6 +47,7 @@ export interface ChatBot {
   logo: string;
   autoTranslate: boolean;
   autoTranslateTarget: string;
+  temperature: number;
 }
 
 export interface ContextData {
@@ -61,7 +64,7 @@ export const messagesState = atom<Message[]>({
 });
 
 export const defaultChatBot: ChatBot = {
-  key: "xjdas87y",
+  key: ChatBotNotLoaded,
   name: "Dr. John",
   description:
     "Emotional support, stress, anxiety, depression, and relationship issues",
@@ -72,11 +75,12 @@ export const defaultChatBot: ChatBot = {
   logo: "/parent-coach-logo.png",
   autoTranslate: false,
   autoTranslateTarget: "en",
+  temperature: 0.7,
 };
 
 export const chatBotsState = atom<ChatBot[]>({
   key: "chatBots",
-  default: [defaultChatBot],
+  default: [],
 });
 
 export const getChatBot = (chatBots: ChatBot[], id: string) => {
@@ -88,7 +92,7 @@ export const userProfileState = atom<UserProfile>({
   default: {
     name: "Avi",
     avatar: "/images/avatars/av3.png",
-    activeChat: "xjdas87y",
+    activeChat: ChatBotNotLoaded,
   },
 });
 

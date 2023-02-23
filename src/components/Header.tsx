@@ -1,6 +1,7 @@
 import { Bars2Icon } from "@heroicons/react/24/solid";
 import {
   ChatBot,
+  ChatBotNotLoaded,
   chatBotsState,
   defaultChatBot,
   getChatBot,
@@ -20,40 +21,39 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const userProfile = useRecoilValue(userProfileState);
   const chatBots = useRecoilValue(chatBotsState);
   const [chatBot, setChatBot] = useState<ChatBot>();
-
-
-  const [ chatBotName, setChatBotName ] = useState<string>("");
-  const [ chatBotDescription, setChatBotDescription ] = useState<string>("");
-  
+  const [chatBotName, setChatBotName] = useState<string>("");
+  const [chatBotDescription, setChatBotDescription] = useState<string>("");
 
   useEffect(() => {
-    console.log("header, set chatBot", chatBots, userProfile.activeChat);
+    if (chatBot && chatBot.key === ChatBotNotLoaded) {
+      return;
+    }
+
     setChatBot(
       getChatBot(chatBots, userProfile.activeChat || "") || defaultChatBot
     );
 
     if (!chatBot) {
       return;
-    } 
+    }
 
-    if (chatBot.autoTranslate)  {
+    if (chatBot.autoTranslate) {
+      translateText(chatBot.name, chatBot.autoTranslateTarget).then(
+        (translatedText) => {
+          setChatBotName(translatedText);
+        }
+      );
 
-      translateText(chatBot.name, chatBot.autoTranslateTarget)
-      .then(translatedText => {
-        setChatBotName(translatedText);
-      });
-
-      translateText(chatBot.description, chatBot.autoTranslateTarget)
-      .then((translatedText) => {
-        setChatBotDescription(translatedText);
-      });
-
+      translateText(chatBot.description, chatBot.autoTranslateTarget).then(
+        (translatedText) => {
+          setChatBotDescription(translatedText);
+        }
+      );
     } else {
       setChatBotName(chatBot.name);
       setChatBotDescription(chatBot.description);
     }
-
-  }, [chatBots, chatBot]);
+  }, [chatBots]);
 
   return (
     <header className="p-4 flex justify-between items-center">

@@ -30,11 +30,10 @@ const getGPTCompletion = async (
   userName: string,
   message: string,
   history: Message[],
-  contextData: ContextData[]
+  contextData: ContextData[],
+  temperature: number
 ) => {
-  console.log("getGPTCompletion", agentName, userName, message);
   const prevChatAsText = mapChatToPrompt(history);
-
   const prompt = Mustache.render(promptTemplate, {
     userName,
     agentName,
@@ -48,7 +47,7 @@ const getGPTCompletion = async (
   const request: CreateCompletionRequest = {
     model: "text-davinci-003",
     prompt: prompt,
-    temperature: 0.8,
+    temperature: temperature,
     max_tokens: 200,
     top_p: 1,
     frequency_penalty: 0,
@@ -59,9 +58,8 @@ const getGPTCompletion = async (
   const response = await openai.createCompletion(request);
   console.log("gpt response", response);
 
-  const responseText =
-    response?.data?.choices[0]?.text?.replace(`${agentName}:`, "") || "";
-  return decodeURIComponent(responseText);
+  const responseText = response?.data?.choices[0]?.text?.replace(`${agentName}:`, "") || "";  
+  return responseText;
 };
 
 export { getGPTCompletion };
