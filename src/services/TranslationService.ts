@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const  decodeText = (encodedText: string) =>  {
+export const decodeText = (encodedText: string) =>  {
   return decodeURIComponent(encodedText.replace(/\&#39;/g, "'"));
 }; 
 

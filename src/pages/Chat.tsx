@@ -15,7 +15,7 @@ import {
 import { ChatFooter } from "../components/ChatFooter";
 import { useParams } from "react-router-dom";
 import { getGPTCompletion } from "../services/ChatService";
-import { translateText } from "../services/TranslationService";
+import { decodeText, translateText } from "../services/TranslationService";
 
 interface ChatMessageProps {
   message: Message;
@@ -76,7 +76,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
                   : "ltr",
             }}
           >
-            <div>{getMessageText(message)}</div>
+            <div>{ decodeText( getMessageText(message))}</div>
           </div>
         </div>
       </div>
