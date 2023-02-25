@@ -1,12 +1,54 @@
 import { ChevronRightIcon, MicrophoneIcon } from "@heroicons/react/24/outline";
 import React, { useEffect } from "react";
-import useSpeechToText from 'react-hook-speech-to-text';
+import useSpeechToText from "react-hook-speech-to-text";
+import { ChatBot } from "../atoms/dataStore";
 
 interface ChatFooterProps {
   onSendMessage: (value: string) => void;
+  chatBot: ChatBot;
 }
 
-const ChatFooter: React.FC<ChatFooterProps> = ({ onSendMessage }) => {
+interface LanguageVoiceMap {
+  speeachRecognitionProperties: {
+    lang: string;
+  };
+  googleCloudRecognitionConfig: {
+    languageCode: string;
+  };
+}
+
+const languageVoiceMap: { [key: string]: LanguageVoiceMap } = {
+  he: {
+    speeachRecognitionProperties: {
+      lang: "he-IL",
+    },
+    googleCloudRecognitionConfig: {
+      languageCode: "iw-IL",
+    },
+  },
+  en: {
+    speeachRecognitionProperties: {
+      lang: "en-US",
+    },
+    googleCloudRecognitionConfig: {
+      languageCode: "en-US",
+    },
+  },
+  ru: {
+    speeachRecognitionProperties: {
+      lang: "ru-RU",
+    },
+    googleCloudRecognitionConfig: {
+      languageCode: "ru-RU",
+    },
+  },
+};
+
+function getVoiceMap(language: string): LanguageVoiceMap {
+  return languageVoiceMap[language];
+}
+
+const ChatFooter: React.FC<ChatFooterProps> = ({ onSendMessage, chatBot }) => {
 
   const {
     error,
@@ -21,35 +63,24 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ onSendMessage }) => {
     useLegacyResults: false,
     useOnlyGoogleCloud: false,
     speechRecognitionProperties: {
-      lang: 'he-IL',
-      interimResults: true
+      lang: getVoiceMap(chatBot?.autoTranslateTarget)?.speeachRecognitionProperties.lang ,      
+      interimResults: true,
     },
-    googleApiKey: 'AIzaSyCmCIWBPBwiYiwHa0KoiL892ucEhRy8hZ8',
+    googleApiKey: "AIzaSyCmCIWBPBwiYiwHa0KoiL892ucEhRy8hZ8",
     googleCloudRecognitionConfig: {
-      languageCode: 'iw-IL'
-    }
+      languageCode: getVoiceMap(chatBot?.autoTranslateTarget)?.googleCloudRecognitionConfig.lang,
+    },
   });
 
-
   useEffect(() => {
-
-          
-
-    if (results.length > 0) {
-      console.log('results', results);
-      setUserInput(results[results.length - 1].transcript);
-    }
-
     if (interimResult) {
-      console.log('interimResult', interimResult);
       setUserInput(interimResult);
+      return;
     }
 
-
-
-  }, [results , interimResult]);
-
-
+    if (results.length > 0)
+      setUserInput(results[results.length - 1].transcript);
+  }, [results, interimResult]);
 
   const [userInput, setUserInput] = React.useState("");
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -66,19 +97,22 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ onSendMessage }) => {
 
   if (error) return <p>Web Speech API is not available in this browser 🤷‍</p>;
 
-
   return (
     <footer className="p-3 text-center text-base font-light">
-
-    
       <div className="flex flex-row items-center bg-white w-full">
         <div className="mr-3">
           <button
-            className="flex items-center justify-center"            
+            className="flex items-center justify-center"
             onClick={isRecording ? stopSpeechToText : startSpeechToText}
           >
             <span>
-              <MicrophoneIcon className={ isRecording ? "h-8 w-8  text-red-500" : "h-8 w-8 text-gray-500 "} />
+              <MicrophoneIcon
+                className={
+                  isRecording
+                    ? "h-8 w-8  text-red-500"
+                    : "h-8 w-8 text-gray-500 "
+                }
+              />
             </span>
           </button>
         </div>

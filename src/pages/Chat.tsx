@@ -192,7 +192,7 @@ const Chat = () => {
           </div>
         </div>
       </ContentContainer>
-      <ChatFooter onSendMessage={onSendMessage} />
+      <ChatFooter onSendMessage={onSendMessage} chatBot={chatBot} />
     </>
   );
 };
