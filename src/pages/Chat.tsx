@@ -11,6 +11,8 @@ import {
   SenderType,
   getMessageText,
   ChatBotNotLoaded,
+  ChatBot,
+  defaultChatBot,
 } from "../atoms/dataStore";
 import { ChatFooter } from "../components/ChatFooter";
 import { useParams } from "react-router-dom";
@@ -30,21 +32,22 @@ const ContentContainer: React.FC<ContentContainerProps> = ({ children }) => {
 };
 
 const Chat = () => {
+  
   const [context, setContext] = useRecoilState(contextData);
   const [chatData, setChatData] = useRecoilState(messagesState);
   const [chatBots, setChatBots] = useRecoilState(chatBotsState);
   const userProfile = useRecoilValue(userProfileState);
   const chatContainerRef = useRef(null);
-  const chatBot = getChatBot(chatBots, userProfile.activeChatBot);
+  const [chatBot, setChatBot] = useState<ChatBot>(defaultChatBot);
 
   useEffect(() => {
-    if (chatBot?.key === ChatBotNotLoaded || chatBot === undefined) {
-      return;
-    }
+    if (userProfile.activeChatBot === ChatBotNotLoaded || !chatBots) return;
+    setChatBot(getChatBot(chatBots, userProfile.activeChatBot));
+  }, [chatBots, userProfile]);
 
-    if (chatData.length === 0) {
-      onSendMessage("");
-    }
+  useEffect(() => {
+    if (!chatBot || chatBot.key === ChatBotNotLoaded ) return;
+    onSendMessage("");
   }, [chatBot]);
 
   useEffect(() => {
@@ -89,9 +92,9 @@ const Chat = () => {
       : "";
 
     const ttsResponse = await generateAudioFromText(
-      response,
-      "en-US",
-      "en-US-Neural2-I"
+      translatedResponse || response,
+      chatBot.ttsLanguage,
+      chatBot.ttsActor
     );
 
     setChatData((prevChatData) => [
@@ -134,7 +137,7 @@ const Chat = () => {
           </div>
         </div>
       </ContentContainer>
-      <ChatFooter onSendMessage={onSendMessage} chatBot={chatBot} />
+      <ChatFooter onSendMessage={onSendMessage} autoTranslateTarget={chatBot?.autoTranslateTarget || 'en'} />
     </>
   );
 };

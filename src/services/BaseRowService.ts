@@ -6,6 +6,8 @@ interface ChatBotAPIResponse {
   description: string;
   autoTranslate: boolean;
   autoTranslateTarget: string;
+  ttsLanguage: string;
+  ttsActor: string;
   temperature: number;
   avatar: {
     url: string;
@@ -105,6 +107,8 @@ const mapChatBot = (chatBot: ChatBotAPIResponse) => {
     logo: chatBot?.logo[0]?.url,
     autoTranslate: chatBot.autoTranslate,
     autoTranslateTarget: chatBot.autoTranslateTarget,
+    ttsLanguage: chatBot.ttsLanguage,
+    ttsActor: chatBot.ttsActor,
     temperature: Number(chatBot.temperature),
   };
 };

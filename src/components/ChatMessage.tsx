@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { SpeakerWaveIcon } from "@heroicons/react/24/solid";
 import {
   Message,
@@ -33,7 +33,7 @@ const ChatMessageStyles = {
 };
 
 const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
-  const userProfile = useRecoilValue(userProfileState);
+  const [userProfile, setUserProfile] = useRecoilState(userProfileState);
   const chatBots = useRecoilValue(chatBotsState);
 
   const { id } = useParams<{ id: string }>();
@@ -53,19 +53,12 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
       ? userProfile.avatar
       : chatBot?.avatar;
 
-  // handle playFile
-
   const [audioFile, setAudioFile] = useState<ArrayBuffer>();
 
   useEffect(() => {
     if (message.audio) {
       setAudioFile(message.audio);
-    } else {
-      generateAudioFromText(getMessageText(message), "en", "mp3").then(
-        (audio) => {
-          setAudioFile(audio);
-        }
-      );
+      // playAudio();
     }
   }, [message]);
 
@@ -82,8 +75,10 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   };
 
   const playAudio = async () => {
-    if (audioFile) {
+    if (audioFile && !userProfile.isAudioPlaying) {
+      setUserProfile({ ...userProfile, isAudioPlaying: true });
       playAudioBase64(audioFile.toString());
+      setUserProfile({ ...userProfile, isAudioPlaying: false });
     }
   };
 
@@ -107,12 +102,13 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
             }}
           >
             <div>{decodeText(getMessageText(message))}</div>
-
-            
           </div>
-          <div className={`${messageStyles.flexRow} mr-3 ml-3` } onClick={playAudio}>
-              <SpeakerWaveIcon className={"h-8 w-8  text-blue-600"} />
-            </div>
+          <div
+            className={`${messageStyles.flexRow} mr-3 ml-3`}
+            onClick={playAudio}
+          >
+            <SpeakerWaveIcon className={"h-8 w-8  text-blue-600"} />
+          </div>
         </div>
       </div>
     </>

@@ -5,7 +5,7 @@ import { ChatBot } from "../atoms/dataStore";
 
 interface ChatFooterProps {
   onSendMessage: (value: string) => void;
-  chatBot: ChatBot;
+  autoTranslateTarget: string;
 }
 
 interface LanguageVoiceMap {
@@ -44,11 +44,13 @@ const languageVoiceMap: { [key: string]: LanguageVoiceMap } = {
   },
 };
 
-function getVoiceMap(language: string): LanguageVoiceMap {
+function getVoiceMap(language: string): LanguageVoiceMap 
+{
   return languageVoiceMap[language];
 }
 
-const ChatFooter: React.FC<ChatFooterProps> = ({ onSendMessage, chatBot }) => {
+const ChatFooter: React.FC<ChatFooterProps> = ({ onSendMessage, autoTranslateTarget,  }) => {
+
   const {
     error,
     interimResult,
@@ -62,18 +64,17 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ onSendMessage, chatBot }) => {
     useLegacyResults: false,
     useOnlyGoogleCloud: false,
     speechRecognitionProperties: {
-      lang: getVoiceMap(chatBot?.autoTranslateTarget)
-        ?.speeachRecognitionProperties.lang,
+      lang: getVoiceMap(autoTranslateTarget).speeachRecognitionProperties.lang,
       interimResults: true,
     },
     googleApiKey: "AIzaSyCmCIWBPBwiYiwHa0KoiL892ucEhRy8hZ8",
     googleCloudRecognitionConfig: {
-      languageCode: getVoiceMap(chatBot?.autoTranslateTarget)
-        ?.googleCloudRecognitionConfig.lang,
+      languageCode: getVoiceMap(autoTranslateTarget).googleCloudRecognitionConfig?.lang,
     },
   });
 
   useEffect(() => {
+
     if (interimResult) {
       setUserInput(interimResult);
       return;
@@ -99,7 +100,13 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ onSendMessage, chatBot }) => {
   const handleSendMessage = () => {
     onSendMessage(userInput);
     setUserInput("");
+    results.length = 0;
     stopSpeechToText();
+  };
+
+  const handleStartSpeechToText = () => {
+    results.length = 0;    
+    startSpeechToText();
   };
 
   if (error) return <p>Web Speech API is not available in this browser 🤷‍</p>;
@@ -110,7 +117,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ onSendMessage, chatBot }) => {
         <div className="mr-3">
           <button
             className="flex items-center justify-center"
-            onClick={isRecording ? stopSpeechToText : startSpeechToText}
+            onClick={isRecording ? stopSpeechToText : handleStartSpeechToText}
           >
             <span>
               <MicrophoneIcon

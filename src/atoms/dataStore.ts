@@ -1,6 +1,5 @@
 import { atom, useRecoilValue } from "recoil";
 
-// enum for message sender type
 export enum SenderType {
   user = "user",
   bot = "bot",
@@ -36,6 +35,7 @@ export interface UserProfile {
   name: string;
   avatar: string;
   activeChatBot: string;
+  isAudioPlaying: boolean;
 }
 
 export interface ChatBot {
@@ -49,6 +49,8 @@ export interface ChatBot {
   autoTranslate: boolean;
   autoTranslateTarget: string;
   temperature: number;
+  ttsLanguage: string;
+  ttsActor: string;
 }
 
 export interface ContextData {
@@ -77,6 +79,8 @@ export const defaultChatBot: ChatBot = {
   autoTranslate: false,
   autoTranslateTarget: "en",
   temperature: 0.7,
+  ttsLanguage: "en-US",
+  ttsActor: "en-US-Wavenet-A",
 };
 
 export const chatBotsState = atom<ChatBot[]>({
@@ -94,6 +98,7 @@ export const userProfileState = atom<UserProfile>({
     name: "Avi",
     avatar: "/images/avatars/av3.png",
     activeChatBot: ChatBotNotLoaded,
+    isAudioPlaying: false,
   },
 });
 

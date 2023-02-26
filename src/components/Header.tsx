@@ -42,8 +42,6 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
       return;
     }
 
-    console.log("Header: ", chatBot);
-
     setChatBotAvatar(chatBot.avatar);
 
 

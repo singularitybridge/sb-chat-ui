@@ -26,6 +26,10 @@ const generateAudioFromText = (
   languageCode: string,
   voiceName: string
 ): Promise<ArrayBuffer> => {
+
+  console.log('object :>> ', text, languageCode, voiceName);
+
+
   const requestBody: RequestBody = {
     input: { text },
     voice: { languageCode, name: voiceName },
