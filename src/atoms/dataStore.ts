@@ -15,6 +15,7 @@ export interface Message {
   sender?: string;
   timestamp?: number;
   senderType?: SenderType.user | SenderType.bot;
+  audio?: ArrayBuffer;
 }
 
 export const getMessageText = (message: Message) => {
