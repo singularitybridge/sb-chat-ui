@@ -1,7 +1,15 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useRecoilValue } from "recoil";
-import { Message, userProfileState, chatBotsState, getChatBot, SenderType, getMessageText } from "../atoms/dataStore";
+import { SpeakerWaveIcon } from "@heroicons/react/24/solid";
+import {
+  Message,
+  userProfileState,
+  chatBotsState,
+  getChatBot,
+  SenderType,
+  getMessageText,
+} from "../atoms/dataStore";
 import { decodeText } from "../services/TranslationService";
 import { generateAudioFromText } from "../services/TTSService";
 import { Avatar, AvatarStyles } from "./Avatar";
@@ -25,7 +33,6 @@ const ChatMessageStyles = {
 };
 
 const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
-
   const userProfile = useRecoilValue(userProfileState);
   const chatBots = useRecoilValue(chatBotsState);
 
@@ -46,8 +53,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
       ? userProfile.avatar
       : chatBot?.avatar;
 
-
-  // handle playFile 
+  // handle playFile
 
   const [audioFile, setAudioFile] = useState<ArrayBuffer>();
 
@@ -55,9 +61,11 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
     if (message.audio) {
       setAudioFile(message.audio);
     } else {
-      generateAudioFromText(getMessageText(message), 'en', 'mp3').then((audio) => {
-        setAudioFile(audio);
-      });
+      generateAudioFromText(getMessageText(message), "en", "mp3").then(
+        (audio) => {
+          setAudioFile(audio);
+        }
+      );
     }
   }, [message]);
 
@@ -79,18 +87,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
     }
   };
 
-
-
   return (
     <>
       <div className={messageStyles.container}>
-
-
-        <div className="flex flex-row items-center" onClick={playAudio}>
-          <b>play</b>
-        </div>
-
-        
         <div className={messageStyles.flexRow}>
           <Avatar
             imageUrl={avatarImage || "images/avatars/av1.png"}
@@ -108,7 +107,12 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
             }}
           >
             <div>{decodeText(getMessageText(message))}</div>
+
+            
           </div>
+          <div className={`${messageStyles.flexRow} mr-3 ml-3` } onClick={playAudio}>
+              <SpeakerWaveIcon className={"h-8 w-8  text-blue-600"} />
+            </div>
         </div>
       </div>
     </>
