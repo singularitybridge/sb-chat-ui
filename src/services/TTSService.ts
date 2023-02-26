@@ -43,8 +43,8 @@ const generateAudioFromText = (
   const url = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKeyForGoogle}`;
 
   return axios.post<ArrayBuffer>(url, requestBody, config).then(
-    (response: AxiosResponse<ArrayBuffer>) => {
-      return response.data;
+    (response: AxiosResponse<any>) => {
+      return response.data.audioContent;
     }
   );
 };

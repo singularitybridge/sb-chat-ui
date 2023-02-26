@@ -13,7 +13,7 @@ interface LanguageVoiceMap {
     lang: string;
   };
   googleCloudRecognitionConfig: {
-    languageCode: string;
+    lang: string;
   };
 }
 
@@ -23,7 +23,7 @@ const languageVoiceMap: { [key: string]: LanguageVoiceMap } = {
       lang: "he-IL",
     },
     googleCloudRecognitionConfig: {
-      languageCode: "iw-IL",
+      lang: "iw-IL",
     },
   },
   en: {
@@ -31,7 +31,7 @@ const languageVoiceMap: { [key: string]: LanguageVoiceMap } = {
       lang: "en-US",
     },
     googleCloudRecognitionConfig: {
-      languageCode: "en-US",
+      lang: "en-US",
     },
   },
   ru: {
@@ -39,7 +39,7 @@ const languageVoiceMap: { [key: string]: LanguageVoiceMap } = {
       lang: "ru-RU",
     },
     googleCloudRecognitionConfig: {
-      languageCode: "ru-RU",
+      lang: "ru-RU",
     },
   },
 };
@@ -49,7 +49,6 @@ function getVoiceMap(language: string): LanguageVoiceMap {
 }
 
 const ChatFooter: React.FC<ChatFooterProps> = ({ onSendMessage, chatBot }) => {
-
   const {
     error,
     interimResult,
@@ -63,12 +62,14 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ onSendMessage, chatBot }) => {
     useLegacyResults: false,
     useOnlyGoogleCloud: false,
     speechRecognitionProperties: {
-      lang: getVoiceMap(chatBot?.autoTranslateTarget)?.speeachRecognitionProperties.lang ,      
+      lang: getVoiceMap(chatBot?.autoTranslateTarget)
+        ?.speeachRecognitionProperties.lang,
       interimResults: true,
     },
     googleApiKey: "AIzaSyCmCIWBPBwiYiwHa0KoiL892ucEhRy8hZ8",
     googleCloudRecognitionConfig: {
-      languageCode: getVoiceMap(chatBot?.autoTranslateTarget)?.googleCloudRecognitionConfig.lang,
+      languageCode: getVoiceMap(chatBot?.autoTranslateTarget)
+        ?.googleCloudRecognitionConfig.lang,
     },
   });
 
@@ -77,9 +78,14 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ onSendMessage, chatBot }) => {
       setUserInput(interimResult);
       return;
     }
-
-    if (results.length > 0)
-      setUserInput(results[results.length - 1].transcript);
+  
+    if (results.length > 0) {
+      const lastResult = results
+        .map((result) => (typeof result === 'string' ? result : result.transcript))
+        .join(' ');
+  
+      setUserInput(lastResult);
+    }
   }, [results, interimResult]);
 
   const [userInput, setUserInput] = React.useState("");
@@ -93,6 +99,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ onSendMessage, chatBot }) => {
   const handleSendMessage = () => {
     onSendMessage(userInput);
     setUserInput("");
+    stopSpeechToText();
   };
 
   if (error) return <p>Web Speech API is not available in this browser 🤷‍</p>;

@@ -1,7 +1,9 @@
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import { Message, userProfileState, chatBotsState, getChatBot, SenderType, getMessageText } from "../atoms/dataStore";
 import { decodeText } from "../services/TranslationService";
+import { generateAudioFromText } from "../services/TTSService";
 import { Avatar, AvatarStyles } from "./Avatar";
 
 interface ChatMessageProps {
@@ -23,6 +25,7 @@ const ChatMessageStyles = {
 };
 
 const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
+
   const userProfile = useRecoilValue(userProfileState);
   const chatBots = useRecoilValue(chatBotsState);
 
@@ -43,9 +46,51 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
       ? userProfile.avatar
       : chatBot?.avatar;
 
+
+  // handle playFile 
+
+  const [audioFile, setAudioFile] = useState<ArrayBuffer>();
+
+  useEffect(() => {
+    if (message.audio) {
+      setAudioFile(message.audio);
+    } else {
+      generateAudioFromText(getMessageText(message), 'en', 'mp3').then((audio) => {
+        setAudioFile(audio);
+      });
+    }
+  }, [message]);
+
+  const playAudioBase64 = (base64Data: string) => {
+    const audioData = atob(base64Data);
+    const arrayBuffer = new ArrayBuffer(audioData.length);
+    const view = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < audioData.length; i++) {
+      view[i] = audioData.charCodeAt(i);
+    }
+    const blob = new Blob([arrayBuffer], { type: "audio/mp3" });
+    const audio = new Audio(URL.createObjectURL(blob));
+    audio.play();
+  };
+
+  const playAudio = async () => {
+    if (audioFile) {
+      playAudioBase64(audioFile.toString());
+    }
+  };
+
+
+
   return (
     <>
       <div className={messageStyles.container}>
+
+
+        <div className="flex flex-row items-center" onClick={playAudio}>
+          <b>play</b>
+        </div>
+
+        
         <div className={messageStyles.flexRow}>
           <Avatar
             imageUrl={avatarImage || "images/avatars/av1.png"}
