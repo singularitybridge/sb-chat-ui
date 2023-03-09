@@ -1,6 +1,7 @@
 export interface ChatFooterProps {
   onSendMessage: (value: string) => void;
   autoTranslateTarget: string;
+  isEnabled : boolean;
 }
 
 export interface LanguageVoiceMap {

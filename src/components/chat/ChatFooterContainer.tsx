@@ -6,7 +6,7 @@ const ChatFooterContainer: React.FC<ChatFooterContainerProps> = ({
   children,
 }) => {
   return (
-    <footer className="p-3 text-center text-base font-light">{children}</footer>
+    <footer className="text-center font-light">{children}</footer>
   );
 };
 

@@ -22,14 +22,17 @@ import { ContentContainer } from "../components/ContentContainer";
 import { ContainerBGImage } from "../components/ContainerBGImage";
 import { ChatFooterContainer } from "../components/chat/ChatFooterContainer";
 import { ChatFooterText } from "../components/chat/ChatFooterText";
+import { ChatFooterVoice } from "../components/chat/ChatFooterVoice";
 
 const Chat = () => {
+
   const [context, setContext] = useRecoilState(contextData);
   const [chatData, setChatData] = useRecoilState(messagesState);
   const [chatBots, setChatBots] = useRecoilState(chatBotsState);
   const userProfile = useRecoilValue(userProfileState);
   const chatContainerRef = useRef(null);
   const [chatBot, setChatBot] = useState<ChatBot>(defaultChatBot);
+  const [isUserInputEnabled, setIsUserInputEnabled] = useState(true);
 
   useEffect(() => {
     if (userProfile.activeChatBot === ChatBotNotLoaded || !chatBots) return;
@@ -124,9 +127,10 @@ const Chat = () => {
         </ContainerBGImage>
       </ContentContainer>
       <ChatFooterContainer>
-        <ChatFooterText
+        <ChatFooterVoice
           onSendMessage={onSendMessage}
           autoTranslateTarget={chatBot?.autoTranslateTarget || "en"}
+          isEnabled={isUserInputEnabled}
         />
       </ChatFooterContainer>
     </>
