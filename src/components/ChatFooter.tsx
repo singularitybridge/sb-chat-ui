@@ -18,6 +18,15 @@ interface LanguageVoiceMap {
 }
 
 const languageVoiceMap: { [key: string]: LanguageVoiceMap } = {
+
+  it : {
+    speeachRecognitionProperties: {
+      lang: "it-IT",
+    },
+    googleCloudRecognitionConfig: {
+      lang: "it-IT",
+    },
+  },
   he: {
     speeachRecognitionProperties: {
       lang: "he-IL",

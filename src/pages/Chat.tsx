@@ -20,19 +20,10 @@ import { getGPTCompletion } from "../services/ChatService";
 import { decodeText, translateText } from "../services/TranslationService";
 import { generateAudioFromText } from "../services/TTSService";
 import { ChatMessage } from "../components/ChatMessage";
-
-interface ContentContainerProps {
-  children: React.ReactNode;
-}
-
-const ContentContainer: React.FC<ContentContainerProps> = ({ children }) => {
-  return (
-    <main className="flex-1 overflow-y-scroll antialiased ">{children}</main>
-  );
-};
+import { ContentContainer } from "../components/ContentContainer";
+import { ContainerBGImage } from "../components/ContainerBGImage";
 
 const Chat = () => {
-  
   const [context, setContext] = useRecoilState(contextData);
   const [chatData, setChatData] = useRecoilState(messagesState);
   const [chatBots, setChatBots] = useRecoilState(chatBotsState);
@@ -46,8 +37,9 @@ const Chat = () => {
   }, [chatBots, userProfile]);
 
   useEffect(() => {
-    if (!chatBot || chatBot.key === ChatBotNotLoaded ) return;
+    if (!chatBot || chatBot.key === ChatBotNotLoaded) return;
     onSendMessage("");
+    document.title = chatBot.name;
   }, [chatBot]);
 
   useEffect(() => {
@@ -112,15 +104,11 @@ const Chat = () => {
   return (
     <>
       <ContentContainer>
-        <div
-          className="flex flex-row h-full w-full overflow-x-hidden"
-          style={{
-            backgroundImage: `linear-gradient(rgba(200, 200, 200, 0.6), rgba(200, 200, 200, 0.6)), url(${chatBot?.bgImage})`,
-            backgroundSize: "cover",
-          }}
-        >
+        <ContainerBGImage bgImage={chatBot?.bgImage || ""}>
+          
           <div className="flex flex-col flex-auto h-full p-0">
-            <div className="flex flex-col flex-auto flex-shrink-0 h-full pt-3  ">
+          
+            <div className="flex flex-col flex-auto flex-shrink-0 h-full pt-3">            
               <div
                 className="flex flex-col h-full overflow-x-auto mb-4"
                 ref={chatContainerRef}
@@ -135,9 +123,12 @@ const Chat = () => {
               </div>
             </div>
           </div>
-        </div>
+        </ContainerBGImage>
       </ContentContainer>
-      <ChatFooter onSendMessage={onSendMessage} autoTranslateTarget={chatBot?.autoTranslateTarget || 'en'} />
+      <ChatFooter
+        onSendMessage={onSendMessage}
+        autoTranslateTarget={chatBot?.autoTranslateTarget || "en"}
+      />
     </>
   );
 };
