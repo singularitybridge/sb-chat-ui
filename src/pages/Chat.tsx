@@ -32,7 +32,8 @@ const Chat = () => {
   const userProfile = useRecoilValue(userProfileState);
   const chatContainerRef = useRef(null);
   const [chatBot, setChatBot] = useState<ChatBot>(defaultChatBot);
-  const [isUserInputEnabled, setIsUserInputEnabled] = useState(true);
+  const [isUserInputEnabled, setIsUserInputEnabled] = useState(false);
+  
 
   useEffect(() => {
     if (userProfile.activeChatBot === ChatBotNotLoaded || !chatBots) return;
@@ -54,7 +55,18 @@ const Chat = () => {
     }
   }, [chatData]);
 
+  useEffect(() => {
+
+    if (!userProfile.isAudioPlaying) setIsUserInputEnabled(true);
+
+
+  }, [userProfile.isAudioPlaying]);
+
   const onSendMessage = async (message: string) => {
+
+    setIsUserInputEnabled(false);
+
+
     const translatedMessage =
       chatBot && chatBot.autoTranslate
         ? await translateText(message, "en")
@@ -102,6 +114,9 @@ const Chat = () => {
         audio: ttsResponse,
       },
     ]);
+
+    // setIsUserInputEnabled(true);
+
   };
 
   return (

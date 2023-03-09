@@ -1,14 +1,12 @@
 import {
-  ChevronRightIcon,
   MicrophoneIcon,
-  ArrowRightIcon,
-  ArrowSmallRightIcon,
   PaperAirplaneIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import React, { useEffect } from "react";
 import useSpeechToText from "react-hook-speech-to-text";
 import { ChatFooterProps, getVoiceMap } from "./common";
+import { motion } from "framer-motion";
 
 const ChatFooterVoice: React.FC<ChatFooterProps> = ({
   onSendMessage,
@@ -25,6 +23,7 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
   } = useSpeechToText({
     crossBrowser: true,
     continuous: true,
+    timeout: 5000,
     useLegacyResults: false,
     useOnlyGoogleCloud: false,
     speechRecognitionProperties: {
@@ -57,6 +56,12 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
     }
   }, [results, interimResult]);
 
+  useEffect(() => {
+    if (isEnabled && !isRecording) {
+      startSpeechToText();
+    }
+  }, [isEnabled]);
+
   const handleSendMessage = () => {
     onSendMessage(userInput);
     setUserInput("");
@@ -65,6 +70,8 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
   };
 
   const handleStartSpeechToText = () => {
+    if (!isEnabled) return;
+
     results.length = 0;
     startSpeechToText();
   };
@@ -78,10 +85,18 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
 
   const actionButtonStyle = "h-5 w-5 text-gray-500";
 
+  const breathingAnimation = {
+    scale: [1, 1.04, 1],
+    transition: {
+      duration: 1.2,
+      repeat: Infinity,
+    },
+  };
+
   return (
     <>
       <div className="flex flex-col">
-        <div className="relative w-full p-4 text-xl text-slate-500">
+        <div className="relative w-full p-4 text-lg text-slate-500 h-24 flex items-center justify-center">
           {userInput || "Say something..."}
         </div>
 
@@ -94,24 +109,27 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
               <XMarkIcon className={actionButtonStyle} />
             </span>
           </button>
-          <button
-            className={
-              isRecording
-                ? "bg-red-500 rounded-full p-7"
-                : "bg-red-300 rounded-full p-7"
-            }
-            onClick={isRecording ? stopSpeechToText : handleStartSpeechToText}
-          >
-            <span>
-              <MicrophoneIcon
-                className={
-                  isRecording
-                    ? "h-8 w-8 text-gray-100"
-                    : "h-8 w-8 text-gray-200 "
-                }
-              />
-            </span>
-          </button>
+
+          <motion.div animate={isRecording ? breathingAnimation : {}}>
+            <button
+              className={
+                isRecording
+                  ? "bg-red-500 rounded-full p-7"
+                  : "bg-gray-400 rounded-full p-7"
+              }
+              onClick={isRecording ? stopSpeechToText : handleStartSpeechToText}
+            >
+              <span>
+                <MicrophoneIcon
+                  className={
+                    isRecording
+                      ? "h-8 w-8 text-gray-100"
+                      : "h-8 w-8 text-gray-200 "
+                  }
+                />
+              </span>
+            </button>
+          </motion.div>
 
           <button
             className="flex items-center justify-center"
