@@ -14,13 +14,14 @@ import {
   ChatBot,
   defaultChatBot,
 } from "../atoms/dataStore";
-import { ChatFooter } from "../components/ChatFooter";
 import { getGPTCompletion } from "../services/ChatService";
 import { translateText } from "../services/TranslationService";
 import { generateAudioFromText } from "../services/TTSService";
 import { ChatMessage } from "../components/ChatMessage";
 import { ContentContainer } from "../components/ContentContainer";
 import { ContainerBGImage } from "../components/ContainerBGImage";
+import { ChatFooterContainer } from "../components/chat/ChatFooterContainer";
+import { ChatFooterText } from "../components/chat/ChatFooterText";
 
 const Chat = () => {
   const [context, setContext] = useRecoilState(contextData);
@@ -122,10 +123,12 @@ const Chat = () => {
           </div>
         </ContainerBGImage>
       </ContentContainer>
-      <ChatFooter
-        onSendMessage={onSendMessage}
-        autoTranslateTarget={chatBot?.autoTranslateTarget || "en"}
-      />
+      <ChatFooterContainer>
+        <ChatFooterText
+          onSendMessage={onSendMessage}
+          autoTranslateTarget={chatBot?.autoTranslateTarget || "en"}
+        />
+      </ChatFooterContainer>
     </>
   );
 };
