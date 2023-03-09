@@ -1,8 +1,5 @@
 import axios from "axios";
-
-export const decodeText = (encodedText: string) => {
-  return decodeURIComponent(encodedText.replace(/\&#39;/g, "'"));
-};
+import * as sanitizeHtml from 'sanitize-html';
 
 interface TranslateResponse {
   data: {
@@ -30,5 +27,5 @@ export const translateText = async (
     }
   );
 
-  return decodeText(response.data.data.translations[0].translatedText);
+  return sanitizeHtml(response.data.data.translations[0].translatedText);
 };

@@ -9,7 +9,6 @@ import {
   SenderType,
   getMessageText,
 } from "../atoms/dataStore";
-import { decodeText } from "../services/TranslationService";
 import { Avatar, AvatarStyles } from "./Avatar";
 
 interface ChatMessageProps {
@@ -105,7 +104,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
                   : "ltr",
             }}
           >
-            <div>{decodeText(getMessageText(message))}</div>
+            <div>{getMessageText(message)}</div>
           </div>
         </div>
       </div>

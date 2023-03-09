@@ -15,9 +15,8 @@ import {
   defaultChatBot,
 } from "../atoms/dataStore";
 import { ChatFooter } from "../components/ChatFooter";
-import { useParams } from "react-router-dom";
 import { getGPTCompletion } from "../services/ChatService";
-import { decodeText, translateText } from "../services/TranslationService";
+import { translateText } from "../services/TranslationService";
 import { generateAudioFromText } from "../services/TTSService";
 import { ChatMessage } from "../components/ChatMessage";
 import { ContentContainer } from "../components/ContentContainer";
@@ -105,10 +104,8 @@ const Chat = () => {
     <>
       <ContentContainer>
         <ContainerBGImage bgImage={chatBot?.bgImage || ""}>
-          
           <div className="flex flex-col flex-auto h-full p-0">
-          
-            <div className="flex flex-col flex-auto flex-shrink-0 h-full pt-3">            
+            <div className="flex flex-col flex-auto flex-shrink-0 h-full pt-3">
               <div
                 className="flex flex-col h-full overflow-x-auto mb-4"
                 ref={chatContainerRef}

@@ -1,6 +1,7 @@
 import { Configuration, OpenAIApi, CreateCompletionRequest } from "openai";
 import { ContextData, getMessageTextGPT, Message } from "../atoms/dataStore";
 import Mustache from "mustache";
+import * as sanitizeHtml from 'sanitize-html';
 
 const configuration = new Configuration({
   apiKey: "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",
@@ -59,7 +60,7 @@ const getGPTCompletion = async (
   console.log("gpt response", response);
 
   const responseText = response?.data?.choices[0]?.text?.replace(`${agentName}:`, "") || "";  
-  return responseText;
+  return sanitizeHtml(responseText);
 };
 
 export { getGPTCompletion };
