@@ -46,13 +46,10 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
     }
 
     if (results.length > 0) {
-      const lastResult = results
-        .map((result) =>
-          typeof result === "string" ? result : result.transcript
-        )
-        .join(" ");
-
-      setUserInput(lastResult);
+      const lastResult = results[results.length - 1];
+      const result =
+        typeof lastResult === "string" ? lastResult : lastResult.transcript;
+      setUserInput(result);
     }
   }, [results, interimResult]);
 
