@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { SpeakerWaveIcon } from "@heroicons/react/24/solid";
 import {
   Message,
   userProfileState,
@@ -11,7 +10,6 @@ import {
   getMessageText,
 } from "../atoms/dataStore";
 import { decodeText } from "../services/TranslationService";
-import { generateAudioFromText } from "../services/TTSService";
 import { Avatar, AvatarStyles } from "./Avatar";
 
 interface ChatMessageProps {
@@ -33,8 +31,10 @@ const ChatMessageStyles = {
 };
 
 const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
+
   const [userProfile, setUserProfile] = useRecoilState(userProfileState);
   const chatBots = useRecoilValue(chatBotsState);
+  const [isAudioPlayed, setIsAudioPlayed] = useState(false);
 
   const { id } = useParams<{ id: string }>();
 
@@ -71,20 +71,30 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
     }
     const blob = new Blob([arrayBuffer], { type: "audio/mp3" });
     const audio = new Audio(URL.createObjectURL(blob));
+    
     audio.play();
+
+    audio.addEventListener('ended', () => {
+      setUserProfile({ ...userProfile, isAudioPlaying: false });
+    });
+        
   };
 
   const playAudio = async () => {
+
+    console.log('playing' , userProfile.isAudioPlaying);
+
     if (audioFile && !userProfile.isAudioPlaying) {
       setUserProfile({ ...userProfile, isAudioPlaying: true });
       playAudioBase64(audioFile.toString());
-      setUserProfile({ ...userProfile, isAudioPlaying: false });
+    } else {
+      console.log("Audio is playing");
     }
   };
 
   return (
     <>
-      <div className={messageStyles.container}>
+      <div className={messageStyles.container} onClick={playAudio}>
         <div className={messageStyles.flexRow}>
           <Avatar
             imageUrl={avatarImage || "images/avatars/av1.png"}
@@ -102,12 +112,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
             }}
           >
             <div>{decodeText(getMessageText(message))}</div>
-          </div>
-          <div
-            className={`${messageStyles.flexRow} mr-3 ml-3`}
-            onClick={playAudio}
-          >
-            <SpeakerWaveIcon className={"h-8 w-8  text-blue-600"} />
           </div>
         </div>
       </div>
