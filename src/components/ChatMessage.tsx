@@ -31,11 +31,8 @@ const ChatMessageStyles = {
 };
 
 const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
-
   const [userProfile, setUserProfile] = useRecoilState(userProfileState);
   const chatBots = useRecoilValue(chatBotsState);
-  const [isAudioPlayed, setIsAudioPlayed] = useState(false);
-
   const { id } = useParams<{ id: string }>();
 
   if (!id) {
@@ -53,14 +50,10 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
       ? userProfile.avatar
       : chatBot?.avatar;
 
-  const [audioFile, setAudioFile] = useState<ArrayBuffer>();
-
   useEffect(() => {
-    if (message.audio) {
-      setAudioFile(message.audio);
-      // playAudio();
-    }
-  }, [message]);
+    if (!message.audio) return;     
+    playAudio(message.audio);
+  }, [message.audio]);
 
   const playAudioBase64 = (base64Data: string) => {
     const audioData = atob(base64Data);
@@ -71,30 +64,31 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
     }
     const blob = new Blob([arrayBuffer], { type: "audio/mp3" });
     const audio = new Audio(URL.createObjectURL(blob));
-    
-    audio.play();
 
-    audio.addEventListener('ended', () => {
+    audio.play().catch((e) => {
+      console.log("error playing audio", e);
       setUserProfile({ ...userProfile, isAudioPlaying: false });
     });
-        
+
+    audio.addEventListener("ended", () => {
+      setUserProfile({ ...userProfile, isAudioPlaying: false });
+    });
   };
 
-  const playAudio = async () => {
-
-    console.log('playing' , userProfile.isAudioPlaying);
+  const playAudio = async (audioFile?: ArrayBuffer) => {
 
     if (audioFile && !userProfile.isAudioPlaying) {
       setUserProfile({ ...userProfile, isAudioPlaying: true });
       playAudioBase64(audioFile.toString());
-    } else {
-      console.log("Audio is playing");
     }
   };
 
   return (
     <>
-      <div className={messageStyles.container} onClick={playAudio}>
+      <div
+        className={messageStyles.container}
+        onClick={() => playAudio(message.audio)}
+      >
         <div className={messageStyles.flexRow}>
           <Avatar
             imageUrl={avatarImage || "images/avatars/av1.png"}
