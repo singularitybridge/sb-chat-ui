@@ -1,5 +1,5 @@
 import axios from "axios";
-import * as sanitizeHtml from 'sanitize-html';
+import sanitizeHtml from 'sanitize-html';
 
 interface TranslateResponse {
   data: {

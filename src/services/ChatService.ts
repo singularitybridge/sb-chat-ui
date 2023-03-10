@@ -1,7 +1,7 @@
 import { Configuration, OpenAIApi, CreateCompletionRequest } from "openai";
 import { ContextData, getMessageTextGPT, Message } from "../atoms/dataStore";
 import Mustache from "mustache";
-import * as sanitizeHtml from 'sanitize-html';
+import sanitizeHtml from 'sanitize-html';
 
 const configuration = new Configuration({
   apiKey: "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",
