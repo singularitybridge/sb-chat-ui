@@ -9,6 +9,7 @@ import {
   SenderType,
   getMessageText,
 } from "../atoms/dataStore";
+import { playAudio } from "../services/AudioService";
 import { Avatar, AvatarStyles } from "./Avatar";
 
 interface ChatMessageProps {
@@ -48,39 +49,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
     message.senderType === SenderType.user
       ? userProfile.avatar
       : chatBot?.avatar;
-
-  useEffect(() => {
-    if (!message.audio) return;     
-    playAudio(message.audio);
-  }, [message.audio]);
-
-  const playAudioBase64 = (base64Data: string) => {
-    const audioData = atob(base64Data);
-    const arrayBuffer = new ArrayBuffer(audioData.length);
-    const view = new Uint8Array(arrayBuffer);
-    for (let i = 0; i < audioData.length; i++) {
-      view[i] = audioData.charCodeAt(i);
-    }
-    const blob = new Blob([arrayBuffer], { type: "audio/mp3" });
-    const audio = new Audio(URL.createObjectURL(blob));
-
-    audio.play().catch((e) => {
-      console.log("error playing audio", e);
-      setUserProfile({ ...userProfile, isAudioPlaying: false });
-    });
-
-    audio.addEventListener("ended", () => {
-      setUserProfile({ ...userProfile, isAudioPlaying: false });
-    });
-  };
-
-  const playAudio = async (audioFile?: ArrayBuffer) => {
-
-    if (audioFile && !userProfile.isAudioPlaying) {
-      setUserProfile({ ...userProfile, isAudioPlaying: true });
-      playAudioBase64(audioFile.toString());
-    }
-  };
 
   return (
     <>

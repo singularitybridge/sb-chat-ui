@@ -20,6 +20,7 @@ const ChatMessageWelcome: React.FC<ChatMessageProps> = ({
 }) => {
   const chatBots = useRecoilValue(chatBotsState);
   const { id } = useParams<{ id: string }>();
+  const [chatStarted, setChatStarted] = useState(false);
 
   if (!id) {
     return null;
@@ -27,9 +28,14 @@ const ChatMessageWelcome: React.FC<ChatMessageProps> = ({
 
   const chatBot = getChatBot(chatBots, id);
 
+  const handleStartChat = () => {
+    setChatStarted(true);
+    onClickStartChat && onClickStartChat();
+  };
+
   return (
     <>
-      <div className="col-start-3 col-end-11 mt-8 mb-8">
+      <div className="col-start-4 col-end-10 mt-8 mb-8">
         <div
           className="flex flex-col items-center bg-white p-7 shadow rounded-xl space-y-7"
           style={{
@@ -43,12 +49,14 @@ const ChatMessageWelcome: React.FC<ChatMessageProps> = ({
         >
           <Avatar imageUrl={chatBot?.avatar} avatarStyle={AvatarStyles.large} />
           <div>{chatBot?.description}</div>
-          <button
-            className="bg-stone-300 p-4 rounded-xl w-full"
-            onClick={onClickStartChat}
-          >
-            Start Chat
-          </button>
+          {chatStarted ? null : (
+              <button
+                className="bg-stone-300 p-4 rounded-xl w-full"
+                onClick={handleStartChat}
+              >
+                Start Chat
+              </button>
+          )}
         </div>
       </div>
     </>

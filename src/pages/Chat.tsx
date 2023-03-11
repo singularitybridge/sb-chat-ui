@@ -24,6 +24,7 @@ import { ChatFooterContainer } from "../components/chat/ChatFooterContainer";
 import { ChatFooterText } from "../components/chat/ChatFooterText";
 import { ChatFooterVoice } from "../components/chat/ChatFooterVoice";
 import { ChatMessageWelcome } from "../components/ChatMessageWelcome";
+import { playAudio } from "../services/AudioService";
 
 const Chat = () => {
   const [context, setContext] = useRecoilState(contextData);
@@ -110,6 +111,7 @@ const Chat = () => {
       },
     ]);
 
+    await playAudio(ttsResponse);
     setIsUserInputEnabled(true);
 
   };

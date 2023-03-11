@@ -3,10 +3,39 @@ import {
   PaperAirplaneIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import useSpeechToText from "react-hook-speech-to-text";
 import { ChatFooterProps, getVoiceMap } from "./common";
 import { motion } from "framer-motion";
+
+
+const useTimer = (sendMessage: () => void) => {
+  const [timerRunning, setTimerRunning] = useState(false);
+  const timerRef = useRef<number | null>(null);
+
+  function startTimer() {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+    timerRef.current = window.setTimeout(() => {
+      sendMessage();
+      setTimerRunning(false);
+    }, 3000);
+    setTimerRunning(true);
+  }
+
+  function resetTimer() {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      setTimerRunning(false);
+    }
+  }
+
+  return { timerRunning, startTimer, resetTimer };
+}
+
+
+
 
 const ChatFooterVoice: React.FC<ChatFooterProps> = ({
   onSendMessage,
@@ -23,7 +52,7 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
   } = useSpeechToText({
     crossBrowser: true,
     continuous: true,
-    timeout: 5000,
+    timeout: 7000,
     useLegacyResults: false,
     useOnlyGoogleCloud: false,
     speechRecognitionProperties: {
@@ -40,6 +69,8 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
   const [userInput, setUserInput] = React.useState("");
   const [currentStatus, setCurrentStatus] = React.useState("Thinking...");
 
+  const { timerRunning, startTimer, resetTimer } = useTimer( () => handleSendMessage() );
+
   useEffect(() => {
     if (!isEnabled) {
       setCurrentStatus("Thinking...");      
@@ -51,6 +82,7 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
   useEffect(() => {
     if (interimResult) {
       setUserInput(interimResult);
+      startTimer();
       return;
     }
 
@@ -59,6 +91,7 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
       const result =
         typeof lastResult === "string" ? lastResult : lastResult.transcript;
       setUserInput(result);
+      startTimer();
     }
   }, [results, interimResult]);
 
