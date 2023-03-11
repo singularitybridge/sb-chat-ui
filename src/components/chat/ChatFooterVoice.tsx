@@ -38,6 +38,15 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
   });
 
   const [userInput, setUserInput] = React.useState("");
+  const [currentStatus, setCurrentStatus] = React.useState("Thinking...");
+
+  useEffect(() => {
+    if (!isEnabled) {
+      setCurrentStatus("Thinking...");      
+    } else {
+      setCurrentStatus("Listening...");
+    } 
+  }, [isEnabled]);
 
   useEffect(() => {
     if (interimResult) {
@@ -94,7 +103,7 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
     <>
       <div className="flex flex-col">
         <div className="relative w-full p-4 text-lg text-slate-500 h-24 flex items-center justify-center">
-          {userInput || "Say something..."}
+          {userInput || currentStatus }
         </div>
 
         <div className="flex flex-row justify-center pt-4 pb-4 space-x-8 bg-slate-100">

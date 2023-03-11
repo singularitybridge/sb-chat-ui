@@ -23,17 +23,18 @@ import { ContainerBGImage } from "../components/ContainerBGImage";
 import { ChatFooterContainer } from "../components/chat/ChatFooterContainer";
 import { ChatFooterText } from "../components/chat/ChatFooterText";
 import { ChatFooterVoice } from "../components/chat/ChatFooterVoice";
+import { ChatMessageWelcome } from "../components/ChatMessageWelcome";
 
 const Chat = () => {
-
   const [context, setContext] = useRecoilState(contextData);
   const [chatData, setChatData] = useRecoilState(messagesState);
   const [chatBots, setChatBots] = useRecoilState(chatBotsState);
   const userProfile = useRecoilValue(userProfileState);
   const chatContainerRef = useRef(null);
   const [chatBot, setChatBot] = useState<ChatBot>(defaultChatBot);
+
+  const [isChatBotActive, setIsChatBotActive] = useState(false);
   const [isUserInputEnabled, setIsUserInputEnabled] = useState(false);
-  
 
   useEffect(() => {
     if (userProfile.activeChatBot === ChatBotNotLoaded || !chatBots) return;
@@ -41,8 +42,7 @@ const Chat = () => {
   }, [chatBots, userProfile]);
 
   useEffect(() => {
-    if (!chatBot || chatBot.key === ChatBotNotLoaded) return;
-    onSendMessage("");
+    if (!chatBot || chatBot.key === ChatBotNotLoaded) return;    
     document.title = chatBot.name;
   }, [chatBot]);
 
@@ -55,17 +55,12 @@ const Chat = () => {
     }
   }, [chatData]);
 
-  useEffect(() => {
-
-    if (!userProfile.isAudioPlaying) setIsUserInputEnabled(true);
-
-
-  }, [userProfile.isAudioPlaying]);
+  // useEffect(() => {
+  //   if (!userProfile.isAudioPlaying && isChatBotActive) setIsUserInputEnabled(true);
+  // }, [userProfile.isAudioPlaying, isChatBotActive]);
 
   const onSendMessage = async (message: string) => {
-
     setIsUserInputEnabled(false);
-
 
     const translatedMessage =
       chatBot && chatBot.autoTranslate
@@ -115,7 +110,7 @@ const Chat = () => {
       },
     ]);
 
-    // setIsUserInputEnabled(true);
+    setIsUserInputEnabled(true);
 
   };
 
@@ -131,6 +126,11 @@ const Chat = () => {
               >
                 <div className="flex flex-col h-full">
                   <div className="grid grid-cols-12 gap-y-2">
+
+                    <ChatMessageWelcome 
+                      onClickStartChat={() => onSendMessage("")}
+                    />
+
                     {chatData.map((message: Message, index: number) => {
                       return <ChatMessage key={index} message={message} />;
                     })}
