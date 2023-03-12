@@ -35,7 +35,7 @@ const ChatMessageWelcome: React.FC<ChatMessageProps> = ({
 
   return (
     <>
-      <div className="col-start-4 col-end-10 mt-8 mb-8">
+      <div className="col-start-2 col-end-12 mt-8 mb-8">
         <div
           className="flex flex-col items-center bg-white p-7 shadow rounded-xl space-y-7"
           style={{

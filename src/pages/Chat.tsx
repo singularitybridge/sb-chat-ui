@@ -25,6 +25,7 @@ import { ChatFooterText } from "../components/chat/ChatFooterText";
 import { ChatFooterVoice } from "../components/chat/ChatFooterVoice";
 import { ChatMessageWelcome } from "../components/ChatMessageWelcome";
 import { playAudio } from "../services/AudioService";
+import { ChatState } from "../components/chat/common";
 
 const Chat = () => {
   const [context, setContext] = useRecoilState(contextData);
@@ -36,6 +37,7 @@ const Chat = () => {
 
   const [isChatBotActive, setIsChatBotActive] = useState(false);
   const [isUserInputEnabled, setIsUserInputEnabled] = useState(false);
+  const [chatState, setChatState] = useState(ChatState.GETTING_DATA);
 
   useEffect(() => {
     if (userProfile.activeChatBot === ChatBotNotLoaded || !chatBots) return;
@@ -56,12 +58,46 @@ const Chat = () => {
     }
   }, [chatData]);
 
+
+
   // useEffect(() => {
-  //   if (!userProfile.isAudioPlaying && isChatBotActive) setIsUserInputEnabled(true);
-  // }, [userProfile.isAudioPlaying, isChatBotActive]);
+  //   if (chatBot && chatBot.key !== ChatBotNotLoaded) {
+  //     setIsChatBotActive(true);
+  //     setChatState(ChatState.LISTENING);
+  //   } else {
+  //     setIsChatBotActive(false);
+  //     setChatState(ChatState.GETTING_DATA);
+  //   }
+  // }, [chatBot]);
+
+
+
+  // useEffect(() => {
+
+  //   let newState : ChatState = ChatState.GETTING_DATA;
+
+  //   if (isChatBotActive) {
+  //     if (userProfile.isAudioPlaying) {
+  //       newState = ChatState.PLAYING;
+  //     } else if (isUserInputEnabled) {
+  //       newState = ChatState.LISTENING;
+  //     } else {
+  //       newState = ChatState.GETTING_DATA;
+  //     }
+  //   }
+
+  //   setChatState(newState);
+
+
+  // }, [ isChatBotActive, isUserInputEnabled, userProfile.isAudioPlaying]);
+
+
+
 
   const onSendMessage = async (message: string) => {
+
     setIsUserInputEnabled(false);
+    setChatState(ChatState.GETTING_DATA);
 
     const translatedMessage =
       chatBot && chatBot.autoTranslate
@@ -111,7 +147,9 @@ const Chat = () => {
       },
     ]);
 
+    setChatState(ChatState.PLAYING);
     await playAudio(ttsResponse);
+    setChatState(ChatState.LISTENING);
     setIsUserInputEnabled(true);
 
   };
@@ -147,7 +185,7 @@ const Chat = () => {
         <ChatFooterVoice
           onSendMessage={onSendMessage}
           autoTranslateTarget={chatBot?.autoTranslateTarget || "en"}
-          isEnabled={isUserInputEnabled}
+          chatState={chatState}
         />
       </ChatFooterContainer>
     </>

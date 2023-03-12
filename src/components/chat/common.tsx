@@ -1,7 +1,14 @@
+export enum ChatState {
+  PLAYING = "PLAYING",
+  LISTENING = "LISTENING",
+  GETTING_DATA = "GETTING_DATA",
+}
+
+
 export interface ChatFooterProps {
   onSendMessage: (value: string) => void;
   autoTranslateTarget: string;
-  isEnabled : boolean;
+  chatState: ChatState;
 }
 
 export interface LanguageVoiceMap {
@@ -44,6 +51,14 @@ export const languageVoiceMap: { [key: string]: LanguageVoiceMap } = {
     },
     googleCloudRecognitionConfig: {
       lang: "ru-RU",
+    },
+  },
+  ar: {
+    speeachRecognitionProperties: {
+      lang: "ar-DZ",
+    },
+    googleCloudRecognitionConfig: {
+      lang: "ar-DZ",
     },
   },
 };

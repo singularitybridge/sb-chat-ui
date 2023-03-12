@@ -2,45 +2,21 @@ import {
   MicrophoneIcon,
   PaperAirplaneIcon,
   XMarkIcon,
+  UserIcon,
+  ChatBubbleLeftEllipsisIcon,
+  CloudArrowDownIcon,
+  MinusIcon,
 } from "@heroicons/react/24/outline";
 import React, { useEffect, useRef, useState } from "react";
 import useSpeechToText from "react-hook-speech-to-text";
-import { ChatFooterProps, getVoiceMap } from "./common";
+import { ChatFooterProps, ChatState, getVoiceMap } from "./common";
 import { motion } from "framer-motion";
-
-
-const useTimer = (sendMessage: () => void) => {
-  const [timerRunning, setTimerRunning] = useState(false);
-  const timerRef = useRef<number | null>(null);
-
-  function startTimer() {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-    timerRef.current = window.setTimeout(() => {
-      sendMessage();
-      setTimerRunning(false);
-    }, 3000);
-    setTimerRunning(true);
-  }
-
-  function resetTimer() {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      setTimerRunning(false);
-    }
-  }
-
-  return { timerRunning, startTimer, resetTimer };
-}
-
-
-
+import { useTimer } from "../../services/useTimer";
 
 const ChatFooterVoice: React.FC<ChatFooterProps> = ({
   onSendMessage,
   autoTranslateTarget,
-  isEnabled,
+  chatState,
 }) => {
   const {
     error,
@@ -67,21 +43,45 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
   });
 
   const [userInput, setUserInput] = React.useState("");
-  const [currentStatus, setCurrentStatus] = React.useState("Thinking...");
+  const { timerRunning, startTimer, resetTimer } = useTimer(() => {
+    console.log("send message timer");
+    handleSendMessage();
+  });
 
-  const { timerRunning, startTimer, resetTimer } = useTimer( () => handleSendMessage() );
+  const [isEnabled, setIsEnabled] = useState(false);
+  const primaryActionButtonStyle = "h-8 w-8 text-gray-100";
+
+  const getActionIcon = () => {
+    switch (chatState) {
+      case ChatState.LISTENING:
+        return <MicrophoneIcon className={primaryActionButtonStyle} />;
+      case ChatState.PLAYING:
+        return (
+          <ChatBubbleLeftEllipsisIcon className={primaryActionButtonStyle} />
+        );
+      case ChatState.GETTING_DATA:
+        return (
+          <ChatBubbleLeftEllipsisIcon className={primaryActionButtonStyle} />
+        );
+      default:
+        return (
+          <ChatBubbleLeftEllipsisIcon className={primaryActionButtonStyle} />
+        );
+    }
+  };
 
   useEffect(() => {
-    if (!isEnabled) {
-      setCurrentStatus("Thinking...");      
+    if (chatState === ChatState.LISTENING) {
+      setIsEnabled(true);
     } else {
-      setCurrentStatus("Listening...");
-    } 
-  }, [isEnabled]);
+      setIsEnabled(false);
+    }
+  }, [chatState]);
 
   useEffect(() => {
     if (interimResult) {
       setUserInput(interimResult);
+      resetTimer();
       startTimer();
       return;
     }
@@ -91,6 +91,7 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
       const result =
         typeof lastResult === "string" ? lastResult : lastResult.transcript;
       setUserInput(result);
+      resetTimer();
       startTimer();
     }
   }, [results, interimResult]);
@@ -125,57 +126,81 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
   const actionButtonStyle = "h-5 w-5 text-gray-500";
 
   const breathingAnimation = {
-    scale: [1, 1.04, 1],
+    scale: [1, 1.02, 1],
     transition: {
       duration: 1.2,
       repeat: Infinity,
     },
   };
 
+  const getPrimaryActionButtonStyle = () => {
+    switch (chatState) {
+      case ChatState.LISTENING:
+        if (isRecording) {
+          return "bg-rose-500 rounded-full p-7";
+        } else {
+          return "bg-rose-300 rounded-full p-7";
+        }
+      case ChatState.PLAYING:
+        return "bg-sky-500 rounded-full p-7";
+      case ChatState.GETTING_DATA:
+        return "bg-sky-300 rounded-full p-7";
+    }
+  };
+
+  const handlePrimaryActionButtonClick = () => {
+    if (chatState === ChatState.LISTENING) {
+      if (isRecording) {
+        resetTimer();
+        stopSpeechToText();
+      } else {
+        handleStartSpeechToText();
+      }
+    }
+  };
+
   return (
     <>
       <div className="flex flex-col">
         <div className="relative w-full p-4 text-lg text-slate-500 h-24 flex items-center justify-center">
-          {userInput || currentStatus }
+          {userInput || ""}
         </div>
 
-        <div className="flex flex-row justify-center pt-4 pb-4 space-x-8 bg-slate-100">
+        <div className="flex flex-row justify-center pt-5 pb-5 space-x-8 bg-slate-100">
           <button
             className="flex items-center justify-center"
             onClick={handleClearInput}
           >
             <span>
-              <XMarkIcon className={actionButtonStyle} />
+              {chatState === ChatState.LISTENING && (
+                <XMarkIcon className={actionButtonStyle} />
+              )}
             </span>
           </button>
 
-          <motion.div animate={isRecording ? breathingAnimation : {}}>
+          <motion.div
+            animate={
+              isRecording || chatState === ChatState.PLAYING
+                ? breathingAnimation
+                : {}
+            }
+          >
             <button
-              className={
-                isRecording
-                  ? "bg-red-500 rounded-full p-7"
-                  : "bg-gray-400 rounded-full p-7"
-              }
-              onClick={isRecording ? stopSpeechToText : handleStartSpeechToText}
+              className={getPrimaryActionButtonStyle()}
+              onClick={handlePrimaryActionButtonClick}
             >
-              <span>
-                <MicrophoneIcon
-                  className={
-                    isRecording
-                      ? "h-8 w-8 text-gray-100"
-                      : "h-8 w-8 text-gray-200 "
-                  }
-                />
-              </span>
+              <span>{getActionIcon()}</span>
             </button>
           </motion.div>
 
           <button
             className="flex items-center justify-center"
-            onClick={handleSendMessage}
+            onClick={ () => { resetTimer() ; handleSendMessage(); }}
           >
             <span>
-              <PaperAirplaneIcon className={actionButtonStyle} />
+              {chatState === ChatState.LISTENING && (
+                <PaperAirplaneIcon className={actionButtonStyle} />
+              )}
             </span>
           </button>
         </div>
