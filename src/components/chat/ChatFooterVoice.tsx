@@ -80,17 +80,15 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
   }, [chatState]);
 
   useEffect(() => {
-    if (interimResult) {
-      setUserInput(interimResult);
-      resetTimer();
-      startTimer();
-      return;
-    }
-
-    if (results.length > 0) {
-      const lastResult = results[results.length - 1];
-      const result =
-        typeof lastResult === "string" ? lastResult : lastResult.transcript;
+    if (results.length > 0 || interimResult) {
+      const combinedResults = results
+        .map((item) => (typeof item === "string" ? item : item.transcript))
+        .join(" ");
+  
+      const result = interimResult
+        ? `${combinedResults} ${interimResult}`
+        : combinedResults;
+  
       setUserInput(result);
       resetTimer();
       startTimer();
