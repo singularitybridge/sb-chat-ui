@@ -12,6 +12,7 @@ import useSpeechToText from "react-hook-speech-to-text";
 import { ChatFooterProps, ChatState, getVoiceMap } from "./common";
 import { motion } from "framer-motion";
 import { useTimer } from "../../services/useTimer";
+import { AudioCircle } from "./AudioCircle";
 
 const ChatFooterVoice: React.FC<ChatFooterProps> = ({
   onSendMessage,
@@ -49,7 +50,7 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
   });
 
   const [isEnabled, setIsEnabled] = useState(false);
-  const primaryActionButtonStyle = "h-8 w-8 text-gray-100";
+  const primaryActionButtonStyle = "text-gray-100";
 
   const getActionIcon = () => {
     switch (chatState) {
@@ -126,9 +127,9 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
   const actionButtonStyle = "h-5 w-5 text-gray-500";
 
   const breathingAnimation = {
-    scale: [1, 1.02, 1],
+    scale: [1, 1.01, 1],
     transition: {
-      duration: 1.2,
+      duration: 1.7,
       repeat: Infinity,
     },
   };
@@ -185,11 +186,20 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
                 : {}
             }
           >
+
+            <AudioCircle active={ chatState === ChatState.PLAYING } scaleFrom={40} scaleTo={45} />
+
+
             <button
               className={getPrimaryActionButtonStyle()}
               onClick={handlePrimaryActionButtonClick}
             >
-              <span>{getActionIcon()}</span>
+              <span className="">
+                <AudioCircle active={ chatState === ChatState.PLAYING } scaleFrom={42} scaleTo={47}>
+                  {getActionIcon()}
+                </AudioCircle>
+              </span>
+              {/* <span>{getActionIcon()}</span> */}
             </button>
           </motion.div>
 
