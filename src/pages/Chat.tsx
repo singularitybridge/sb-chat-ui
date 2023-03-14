@@ -26,6 +26,7 @@ import { ChatFooterVoice } from "../components/chat/ChatFooterVoice";
 import { ChatMessageWelcome } from "../components/ChatMessageWelcome";
 import { playAudio } from "../services/AudioService";
 import { ChatState } from "../components/chat/common";
+import { AudioCircle } from "../components/chat/AudioCircle";
 
 const Chat = () => {
   const [context, setContext] = useRecoilState(contextData);
@@ -37,7 +38,8 @@ const Chat = () => {
 
   const [isChatBotActive, setIsChatBotActive] = useState(false);
   const [isUserInputEnabled, setIsUserInputEnabled] = useState(false);
-  const [chatState, setChatState] = useState(ChatState.GETTING_DATA);
+  const [chatState, setChatState] = useState(ChatState.GETTING_DATA);  
+  const [audioCircleActive, setAudioCircleActive] = useState(false);
 
   useEffect(() => {
     if (userProfile.activeChatBot === ChatBotNotLoaded || !chatBots) return;
@@ -45,7 +47,7 @@ const Chat = () => {
   }, [chatBots, userProfile]);
 
   useEffect(() => {
-    if (!chatBot || chatBot.key === ChatBotNotLoaded) return;    
+    if (!chatBot || chatBot.key === ChatBotNotLoaded) return;
     document.title = chatBot.name;
   }, [chatBot]);
 
@@ -58,44 +60,7 @@ const Chat = () => {
     }
   }, [chatData]);
 
-
-
-  // useEffect(() => {
-  //   if (chatBot && chatBot.key !== ChatBotNotLoaded) {
-  //     setIsChatBotActive(true);
-  //     setChatState(ChatState.LISTENING);
-  //   } else {
-  //     setIsChatBotActive(false);
-  //     setChatState(ChatState.GETTING_DATA);
-  //   }
-  // }, [chatBot]);
-
-
-
-  // useEffect(() => {
-
-  //   let newState : ChatState = ChatState.GETTING_DATA;
-
-  //   if (isChatBotActive) {
-  //     if (userProfile.isAudioPlaying) {
-  //       newState = ChatState.PLAYING;
-  //     } else if (isUserInputEnabled) {
-  //       newState = ChatState.LISTENING;
-  //     } else {
-  //       newState = ChatState.GETTING_DATA;
-  //     }
-  //   }
-
-  //   setChatState(newState);
-
-
-  // }, [ isChatBotActive, isUserInputEnabled, userProfile.isAudioPlaying]);
-
-
-
-
   const onSendMessage = async (message: string) => {
-
     setIsUserInputEnabled(false);
     setChatState(ChatState.GETTING_DATA);
 
@@ -148,10 +113,14 @@ const Chat = () => {
     ]);
 
     setChatState(ChatState.PLAYING);
+
+    
+    
+    setAudioCircleActive(true);
     await playAudio(ttsResponse);
+    setAudioCircleActive(false);
     setChatState(ChatState.LISTENING);
     setIsUserInputEnabled(true);
-
   };
 
   return (
@@ -166,8 +135,13 @@ const Chat = () => {
               >
                 <div className="flex flex-col h-full">
                   <div className="grid grid-cols-12 gap-y-2">
+                    <AudioCircle                      
+                      active={audioCircleActive}
+                      scaleFrom={10}
+                      scaleTo={12}                      
+                    />
 
-                    <ChatMessageWelcome 
+                    <ChatMessageWelcome
                       onClickStartChat={() => onSendMessage("")}
                     />
 

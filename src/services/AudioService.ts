@@ -24,6 +24,8 @@ const playAudio = async (audioFile?: ArrayBuffer) => {
   if (audioFile) {
     return playAudioBase64(audioFile.toString());
   }
+  
+  return Promise.reject("No audio file provided.");
 };
 
 export { playAudio };
