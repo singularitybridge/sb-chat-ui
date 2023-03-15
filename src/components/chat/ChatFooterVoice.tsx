@@ -81,14 +81,20 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
 
   useEffect(() => {
     if (results.length > 0 || interimResult) {
-      const combinedResults = results
-        .map((item) => (typeof item === "string" ? item : item.transcript))
-        .join(" ");
-  
+      let combinedResults = "";
+
+      if (typeof results[0] === "string") {
+        combinedResults = results[results.length - 1] as string;
+      } else {
+        combinedResults = results
+          .map((item) => (typeof item === "string" ? item : item.transcript))
+          .join(" ");
+      }
+
       const result = interimResult
         ? `${combinedResults} ${interimResult}`
         : combinedResults;
-  
+
       setUserInput(result);
       resetTimer();
       startTimer();
@@ -184,16 +190,22 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
                 : {}
             }
           >
-
-            <AudioCircle active={ chatState === ChatState.PLAYING } scaleFrom={40} scaleTo={45} />
-
+            <AudioCircle
+              active={chatState === ChatState.PLAYING}
+              scaleFrom={40}
+              scaleTo={45}
+            />
 
             <button
               className={getPrimaryActionButtonStyle()}
               onClick={handlePrimaryActionButtonClick}
             >
               <span className="">
-                <AudioCircle active={ chatState === ChatState.PLAYING } scaleFrom={42} scaleTo={47}>
+                <AudioCircle
+                  active={chatState === ChatState.PLAYING}
+                  scaleFrom={42}
+                  scaleTo={47}
+                >
                   {getActionIcon()}
                 </AudioCircle>
               </span>
@@ -203,7 +215,10 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
 
           <button
             className="flex items-center justify-center"
-            onClick={ () => { resetTimer() ; handleSendMessage(); }}
+            onClick={() => {
+              resetTimer();
+              handleSendMessage();
+            }}
           >
             <span>
               {chatState === ChatState.LISTENING && (
