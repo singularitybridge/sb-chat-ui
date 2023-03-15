@@ -81,25 +81,21 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
 
   useEffect(() => {
     if (results.length > 0 || interimResult) {
-      let combinedResults = "";
-
-      if (typeof results[0] === "string") {
-        combinedResults = results[results.length - 1] as string;
-      } else {
-        combinedResults = results
-          .map((item) => (typeof item === "string" ? item : item.transcript))
-          .join(" ");
-      }
-
+      const lastResult = results[results.length - 1];
+      const lastTranscript = typeof lastResult === "string" ? lastResult : lastResult.transcript;
+  
       const result = interimResult
-        ? `${combinedResults} ${interimResult}`
-        : combinedResults;
-
+        ? `${lastTranscript} ${interimResult}`
+        : lastTranscript;
+  
+      console.log(result, results, interimResult);
+  
       setUserInput(result);
       resetTimer();
       startTimer();
     }
   }, [results, interimResult]);
+  
 
   useEffect(() => {
     if (isEnabled && !isRecording) {
@@ -190,22 +186,16 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
                 : {}
             }
           >
-            <AudioCircle
-              active={chatState === ChatState.PLAYING}
-              scaleFrom={40}
-              scaleTo={45}
-            />
+
+            <AudioCircle active={ chatState === ChatState.PLAYING } scaleFrom={40} scaleTo={45} />
+
 
             <button
               className={getPrimaryActionButtonStyle()}
               onClick={handlePrimaryActionButtonClick}
             >
               <span className="">
-                <AudioCircle
-                  active={chatState === ChatState.PLAYING}
-                  scaleFrom={42}
-                  scaleTo={47}
-                >
+                <AudioCircle active={ chatState === ChatState.PLAYING } scaleFrom={42} scaleTo={47}>
                   {getActionIcon()}
                 </AudioCircle>
               </span>
@@ -215,10 +205,7 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
 
           <button
             className="flex items-center justify-center"
-            onClick={() => {
-              resetTimer();
-              handleSendMessage();
-            }}
+            onClick={ () => { resetTimer() ; handleSendMessage(); }}
           >
             <span>
               {chatState === ChatState.LISTENING && (
