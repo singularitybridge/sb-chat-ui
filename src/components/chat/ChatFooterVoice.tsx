@@ -17,6 +17,9 @@ import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
 
+
+
+
 const ChatFooterVoice: React.FC<ChatFooterProps> = ({
   onSendMessage,
   autoTranslateTarget,
@@ -61,6 +64,8 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
     }
   };
 
+  const voiceLanguage = getVoiceMap(autoTranslateTarget).googleCloudRecognitionConfig?.lang
+
   useEffect(() => {
     if (chatState === ChatState.LISTENING) {
       setIsEnabled(true);
@@ -71,8 +76,6 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
 
   useEffect(() => {
 
-    console.log("transcript", transcript);
-
     if (transcript) {
       setUserInput(transcript);
       resetTimer();
@@ -82,7 +85,7 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
 
   useEffect(() => {
     if (isEnabled && !listening) {      
-      SpeechRecognition.startListening({ continuous: true });
+      SpeechRecognition.startListening({ continuous: true , language: voiceLanguage});
     }
   }, [isEnabled]);
 
@@ -97,7 +100,7 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
     if (!isEnabled) return;
 
     resetTranscript();
-    SpeechRecognition.startListening({ continuous: true });
+    SpeechRecognition.startListening({ continuous: true, language: voiceLanguage });
   };
 
   const handleClearInput = () => {
