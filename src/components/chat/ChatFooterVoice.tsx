@@ -29,7 +29,7 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
   } = useSpeechToText({
     crossBrowser: true,
     continuous: true,
-    timeout: 7000,
+    timeout: 12000,
     useLegacyResults: false,
     useOnlyGoogleCloud: false,
     speechRecognitionProperties: {
@@ -82,22 +82,28 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
   useEffect(() => {
     console.log("results", results);
     console.log("interimResult", interimResult);
-
+  
     if (results.length > 0 || interimResult) {
-      
-      const combinedResults = results
-          .map((item) => (typeof item === "string" ? item : item.transcript))
-          .join(" ");
-
+      const filteredResults = results
+        .map((item) => (typeof item === "string" ? item : item.transcript))
+        .filter((item, index, arr) => {
+          return (
+            index === arr.length - 1 || !arr[index + 1].startsWith(item)
+          );
+        });
+  
+      const combinedResults = filteredResults.join(" ");
+  
       const result = interimResult
         ? `${combinedResults} ${interimResult}`
         : combinedResults;
-
+  
       setUserInput(result);
       resetTimer();
       startTimer();
     }
   }, [results, interimResult]);
+  
 
   useEffect(() => {
     if (isEnabled && !isRecording) {
