@@ -37,7 +37,7 @@ const ChatMessageWelcome: React.FC<ChatMessageProps> = ({
     <>
       <div className="col-start-2 col-end-12 mt-8 mb-8">
         <div
-          className="flex flex-col items-center bg-white p-7 shadow rounded-xl space-y-7"
+          className="flex flex-col items-center bg-white p-5 shadow rounded-xl space-y-4"
           style={{
             direction:
               chatBot &&

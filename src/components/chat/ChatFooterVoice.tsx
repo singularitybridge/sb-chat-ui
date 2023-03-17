@@ -80,22 +80,24 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
   }, [chatState]);
 
   useEffect(() => {
+    console.log("results", results);
+    console.log("interimResult", interimResult);
+
     if (results.length > 0 || interimResult) {
-      const lastResult = results[results.length - 1];
-      const lastTranscript = typeof lastResult === "string" ? lastResult : lastResult.transcript;
-  
+      
+      const combinedResults = results
+          .map((item) => (typeof item === "string" ? item : item.transcript))
+          .join(" ");
+
       const result = interimResult
-        ? `${lastTranscript} ${interimResult}`
-        : lastTranscript;
-  
-      console.log(result, results, interimResult);
-  
+        ? `${combinedResults} ${interimResult}`
+        : combinedResults;
+
       setUserInput(result);
       resetTimer();
       startTimer();
     }
   }, [results, interimResult]);
-  
 
   useEffect(() => {
     if (isEnabled && !isRecording) {
@@ -104,6 +106,8 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
   }, [isEnabled]);
 
   const handleSendMessage = () => {
+    if (userInput === "") return;
+
     onSendMessage(userInput);
     setUserInput("");
     results.length = 0;
@@ -119,6 +123,7 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
 
   const handleClearInput = () => {
     setUserInput("");
+    resetTimer();
     results.length = 0;
   };
 
@@ -138,21 +143,22 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
     switch (chatState) {
       case ChatState.LISTENING:
         if (isRecording) {
-          return "bg-rose-500 rounded-full p-7";
+          return "bg-rose-500 rounded-full p-4";
         } else {
-          return "bg-rose-300 rounded-full p-7";
+          return "bg-rose-300 rounded-full p-4";
         }
       case ChatState.PLAYING:
-        return "bg-sky-500 rounded-full p-7";
+        return "bg-sky-500 rounded-full p-4";
       case ChatState.GETTING_DATA:
-        return "bg-sky-300 rounded-full p-7";
+        return "bg-sky-300 rounded-full p-4";
     }
   };
 
   const handlePrimaryActionButtonClick = () => {
+    resetTimer();
+
     if (chatState === ChatState.LISTENING) {
       if (isRecording) {
-        resetTimer();
         stopSpeechToText();
       } else {
         handleStartSpeechToText();
@@ -163,11 +169,11 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
   return (
     <>
       <div className="flex flex-col">
-        <div className="relative w-full p-4 text-lg text-slate-500 h-24 flex items-center justify-center">
+        <div className="relative w-full p-4 text-lg text-slate-500 h-20 flex items-center justify-center">
           {userInput || ""}
         </div>
 
-        <div className="flex flex-row justify-center pt-5 pb-5 space-x-8 bg-slate-100">
+        <div className="flex flex-row justify-center pt-4 pb-4 space-x-8 bg-slate-100">
           <button
             className="flex items-center justify-center"
             onClick={handleClearInput}
@@ -186,16 +192,16 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
                 : {}
             }
           >
-
-            <AudioCircle active={ chatState === ChatState.PLAYING } scaleFrom={40} scaleTo={45} />
-
-
             <button
               className={getPrimaryActionButtonStyle()}
               onClick={handlePrimaryActionButtonClick}
             >
               <span className="">
-                <AudioCircle active={ chatState === ChatState.PLAYING } scaleFrom={42} scaleTo={47}>
+                <AudioCircle
+                  active={chatState === ChatState.PLAYING}
+                  scaleFrom={42}
+                  scaleTo={47}
+                >
                   {getActionIcon()}
                 </AudioCircle>
               </span>
@@ -205,7 +211,10 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
 
           <button
             className="flex items-center justify-center"
-            onClick={ () => { resetTimer() ; handleSendMessage(); }}
+            onClick={() => {
+              resetTimer();
+              handleSendMessage();
+            }}
           >
             <span>
               {chatState === ChatState.LISTENING && (

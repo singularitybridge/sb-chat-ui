@@ -34,18 +34,22 @@ const AudioCircle: React.FC<AudioCircleProps> = ({
 
   return (
     <>
-    <div style={{width: scaleTo, height: scaleTo}}>
-      <div
-        className=""
-        style={{
-          overflow: "hidden",
-          width: `${scale}px`,
-          height: `${scale}px`,
-          transition: "width 0.3s ease, height 0.3s ease",
-        }}
-      >
-        {children} 
-      </div>
+      <div style={{ width: scaleTo, height: scaleTo, position: 'relative' }}>
+        <div
+          className=""
+          style={{
+            position: 'absolute',
+            left: '50%',
+            top: '50%',
+            transform: 'translate(-50%, -50%)',
+            overflow: "hidden",
+            width: `${scale}px`,
+            height: `${scale}px`,
+            transition: "width 0.3s ease, height 0.3s ease",
+          }}
+        >
+          {children}
+        </div>
       </div>
     </>
   );
