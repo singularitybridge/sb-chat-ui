@@ -24,14 +24,18 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
 }) => {
   const {
     transcript,
-    listening,
+    interimTranscript,
+    // finalTranscript,
     resetTranscript,
+    listening,
     browserSupportsSpeechRecognition,
+    isMicrophoneAvailable,
   } = useSpeechRecognition();
 
   const [userInput, setUserInput] = React.useState("");
   const { timerRunning, startTimer, resetTimer } = useTimer(() => {
     console.log("send message timer");
+    SpeechRecognition.stopListening();
     handleSendMessage();
   });
 
@@ -66,7 +70,8 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
   }, [chatState]);
 
   useEffect(() => {
-    console.log("results", transcript);
+
+    console.log("transcript", transcript);
 
     if (transcript) {
       setUserInput(transcript);
@@ -77,24 +82,22 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
 
   useEffect(() => {
     if (isEnabled && !listening) {      
-      SpeechRecognition.startListening();
+      SpeechRecognition.startListening({ continuous: true });
     }
   }, [isEnabled]);
 
   const handleSendMessage = () => {
-    if (userInput === "") return;
-
-    onSendMessage(userInput);
+    if (transcript === "") return;    
+    onSendMessage(transcript);
     setUserInput("");
     resetTranscript();    
-    SpeechRecognition.stopListening();
   };
 
   const handleStartSpeechToText = () => {
     if (!isEnabled) return;
 
     resetTranscript();
-    SpeechRecognition.startListening();
+    SpeechRecognition.startListening({ continuous: true });
   };
 
   const handleClearInput = () => {
@@ -192,6 +195,7 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
             className="flex items-center justify-center"
             onClick={() => {
               resetTimer();
+              SpeechRecognition.stopListening();
               handleSendMessage();
             }}
           >
