@@ -297,6 +297,11 @@
   "resolved" "https://registry.npmjs.org/@remix-run/router/-/router-1.3.2.tgz"
   "version" "1.3.2"
 
+"@types/dom-speech-recognition@*":
+  "integrity" "sha512-udCxb8DvjcDKfk1WTBzDsxFbLgYxmQGKrE/ricoMqHRNjSlSUCcamVTA5lIQqzY10mY5qCY0QDwBfFEwhfoDPw=="
+  "resolved" "https://registry.npmjs.org/@types/dom-speech-recognition/-/dom-speech-recognition-0.0.1.tgz"
+  "version" "0.0.1"
+
 "@types/mustache@^4.2.2":
   "integrity" "sha512-MUSpfpW0yZbTgjekDbH0shMYBUD+X/uJJJMm9LXN1d5yjl5lCY1vN/eWKD6D1tOtjA6206K0zcIPnUaFMurdNA=="
   "resolved" "https://registry.npmjs.org/@types/mustache/-/mustache-4.2.2.tgz"
@@ -314,7 +319,14 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@^18.0.27":
+"@types/react-speech-recognition@^3.9.1":
+  "integrity" "sha512-9aR3BvLMgO9M+dKueOd5TK5UwGm/0wqnykGHD2irTsSf0sGUMk19q4nmjVNeVMLDBfuLfR8o0rj5WvMv5Fje/Q=="
+  "resolved" "https://registry.npmjs.org/@types/react-speech-recognition/-/react-speech-recognition-3.9.1.tgz"
+  "version" "3.9.1"
+  dependencies:
+    "@types/dom-speech-recognition" "*"
+
+"@types/react@*", "@types/react@^18.0.28":
   "integrity" "sha512-RD0ivG1kEztNBdoAK7lekI9M+azSnitIn85h4iOiaLjaTrMjzslhaqCGaI4IyCJ1RljWiLCEu4jyrLLgqxBTew=="
   "resolved" "https://registry.npmjs.org/@types/react/-/react-18.0.28.tgz"
   "version" "18.0.28"
@@ -1020,6 +1032,11 @@
   dependencies:
     "@remix-run/router" "1.3.2"
 
+"react-speech-recognition@^3.10.0":
+  "integrity" "sha512-EVSr4Ik8l9urwdPiK2r0+ADrLyDDrjB0qBRdUWO+w2MfwEBrj6NuRmy1GD3x7BU/V6/hab0pl8Lupen0zwlJyw=="
+  "resolved" "https://registry.npmjs.org/react-speech-recognition/-/react-speech-recognition-3.10.0.tgz"
+  "version" "3.10.0"
+
 "react@^18.0.0", "react@^18.2.0", "react@>= 16", "react@>=16.13.1", "react@>=16.8", "react@>=16.8.0":
   "integrity" "sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ=="
   "resolved" "https://registry.npmjs.org/react/-/react-18.2.0.tgz"
@@ -1047,6 +1064,11 @@
   "version" "0.7.6"
   dependencies:
     "hamt_plus" "1.0.2"
+
+"regenerator-runtime@^0.13.11":
+  "integrity" "sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg=="
+  "resolved" "https://registry.npmjs.org/regenerator-runtime/-/regenerator-runtime-0.13.11.tgz"
+  "version" "0.13.11"
 
 "resolve@^1.1.7", "resolve@^1.22.1":
   "integrity" "sha512-nBpuuYuY5jFsli/JIs1oldw6fOQCBioohqWZg/2hiaOybXOft4lonv85uDOKXdf8rhyK159cxU5cDcK/NKk8zw=="

@@ -13,6 +13,9 @@ import { ChatFooterProps, ChatState, getVoiceMap } from "./common";
 import { motion } from "framer-motion";
 import { useTimer } from "../../services/useTimer";
 import { AudioCircle } from "./AudioCircle";
+import SpeechRecognition, {
+  useSpeechRecognition,
+} from "react-speech-recognition";
 
 const ChatFooterVoice: React.FC<ChatFooterProps> = ({
   onSendMessage,
@@ -20,28 +23,11 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
   chatState,
 }) => {
   const {
-    error,
-    interimResult,
-    isRecording,
-    results,
-    startSpeechToText,
-    stopSpeechToText,
-  } = useSpeechToText({
-    crossBrowser: true,
-    continuous: true,
-    timeout: 12000,
-    useLegacyResults: false,
-    useOnlyGoogleCloud: false,
-    speechRecognitionProperties: {
-      lang: getVoiceMap(autoTranslateTarget).speeachRecognitionProperties.lang,
-      interimResults: true,
-    },
-    googleApiKey: "AIzaSyCmCIWBPBwiYiwHa0KoiL892ucEhRy8hZ8",
-    googleCloudRecognitionConfig: {
-      languageCode:
-        getVoiceMap(autoTranslateTarget).googleCloudRecognitionConfig?.lang,
-    },
-  });
+    transcript,
+    listening,
+    resetTranscript,
+    browserSupportsSpeechRecognition,
+  } = useSpeechRecognition();
 
   const [userInput, setUserInput] = React.useState("");
   const { timerRunning, startTimer, resetTimer } = useTimer(() => {
@@ -80,34 +66,18 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
   }, [chatState]);
 
   useEffect(() => {
-    console.log("results", results);
-    console.log("interimResult", interimResult);
-  
-    if (results.length > 0 || interimResult) {
-      const filteredResults = results
-        .map((item) => (typeof item === "string" ? item : item.transcript))
-        .filter((item, index, arr) => {
-          return (
-            index === arr.length - 1 || !arr[index + 1].startsWith(item)
-          );
-        });
-  
-      const combinedResults = filteredResults.join(" ");
-  
-      const result = interimResult
-        ? `${combinedResults} ${interimResult}`
-        : combinedResults;
-  
-      setUserInput(result);
+    console.log("results", transcript);
+
+    if (transcript) {
+      setUserInput(transcript);
       resetTimer();
       startTimer();
     }
-  }, [results, interimResult]);
-  
+  }, [transcript]);
 
   useEffect(() => {
-    if (isEnabled && !isRecording) {
-      startSpeechToText();
+    if (isEnabled && !listening) {      
+      SpeechRecognition.startListening();
     }
   }, [isEnabled]);
 
@@ -116,24 +86,27 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
 
     onSendMessage(userInput);
     setUserInput("");
-    results.length = 0;
-    stopSpeechToText();
+    resetTranscript();    
+    SpeechRecognition.stopListening();
   };
 
   const handleStartSpeechToText = () => {
     if (!isEnabled) return;
 
-    results.length = 0;
-    startSpeechToText();
+    resetTranscript();
+    SpeechRecognition.startListening();
   };
 
   const handleClearInput = () => {
     setUserInput("");
     resetTimer();
-    results.length = 0;
+    resetTranscript();
   };
 
-  if (error) return <p>Web Speech API is not available in this browser 🤷‍</p>;
+  // if (error) return <p>Web Speech API is not available in this browser 🤷‍</p>;
+  if (!browserSupportsSpeechRecognition) {
+    return <span>Browser doesn't support speech recognition.</span>;
+  }
 
   const actionButtonStyle = "h-5 w-5 text-gray-500";
 
@@ -148,7 +121,7 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
   const getPrimaryActionButtonStyle = () => {
     switch (chatState) {
       case ChatState.LISTENING:
-        if (isRecording) {
+        if (listening) {
           return "bg-rose-500 rounded-full p-4";
         } else {
           return "bg-rose-300 rounded-full p-4";
@@ -164,8 +137,8 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
     resetTimer();
 
     if (chatState === ChatState.LISTENING) {
-      if (isRecording) {
-        stopSpeechToText();
+      if (listening) {
+        SpeechRecognition.stopListening();
       } else {
         handleStartSpeechToText();
       }
@@ -193,7 +166,7 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
 
           <motion.div
             animate={
-              isRecording || chatState === ChatState.PLAYING
+              listening || chatState === ChatState.PLAYING
                 ? breathingAnimation
                 : {}
             }

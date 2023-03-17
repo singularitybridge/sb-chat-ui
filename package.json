@@ -18,13 +18,16 @@
     "react-dom": "^18.2.0",
     "react-hook-speech-to-text": "^0.8.0",
     "react-router-dom": "^6.8.1",
+    "react-speech-recognition": "^3.10.0",
     "recoil": "^0.7.6",
+    "regenerator-runtime": "^0.13.11",
     "sanitize-html": "^2.10.0"
   },
   "devDependencies": {
     "@types/mustache": "^4.2.2",
-    "@types/react": "^18.0.27",
+    "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.10",
+    "@types/react-speech-recognition": "^3.9.1",
     "@types/sanitize-html": "^2.8.1",
     "@vitejs/plugin-react": "^3.1.0",
     "autoprefixer": "^10.4.13",
