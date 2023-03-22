@@ -61,6 +61,7 @@ const Chat = () => {
   }, [chatData]);
 
   const onSendMessage = async (message: string) => {
+    
     setIsUserInputEnabled(false);
     setChatState(ChatState.GETTING_DATA);
 
