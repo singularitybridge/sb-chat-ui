@@ -38,7 +38,7 @@ const Chat = () => {
 
   const [isChatBotActive, setIsChatBotActive] = useState(false);
   const [isUserInputEnabled, setIsUserInputEnabled] = useState(false);
-  const [chatState, setChatState] = useState(ChatState.GETTING_DATA);  
+  const [chatState, setChatState] = useState(ChatState.GETTING_DATA);
   const [audioCircleActive, setAudioCircleActive] = useState(false);
 
   useEffect(() => {
@@ -61,7 +61,6 @@ const Chat = () => {
   }, [chatData]);
 
   const onSendMessage = async (message: string) => {
-    
     setIsUserInputEnabled(false);
     setChatState(ChatState.GETTING_DATA);
 
@@ -115,8 +114,6 @@ const Chat = () => {
 
     setChatState(ChatState.PLAYING);
 
-    
-    
     setAudioCircleActive(true);
     await playAudio(ttsResponse);
     setAudioCircleActive(false);
@@ -136,14 +133,14 @@ const Chat = () => {
               >
                 <div className="flex flex-col h-full">
                   <div className="grid grid-cols-12 gap-y-2">
-                    <AudioCircle                      
+                    <AudioCircle
                       active={audioCircleActive}
                       scaleFrom={10}
-                      scaleTo={12}                      
+                      scaleTo={12}
                     />
 
                     <ChatMessageWelcome
-                      onClickStartChat={() => onSendMessage("")}
+                      onClickStartChat={() => onSendMessage("hi")}
                     />
 
                     {chatData.map((message: Message, index: number) => {

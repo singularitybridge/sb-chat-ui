@@ -13,21 +13,13 @@ const getGPTResponse = async (sessionId: string, message: string) => {
   return response.data;
 };
 
-const mapChatToPrompt = (chat: Message[]) => {
-  let prompt = "\n";
-  chat.forEach((message) => {
-    prompt += `${message.sender}: ${getMessageTextGPT(message)}\n`;
-  });
-  return prompt;
+const clearChat = async (sessionId: string = 'jack') => {
+  const response = await axios.delete(
+    `http://127.0.0.1:5000/chat_sessions/${sessionId}/messages`
+  );
+  return response.data;
 };
 
-const sanitizeContextDataToString = (contextData: ContextData[]) => {
-  let processedData = "";
-  contextData.forEach((item) => {
-    processedData += `${item.title}\n\n${item.description}\n\n`;
-  });
-  return processedData;
-};
 
 const getGPTCompletion = async (
   promptTemplate: string,
@@ -41,8 +33,7 @@ const getGPTCompletion = async (
 
   const tmp = await getGPTResponse("jack", message);
   const responseText = tmp.response;
-
   return sanitizeHtml(responseText);
 };
 
-export { getGPTCompletion };
+export { getGPTCompletion, clearChat };
