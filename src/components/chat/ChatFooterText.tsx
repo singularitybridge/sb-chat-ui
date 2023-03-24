@@ -62,29 +62,11 @@ const ChatFooterText: React.FC<ChatFooterProps> = ({
     stopSpeechToText();
   };
 
-  const handleStartSpeechToText = () => {
-    results.length = 0;
-    startSpeechToText();
-  };
-
   if (error) return <p>Web Speech API is not available in this browser 🤷‍</p>;
 
   return (
-    <div className="flex flex-row items-center bg-white w-full">
-      <div className="mr-3">
-        <button
-          className="flex items-center justify-center"
-          onClick={isRecording ? stopSpeechToText : handleStartSpeechToText}
-        >
-          <span>
-            <MicrophoneIcon
-              className={
-                isRecording ? "h-8 w-8  text-red-500" : "h-8 w-8 text-gray-500 "
-              }
-            />
-          </span>
-        </button>
-      </div>
+    <div className="flex flex-row items-center bg-white p-3 w-full">
+      
       <div className="flex-grow mr-4">
         <div className="relative w-full">
           <input
@@ -94,7 +76,7 @@ const ChatFooterText: React.FC<ChatFooterProps> = ({
             }}
             onKeyDown={handleKeyDown}
             type="text"
-            className="flex w-full border rounded-md focus:outline-none focus:border-indigo-300 p-2"
+            className="flex w-full border rounded-md h-12 focus:outline-none focus:border-indigo-300 p-2"
           />
         </div>
       </div>

@@ -13,13 +13,11 @@ const getGPTResponse = async (sessionId: string, message: string) => {
   return response.data;
 };
 
-const clearChat = async (sessionId: string = 'jack') => {
-  const response = await axios.delete(
+const clearChat = (sessionId: string = "jack") => {
+  return axios.delete(
     `http://127.0.0.1:5000/chat_sessions/${sessionId}/messages`
   );
-  return response.data;
 };
-
 
 const getGPTCompletion = async (
   promptTemplate: string,
@@ -30,7 +28,6 @@ const getGPTCompletion = async (
   contextData: ContextData[],
   temperature: number
 ) => {
-
   const tmp = await getGPTResponse("jack", message);
   const responseText = tmp.response;
   return sanitizeHtml(responseText);

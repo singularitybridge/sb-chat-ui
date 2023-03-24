@@ -1,7 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 const apiKeyForGoogle = "AIzaSyChUGpxx9shF3dckbeNdR7frcwcuZ4VrGg";
 
-
 interface Input {
   text: string;
 }
@@ -27,11 +26,12 @@ const generateAudioFromText = (
   voiceName: string
 ): Promise<ArrayBuffer> => {
 
-  console.log('object :>> ', text, languageCode, voiceName);
+  const trimmedText = text.substring(0, 80);
 
 
   const requestBody: RequestBody = {
-    input: { text },
+    // input: { text },
+    input: { text: trimmedText },
     voice: { languageCode, name: voiceName },
     audioConfig: { audioEncoding: "MP3" },
   };
@@ -46,11 +46,11 @@ const generateAudioFromText = (
 
   const url = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKeyForGoogle}`;
 
-  return axios.post<ArrayBuffer>(url, requestBody, config).then(
-    (response: AxiosResponse<any>) => {
+  return axios
+    .post<ArrayBuffer>(url, requestBody, config)
+    .then((response: AxiosResponse<any>) => {
       return response.data.audioContent;
-    }
-  );
+    });
 };
 
 export { generateAudioFromText };

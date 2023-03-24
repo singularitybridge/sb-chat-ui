@@ -24,6 +24,11 @@ export const getMessageText = (message: Message) => {
   return message.textTranslated || message.text;
 };
 
+export const sanitizeMessageText = (text: string) => {
+  // turn "hello {{ some : data , "here" : "oi" }} world" into "hello world"
+  return text.replace(/{{.*?}}/g, "");
+};
+
 export const getMessageTextGPT = (message: Message) => {
   if (message.senderType === SenderType.user) {
     return message.textTranslated || message.text;

@@ -8,6 +8,7 @@ import {
   getChatBot,
   SenderType,
   getMessageText,
+  sanitizeMessageText,
 } from "../atoms/dataStore";
 import { playAudio } from "../services/AudioService";
 import { Avatar, AvatarStyles } from "./Avatar";
@@ -28,6 +29,24 @@ const ChatMessageStyles = {
     flexRow: "flex items-center justify-start flex-row-reverse",
     message: "relative mr-3 text-sm bg-indigo-100 py-4 px-4 shadow rounded-lg",
   },
+};
+
+const getMessageMetaData = (message: Message) => {
+  const messageText = getMessageText(message);
+  const regex = /{{\s*"([^"]+)"\s*,\s*"([^"]+)"\s*,\s*"([^"]+)"\s*}}/;
+  const match = regex.exec(messageText);
+
+  if (match) {
+    const obj = {
+      title: match[1],
+      price: match[2],
+      pic: match[3],
+    };
+    console.log("pic found: ", obj.pic);
+    return obj;
+  } else {
+    return null;
+  }
 };
 
 const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
@@ -54,7 +73,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
     <>
       <div
         className={messageStyles.container}
-        onClick={() => playAudio(message.audio)}
+        // onClick={() => playAudio(message.audio)}
       >
         <div className={messageStyles.flexRow}>
           <Avatar
@@ -72,7 +91,25 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
                   : "ltr",
             }}
           >
-            <div>{getMessageText(message)}</div>
+            <div>{sanitizeMessageText(getMessageText(message))}</div>
+
+            {getMessageMetaData(message)?.pic && (
+              <div className="mt-6">
+                <div className="flex flex-col justify-between space-y-3">
+                  <img
+                    src={getMessageMetaData(message)?.pic || ""}
+                    alt="message"
+                    className="w-44"
+                  />
+                  <div className="text-base font-medium">
+                    {getMessageMetaData(message)?.title}
+                    </div>
+                  <div className="text-base text-lime-700">
+                    {getMessageMetaData(message)?.price}
+                    </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

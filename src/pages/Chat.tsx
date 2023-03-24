@@ -36,7 +36,6 @@ const Chat = () => {
   const chatContainerRef = useRef(null);
   const [chatBot, setChatBot] = useState<ChatBot>(defaultChatBot);
 
-  const [isChatBotActive, setIsChatBotActive] = useState(false);
   const [isUserInputEnabled, setIsUserInputEnabled] = useState(false);
   const [chatState, setChatState] = useState(ChatState.GETTING_DATA);
   const [audioCircleActive, setAudioCircleActive] = useState(false);
@@ -159,6 +158,11 @@ const Chat = () => {
           autoTranslateTarget={chatBot?.autoTranslateTarget || "en"}
           chatState={chatState}
         />
+        {/* <ChatFooterText
+          onSendMessage={onSendMessage}
+          autoTranslateTarget={chatBot?.autoTranslateTarget || "en"}
+          chatState={chatState}
+        /> */}
       </ChatFooterContainer>
     </>
   );

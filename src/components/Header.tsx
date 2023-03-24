@@ -26,8 +26,8 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const [chatBotDescription, setChatBotDescription] = useState<string>("");
   const [chatBotAvatar, setChatBotAvatar] = useState<string>("");
 
-  const handleClearChat = () => {
-    clearChat("jack");
+  const handleClearChat = async () => {
+    await clearChat("jack");
     window.location.reload();
   };
 
