@@ -9,9 +9,9 @@ export const ChatBotNotLoaded = "ChatBotNotLoaded";
 
 export interface Message {
   id?: string;
-  text: string;
-  textTranslated: string;
-  sender?: string;
+  content: any;
+  textTranslated?: string;
+  role?: string;
   timestamp?: number;
   senderType?: SenderType.user | SenderType.bot;
   audio?: ArrayBuffer;
@@ -19,9 +19,9 @@ export interface Message {
 
 export const getMessageText = (message: Message) => {
   if (message.senderType === SenderType.user) {
-    return message.text;
+    return message.content;
   }
-  return message.textTranslated || message.text;
+  return message.textTranslated || message.content;
 };
 
 export const sanitizeMessageText = (text: string) => {
@@ -31,9 +31,9 @@ export const sanitizeMessageText = (text: string) => {
 
 export const getMessageTextGPT = (message: Message) => {
   if (message.senderType === SenderType.user) {
-    return message.textTranslated || message.text;
+    return message.textTranslated || message.content;
   }
-  return message.text;
+  return message.content;
 };
 
 export interface UserProfile {
@@ -68,7 +68,7 @@ export interface ContextData {
 
 export const messagesState = atom<Message[]>({
   key: "messages",
-  default: [],
+  default: []
 });
 
 export const defaultChatBot: ChatBot = {

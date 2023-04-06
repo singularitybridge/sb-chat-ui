@@ -19,6 +19,7 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
+
   const userProfile = useRecoilValue(userProfileState);
   const chatBots = useRecoilValue(chatBotsState);
 
@@ -26,9 +27,15 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const [chatBotDescription, setChatBotDescription] = useState<string>("");
   const [chatBotAvatar, setChatBotAvatar] = useState<string>("");
 
+  const { id } = useParams<{ id: string }>();
+
   const handleClearChat = async () => {
-    await clearChat("jack");
-    window.location.reload();
+    if (id) {
+      await clearChat(id);
+      window.location.reload();
+    } else {      
+      console.error('chatBotId is undefined');
+    }
   };
 
   useEffect(() => {

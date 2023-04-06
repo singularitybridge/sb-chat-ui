@@ -72,7 +72,7 @@ const Chat = () => {
       setChatData((prevChatData) => [
         ...prevChatData,
         {
-          text: message,
+          content: [{ text: message, type: "text" }],
           textTranslated: translatedMessage,
           sender: userProfile.name,
           senderType: SenderType.user,
@@ -82,7 +82,7 @@ const Chat = () => {
 
     const response = await getGPTCompletion(
       chatBot.prompt,
-      chatBot.name,
+      chatBot.key,
       userProfile.name,
       translatedMessage || message,
       chatData || [],
@@ -94,27 +94,27 @@ const Chat = () => {
       ? await translateText(response, chatBot.autoTranslateTarget)
       : "";
 
-    const ttsResponse = await generateAudioFromText(
-      translatedResponse || response,
-      chatBot.ttsLanguage,
-      chatBot.ttsActor
-    );
+    // const ttsResponse = await generateAudioFromText(
+    //   translatedResponse || response,
+    //   chatBot.ttsLanguage,
+    //   chatBot.ttsActor
+    // );
 
     setChatData((prevChatData) => [
       ...prevChatData,
       {
-        text: response,
+        content: response,
         textTranslated: translatedResponse,
         sender: chatBot.name,
         senderType: SenderType.bot,
-        audio: ttsResponse,
+        // audio: ttsResponse,
       },
     ]);
 
     setChatState(ChatState.PLAYING);
 
     setAudioCircleActive(true);
-    await playAudio(ttsResponse);
+    // await playAudio(ttsResponse);
     setAudioCircleActive(false);
     setChatState(ChatState.LISTENING);
     setIsUserInputEnabled(true);
@@ -138,12 +138,22 @@ const Chat = () => {
                       scaleTo={12}
                     />
 
-                    <ChatMessageWelcome
-                      onClickStartChat={() => onSendMessage("hi")}
-                    />
+                    {chatData.length === 0 && (
+                      <ChatMessageWelcome
+                        onClickStartChat={() => onSendMessage("hi")}
+                      />
+                    )}
 
                     {chatData.map((message: Message, index: number) => {
-                      return <ChatMessage key={index} message={message} />;
+                      return (
+                        <ChatMessage
+                          key={index}
+                          message={message}
+                          onUserSelection={(selection) => {
+                            onSendMessage(selection);
+                          }}
+                        />
+                      );
                     })}
                   </div>
                 </div>
@@ -153,16 +163,16 @@ const Chat = () => {
         </ContainerBGImage>
       </ContentContainer>
       <ChatFooterContainer>
-        <ChatFooterVoice
-          onSendMessage={onSendMessage}
-          autoTranslateTarget={chatBot?.autoTranslateTarget || "en"}
-          chatState={chatState}
-        />
-        {/* <ChatFooterText
+        {/* <ChatFooterVoice
           onSendMessage={onSendMessage}
           autoTranslateTarget={chatBot?.autoTranslateTarget || "en"}
           chatState={chatState}
         /> */}
+        <ChatFooterText
+          onSendMessage={onSendMessage}
+          autoTranslateTarget={chatBot?.autoTranslateTarget || "en"}
+          chatState={chatState}
+        />
       </ChatFooterContainer>
     </>
   );

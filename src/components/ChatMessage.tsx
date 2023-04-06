@@ -16,7 +16,72 @@ import { Avatar, AvatarStyles } from "./Avatar";
 interface ChatMessageProps {
   message: Message;
   autoTranslate?: boolean;
+  onUserSelection?: (selection: string) => void;
 }
+
+interface MessageTextProps {
+  text: string;
+}
+
+const MessageText: React.FC<MessageTextProps> = ({ text }) => {
+  return <div className="mb-3">{text}</div>;
+};
+
+interface MessageOptionsProps {
+  options: [any];
+  onOptionClick?: (option: any) => void;
+}
+
+const MessageOptions: React.FC<MessageOptionsProps> = ({
+  options,
+  onOptionClick,
+}) => {
+  const handleClick = (selection: string) => {
+    if (onOptionClick) {      
+      onOptionClick(selection);
+    }
+  };
+
+  return (
+    <div className="w-full">
+      {options.map((option, index) => (
+        <button
+          key={index}
+          onClick={() => handleClick(option.text || option)}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl mt-3 w-full"
+        >
+          {option.text || option}
+        </button>
+      ))}
+    </div>
+  );
+};
+
+
+
+const renderContent = (content: any[], onUserSelection?: (selection: string) => void) => { 
+
+  console.log('render content', content);
+
+
+  return content.map((item, index) => {
+    switch (item.type) {
+      case "text":
+        return <MessageText key={index} text={item.text} />;
+      case "options":
+        return (
+          <MessageOptions
+            key={index}
+            options={item.options}
+            onOptionClick={onUserSelection} // Pass onUserSelection as the onOptionClick callback
+          />
+        );
+      default:
+        return null;
+    }
+  });
+};
+
 
 const ChatMessageStyles = {
   user: {
@@ -31,25 +96,10 @@ const ChatMessageStyles = {
   },
 };
 
-const getMessageMetaData = (message: Message) => {
-  const messageText = getMessageText(message);
-  const regex = /{{\s*"([^"]+)"\s*,\s*"([^"]+)"\s*,\s*"([^"]+)"\s*}}/;
-  const match = regex.exec(messageText);
-
-  if (match) {
-    const obj = {
-      title: match[1],
-      price: match[2],
-      pic: match[3],
-    };
-    console.log("pic found: ", obj.pic);
-    return obj;
-  } else {
-    return null;
-  }
-};
-
-const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
+const ChatMessage: React.FC<ChatMessageProps> = ({
+  message,
+  onUserSelection,
+}) => {
   const [userProfile, setUserProfile] = useRecoilState(userProfileState);
   const chatBots = useRecoilValue(chatBotsState);
   const { id } = useParams<{ id: string }>();
@@ -91,25 +141,11 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
                   : "ltr",
             }}
           >
-            <div>{sanitizeMessageText(getMessageText(message))}</div>
+            {/* <div>{sanitizeMessageText(getMessageText(message))}</div> */}
+            {/* <div>{message.content}</div> */}
+            {/* <div>{renderContent(message.content)}</div> */}
+            <div>{renderContent(message.content, onUserSelection)}</div> {/* Pass onUserSelection to renderContent */}
 
-            {getMessageMetaData(message)?.pic && (
-              <div className="mt-6">
-                <div className="flex flex-col justify-between space-y-3">
-                  <img
-                    src={getMessageMetaData(message)?.pic || ""}
-                    alt="message"
-                    className="w-44"
-                  />
-                  <div className="text-base font-medium">
-                    {getMessageMetaData(message)?.title}
-                    </div>
-                  <div className="text-base text-lime-700">
-                    {getMessageMetaData(message)?.price}
-                    </div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>

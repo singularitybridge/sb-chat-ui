@@ -97,6 +97,7 @@ interface ChatBotAPIResponse {
 }
 
 const mapChatBot = (chatBot: ChatBotAPIResponse) => {
+
   return {
     key: chatBot.key,
     name: chatBot.name,
