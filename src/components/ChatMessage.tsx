@@ -24,7 +24,7 @@ interface MessageTextProps {
 }
 
 const MessageText: React.FC<MessageTextProps> = ({ text }) => {
-  return <div className="mb-3">{text}</div>;
+  return <div className="mb-5">{text}</div>;
 };
 
 interface MessageOptionsProps {
@@ -37,7 +37,7 @@ const MessageOptions: React.FC<MessageOptionsProps> = ({
   onOptionClick,
 }) => {
   const handleClick = (selection: string) => {
-    if (onOptionClick) {      
+    if (onOptionClick) {
       onOptionClick(selection);
     }
   };
@@ -45,24 +45,29 @@ const MessageOptions: React.FC<MessageOptionsProps> = ({
   return (
     <div className="w-full">
       {options.map((option, index) => (
-        <button
-          key={index}
-          onClick={() => handleClick(option.text || option)}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl mt-3 w-full"
-        >
-          {option.text || option}
-        </button>
+        <div key={option.text} className=" bg-white hover:bg-slate-100 p-5 mt-3 rounded-2xl flex space-x-2" onClick={() => handleClick(option.text || option)}>
+
+          {option.image && (
+            <img src={option.image} alt={option.text || option} className=" w-16" />
+          )}
+
+          <button
+            key={index}            
+            className=" text-slate-700 font-bold "
+          >
+            {option.text || option}
+          </button>
+        </div>
       ))}
     </div>
   );
 };
 
-
-
-const renderContent = (content: any[], onUserSelection?: (selection: string) => void) => { 
-
-  console.log('render content', content);
-
+const renderContent = (
+  content: any[],
+  onUserSelection?: (selection: string) => void
+) => {
+  console.log("render content", content);
 
   return content.map((item, index) => {
     switch (item.type) {
@@ -81,7 +86,6 @@ const renderContent = (content: any[], onUserSelection?: (selection: string) => 
     }
   });
 };
-
 
 const ChatMessageStyles = {
   user: {
@@ -144,8 +148,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             {/* <div>{sanitizeMessageText(getMessageText(message))}</div> */}
             {/* <div>{message.content}</div> */}
             {/* <div>{renderContent(message.content)}</div> */}
-            <div>{renderContent(message.content, onUserSelection)}</div> {/* Pass onUserSelection to renderContent */}
-
+            <div>{renderContent(message.content, onUserSelection)}</div>{" "}
+            {/* Pass onUserSelection to renderContent */}
           </div>
         </div>
       </div>

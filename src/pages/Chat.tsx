@@ -137,12 +137,10 @@ const Chat = () => {
                       scaleFrom={10}
                       scaleTo={12}
                     />
-
-                    {chatData.length === 0 && (
-                      <ChatMessageWelcome
-                        onClickStartChat={() => onSendMessage("hi")}
-                      />
-                    )}
+                    
+                    <ChatMessageWelcome
+                      onClickStartChat={() => onSendMessage("hi")}
+                    />
 
                     {chatData.map((message: Message, index: number) => {
                       return (
