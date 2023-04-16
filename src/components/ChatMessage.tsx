@@ -24,7 +24,7 @@ interface MessageTextProps {
 }
 
 const MessageText: React.FC<MessageTextProps> = ({ text }) => {
-  return <div className="mb-5">{text}</div>;
+  return <div className="">{text}</div>;
 };
 
 interface MessageOptionsProps {
@@ -43,25 +43,47 @@ const MessageOptions: React.FC<MessageOptionsProps> = ({
   };
 
   return (
-    <div className="w-full">
-      {options.map((option, index) => (
-        <div key={option.text} className=" bg-white hover:bg-slate-100 p-5 mt-3 rounded-2xl flex space-x-2" onClick={() => handleClick(option.text || option)}>
+    <div className="w-full mt-4 mb-2">
+      <div className="flex flex-wrap -mx-2">
+        {options.map((option, index) => (
+          <div key={option.text} className="w-1/2 px-2 mb-3">
+            <div
+              className="bg-white hover:bg-slate-100 rounded-xl flex flex-col items-center justify-center h-full p-2"
+              onClick={() => handleClick(option.text || option)}
+            >
+              {option.image && (
+                <img
+                  src={option.image}
+                  alt={option.text || option}
+                  className=" rounded-md"
+                />
+              )}
 
-          {option.image && (
-            <img src={option.image} alt={option.text || option} className=" w-16" />
-          )}
-
-          <button
-            key={index}            
-            className=" text-slate-700 font-bold "
-          >
-            {option.text || option}
-          </button>
-        </div>
-      ))}
+              <div className="flex flex-col items-center">
+                <button
+                  key={index}
+                  className={`text-slate-600 ${
+                    option.image ? "self-start p-3" : " my-1"
+                  }`}
+                >
+                  {option.text || option}
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
+
+
+
+
+
+
+
+
 
 const renderContent = (
   content: any[],
@@ -115,11 +137,11 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   const chatBot = getChatBot(chatBots, id);
 
   const messageStyles =
-    message.senderType === SenderType.user
+    message.role === SenderType.user
       ? ChatMessageStyles.user
       : ChatMessageStyles.bot;
   const avatarImage =
-    message.senderType === SenderType.user
+    message.role === SenderType.user
       ? userProfile.avatar
       : chatBot?.avatar;
 

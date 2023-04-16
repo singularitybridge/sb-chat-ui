@@ -14,7 +14,7 @@ import {
   ChatBot,
   defaultChatBot,
 } from "../atoms/dataStore";
-import { getGPTCompletion } from "../services/ChatService";
+import { getChatHistory, getGPTCompletion } from "../services/ChatService";
 import { translateText } from "../services/TranslationService";
 import { generateAudioFromText } from "../services/TTSService";
 import { ChatMessage } from "../components/ChatMessage";
@@ -48,6 +48,21 @@ const Chat = () => {
   useEffect(() => {
     if (!chatBot || chatBot.key === ChatBotNotLoaded) return;
     document.title = chatBot.name;
+  }, [chatBot]);
+
+  // when app starts, get messages from here: http://127.0.0.1:5000/chat_sessions/ai-teacher/messages
+
+  useEffect(() => {
+    if (!chatBot || chatBot.key === ChatBotNotLoaded) return;
+
+    getChatHistory(chatBot.key)
+      .then((chatHistory) => {
+        console.log("loaded history: ", chatHistory);
+        setChatData(chatHistory);
+      })
+      .catch((err) => {
+        console.log("error loading chat history: ", err);
+      });
   }, [chatBot]);
 
   useEffect(() => {
@@ -137,7 +152,7 @@ const Chat = () => {
                       scaleFrom={10}
                       scaleTo={12}
                     />
-                    
+
                     <ChatMessageWelcome
                       onClickStartChat={() => onSendMessage("hi")}
                     />

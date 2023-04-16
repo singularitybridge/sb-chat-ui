@@ -13,6 +13,14 @@ const getGPTResponse = async (sessionId: string, message: string) => {
   return response.data;
 };
 
+const getChatHistory = async (sessionId: string) => {
+  const response = await axios.get(
+    `http://127.0.0.1:5000/chat_sessions/${sessionId}/messages`
+  );
+  return response.data;
+};
+
+
 const clearChat = (sessionId: string) => {
   return axios.delete(
     `http://127.0.0.1:5000/chat_sessions/${sessionId}/messages`
@@ -32,4 +40,4 @@ const getGPTCompletion = async (
   return tmp.response;
 };
 
-export { getGPTCompletion, clearChat };
+export { getGPTCompletion, clearChat, getChatHistory };

@@ -13,12 +13,12 @@ export interface Message {
   textTranslated?: string;
   role?: string;
   timestamp?: number;
-  senderType?: SenderType.user | SenderType.bot;
+  // senderType?: SenderType.user | SenderType.bot;
   audio?: ArrayBuffer;
 }
 
 export const getMessageText = (message: Message) => {
-  if (message.senderType === SenderType.user) {
+  if (message.role === SenderType.user) {
     return message.content;
   }
   return message.textTranslated || message.content;
@@ -30,7 +30,7 @@ export const sanitizeMessageText = (text: string) => {
 };
 
 export const getMessageTextGPT = (message: Message) => {
-  if (message.senderType === SenderType.user) {
+  if (message.role === SenderType.user) {
     return message.textTranslated || message.content;
   }
   return message.content;
