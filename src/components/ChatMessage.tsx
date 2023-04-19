@@ -103,11 +103,21 @@ const renderContent = (
             onOptionClick={onUserSelection} // Pass onUserSelection as the onOptionClick callback
           />
         );
+      case "video":
+        return (
+          <video
+            key={index}
+            src={item.video_url}
+            controls
+            className="w-full my-2"
+          />
+        );
       default:
         return null;
     }
   });
 };
+
 
 const ChatMessageStyles = {
   user: {
