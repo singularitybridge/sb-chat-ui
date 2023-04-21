@@ -14,7 +14,7 @@ import {
   ChatBot,
   defaultChatBot,
 } from "../atoms/dataStore";
-import { getChatHistory, getGPTCompletion } from "../services/ChatService";
+import { getSessionMessages, getGPTCompletion } from "../services/ChatService";
 import { translateText } from "../services/TranslationService";
 import { generateAudioFromText } from "../services/TTSService";
 import { ChatMessage } from "../components/ChatMessage";
@@ -27,9 +27,24 @@ import { ChatMessageWelcome } from "../components/ChatMessageWelcome";
 import { playAudio } from "../services/AudioService";
 import { ChatState } from "../components/chat/common";
 import { AudioCircle } from "../components/chat/AudioCircle";
+import { useParams } from "react-router-dom";
+
+// move to the api service
+const transformApiResponseToMessage = (message: any): Message => {
+  return {
+    content: message.content.map((contentItem: any) => ({
+      ...contentItem,
+      options: contentItem.options
+        ? contentItem.options.map((option: any) => ({
+            ...option,
+          }))
+        : undefined,
+    })),
+    role: message.role,
+  };
+};
 
 const Chat = () => {
-  const [context, setContext] = useRecoilState(contextData);
   const [chatData, setChatData] = useRecoilState(messagesState);
   const [chatBots, setChatBots] = useRecoilState(chatBotsState);
   const userProfile = useRecoilValue(userProfileState);
@@ -40,6 +55,34 @@ const Chat = () => {
   const [chatState, setChatState] = useState(ChatState.GETTING_DATA);
   const [audioCircleActive, setAudioCircleActive] = useState(false);
 
+  const [sessionMessages, setSessionMessages] = useState<Message[]>([]);
+  const { sessionId = "" } = useParams<{ sessionId?: string }>();
+
+  useEffect(() => {
+
+    if (!sessionId) return;
+
+    console.log('load history with session id: ', sessionId);
+
+
+    // if (!chatBot || chatBot.key === ChatBotNotLoaded) return;
+
+    // Change the function call to pass the sessionId
+    getSessionMessages(sessionId)
+      .then((chatHistoryResponse) => {
+        console.log("loaded history: ", chatHistoryResponse);
+        // if (chatHistoryResponse && chatHistoryResponse.messages) {
+        //   const chatHistory = chatHistoryResponse.messages;
+          setSessionMessages(chatHistoryResponse.map(transformApiResponseToMessage));
+        // } else {
+        //   console.log("No messages found in chat history response");
+        // }
+      })
+      .catch((err) => {
+        console.log("error loading chat history: ", err);
+      });
+  }, [sessionId]);
+
   useEffect(() => {
     if (userProfile.activeChatBot === ChatBotNotLoaded || !chatBots) return;
     setChatBot(getChatBot(chatBots, userProfile.activeChatBot));
@@ -48,21 +91,6 @@ const Chat = () => {
   useEffect(() => {
     if (!chatBot || chatBot.key === ChatBotNotLoaded) return;
     document.title = chatBot.name;
-  }, [chatBot]);
-
-  // when app starts, get messages from here: http://127.0.0.1:5000/chat_sessions/ai-teacher/messages
-
-  useEffect(() => {
-    if (!chatBot || chatBot.key === ChatBotNotLoaded) return;
-
-    getChatHistory(chatBot.key)
-      .then((chatHistory) => {
-        console.log("loaded history: ", chatHistory);
-        setChatData(chatHistory);
-      })
-      .catch((err) => {
-        console.log("error loading chat history: ", err);
-      });
   }, [chatBot]);
 
   useEffect(() => {
@@ -77,14 +105,14 @@ const Chat = () => {
   const onSendMessage = async (message: string) => {
     setIsUserInputEnabled(false);
     setChatState(ChatState.GETTING_DATA);
-
+  
     const translatedMessage =
       chatBot && chatBot.autoTranslate
         ? await translateText(message, "en")
         : "";
-
+  
     if (message !== "") {
-      setChatData((prevChatData) => [
+      setSessionMessages((prevChatData) => [
         ...prevChatData,
         {
           content: [{ text: message, type: "text" }],
@@ -94,46 +122,38 @@ const Chat = () => {
         },
       ]);
     }
-
+  
     const response = await getGPTCompletion(
       chatBot.prompt,
-      chatBot.key,
+      sessionId,
       userProfile.name,
       translatedMessage || message,
       chatData || [],
-      context,
       chatBot.temperature
     );
-
+  
     const translatedResponse = chatBot.autoTranslate
       ? await translateText(response, chatBot.autoTranslateTarget)
       : "";
-
-    // const ttsResponse = await generateAudioFromText(
-    //   translatedResponse || response,
-    //   chatBot.ttsLanguage,
-    //   chatBot.ttsActor
-    // );
-
-    setChatData((prevChatData) => [
+  
+    setSessionMessages((prevChatData) => [
       ...prevChatData,
       {
         content: response,
         textTranslated: translatedResponse,
         sender: chatBot.name,
         senderType: SenderType.bot,
-        // audio: ttsResponse,
       },
     ]);
-
+  
     setChatState(ChatState.PLAYING);
-
+  
     setAudioCircleActive(true);
-    // await playAudio(ttsResponse);
     setAudioCircleActive(false);
     setChatState(ChatState.LISTENING);
     setIsUserInputEnabled(true);
   };
+  
 
   return (
     <>
@@ -157,7 +177,7 @@ const Chat = () => {
                       onClickStartChat={() => onSendMessage("hi")}
                     />
 
-                    {chatData.map((message: Message, index: number) => {
+                    {sessionMessages.map((message: Message, index: number) => {
                       return (
                         <ChatMessage
                           key={index}

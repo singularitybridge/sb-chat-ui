@@ -49,6 +49,7 @@ export interface ChatBot {
   description: string;
   avatar: string;
   bgImage: string;
+  backgroundImage?: string;
   prompt: string;
   logo: string;
   autoTranslate: boolean;
@@ -56,6 +57,7 @@ export interface ChatBot {
   temperature: number;
   ttsLanguage: string;
   ttsActor: string;
+  avatarImage: string;
 }
 
 export interface ContextData {
@@ -78,6 +80,8 @@ export const defaultChatBot: ChatBot = {
     "Emotional support, stress, anxiety, depression, and relationship issues",
   avatar: "/images/avatars/av2.png",
   bgImage: "/chat-bg.png",
+  backgroundImage: "/chat-bg.png",
+  avatarImage: "/images/avatars/av2.png",
   prompt:
     "The following is a conversation between {{userName}} and an AI therapist named {{agentName}}. The therapist is calm, patient and emphatic. his goal is to help {{userName}} feel better and act in positive ways.\n {{prevChatAsText}}\n {{userName}}: {{message}}\n {{agentName}}: ",
   logo: "/parent-coach-logo.png",

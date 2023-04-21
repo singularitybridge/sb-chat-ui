@@ -14,7 +14,7 @@ export const browserRouter = createBrowserRouter([
         element: <Chat />,
       },     
       {
-        path: "/chat/:id",
+        path: "/chat/:sessionId",
         element: <Chat />,
       },
       {

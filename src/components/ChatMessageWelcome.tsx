@@ -8,6 +8,7 @@ import {
   getChatBot,
   SenderType,
   getMessageText,
+  ChatBot,
 } from "../atoms/dataStore";
 import { Avatar, AvatarStyles } from "./Avatar";
 
@@ -18,15 +19,27 @@ interface ChatMessageProps {
 const ChatMessageWelcome: React.FC<ChatMessageProps> = ({
   onClickStartChat,
 }) => {
-  const chatBots = useRecoilValue(chatBotsState);
-  const { id } = useParams<{ id: string }>();
+  // const chatBots = useRecoilValue(chatBotsState);
+  const { sessionId } = useParams<{ sessionId: string }>();
   const [chatStarted, setChatStarted] = useState(false);
+  const [chatBot, setChatBot] = useState<ChatBot | null>(null);
 
-  if (!id) {
+  if (!sessionId) {
     return null;
   }
 
-  const chatBot = getChatBot(chatBots, id);
+  useEffect(() => {
+    fetch(`http://127.0.0.1:5000/chat_sessions/${sessionId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.chatbot) {
+          setChatBot(data.chatbot);
+        }
+      });
+  }, [sessionId]);
+  
+
+  
 
   const handleStartChat = () => {
     setChatStarted(true);
@@ -47,7 +60,7 @@ const ChatMessageWelcome: React.FC<ChatMessageProps> = ({
                 : "ltr",
           }}
         >
-          <Avatar imageUrl={chatBot?.avatar} avatarStyle={AvatarStyles.large} />
+          <Avatar imageUrl={chatBot?.avatarImage || ''} avatarStyle={AvatarStyles.large} />
           <div>{chatBot?.description}</div>
           {chatStarted ? null : (
               <button

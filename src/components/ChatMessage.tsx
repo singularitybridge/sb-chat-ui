@@ -9,9 +9,22 @@ import {
   SenderType,
   getMessageText,
   sanitizeMessageText,
+  ChatBot,
 } from "../atoms/dataStore";
 import { playAudio } from "../services/AudioService";
 import { Avatar, AvatarStyles } from "./Avatar";
+
+import {
+  MicrophoneIcon,
+  PaperAirplaneIcon,
+  XMarkIcon,
+  UserIcon,
+  ChatBubbleLeftEllipsisIcon,
+  CloudArrowDownIcon,
+  MinusIcon,
+  BoltIcon,
+  CursorArrowRippleIcon,
+} from "@heroicons/react/24/outline";
 
 interface ChatMessageProps {
   message: Message;
@@ -26,6 +39,32 @@ interface MessageTextProps {
 const MessageText: React.FC<MessageTextProps> = ({ text }) => {
   return <div className="">{text}</div>;
 };
+
+// Create the MessageInfo component
+const MessageInfo: React.FC<MessageTextProps> = ({ text }) => {
+  return (
+    <div className="flex flex-col items-center">
+      <div className=" bg-sky-500 rounded-full p-2 h-10 w-10 mb-2">
+        <CursorArrowRippleIcon className="text-sm mb-1" />
+      </div>
+      <div className="">{text}</div>
+    </div>
+  );
+};
+
+// Create the MessageCallout component
+const MessageCallout: React.FC<MessageTextProps> = ({ text }) => {
+  return (
+    <div className="flex flex-col items-center">
+      <div className=" bg-fuchsia-600 rounded-full p-2 h-10 w-10 mb-2">
+        <BoltIcon className=" text-sm mb-1" />
+      </div>
+      <div className="">{text}</div>
+    </div>
+  );
+};
+
+
 
 interface MessageOptionsProps {
   options: [any];
@@ -77,14 +116,6 @@ const MessageOptions: React.FC<MessageOptionsProps> = ({
   );
 };
 
-
-
-
-
-
-
-
-
 const renderContent = (
   content: any[],
   onUserSelection?: (selection: string) => void
@@ -112,12 +143,17 @@ const renderContent = (
             className="w-full my-2"
           />
         );
+
+      case "text-info":
+        return <MessageInfo key={index} text={item.text} />;
+      case "text-callout":
+        return <MessageCallout key={index} text={item.text} />;
+
       default:
         return null;
     }
   });
 };
-
 
 const ChatMessageStyles = {
   user: {
@@ -138,13 +174,25 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 }) => {
   const [userProfile, setUserProfile] = useRecoilState(userProfileState);
   const chatBots = useRecoilValue(chatBotsState);
-  const { id } = useParams<{ id: string }>();
+  const { sessionId } = useParams<{ sessionId: string }>();
 
-  if (!id) {
+  if (!sessionId) {
     return null;
   }
 
-  const chatBot = getChatBot(chatBots, id);
+  const [chatBot, setChatBot] = useState<ChatBot | null>(null);
+
+  useEffect(() => {
+    fetch(`http://127.0.0.1:5000/chat_sessions/${sessionId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.chatbot) {
+          setChatBot(data.chatbot);
+        }
+      });
+  }, [sessionId]);
+
+  // const chatBot = getChatBot(chatBots, sessionId);
 
   const messageStyles =
     message.role === SenderType.user
@@ -153,7 +201,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   const avatarImage =
     message.role === SenderType.user
       ? userProfile.avatar
-      : chatBot?.avatar;
+      : chatBot?.avatarImage;
 
   return (
     <>

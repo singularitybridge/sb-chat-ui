@@ -12,7 +12,7 @@ import { useParams } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import { useEffect, useState } from "react";
 import { translateText } from "../services/TranslationService";
-import { clearChat } from "../services/ChatService";
+import { clearSession } from "../services/ChatService";
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -20,48 +20,48 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
 
-  const userProfile = useRecoilValue(userProfileState);
-  const chatBots = useRecoilValue(chatBotsState);
-
   const [chatBotName, setChatBotName] = useState<string>("");
   const [chatBotDescription, setChatBotDescription] = useState<string>("");
   const [chatBotAvatar, setChatBotAvatar] = useState<string>("");
+  const [chatBot, setChatBot] = useState<ChatBot | null>(null);
 
-  const { id } = useParams<{ id: string }>();
+
+  const { sessionId } = useParams<{ sessionId: string }>();
+
+  useEffect(() => {
+    fetch(`http://127.0.0.1:5000/chat_sessions/${sessionId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.chatbot) {
+          setChatBot(data.chatbot);
+        }
+      });
+  }, [sessionId]);
+  
 
   const handleClearChat = async () => {
-    if (id) {
-      await clearChat(id);
+    if (sessionId) {
+      await clearSession(sessionId);
       window.location.reload();
     } else {      
-      console.error('chatBotId is undefined');
+      console.error('sessionId is undefined');
     }
   };
 
   useEffect(() => {
-    if (chatBots.length === 0 || !userProfile.activeChatBot) {
+    if (!chatBot) {
       return;
     }
-
-    const chatBot = getChatBot(chatBots, userProfile.activeChatBot);
-
-    if (chatBot && chatBot.key === ChatBotNotLoaded) {
-      return;
-    }
-
-    if (chatBot.key === ChatBotNotLoaded) {
-      return;
-    }
-
-    setChatBotAvatar(chatBot.avatar);
-
+  
+    setChatBotAvatar(chatBot.avatarImage);
+  
     if (chatBot.autoTranslate) {
       translateText(chatBot.name, chatBot.autoTranslateTarget).then(
         (translatedText) => {
           setChatBotName(translatedText);
         }
       );
-
+  
       translateText(chatBot.description, chatBot.autoTranslateTarget).then(
         (translatedText) => {
           setChatBotDescription(translatedText);
@@ -71,7 +71,8 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
       setChatBotName(chatBot.name);
       setChatBotDescription(chatBot.description);
     }
-  }, [chatBots]);
+  }, [chatBot]);
+  
 
   return (
     <header className="p-4 flex justify-between items-center">
