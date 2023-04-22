@@ -8,23 +8,24 @@ import {
   userProfileState,
 } from "../atoms/dataStore";
 import { Avatar, AvatarStyles } from "./Avatar";
-import { useParams } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import { useEffect, useState } from "react";
 import { translateText } from "../services/TranslationService";
 import { clearSession } from "../services/ChatService";
+import { useParams, useLocation } from "react-router-dom";
 
 interface HeaderProps {
   onMenuClick: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
-
   const [chatBotName, setChatBotName] = useState<string>("");
   const [chatBotDescription, setChatBotDescription] = useState<string>("");
   const [chatBotAvatar, setChatBotAvatar] = useState<string>("");
   const [chatBot, setChatBot] = useState<ChatBot | null>(null);
 
+  const location = useLocation();
+  const isAdminRoute = location.pathname === "/admin";
 
   const { sessionId } = useParams<{ sessionId: string }>();
 
@@ -37,14 +38,13 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
         }
       });
   }, [sessionId]);
-  
 
   const handleClearChat = async () => {
     if (sessionId) {
       await clearSession(sessionId);
       window.location.reload();
-    } else {      
-      console.error('sessionId is undefined');
+    } else {
+      console.error("sessionId is undefined");
     }
   };
 
@@ -52,16 +52,16 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
     if (!chatBot) {
       return;
     }
-  
+
     setChatBotAvatar(chatBot.avatarImage);
-  
+
     if (chatBot.autoTranslate) {
       translateText(chatBot.name, chatBot.autoTranslateTarget).then(
         (translatedText) => {
           setChatBotName(translatedText);
         }
       );
-  
+
       translateText(chatBot.description, chatBot.autoTranslateTarget).then(
         (translatedText) => {
           setChatBotDescription(translatedText);
@@ -72,32 +72,33 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
       setChatBotDescription(chatBot.description);
     }
   }, [chatBot]);
-  
 
   return (
     <header className="p-4 flex justify-between items-center">
-      <div
-        className="p-1 rounded-2xl bg-gray-200 hover:bg-gray-200 w-9 h-9 cursor-pointer flex items-center justify-center"
-        onClick={onMenuClick}
-      >
-        <Bars2Icon className="h-5 w-5 text-slate-700" />
-      </div>
-      <div className="headerImageAndText flex flex-row items-center w-full text-left pl-5">
-        <Avatar imageUrl={chatBotAvatar} avatarStyle={AvatarStyles.logo} />
-        <div className="ml-3">
-          <div className="text-2xl font-normal">{chatBotName}</div>
-          <div className="text-xs font-light">{chatBotDescription}</div>
-        </div>
-      </div>
+      {!isAdminRoute && (
+        <>
+          <div
+            className="p-1 rounded-2xl bg-gray-200 hover:bg-gray-200 w-9 h-9 cursor-pointer flex items-center justify-center"
+            onClick={onMenuClick}
+          >
+            <Bars2Icon className="h-5 w-5 text-slate-700" />
+          </div>
+          <div className="headerImageAndText flex flex-row items-center w-full text-left pl-5">
+            <Avatar imageUrl={chatBotAvatar} avatarStyle={AvatarStyles.logo} />
+            <div className="ml-3">
+              <div className="text-2xl font-normal">{chatBotName}</div>
+              <div className="text-xs font-light">{chatBotDescription}</div>
+            </div>
+          </div>
 
-      <div className="mr-3 cursor-pointer">
-        <TrashIcon
-          className="h-6 w-6  text-yellow-700"
-          onClick={handleClearChat}
-        />
-      </div>
-
-      <div></div>
+          <div className="mr-3 cursor-pointer">
+            <TrashIcon
+              className="h-6 w-6  text-yellow-700"
+              onClick={handleClearChat}
+            />
+          </div>
+        </>
+      )}
     </header>
   );
 };
