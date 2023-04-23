@@ -21,7 +21,8 @@
     "react-speech-recognition": "^3.10.0",
     "recoil": "^0.7.6",
     "regenerator-runtime": "^0.13.11",
-    "sanitize-html": "^2.10.0"
+    "sanitize-html": "^2.10.0",
+    "tw-elements": "^1.0.0-beta2"
   },
   "devDependencies": {
     "@types/mustache": "^4.2.2",

@@ -1,13 +1,12 @@
-// Router.tsx
 import { Chat } from "./pages/Chat";
 import { NotFound } from "./pages/NotFound";
-import { Admin } from "./pages/Admin"; // Import the Admin component
-
+import { Admin } from "./pages/Admin";
 import React from "react";
-import ReactDOM from "react-dom/client";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom"; // Import the Outlet component
 import App from "./App";
 import { ChatSessionView } from "./services/ChatSessionView";
+import { Dashboard } from "./pages/admin/Dashboard";
+import { ChatbotView } from "./pages/admin/ChatbotView";
 
 export const browserRouter = createBrowserRouter([
   {
@@ -16,7 +15,7 @@ export const browserRouter = createBrowserRouter([
       {
         path: "/",
         element: <Chat />,
-      },     
+      },
       {
         path: "/chat/:sessionId",
         element: <Chat />,
@@ -26,12 +25,22 @@ export const browserRouter = createBrowserRouter([
         element: <Chat />,
       },
       {
-        path: "/admin", // Add a new route for the admin page
+        path: "/admin",
         element: <Admin />,
-      },
-      {
-        path: "/admin/chat-sessions/:id",
-        element: <ChatSessionView />,
+        children: [
+          {
+            index: true,
+            element: <Dashboard />
+          },
+          // {
+          //   path: "/chat-sessions/:id",
+          //   element: <ChatSessionView />,
+          // },
+          {
+            path: "chatbots/:key",
+            element: <ChatbotView />,
+          },
+        ],
       },
       { path: "*", element: <NotFound /> },
     ],

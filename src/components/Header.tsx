@@ -25,7 +25,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const [chatBot, setChatBot] = useState<ChatBot | null>(null);
 
   const location = useLocation();
-  const isAdminRoute = location.pathname === "/admin";
+  const isAdminRoute = location.pathname.startsWith("/admin");
 
   const { sessionId } = useParams<{ sessionId: string }>();
 
@@ -74,9 +74,9 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   }, [chatBot]);
 
   return (
-    <header className="p-4 flex justify-between items-center">
+    <>
       {!isAdminRoute && (
-        <>
+        <header className="p-4 flex justify-between items-center">
           <div
             className="p-1 rounded-2xl bg-gray-200 hover:bg-gray-200 w-9 h-9 cursor-pointer flex items-center justify-center"
             onClick={onMenuClick}
@@ -97,9 +97,9 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
               onClick={handleClearChat}
             />
           </div>
-        </>
+        </header>
       )}
-    </header>
+    </>
   );
 };
 
