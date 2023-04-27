@@ -120,7 +120,7 @@ const renderContent = (
   content: any[],
   onUserSelection?: (selection: string) => void
 ) => {
-  console.log("render content", content);
+  
 
   return content.map((item, index) => {
     switch (item.type) {

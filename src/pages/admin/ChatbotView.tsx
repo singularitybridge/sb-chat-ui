@@ -4,7 +4,8 @@ import { Chatbot } from "../../services/ChatbotService";
 import { useChatbot } from "../../custom-hooks/useChatbot";
 import { ChatbotCard } from "../../components/admin/chatbots/ChatbotCard";
 import { DataItem } from "../../components/admin/DataItem";
-import { ActionsView } from "../../components/admin/ActionsView";
+import { ActionsView } from "../../components/admin/ActionsView/ActionsView";
+import { ReactFlowProvider } from "reactflow";
 
 const ChatbotView: React.FC = () => {
   const { key } = useParams<{ key: string }>();
@@ -24,7 +25,9 @@ const ChatbotView: React.FC = () => {
         <div className="w-1/2 mr-4">
           <div className="">
             <div className="w-full h-96 ">
-              <ActionsView chatbot={chatbot} />
+              <ReactFlowProvider>
+                <ActionsView chatbot={chatbot} />
+              </ReactFlowProvider>
             </div>
 
             <h2 className="text-xl font-bold mb-4">Chatbot Details</h2>
@@ -73,6 +76,5 @@ const ChatbotView: React.FC = () => {
     </>
   );
 };
-
 
 export { ChatbotView };

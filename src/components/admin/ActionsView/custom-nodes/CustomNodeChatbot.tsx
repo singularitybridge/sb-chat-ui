@@ -5,6 +5,7 @@ type CustomNodeData = {
   name: string;
   job: string;
   emoji: string;
+  image: string;
 };
 
 interface CustomNodeProps {
@@ -12,17 +13,15 @@ interface CustomNodeProps {
 }
 
 const CustomNode: React.FC<CustomNodeProps> = ({ data }) => {
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
+  useEffect(() => {}, [data]);
 
   return (
-    <div className="px-4 py-2 shadow-md rounded-md bg-white border-2 border-stone-400">
+    <div className="px-4 py-4 shadow-md rounded-md bg-white border-2 border-stone-400">
       <div className="flex">
-        <div className="rounded-full w-12 h-12 flex justify-center items-center bg-gray-100">
-          {data.emoji}
+        <div className="rounded-full w-24 h-24 flex justify-center items-center bg-gray-100">
+          <img src={data.image} alt="" className="w-16 h-16" />
         </div>
-        <div className="ml-2">
+        <div className="ml-4">
           <div className="text-lg font-bold">{data.name}</div>
           <div className="text-gray-500">{data.job}</div>
         </div>

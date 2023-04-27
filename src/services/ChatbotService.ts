@@ -16,6 +16,7 @@ export interface Chatbot {
 }
 
 interface State {
+  model: string;
   name: string;
   processors: Processor[];
   prompt: string;
