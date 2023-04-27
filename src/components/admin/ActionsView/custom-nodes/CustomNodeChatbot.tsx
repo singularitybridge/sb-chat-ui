@@ -1,10 +1,13 @@
 import { useEffect } from "react";
 import ReactFlow, { Handle, Position } from "reactflow";
+import { CalculatorIcon, KeyIcon } from "@heroicons/react/24/outline";
+import { LabelText } from "../../../chat/LabelText";
 
 type CustomNodeData = {
   name: string;
-  job: string;
-  emoji: string;
+  description: string;
+  key: string;
+  maxTokens: number;
   image: string;
 };
 
@@ -18,12 +21,24 @@ const CustomNode: React.FC<CustomNodeProps> = ({ data }) => {
   return (
     <div className="px-4 py-4 shadow-md rounded-md bg-white border-2 border-stone-400">
       <div className="flex">
-        <div className="rounded-full w-24 h-24 flex justify-center items-center bg-gray-100">
-          <img src={data.image} alt="" className="w-16 h-16" />
+        <div className="w-24 h-24 flex justify-center items-center bg-gray-100">
+          <img src={data.image} alt="" />
         </div>
         <div className="ml-4">
           <div className="text-lg font-bold">{data.name}</div>
-          <div className="text-gray-500">{data.job}</div>
+          <div className="text-gray-500">{data.description}</div>
+
+          <div className="flex items-center pt-5">
+            <LabelText
+              label={<CalculatorIcon className="h-5 w-5 text-slate-400" />}
+              text={data.maxTokens}
+            />
+            <div className="mr-4"></div>
+            <LabelText
+              label={<KeyIcon className="h-5 w-5 text-slate-400" />}
+              text={data.key}
+            />
+          </div>
         </div>
       </div>
 

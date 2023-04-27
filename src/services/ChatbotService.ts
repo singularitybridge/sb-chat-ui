@@ -16,6 +16,7 @@ export interface Chatbot {
 }
 
 interface State {
+  temperature: any;
   model: string;
   name: string;
   processors: Processor[];
@@ -23,10 +24,9 @@ interface State {
 }
 
 interface Processor {
-  processor_data: any;
+  processor_data: {};
   processor_name: string;
 }
-
 
 export async function fetchChatbots(): Promise<Chatbot[]> {
   const response = await fetch("http://127.0.0.1:5000/chatbots");

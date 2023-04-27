@@ -8,7 +8,7 @@ import ReactFlow, {
   MiniMap,
   Background,
   BackgroundVariant,
-  useReactFlow
+  useReactFlow,
 } from "reactflow";
 
 import "reactflow/dist/style.css";
@@ -30,11 +30,19 @@ const nodeTypes = {
 
 const ActionsView: React.FC<ActionsViewProps> = ({ chatbot }) => {
 
+  console.log('chatbot', chatbot);
+
+
   const chatbotNode = {
     id: chatbot.name,
-    
     type: "custom",
-    data: { name: chatbot.name, job: "Chatbot", emoji: "🤖", image: chatbot.avatarImage, },
+    data: {
+      name: chatbot.name,
+      description: chatbot.description,
+      image: chatbot.avatarImage,
+      maxTokens: chatbot.maxTokens,
+      key: chatbot.key,
+    },
     position: { x: (chatbot.states.length * 300) / 2, y: 50 },
   };
 
@@ -43,10 +51,10 @@ const ActionsView: React.FC<ActionsViewProps> = ({ chatbot }) => {
       const stateNode = {
         id: state.name,
         type: "customState",
-        data: { name: state.name, prompt: state.prompt, model: state.model },
+        data: { name: state.name, prompt: state.prompt, model: state.model, temperature: state.temperature },
         position: { x: index * 300, y: 250 },
       };
-  
+
       const processorNodes = state.processors.map(
         (processor, processorIndex) => ({
           id: `${state.name}-${processor.processor_name}`,
@@ -58,12 +66,11 @@ const ActionsView: React.FC<ActionsViewProps> = ({ chatbot }) => {
           position: { x: index * 300, y: 400 + processorIndex * 150 },
         })
       );
-  
+
       return [...acc, stateNode, ...processorNodes];
     },
     [chatbotNode]
   );
-  
 
   const initEdges = chatbot.states.flatMap((state) => {
     const stateToChatbotEdge = {
@@ -95,11 +102,10 @@ const ActionsView: React.FC<ActionsViewProps> = ({ chatbot }) => {
 
   const reactFlow = useReactFlow();
   const { setViewport } = reactFlow;
-  
+
   useEffect(() => {
     setViewport({ x: 0, y: 0, zoom: 0.7 }, { duration: 600 });
   }, [setViewport]);
-
 
   return (
     <ReactFlow
