@@ -24,53 +24,16 @@ const ChatbotView: React.FC = () => {
       <div className="flex">
         <div className="w-1/2 mr-4">
           <div className="">
-            <div className="w-full h-96 ">
+            <div className="w-full h-[42rem] ">
               <ReactFlowProvider>
                 <ActionsView chatbot={chatbot} />
               </ReactFlowProvider>
             </div>
-
-            <h2 className="text-xl font-bold mb-4">Chatbot Details</h2>
-            <DataItem title="Name" value={chatbot.name} />
-            <DataItem title="Description" value={chatbot.description} />
-            <DataItem title="Model" value={chatbot.model} />
-            <DataItem title="Temperature" value={chatbot.temperature} />
-            <DataItem title="Max Tokens" value={chatbot.maxTokens} />
-            <div>
-              <h3 className="font-semibold">Prompt:</h3>
-              <textarea
-                readOnly
-                className="w-full h-32 border p-2"
-                value={chatbot.prompt}
-              ></textarea>
-            </div>
+            <h2 className="text-xl font-bold mb-4 mt-6">Test Chatbot</h2>
           </div>
         </div>
         <div className="w-1/2">
-          <ChatbotCard chatbot={chatbot} />
-
-          <h2 className="text-xl font-bold mb-4">Chatbot States</h2>
-          <ul>
-            {chatbot.states.map((state, index) => (
-              <li key={index} className="mb-4">
-                <DataItem title="Name" value={state.name} />
-                <DataItem title="Prompt" value={state.prompt} />
-                <DataItem title="Model" value={chatbot.model} />
-                <h3 className="font-semibold">Processors:</h3>
-                <ul>
-                  {state.processors.map((processor, idx) => (
-                    <li key={idx}>
-                      <DataItem title="Name" value={processor.processor_name} />
-                      <h4 className="font-semibold">Data:</h4>
-                      <pre>
-                        {JSON.stringify(processor.processor_data, null, 2)}
-                      </pre>
-                    </li>
-                  ))}
-                </ul>
-              </li>
-            ))}
-          </ul>
+          <h2 className="text-xl font-bold mb-4">Edit Node</h2>
         </div>
       </div>
     </>

@@ -29,10 +29,6 @@ const nodeTypes = {
 };
 
 const ActionsView: React.FC<ActionsViewProps> = ({ chatbot }) => {
-
-  console.log('chatbot', chatbot);
-
-
   const chatbotNode = {
     id: chatbot.name,
     type: "custom",
@@ -51,8 +47,13 @@ const ActionsView: React.FC<ActionsViewProps> = ({ chatbot }) => {
       const stateNode = {
         id: state.name,
         type: "customState",
-        data: { name: state.name, prompt: state.prompt, model: state.model, temperature: state.temperature },
-        position: { x: index * 300, y: 250 },
+        data: {
+          name: state.name,
+          prompt: state.prompt,
+          model: state.model,
+          temperature: state.temperature,
+        },
+        position: { x: index * 350, y: 250 },
       };
 
       const processorNodes = state.processors.map(
@@ -63,7 +64,7 @@ const ActionsView: React.FC<ActionsViewProps> = ({ chatbot }) => {
             processor_name: processor.processor_name,
             processor_data: processor.processor_data,
           },
-          position: { x: index * 300, y: 400 + processorIndex * 150 },
+          position: { x: index * 350, y: 500 + processorIndex * 250 },
         })
       );
 
@@ -79,11 +80,22 @@ const ActionsView: React.FC<ActionsViewProps> = ({ chatbot }) => {
       target: state.name,
     };
 
-    const processorEdges = state.processors.map((processor) => ({
-      id: `${state.name}-${processor.processor_name}`,
-      source: state.name,
-      target: `${state.name}-${processor.processor_name}`,
-    }));
+    const processorEdges = state.processors.map((processor, processorIndex) => {
+      if (processorIndex === 0) {
+        return {
+          id: `${state.name}-${processor.processor_name}`,
+          source: state.name,
+          target: `${state.name}-${processor.processor_name}`,
+        };
+      } else {
+        const previousProcessor = state.processors[processorIndex - 1];
+        return {
+          id: `${previousProcessor.processor_name}-${processor.processor_name}`,
+          source: `${state.name}-${previousProcessor.processor_name}`,
+          target: `${state.name}-${processor.processor_name}`,
+        };
+      }
+    });
 
     return [stateToChatbotEdge, ...processorEdges];
   });
