@@ -20,7 +20,9 @@ import { Chatbot } from "../../../services/ChatbotService";
 
 interface ActionsViewProps {
   chatbot: Chatbot;
+  onNodeSelected: (node: any, type: string) => void;
 }
+
 
 const nodeTypes = {
   custom: memo(CustomNode),
@@ -28,20 +30,23 @@ const nodeTypes = {
   customProcessor: memo(CustomNodeProcessor),
 };
 
-const ActionsView: React.FC<ActionsViewProps> = ({ chatbot }) => {
+const ActionsView: React.FC<ActionsViewProps> = ({ chatbot, onNodeSelected }) => {
+
   const chatbotNode = {
     id: chatbot.name,
     type: "custom",
     data: {
       name: chatbot.name,
       description: chatbot.description,
-      image: chatbot.avatarImage,
+      avatarImage: chatbot.avatarImage, // change from 'image' to 'avatarImage'
+      backgroundImage: chatbot.backgroundImage, // add this property
       maxTokens: chatbot.maxTokens,
       key: chatbot.key,
+      type: "chatbotNode",
     },
     position: { x: (chatbot.states.length * 300) / 2, y: 50 },
   };
-
+  
   const nodesFromStates = chatbot.states.reduce<any[]>(
     (acc, state, index) => {
       const stateNode = {
@@ -52,6 +57,7 @@ const ActionsView: React.FC<ActionsViewProps> = ({ chatbot }) => {
           prompt: state.prompt,
           model: state.model,
           temperature: state.temperature,
+          type: "stateNode",
         },
         position: { x: index * 350, y: 250 },
       };
@@ -63,6 +69,7 @@ const ActionsView: React.FC<ActionsViewProps> = ({ chatbot }) => {
           data: {
             processor_name: processor.processor_name,
             processor_data: processor.processor_data,
+            type: "processorNode"
           },
           position: { x: index * 350, y: 500 + processorIndex * 250 },
         })
@@ -109,8 +116,14 @@ const ActionsView: React.FC<ActionsViewProps> = ({ chatbot }) => {
   );
 
   const onNodeClick = (event: any, node: any) => {
-    console.log(node);
+    if (node.type === "custom") {
+      onNodeSelected(node.data, "chatbotNode");
+    }
   };
+  
+
+  
+    
 
   const reactFlow = useReactFlow();
   const { setViewport } = reactFlow;

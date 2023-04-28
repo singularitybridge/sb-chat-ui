@@ -6,6 +6,7 @@ import { LabelText } from "../../../chat/LabelText";
 type CustomNodeData = {
   name: string;
   description: string;
+  avatarImage: string;
   key: string;
   maxTokens: number;
   image: string;
@@ -22,7 +23,7 @@ const CustomNode: React.FC<CustomNodeProps> = ({ data }) => {
     <div className="px-4 py-4 shadow-md rounded-md bg-white border-2 border-stone-400">
       <div className="flex">
         <div className="w-24 h-24 flex justify-center items-center bg-gray-100">
-          <img src={data.image} alt="" />
+          <img src={data.avatarImage} alt="" />
         </div>
         <div className="ml-4">
           <div className="text-lg font-bold">{data.name}</div>
