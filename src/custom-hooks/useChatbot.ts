@@ -1,28 +1,44 @@
-// useChatbot.ts
-import { useState, useEffect } from 'react';
-import { Chatbot } from '../services/ChatbotService';
+// custom-hooks/useChatbot.tsx
 
-interface UseChatbotResult {
-  chatbot: Chatbot | null;
-  loading: boolean;
-  error: any;
-}
+import { useEffect, useState } from "react";
+import { Chatbot } from "../services/ChatbotService";
 
-export const useChatbot = (key: string): UseChatbotResult => {
+export const useChatbot = (key: string) => {
   const [chatbot, setChatbot] = useState<Chatbot | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<boolean>(false);
+
+  const updateChatbot = async (updatedChatbot: Chatbot) => {
+    try {
+      const { _id, ...rest } = updatedChatbot;
+      const response = await fetch(
+        `http://127.0.0.1:5000/chatbots/${updatedChatbot.key}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(rest),
+        }
+      );
+      const updatedData = await response.json();
+      console.log("Chatbot updated", updatedData);
+      setChatbot(updatedData);
+    } catch (err) {
+      console.error("Error updating chatbot:", err);
+    }
+  };
 
   useEffect(() => {
     const fetchChatbot = async () => {
-      setLoading(true);
       try {
         const response = await fetch(`http://127.0.0.1:5000/chatbots/${key}`);
-        const chatbotData = await response.json();
-        setChatbot(chatbotData);
+        const data = await response.json();
+        setChatbot(data);
+        setLoading(false);
       } catch (err) {
-        setError(err);
-      } finally {
+        console.error("Error fetching chatbot:", err);
+        setError(true);
         setLoading(false);
       }
     };
@@ -30,5 +46,6 @@ export const useChatbot = (key: string): UseChatbotResult => {
     fetchChatbot();
   }, [key]);
 
-  return { chatbot, loading, error };
+  return { chatbot, setChatbot, loading, error, updateChatbot };
+
 };

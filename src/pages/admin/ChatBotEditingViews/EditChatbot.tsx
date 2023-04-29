@@ -11,9 +11,10 @@ interface EditChatbotProps {
     maxTokens: number;
   };
   onUpdate: (updatedChatbot: any) => void;
+  onCreateNewState: () => void;
 }
 
-const EditChatbot: React.FC<EditChatbotProps> = ({ chatbot, onUpdate }) => {
+const EditChatbot: React.FC<EditChatbotProps> = ({ chatbot, onUpdate, onCreateNewState }) => {
   const [name, setName] = useState(chatbot.name);
   const [avatarImage, setAvatarImage] = useState(chatbot.avatarImage);
   const [backgroundImage, setBackgroundImage] = useState(chatbot.backgroundImage);
@@ -32,7 +33,6 @@ const EditChatbot: React.FC<EditChatbotProps> = ({ chatbot, onUpdate }) => {
       maxTokens,
     });
   };
-  
 
   return (
     <form onSubmit={handleSubmit}>
@@ -81,9 +81,15 @@ const EditChatbot: React.FC<EditChatbotProps> = ({ chatbot, onUpdate }) => {
       <button type="submit" className="bg-primary text-white px-4 py-2 rounded">
         Save Changes
       </button>
+      <button
+        type="button"
+        onClick={() => onCreateNewState()}
+        className="bg-primary text-white px-4 py-2 rounded ml-4"
+      >
+        Create New State
+      </button>
     </form>
   );
 };
-
 
 export { EditChatbot };

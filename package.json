@@ -23,7 +23,8 @@
     "recoil": "^0.7.6",
     "regenerator-runtime": "^0.13.11",
     "sanitize-html": "^2.10.0",
-    "tw-elements": "^1.0.0-beta2"
+    "tw-elements": "^1.0.0-beta2",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/mustache": "^4.2.2",
@@ -31,6 +32,7 @@
     "@types/react-dom": "^18.0.10",
     "@types/react-speech-recognition": "^3.9.1",
     "@types/sanitize-html": "^2.8.1",
+    "@types/uuid": "^9.0.1",
     "@vitejs/plugin-react": "^3.1.0",
     "autoprefixer": "^10.4.13",
     "postcss": "^8.4.21",

@@ -9,10 +9,11 @@ import { ReactFlowProvider } from "reactflow";
 import { EditChatbot } from "./ChatBotEditingViews/EditChatbot";
 import { EditChatbotState } from "./ChatBotEditingViews/EditChatbotState";
 import { EditChatbotProcessor } from "./ChatBotEditingViews/EditChatbotProcessor";
+import { v4 as uuidv4 } from "uuid";
 
 const ChatbotView: React.FC = () => {
   const { key } = useParams<{ key: string }>();
-  const { chatbot, loading, error } = useChatbot(key || "");
+  const { chatbot, loading, error, updateChatbot } = useChatbot(key || "");
   const [selectedNode, setSelectedNode] = useState<{
     node: any;
     type: string;
@@ -64,24 +65,22 @@ const ChatbotView: React.FC = () => {
     await updateChatbot(updatedChatbot);
   };
 
-  const updateChatbot = async (updatedChatbot: any) => {
-    try {
-      const { _id, ...rest } = updatedChatbot;
-      const response = await fetch(
-        `http://127.0.0.1:5000/chatbots/${updatedChatbot.key}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(rest),
-        }
-      );
-      const updatedData = await response.json();
-      console.log("Chatbot updated", updatedData);
-    } catch (err) {
-      console.error("Error updating chatbot:", err);
-    }
+  const createNewState = async () => {
+    const newState = {
+      _id: uuidv4(),
+      model: "gpt-4",
+      name: "new chatbot",
+      processors: [],
+      prompt: "you're an ai .. ",
+      temperature: 0.8,
+    };
+
+    const updatedChatbot = {
+      ...chatbot,
+      states: [...chatbot.states, newState],
+    };
+
+    await updateChatbot(updatedChatbot);
   };
 
   return (
@@ -103,7 +102,11 @@ const ChatbotView: React.FC = () => {
         <div className="w-1/2">
           <h2 className="text-xl font-bold mb-4">Edit Node</h2>
           {selectedNode && selectedNode.type === "chatbotNode" && (
-            <EditChatbot chatbot={selectedNode.node} onUpdate={updateChatbot} />
+            <EditChatbot
+              chatbot={selectedNode.node}
+              onUpdate={updateChatbot}
+              onCreateNewState={createNewState}
+            />
           )}
           {selectedNode && selectedNode.type === "stateNode" && (
             <EditChatbotState
