@@ -10,9 +10,10 @@ interface EditChatbotProps {
     key: string;
     maxTokens: number;
   };
+  onUpdate: (updatedChatbot: any) => void;
 }
 
-const EditChatbot: React.FC<EditChatbotProps> = ({ chatbot }) => {
+const EditChatbot: React.FC<EditChatbotProps> = ({ chatbot, onUpdate }) => {
   const [name, setName] = useState(chatbot.name);
   const [avatarImage, setAvatarImage] = useState(chatbot.avatarImage);
   const [backgroundImage, setBackgroundImage] = useState(chatbot.backgroundImage);
@@ -22,8 +23,16 @@ const EditChatbot: React.FC<EditChatbotProps> = ({ chatbot }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Implement the logic to update the chatbot with the new values
+    onUpdate({
+      name,
+      avatarImage,
+      backgroundImage,
+      description,
+      key,
+      maxTokens,
+    });
   };
+  
 
   return (
     <form onSubmit={handleSubmit}>

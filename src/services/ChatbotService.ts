@@ -16,6 +16,7 @@ export interface Chatbot {
 }
 
 interface State {
+  _id: string;
   temperature: any;
   model: string;
   name: string;
@@ -24,6 +25,7 @@ interface State {
 }
 
 interface Processor {
+  _id: any;
   processor_data: {};
   processor_name: string;
 }

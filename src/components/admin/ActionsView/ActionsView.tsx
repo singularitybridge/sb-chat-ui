@@ -23,15 +23,16 @@ interface ActionsViewProps {
   onNodeSelected: (node: any, type: string) => void;
 }
 
-
 const nodeTypes = {
   custom: memo(CustomNode),
   customState: memo(CustomNodeState),
   customProcessor: memo(CustomNodeProcessor),
 };
 
-const ActionsView: React.FC<ActionsViewProps> = ({ chatbot, onNodeSelected }) => {
-
+const ActionsView: React.FC<ActionsViewProps> = ({
+  chatbot,
+  onNodeSelected,
+}) => {
   const chatbotNode = {
     id: chatbot.name,
     type: "custom",
@@ -46,13 +47,14 @@ const ActionsView: React.FC<ActionsViewProps> = ({ chatbot, onNodeSelected }) =>
     },
     position: { x: (chatbot.states.length * 300) / 2, y: 50 },
   };
-  
+
   const nodesFromStates = chatbot.states.reduce<any[]>(
     (acc, state, index) => {
       const stateNode = {
         id: state.name,
         type: "customState",
         data: {
+          _id: state._id,
           name: state.name,
           prompt: state.prompt,
           model: state.model,
@@ -67,9 +69,10 @@ const ActionsView: React.FC<ActionsViewProps> = ({ chatbot, onNodeSelected }) =>
           id: `${state.name}-${processor.processor_name}`,
           type: "customProcessor",
           data: {
+            _id: processor._id, // Add the _id property to the processor node
             processor_name: processor.processor_name,
             processor_data: processor.processor_data,
-            type: "processorNode"
+            type: "processorNode",
           },
           position: { x: index * 350, y: 500 + processorIndex * 250 },
         })
@@ -119,11 +122,13 @@ const ActionsView: React.FC<ActionsViewProps> = ({ chatbot, onNodeSelected }) =>
     if (node.type === "custom") {
       onNodeSelected(node.data, "chatbotNode");
     }
+    if (node.type === "customState") {
+      onNodeSelected(node.data, "stateNode");
+    }
+    if (node.type === "customProcessor") {
+      onNodeSelected(node.data, "processorNode");
+    }
   };
-  
-
-  
-    
 
   const reactFlow = useReactFlow();
   const { setViewport } = reactFlow;

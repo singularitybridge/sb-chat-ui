@@ -26,10 +26,62 @@ const ChatbotView: React.FC = () => {
     return <div>Chatbot not found</div>;
   }
 
-  console.log(chatbot);
-
   const handleNodeSelected = (data: any, type: string) => {
     setSelectedNode({ node: data, type });
+  };
+
+  const updateChatbotState = async (updatedData: any) => {
+    const updatedChatbot = {
+      ...chatbot,
+      states: chatbot.states.map((state: any) => {
+        if (state._id === updatedData._id) {
+          return {
+            ...updatedData,
+            processors: state.processors,
+          };
+        }
+        return state;
+      }),
+    };
+    await updateChatbot(updatedChatbot);
+  };
+
+  const updateChatbotProcessor = async (updatedProcessor: any) => {
+    const updatedChatbot = {
+      ...chatbot,
+      states: chatbot.states.map((state: any) => {
+        return {
+          ...state,
+          processors: state.processors.map((processor: any) => {
+            if (processor._id === updatedProcessor._id) {
+              return updatedProcessor;
+            }
+            return processor;
+          }),
+        };
+      }),
+    };
+    await updateChatbot(updatedChatbot);
+  };
+
+  const updateChatbot = async (updatedChatbot: any) => {
+    try {
+      const { _id, ...rest } = updatedChatbot;
+      const response = await fetch(
+        `http://127.0.0.1:5000/chatbots/${updatedChatbot.key}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(rest),
+        }
+      );
+      const updatedData = await response.json();
+      console.log("Chatbot updated", updatedData);
+    } catch (err) {
+      console.error("Error updating chatbot:", err);
+    }
   };
 
   return (
@@ -51,13 +103,20 @@ const ChatbotView: React.FC = () => {
         <div className="w-1/2">
           <h2 className="text-xl font-bold mb-4">Edit Node</h2>
           {selectedNode && selectedNode.type === "chatbotNode" && (
-            <EditChatbot chatbot={selectedNode.node} />
+            <EditChatbot chatbot={selectedNode.node} onUpdate={updateChatbot} />
           )}
           {selectedNode && selectedNode.type === "stateNode" && (
-            <EditChatbotState node={selectedNode.node} />
+            <EditChatbotState
+              state={selectedNode.node}
+              chatbotKey={chatbot.key}
+              onUpdateState={updateChatbotState}
+            />
           )}
           {selectedNode && selectedNode.type === "processorNode" && (
-            <EditChatbotProcessor node={selectedNode.node} />
+            <EditChatbotProcessor
+              node={selectedNode.node}
+              onUpdateProcessor={updateChatbotProcessor}
+            />
           )}
         </div>
       </div>
