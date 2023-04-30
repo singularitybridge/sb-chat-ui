@@ -31,6 +31,20 @@ const ChatbotView: React.FC = () => {
     setSelectedNode({ node: data, type });
   };
 
+  const getNodeTitle = () => {
+    if (!selectedNode) return "Edit Node";
+    switch (selectedNode.type) {
+      case "chatbotNode":
+        return "Edit Chatbot";
+      case "stateNode":
+        return "Edit Chatbot State";
+      case "processorNode":
+        return "Edit State Processor";
+      default:
+        return "Edit Node";
+    }
+  };
+
   const updateChatbotState = async (updatedData: any) => {
     const updatedChatbot = {
       ...chatbot,
@@ -69,7 +83,7 @@ const ChatbotView: React.FC = () => {
     const newState = {
       _id: uuidv4(),
       model: "gpt-4",
-      name: "new chatbot",
+      name: "new-state-" + uuidv4(),
       processors: [],
       prompt: "you're an ai .. ",
       temperature: 0.8,
@@ -82,6 +96,23 @@ const ChatbotView: React.FC = () => {
 
     await updateChatbot(updatedChatbot);
   };
+
+  const deleteChatbotState = async (stateId: string) => {
+    const updatedChatbot = {
+      ...chatbot,
+      states: chatbot.states.filter((state: any) => state._id !== stateId),
+    };
+    await updateChatbot(updatedChatbot);
+  };
+
+  const setActiveChatbotState = async (stateId: string) => {
+    const updatedChatbot = {
+      ...chatbot,
+      current_state: stateId,
+    };
+    await updateChatbot(updatedChatbot);
+  };
+  
 
   return (
     <>
@@ -100,7 +131,7 @@ const ChatbotView: React.FC = () => {
           </div>
         </div>
         <div className="w-1/2">
-          <h2 className="text-xl font-bold mb-4">Edit Node</h2>
+          <h2 className="text-xl font-bold mb-4">{getNodeTitle()}</h2>
           {selectedNode && selectedNode.type === "chatbotNode" && (
             <EditChatbot
               chatbot={selectedNode.node}
@@ -113,6 +144,8 @@ const ChatbotView: React.FC = () => {
               state={selectedNode.node}
               chatbotKey={chatbot.key}
               onUpdateState={updateChatbotState}
+              onDeleteState={deleteChatbotState}
+              onSetActiveState={setActiveChatbotState}
             />
           )}
           {selectedNode && selectedNode.type === "processorNode" && (

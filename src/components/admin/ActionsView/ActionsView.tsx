@@ -39,8 +39,8 @@ const ActionsView: React.FC<ActionsViewProps> = ({
     data: {
       name: chatbot.name,
       description: chatbot.description,
-      avatarImage: chatbot.avatarImage, // change from 'image' to 'avatarImage'
-      backgroundImage: chatbot.backgroundImage, // add this property
+      avatarImage: chatbot.avatarImage,
+      backgroundImage: chatbot.backgroundImage,
       maxTokens: chatbot.maxTokens,
       key: chatbot.key,
       type: "chatbotNode",
@@ -50,6 +50,7 @@ const ActionsView: React.FC<ActionsViewProps> = ({
 
   const nodesFromStates = chatbot.states.reduce<any[]>(
     (acc, state, index) => {
+      const isActive = chatbot.current_state === state.name;
       const stateNode = {
         id: state.name,
         type: "customState",
@@ -60,6 +61,7 @@ const ActionsView: React.FC<ActionsViewProps> = ({
           model: state.model,
           temperature: state.temperature,
           type: "stateNode",
+          isActive,
         },
         position: { x: index * 350, y: 250 },
       };

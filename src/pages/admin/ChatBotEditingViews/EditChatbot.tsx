@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import InputWithLabel from "../../../components/admin/InputWithLabel";
+import Button from "../../../components/core/Button";
 
 interface EditChatbotProps {
   chatbot: {
@@ -14,10 +15,16 @@ interface EditChatbotProps {
   onCreateNewState: () => void;
 }
 
-const EditChatbot: React.FC<EditChatbotProps> = ({ chatbot, onUpdate, onCreateNewState }) => {
+const EditChatbot: React.FC<EditChatbotProps> = ({
+  chatbot,
+  onUpdate,
+  onCreateNewState,
+}) => {
   const [name, setName] = useState(chatbot.name);
   const [avatarImage, setAvatarImage] = useState(chatbot.avatarImage);
-  const [backgroundImage, setBackgroundImage] = useState(chatbot.backgroundImage);
+  const [backgroundImage, setBackgroundImage] = useState(
+    chatbot.backgroundImage
+  );
   const [description, setDescription] = useState(chatbot.description);
   const [key, setKey] = useState(chatbot.key);
   const [maxTokens, setMaxTokens] = useState(chatbot.maxTokens);
@@ -78,16 +85,8 @@ const EditChatbot: React.FC<EditChatbotProps> = ({ chatbot, onUpdate, onCreateNe
         value={maxTokens.toString()}
         onChange={(value) => setMaxTokens(parseInt(value))}
       />
-      <button type="submit" className="bg-primary text-white px-4 py-2 rounded">
-        Save Changes
-      </button>
-      <button
-        type="button"
-        onClick={() => onCreateNewState()}
-        className="bg-primary text-white px-4 py-2 rounded ml-4"
-      >
-        Create New State
-      </button>
+      <Button type="submit">Save Changes</Button>
+      <Button onClick={() => onCreateNewState()}>Create New State</Button>
     </form>
   );
 };

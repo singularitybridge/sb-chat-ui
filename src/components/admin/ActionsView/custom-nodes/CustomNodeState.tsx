@@ -6,22 +6,35 @@ import {
   DocumentTextIcon,
 } from "@heroicons/react/24/outline";
 import { LabelText } from "../../../chat/LabelText";
+import clsx from "clsx";
 
 type CustomNodeStateData = {
   name: string;
   prompt: string;
   model: string;
   temperature: number;
+  isActive?: boolean;
 };
 
 interface CustomNodeStateProps {
   data: CustomNodeStateData;
 }
 
-const CustomNodeState: React.FC<CustomNodeStateProps> = ({ data }) => {
+const CustomNodeState: React.FC<CustomNodeStateProps> = ({
+  data  
+}) => {
+
+  console.log('active', data.isActive,data);
+
+  const bgStyle = clsx(
+    "p-3 ",
+    data.isActive ? " bg-lime-200 " : "bg-slate-200"      
+  );
+
+
   return (
-    <div className=" shadow-md rounded-md bg-white border-2 border-stone-400">
-      <div className="p-3 bg-indigo-200">
+    <div className="bg-shadow-md rounded-md bg-white border-2 border-stone-400">
+      <div className={bgStyle}>
         <LabelText
           label={<BoltIcon className="h-8 w-8 text-slate-400 mr-2" />}
           text={<div className="text-lg font-bold">{data.name}</div>}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import InputWithLabel from "../../../components/admin/InputWithLabel";
+import Button from "../../../components/core/Button";
 
 interface EditChatbotProcessorProps {
   node: any;
@@ -10,15 +11,21 @@ const EditChatbotProcessor: React.FC<EditChatbotProcessorProps> = ({
   node,
   onUpdateProcessor,
 }) => {
-  const initialProcessorData = Object.entries(node.processor_data).map(
-    ([key, value]) => ({
-      key,
-      value: value as string,
-    })
-  );
+  useEffect(() => {
+    const initialProcessorData = Object.entries(node.processor_data).map(
+      ([key, value]) => ({
+        key,
+        value: value as string,
+      })
+    );
+    setProcessorData(initialProcessorData);
+    setProcessorName(node.processor_name);
+  }, [node]);
 
-  const [processorData, setProcessorData] = useState(initialProcessorData);
-  const [processorName, setProcessorName] = useState(node.processor_name);
+  const [processorData, setProcessorData] = useState<
+    { key: string; value: string }[]
+  >([]);
+  const [processorName, setProcessorName] = useState<string>("");
   const [focused, setFocused] = useState<number | null>(null);
 
   const handleKeyChange = (newValue: string, index: number) => {
@@ -100,20 +107,9 @@ const EditChatbotProcessor: React.FC<EditChatbotProcessorProps> = ({
           </button>
         </div>
       ))}
-      <button
-        className="bg-blue-500 text-white py-2 px-4 rounded mr-2"
-        onClick={handleSave}
-      >
-        Save
-      </button>
+      <Button onClick={handleSave}>Save</Button>
 
-      <button
-        type="button"
-        onClick={addParam}
-        className="bg-blue-500 text-white px-4 py-2 rounded mt-4 mr-2"
-      >
-        Add Param
-      </button>
+      <Button onClick={addParam}>Add Param</Button>
     </div>
   );
 };
