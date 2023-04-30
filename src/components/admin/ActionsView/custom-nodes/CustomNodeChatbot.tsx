@@ -20,9 +20,9 @@ const CustomNode: React.FC<CustomNodeProps> = ({ data }) => {
   useEffect(() => {}, [data]);
 
   return (
-    <div className="px-4 py-4 shadow-md rounded-md bg-white border-2 border-stone-400">
+    <div className="p-5 shadow-md rounded-md bg-white border-2 border-stone-400">
       <div className="flex">
-        <div className="w-24 h-24 flex justify-center items-center bg-gray-100">
+        <div className="w-32 h-32 flex justify-center items-center bg-gray-100">
           <img src={data.avatarImage} alt="" />
         </div>
         <div className="ml-4">

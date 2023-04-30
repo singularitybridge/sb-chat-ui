@@ -5,12 +5,22 @@ import Button from "../../../components/core/Button";
 interface EditChatbotProcessorProps {
   node: any;
   onUpdateProcessor: (updatedProcessor: any) => void;
+  onDeleteProcessor: (processorId: string) => void;
+  onInsertProcessorAfter: (processorId: string) => void;
 }
 
 const EditChatbotProcessor: React.FC<EditChatbotProcessorProps> = ({
   node,
   onUpdateProcessor,
+  onDeleteProcessor,
+  onInsertProcessorAfter,
 }) => {
+  const [processorData, setProcessorData] = useState<
+    { key: string; value: string }[]
+  >([]);
+  const [processorName, setProcessorName] = useState<string>("");
+  const [focused, setFocused] = useState<number | null>(null);
+
   useEffect(() => {
     const initialProcessorData = Object.entries(node.processor_data).map(
       ([key, value]) => ({
@@ -21,12 +31,6 @@ const EditChatbotProcessor: React.FC<EditChatbotProcessorProps> = ({
     setProcessorData(initialProcessorData);
     setProcessorName(node.processor_name);
   }, [node]);
-
-  const [processorData, setProcessorData] = useState<
-    { key: string; value: string }[]
-  >([]);
-  const [processorName, setProcessorName] = useState<string>("");
-  const [focused, setFocused] = useState<number | null>(null);
 
   const handleKeyChange = (newValue: string, index: number) => {
     const updatedProcessorData = [...processorData];
@@ -53,7 +57,11 @@ const EditChatbotProcessor: React.FC<EditChatbotProcessorProps> = ({
     const updatedProcessorData = Object.fromEntries(
       processorData.map(({ key, value }) => [key, value])
     );
-    onUpdateProcessor({ ...node, processor_data: updatedProcessorData });
+    onUpdateProcessor({
+      ...node,
+      processor_name: processorName, // Add the updated processorName here
+      processor_data: updatedProcessorData,
+    });
   };
 
   return (
@@ -107,9 +115,15 @@ const EditChatbotProcessor: React.FC<EditChatbotProcessorProps> = ({
           </button>
         </div>
       ))}
-      <Button onClick={handleSave}>Save</Button>
 
+      <Button onClick={handleSave}>Save</Button>
       <Button onClick={addParam}>Add Param</Button>
+      <Button onClick={() => onDeleteProcessor(node._id)}>
+        Delete Processor
+      </Button>
+      <Button onClick={() => onInsertProcessorAfter(node._id)}>
+        Insert Processor After
+      </Button>
     </div>
   );
 };

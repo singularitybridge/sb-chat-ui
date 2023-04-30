@@ -24,8 +24,6 @@ const CustomNodeState: React.FC<CustomNodeStateProps> = ({
   data  
 }) => {
 
-  console.log('active', data.isActive,data);
-
   const bgStyle = clsx(
     "p-3 ",
     data.isActive ? " bg-lime-200 " : "bg-slate-200"      

@@ -19,8 +19,9 @@ const Button: React.FC<ButtonProps> = ({
     "bg-primary",
     "text-white",
     "px-4",
+
     "py-2",
-    "mr-2",
+    "mr-2 mb-2",
     "rounded",
     additionalClassName
   );

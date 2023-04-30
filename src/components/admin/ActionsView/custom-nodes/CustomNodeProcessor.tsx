@@ -14,7 +14,7 @@ interface CustomNodeProcessorProps {
 const CustomNodeProcessor: React.FC<CustomNodeProcessorProps> = ({ data }) => {
   return (
     <div className="shadow-md rounded-md bg-white border-2 border-stone-400">
-      <div className="p-3  bg-violet-100">
+      <div className="p-3  bg-sky-100">
         <LabelText
           label={<CodeBracketIcon className="h-8 w-8 text-slate-400 mr-4" />}
           text={<div className="text-lg font-bold">{data.processor_name}</div>}

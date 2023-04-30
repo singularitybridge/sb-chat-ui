@@ -62,6 +62,10 @@ const ChatbotView: React.FC = () => {
   };
 
   const updateChatbotProcessor = async (updatedProcessor: any) => {
+
+    console.log('updatedProcessor', updatedProcessor);
+
+
     const updatedChatbot = {
       ...chatbot,
       states: chatbot.states.map((state: any) => {
@@ -112,12 +116,83 @@ const ChatbotView: React.FC = () => {
     };
     await updateChatbot(updatedChatbot);
   };
+
+  const addChatbotProcessor = async (stateId: string) => {
+    const newProcessor = {
+      _id: uuidv4(),
+      processor_name: "new-processor-" + uuidv4(),
+      processor_data: {},
+      type: "processorNode",
+    };
+
+    const updatedChatbot = {
+      ...chatbot,
+      states: chatbot.states.map((state: any) => {
+        if (state._id === stateId) {
+          return {
+            ...state,
+            processors: [...state.processors, newProcessor],
+          };
+        }
+        return state;
+      }),
+    };
+
+    await updateChatbot(updatedChatbot);
+  };
+
+  const deleteProcessor = async (processorId: string) => {
+    const updatedChatbot = {
+      ...chatbot,
+      states: chatbot.states.map((state: any) => {
+        return {
+          ...state,
+          processors: state.processors.filter(
+            (processor: any) => processor._id !== processorId
+          ),
+        };
+      }),
+    };
+    await updateChatbot(updatedChatbot);
+  };
+
+  const insertProcessorAfter = async (processorId: string) => {
+    const newProcessor = {
+      _id: uuidv4(),
+      processor_name: "new-processor-" + uuidv4(),
+      processor_data: {},
+    };
+  
+    const updatedChatbot = {
+      ...chatbot,
+      states: chatbot.states.map((state: any) => {
+        const processorIndex = state.processors.findIndex((processor: any) => processor._id === processorId);
+  
+        if (processorIndex === -1) {
+          return state;
+        }
+  
+        const updatedProcessors = [
+          ...state.processors.slice(0, processorIndex + 1),
+          newProcessor,
+          ...state.processors.slice(processorIndex + 1),
+        ];
+        
+        return {
+          ...state,
+          processors: updatedProcessors,
+        };
+      }),
+    };
+    
+    await updateChatbot(updatedChatbot);
+  };
   
 
   return (
     <>
       <div className="flex">
-        <div className="w-1/2 mr-4">
+        <div className="w-2/3 mr-4">
           <div className="">
             <div className="w-full h-[42rem] ">
               <ReactFlowProvider>
@@ -130,7 +205,7 @@ const ChatbotView: React.FC = () => {
             <h2 className="text-xl font-bold mb-4 mt-6">Test Chatbot</h2>
           </div>
         </div>
-        <div className="w-1/2">
+        <div className="w-1/3">
           <h2 className="text-xl font-bold mb-4">{getNodeTitle()}</h2>
           {selectedNode && selectedNode.type === "chatbotNode" && (
             <EditChatbot
@@ -143,6 +218,7 @@ const ChatbotView: React.FC = () => {
             <EditChatbotState
               state={selectedNode.node}
               chatbotKey={chatbot.key}
+              onAddProcessor={addChatbotProcessor}
               onUpdateState={updateChatbotState}
               onDeleteState={deleteChatbotState}
               onSetActiveState={setActiveChatbotState}
@@ -152,6 +228,8 @@ const ChatbotView: React.FC = () => {
             <EditChatbotProcessor
               node={selectedNode.node}
               onUpdateProcessor={updateChatbotProcessor}
+              onDeleteProcessor={deleteProcessor}
+              onInsertProcessorAfter={insertProcessorAfter}
             />
           )}
         </div>
