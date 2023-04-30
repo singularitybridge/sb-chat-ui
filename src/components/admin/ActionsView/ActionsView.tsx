@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import React, { memo } from "react";
 import ReactFlow, {
   useNodesState,
@@ -33,87 +33,8 @@ const ActionsView: React.FC<ActionsViewProps> = ({
   chatbot,
   onNodeSelected,
 }) => {
-  const chatbotNode = {
-    id: chatbot.name,
-    type: "custom",
-    data: {
-      name: chatbot.name,
-      description: chatbot.description,
-      avatarImage: chatbot.avatarImage,
-      backgroundImage: chatbot.backgroundImage,
-      maxTokens: chatbot.maxTokens,
-      key: chatbot.key,
-      type: "chatbotNode",
-    },
-    position: { x: (chatbot.states.length * 300) / 2, y: 50 },
-  };
-
-  const nodesFromStates = chatbot.states.reduce<any[]>(
-    (acc, state, index) => {
-      const isActive = chatbot.current_state === state.name;
-      const stateNode = {
-        id: state.name,
-        type: "customState",
-        data: {
-          _id: state._id,
-          name: state.name,
-          prompt: state.prompt,
-          model: state.model,
-          temperature: state.temperature,
-          type: "stateNode",
-          isActive,
-        },
-        position: { x: index * 350, y: 250 },
-      };
-
-      const processorNodes = state.processors.map(
-        (processor, processorIndex) => ({
-          id: `${state.name}-${processor.processor_name}`,
-          type: "customProcessor",
-          data: {
-            _id: processor._id, // Add the _id property to the processor node
-            processor_name: processor.processor_name,
-            processor_data: processor.processor_data,
-            type: "processorNode",
-          },
-          position: { x: index * 350, y: 500 + processorIndex * 250 },
-        })
-      );
-
-      return [...acc, stateNode, ...processorNodes];
-    },
-    [chatbotNode]
-  );
-
-  const initEdges = chatbot.states.flatMap((state) => {
-    const stateToChatbotEdge = {
-      id: `${chatbot.name}-${state.name}`,
-      source: chatbot.name,
-      target: state.name,
-    };
-
-    const processorEdges = state.processors.map((processor, processorIndex) => {
-      if (processorIndex === 0) {
-        return {
-          id: `${state.name}-${processor.processor_name}`,
-          source: state.name,
-          target: `${state.name}-${processor.processor_name}`,
-        };
-      } else {
-        const previousProcessor = state.processors[processorIndex - 1];
-        return {
-          id: `${previousProcessor.processor_name}-${processor.processor_name}`,
-          source: `${state.name}-${previousProcessor.processor_name}`,
-          target: `${state.name}-${processor.processor_name}`,
-        };
-      }
-    });
-
-    return [stateToChatbotEdge, ...processorEdges];
-  });
-
-  const [nodes, setNodes, onNodesChange] = useNodesState(nodesFromStates);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initEdges);
+  const [nodes, setNodes] = useState<any[]>([]);
+  const [edges, setEdges] = useState<any[]>([]);
 
   const onConnect = useCallback(
     (params: any) => setEdges((eds) => addEdge(params, eds)),
@@ -139,12 +60,97 @@ const ActionsView: React.FC<ActionsViewProps> = ({
     setViewport({ x: 0, y: 0, zoom: 0.7 }, { duration: 600 });
   }, [setViewport]);
 
+  useEffect(() => {
+
+    const chatbotNode = {
+      id: chatbot.name,
+      type: "custom",
+      data: {
+        name: chatbot.name,
+        description: chatbot.description,
+        avatarImage: chatbot.avatarImage,
+        backgroundImage: chatbot.backgroundImage,
+        maxTokens: chatbot.maxTokens,
+        key: chatbot.key,
+        type: "chatbotNode",
+      },
+      position: { x: (chatbot.states.length * 300) / 2, y: 50 },
+    };
+
+    const nodesFromStates = chatbot.states.reduce<any[]>(
+      (acc, state, index) => {
+        const isActive = chatbot.current_state === state.name;
+        const stateNode = {
+          id: state.name,
+          type: "customState",
+          data: {
+            _id: state._id,
+            name: state.name,
+            prompt: state.prompt,
+            model: state.model,
+            temperature: state.temperature,
+            type: "stateNode",
+            isActive,
+          },
+          position: { x: index * 350, y: 250 },
+        };
+
+        const processorNodes = state.processors.map(
+          (processor, processorIndex) => ({
+            id: `${state.name}-${processor.processor_name}`,
+            type: "customProcessor",
+            data: {
+              _id: processor._id, // Add the _id property to the processor node
+              processor_name: processor.processor_name,
+              processor_data: processor.processor_data,
+              type: "processorNode",
+            },
+            position: { x: index * 350, y: 500 + processorIndex * 250 },
+          })
+        );
+
+        return [...acc, stateNode, ...processorNodes];
+      },
+      [chatbotNode]
+    );
+
+    const initEdges = chatbot.states.flatMap((state) => {
+      const stateToChatbotEdge = {
+        id: `${chatbot.name}-${state.name}`,
+        source: chatbot.name,
+        target: state.name,
+      };
+
+      const processorEdges = state.processors.map(
+        (processor, processorIndex) => {
+          if (processorIndex === 0) {
+            return {
+              id: `${state.name}-${processor.processor_name}`,
+              source: state.name,
+              target: `${state.name}-${processor.processor_name}`,
+            };
+          } else {
+            const previousProcessor = state.processors[processorIndex - 1];
+            return {
+              id: `${previousProcessor.processor_name}-${processor.processor_name}`,
+              source: `${state.name}-${previousProcessor.processor_name}`,
+              target: `${state.name}-${processor.processor_name}`,
+            };
+          }
+        }
+      );
+
+      return [stateToChatbotEdge, ...processorEdges];
+    });
+
+    setNodes(nodesFromStates);
+    setEdges(initEdges);
+  }, [chatbot]);
+
   return (
     <ReactFlow
       nodes={nodes}
       edges={edges}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
       onNodeClick={onNodeClick}
       onConnect={onConnect}
       nodeTypes={nodeTypes}
