@@ -1,6 +1,5 @@
 import { ContextData, getMessageTextGPT, Message } from "../atoms/dataStore";
 import Mustache from "mustache";
-import sanitizeHtml from "sanitize-html";
 import axios from "axios";
 
 const getGPTResponse = async (sessionId: string, message: string) => {

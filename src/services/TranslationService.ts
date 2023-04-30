@@ -1,5 +1,5 @@
 import axios from "axios";
-import sanitizeHtml from 'sanitize-html';
+// import sanitizeHtml from 'sanitize-html';
 
 interface TranslateResponse {
   data: {
@@ -27,5 +27,6 @@ export const translateText = async (
     }
   );
 
-  return sanitizeHtml(response.data.data.translations[0].translatedText);
+  return response.data.data.translations[0].translatedText;
+  // return sanitizeHtml(response.data.data.translations[0].translatedText);
 };

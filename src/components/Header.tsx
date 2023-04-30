@@ -30,6 +30,10 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const { sessionId } = useParams<{ sessionId: string }>();
 
   useEffect(() => {
+    if (isAdminRoute) {
+      return;
+    }
+
     fetch(`http://127.0.0.1:5000/chat_sessions/${sessionId}`)
       .then((response) => response.json())
       .then((data) => {
