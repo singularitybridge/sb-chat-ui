@@ -44,6 +44,22 @@ const transformApiResponseToMessage = (message: any): Message => {
   };
 };
 
+const transformUserMessage = (
+  message: string,
+  translatedMessage: string,
+  userProfile: any
+): Message => {
+  return {
+    // _id: "", // You can leave this empty or generate a temporary unique ID if needed
+    // chat_session_id: "", // You can leave this empty or assign the sessionId if needed
+    content: [{ text: message, type: "text" }],
+    // created_at: new Date().toISOString(), // Set the current timestamp
+    role: SenderType.user,
+    // sender: userProfile.name,
+    textTranslated: translatedMessage,
+  };
+};
+
 const Chat = () => {
   const [chatData, setChatData] = useRecoilState(messagesState);
   const [chatBots, setChatBots] = useRecoilState(chatBotsState);
@@ -59,11 +75,7 @@ const Chat = () => {
   const { sessionId = "" } = useParams<{ sessionId?: string }>();
 
   useEffect(() => {
-
     if (!sessionId) return;
-
-    console.log('load history with session id: ', sessionId);
-
 
     // if (!chatBot || chatBot.key === ChatBotNotLoaded) return;
 
@@ -73,7 +85,9 @@ const Chat = () => {
         console.log("loaded history: ", chatHistoryResponse);
         // if (chatHistoryResponse && chatHistoryResponse.messages) {
         //   const chatHistory = chatHistoryResponse.messages;
-          setSessionMessages(chatHistoryResponse.map(transformApiResponseToMessage));
+        setSessionMessages(
+          chatHistoryResponse.map(transformApiResponseToMessage)
+        );
         // } else {
         //   console.log("No messages found in chat history response");
         // }
@@ -105,24 +119,21 @@ const Chat = () => {
   const onSendMessage = async (message: string) => {
     setIsUserInputEnabled(false);
     setChatState(ChatState.GETTING_DATA);
-  
+
     const translatedMessage =
       chatBot && chatBot.autoTranslate
         ? await translateText(message, "en")
         : "";
-  
+
     if (message !== "") {
-      setSessionMessages((prevChatData) => [
-        ...prevChatData,
-        {
-          content: [{ text: message, type: "text" }],
-          textTranslated: translatedMessage,
-          sender: userProfile.name,
-          senderType: SenderType.user,
-        },
-      ]);
+      const userMessage = transformUserMessage(
+        message,
+        translatedMessage,
+        userProfile
+      );
+      setSessionMessages((prevChatData) => [...prevChatData, userMessage]);
     }
-  
+
     const response = await getGPTCompletion(
       chatBot.prompt,
       sessionId,
@@ -131,29 +142,18 @@ const Chat = () => {
       chatData || [],
       chatBot.temperature
     );
-  
+
     const translatedResponse = chatBot.autoTranslate
       ? await translateText(response, chatBot.autoTranslateTarget)
       : "";
-  
-    setSessionMessages((prevChatData) => [
-      ...prevChatData,
-      {
-        content: response,
-        textTranslated: translatedResponse,
-        sender: chatBot.name,
-        senderType: SenderType.bot,
-      },
-    ]);
-  
+
+    setSessionMessages(response.map(transformApiResponseToMessage));
     setChatState(ChatState.PLAYING);
-  
     setAudioCircleActive(true);
     setAudioCircleActive(false);
     setChatState(ChatState.LISTENING);
     setIsUserInputEnabled(true);
   };
-  
 
   return (
     <>

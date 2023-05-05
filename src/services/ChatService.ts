@@ -34,7 +34,8 @@ const getGPTCompletion = async (
   temperature: number
 ) => {
   const tmp = await getGPTResponse(sessionId, message);  
-  return tmp.response;
+  return tmp;
+  // return tmp.response;
 };
 
 const getSession = async (sessionId: string) => {

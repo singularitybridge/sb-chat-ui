@@ -122,7 +122,9 @@ const renderContent = (
 ) => {
   
 
-  return content.map((item, index) => {
+  console.log(content);
+
+  return content?.map((item, index) => {
     switch (item.type) {
       case "text":
         return <MessageText key={index} text={item.text} />;
@@ -211,7 +213,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
       >
         <div className={messageStyles.flexRow}>
           <Avatar
-            imageUrl={avatarImage || "images/avatars/av1.png"}
+            imageUrl={avatarImage || "/images/avatars/av1.png"}
             avatarStyle={AvatarStyles.avatar}
           />
           <div
