@@ -105,7 +105,7 @@ const ActionsView: React.FC<ActionsViewProps> = ({
               processor_data: processor.processor_data,
               type: "processorNode",
             },
-            position: { x: index * 350, y: 500 + processorIndex * 250 },
+            position: { x: index * 350, y: 650 + processorIndex * 250 },
           })
         );
 

@@ -1,6 +1,18 @@
 import React, { useState, useEffect } from "react";
 import InputWithLabel from "../../../components/admin/InputWithLabel";
 import Button from "../../../components/core/Button";
+import { Select, initTE } from "tw-elements";
+import { SelectProcessor } from "../../../components/admin/SelectProcessor";
+import {
+  CloudArrowUpIcon,
+  Cog6ToothIcon,
+  MinusCircleIcon,
+  PlusCircleIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
+import { processorOptions } from "./processorOptions";
+import { TextareaWithLabel } from "../../../components/admin/TextareaWithLabel";
+import { IconButton } from "../../../components/admin/IconButton";
 
 interface EditChatbotProcessorProps {
   node: any;
@@ -20,6 +32,11 @@ const EditChatbotProcessor: React.FC<EditChatbotProcessorProps> = ({
   >([]);
   const [processorName, setProcessorName] = useState<string>("");
   const [focused, setFocused] = useState<number | null>(null);
+  const [setupMode, setSetupMode] = useState<boolean>(false);
+
+  const toggleSetupMode = () => {
+    setSetupMode(!setupMode);
+  };
 
   useEffect(() => {
     const initialProcessorData = Object.entries(node.processor_data).map(
@@ -30,6 +47,8 @@ const EditChatbotProcessor: React.FC<EditChatbotProcessorProps> = ({
     );
     setProcessorData(initialProcessorData);
     setProcessorName(node.processor_name);
+
+    initTE({ Select });
   }, [node]);
 
   const handleKeyChange = (newValue: string, index: number) => {
@@ -39,9 +58,11 @@ const EditChatbotProcessor: React.FC<EditChatbotProcessorProps> = ({
   };
 
   const handleValueChange = (newValue: string, index: number) => {
-    const updatedProcessorData = [...processorData];
-    updatedProcessorData[index].value = newValue;
-    setProcessorData(updatedProcessorData);
+    if (newValue !== null) {
+      const updatedProcessorData = [...processorData];
+      updatedProcessorData[index].value = newValue;
+      setProcessorData(updatedProcessorData);
+    }
   };
 
   const addParam = () => {
@@ -51,6 +72,10 @@ const EditChatbotProcessor: React.FC<EditChatbotProcessorProps> = ({
 
   const removeParam = (index: number) => {
     setProcessorData(processorData.filter((_, i) => i !== index));
+  };
+
+  const handleProcessorChange = (value: string) => {
+    console.log("Selected processor:", value);
   };
 
   const handleSave = () => {
@@ -66,53 +91,91 @@ const EditChatbotProcessor: React.FC<EditChatbotProcessorProps> = ({
 
   return (
     <div>
-      <InputWithLabel
-        id="processor_name"
-        label="Processor Name"
-        type="text"
+      <div className="flex justify-between items-center mb-6">
+        <div className="text-xl font-bold">Edit State Processor</div>
+        <IconButton
+          icon={<PlusCircleIcon className="w-6 h-6 text-stone-400" />}
+          onClick={toggleSetupMode}
+        />
+        <IconButton
+          icon={<TrashIcon className="w-6 h-6 text-stone-400" />}
+          onClick={toggleSetupMode}
+        />
+        <IconButton
+          icon={<CloudArrowUpIcon className="w-6 h-6 text-stone-400" />}
+          onClick={toggleSetupMode}
+        />
+        <IconButton
+          icon={
+            <Cog6ToothIcon
+              className={`${
+                setupMode
+                  ? " w-6 h-6 text-orange-600"
+                  : " w-6 h-6 text-stone-400"
+              } `}
+            />
+          }
+          onClick={toggleSetupMode}
+        />
+      </div>
+
+      <SelectProcessor
+        options={processorOptions}
         value={processorName}
         onChange={(value) => setProcessorName(value)}
       />
-      {processorData.map(({ key, value }, index) => (
-        <div key={key} className="flex space-x-2">
-          <InputWithLabel
-            id={`processor_key_${key}`}
-            label="Key"
-            type="text"
-            value={key}
-            onChange={(newValue) => handleKeyChange(newValue, index)}
-            onFocus={() => setFocused(index)}
-            onBlur={() => setFocused(null)}
-            autoFocus={focused === index}
-          />
-          <InputWithLabel
-            id={`processor_value_${key}`}
-            label="Value"
-            type="text"
-            value={value as string}
-            onChange={(newValue) => handleValueChange(newValue, index)}
-          />
 
-          <button
-            type="button"
-            onClick={() => removeParam(index)}
-            data-te-ripple-init
-            data-te-ripple-color="light"
-            className="inline-block text-center w-10 h-10 rounded-full bg-primary p-2 uppercase leading-normal text-white "
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                fillRule="evenodd"
-                d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z"
-                clipRule="evenodd"
+      {processorData.map(({ key, value }, index) => (
+        <div key={key} className={`${setupMode ? "flex space-x-2" : ""}`}>
+          {setupMode ? (
+            <>
+              <InputWithLabel
+                id={`processor_key_${key}`}
+                label="Key"
+                type="text"
+                value={key}
+                onChange={(newValue) => handleKeyChange(newValue, index)}
+                onFocus={() => setFocused(index)}
+                onBlur={() => setFocused(null)}
+                autoFocus={focused === index}
               />
-            </svg>
-          </button>
+              <InputWithLabel
+                id={`processor_value_${key}`}
+                label="Value"
+                type="text"
+                value={value as string}
+                onChange={(newValue) => handleValueChange(newValue, index)}
+              />
+
+              <button
+                type="button"
+                onClick={() => removeParam(index)}
+                data-te-ripple-init
+                data-te-ripple-color="light"
+              >
+                <MinusCircleIcon className="w-6 h-6 text-orange-400" />
+              </button>
+            </>
+          ) : ["text", "prompt", "textarea"].includes(key) ? (
+            <TextareaWithLabel
+              id={`textarea_${key}`}
+              label={key}
+              rows={10}
+              placeholder={"pls enter the prompt"}
+              value={value}
+              onChange={(updatedPrompt) =>
+                handleValueChange(updatedPrompt, index)
+              }
+            />
+          ) : (
+            <InputWithLabel
+              id="floatingName"
+              label={key}
+              type="text"
+              value={value}
+              onChange={(newValue) => handleValueChange(newValue, index)}
+            />
+          )}
         </div>
       ))}
 

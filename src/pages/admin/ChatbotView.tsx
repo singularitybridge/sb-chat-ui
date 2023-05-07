@@ -206,7 +206,7 @@ const ChatbotView: React.FC = () => {
           </div>
         </div>
         <div className="w-1/3">
-          <h2 className="text-xl font-bold mb-4">{getNodeTitle()}</h2>
+          {/* <div className="text-xl font-bold mb-4">{getNodeTitle()}</div> */}
           {selectedNode && selectedNode.type === "chatbotNode" && (
             <EditChatbot
               chatbot={selectedNode.node}
