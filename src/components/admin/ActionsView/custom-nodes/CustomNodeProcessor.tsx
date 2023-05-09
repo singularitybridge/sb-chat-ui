@@ -22,13 +22,25 @@ const CustomNodeProcessor: React.FC<CustomNodeProcessorProps> = ({ data }) => {
         />
       </div>
 
-      <div className="p-3 mb-1">
-        {Object.entries(data.processor_data).map(([key, value]) => (
-          <div key={key} className="mt-3 ml-1 w-72">
+      <div className="ml-1 p-3">
+      {Object.entries(data.processor_data).slice(0, 6).map(([key, value]) => (
+
+          <div key={key} className="w-96 p-2">
             <LabelText
-              label={<div className="text-sm mr-5 text-sky-400 ">{key}</div>}
-              text={<div className=" text-base">{value}</div>}
+              label={
+                <div className=" text-xs mr-5 text-sky-700 w-44">{key}</div>
+              }
+              text={
+                <div
+                  className={`text-base ${
+                    key === "prompt" ? "line-clamp-2 h-12" : ""
+                  }`}
+                >
+                  {value}
+                </div>
+              }
               labelVerticalAlign="center"
+              layout="vertical" // Set layout to "vertical" here
             />
           </div>
         ))}

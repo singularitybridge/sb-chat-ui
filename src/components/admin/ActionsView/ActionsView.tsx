@@ -61,7 +61,6 @@ const ActionsView: React.FC<ActionsViewProps> = ({
   }, [setViewport]);
 
   useEffect(() => {
-
     const chatbotNode = {
       id: chatbot.name,
       type: "custom",
@@ -92,21 +91,26 @@ const ActionsView: React.FC<ActionsViewProps> = ({
             type: "stateNode",
             isActive,
           },
-          position: { x: index * 350, y: 250 },
+          position: { x: index * 370 + 450, y: 300 },
         };
 
         const processorNodes = state.processors.map(
-          (processor, processorIndex) => ({
-            id: `${state.name}-${processor.processor_name}`,
-            type: "customProcessor",
-            data: {
-              _id: processor._id, // Add the _id property to the processor node
-              processor_name: processor.processor_name,
-              processor_data: processor.processor_data,
-              type: "processorNode",
-            },
-            position: { x: index * 350, y: 650 + processorIndex * 250 },
-          })
+          (processor, processorIndex) => {
+            const processorHeight = 400;
+            const positionY = 600 + (processorHeight + 110) * processorIndex;
+
+            return {
+              id: `${state.name}-${processor._id}`,
+              type: "customProcessor",
+              data: {
+                _id: processor._id,
+                processor_name: processor.processor_name,
+                processor_data: processor.processor_data,
+                type: "processorNode",
+              },
+              position: { x: index * 370 + 495, y: positionY },
+            };
+          }
         );
 
         return [...acc, stateNode, ...processorNodes];
@@ -125,16 +129,16 @@ const ActionsView: React.FC<ActionsViewProps> = ({
         (processor, processorIndex) => {
           if (processorIndex === 0) {
             return {
-              id: `${state.name}-${processor.processor_name}`,
+              id: `${state.name}-${processor._id}`,
               source: state.name,
-              target: `${state.name}-${processor.processor_name}`,
+              target: `${state.name}-${processor._id}`,
             };
           } else {
             const previousProcessor = state.processors[processorIndex - 1];
             return {
-              id: `${previousProcessor.processor_name}-${processor.processor_name}`,
-              source: `${state.name}-${previousProcessor.processor_name}`,
-              target: `${state.name}-${processor.processor_name}`,
+              id: `${previousProcessor._id}-${processor._id}`,
+              source: `${state.name}-${previousProcessor._id}`,
+              target: `${state.name}-${processor._id}`,
             };
           }
         }
