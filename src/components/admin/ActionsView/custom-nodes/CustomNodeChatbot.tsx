@@ -14,13 +14,17 @@ type CustomNodeData = {
 
 interface CustomNodeProps {
   data: CustomNodeData;
+  id: string;
+  selectedNodeId: string | null;
 }
 
-const CustomNode: React.FC<CustomNodeProps> = ({ data }) => {
+const CustomNode: React.FC<CustomNodeProps> = ({ data, id, selectedNodeId }) => {
+  const isSelected = id === selectedNodeId;
+  
   useEffect(() => {}, [data]);
 
   return (
-    <div className="p-5 shadow-md rounded-md bg-white border-2 border-stone-400">
+    <div className={`p-5 shadow-md rounded-md bg-white border-2 ${isSelected ? 'border-red-500' : 'border-stone-400'}`}>
       <div className="flex">
         <div className="w-32 h-32 flex justify-center items-center bg-gray-100">
           <img src={data.avatarImage} alt="" />

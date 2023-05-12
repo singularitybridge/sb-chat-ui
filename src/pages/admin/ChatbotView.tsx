@@ -62,10 +62,6 @@ const ChatbotView: React.FC = () => {
   };
 
   const updateChatbotProcessor = async (updatedProcessor: any) => {
-
-    console.log('updatedProcessor', updatedProcessor);
-
-
     const updatedChatbot = {
       ...chatbot,
       states: chatbot.states.map((state: any) => {
@@ -205,37 +201,43 @@ const ChatbotView: React.FC = () => {
             <h2 className="text-xl font-bold mb-4 mt-6">Test Chatbot</h2>
           </div>
         </div>
-        <div className="w-1/3">
-          {/* <div className="text-xl font-bold mb-4">{getNodeTitle()}</div> */}
-          {selectedNode && selectedNode.type === "chatbotNode" && (
-            <EditChatbot
-              chatbot={selectedNode.node}
-              onUpdate={updateChatbot}
-              onCreateNewState={createNewState}
-            />
-          )}
-          {selectedNode && selectedNode.type === "stateNode" && (
-            <EditChatbotState
-              state={selectedNode.node}
-              chatbotKey={chatbot.key}
-              onAddProcessor={addChatbotProcessor}
-              onUpdateState={updateChatbotState}
-              onDeleteState={deleteChatbotState}
-              onSetActiveState={setActiveChatbotState}
-            />
-          )}
-          {selectedNode && selectedNode.type === "processorNode" && (
-            <EditChatbotProcessor
-              node={selectedNode.node}
-              onUpdateProcessor={updateChatbotProcessor}
-              onDeleteProcessor={deleteProcessor}
-              onInsertProcessorAfter={insertProcessorAfter}
-            />
+        <div className="w-1/3">          
+          {selectedNode ? (
+            <>
+              {selectedNode.type === "chatbotNode" && (
+                <EditChatbot
+                  chatbot={selectedNode.node}
+                  onUpdate={updateChatbot}
+                  onCreateNewState={createNewState}
+                />
+              )}
+              {selectedNode.type === "stateNode" && (
+                <EditChatbotState
+                  state={selectedNode.node}
+                  chatbotKey={chatbot.key}
+                  onAddProcessor={addChatbotProcessor}
+                  onUpdateState={updateChatbotState}
+                  onDeleteState={deleteChatbotState}
+                  onSetActiveState={setActiveChatbotState}
+                />
+              )}
+              {selectedNode.type === "processorNode" && (
+                <EditChatbotProcessor
+                  node={selectedNode.node}
+                  onUpdateProcessor={updateChatbotProcessor}
+                  onDeleteProcessor={deleteProcessor}
+                  onInsertProcessorAfter={insertProcessorAfter}
+                />
+              )}
+            </>
+          ) : (
+            <div className="text-center text-gray-500 mt-5">Please select a node to view or edit its details.</div>
           )}
         </div>
       </div>
     </>
   );
+  
 };
 
 export { ChatbotView };

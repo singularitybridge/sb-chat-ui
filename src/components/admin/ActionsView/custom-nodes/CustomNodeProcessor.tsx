@@ -9,11 +9,17 @@ type CustomNodeProcessorData = {
 
 interface CustomNodeProcessorProps {
   data: CustomNodeProcessorData;
+  id: string;
+  selectedNodeId: string | null;
 }
 
-const CustomNodeProcessor: React.FC<CustomNodeProcessorProps> = ({ data }) => {
+const CustomNodeProcessor: React.FC<CustomNodeProcessorProps> = ({ data, id, selectedNodeId }) => {
+  const isSelected = id === selectedNodeId;
+
   return (
-    <div className="shadow-md rounded-md bg-white border-2 border-stone-400">
+    
+    <div className={`shadow-md rounded-md bg-white border-2 ${isSelected ? 'border-red-600' : 'border-stone-400'}`}>
+
       <div className="p-3  bg-sky-100">
         <LabelText
           label={<CodeBracketIcon className="h-8 w-8 text-slate-400 mr-4" />}

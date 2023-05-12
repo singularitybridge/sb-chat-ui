@@ -23,18 +23,25 @@ interface ActionsViewProps {
   onNodeSelected: (node: any, type: string) => void;
 }
 
-const nodeTypes = {
-  custom: memo(CustomNode),
-  customState: memo(CustomNodeState),
-  customProcessor: memo(CustomNodeProcessor),
-};
-
 const ActionsView: React.FC<ActionsViewProps> = ({
   chatbot,
   onNodeSelected,
 }) => {
   const [nodes, setNodes] = useState<any[]>([]);
   const [edges, setEdges] = useState<any[]>([]);
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+
+  const nodeTypes = {
+    custom: memo((props: any) => (
+      <CustomNode {...props} selectedNodeId={selectedNodeId} />
+    )),
+    customState: memo((props: any) => (
+      <CustomNodeState {...props} selectedNodeId={selectedNodeId} />
+    )),
+    customProcessor: memo((props: any) => (
+      <CustomNodeProcessor {...props} selectedNodeId={selectedNodeId} />
+    )),
+  };
 
   const onConnect = useCallback(
     (params: any) => setEdges((eds) => addEdge(params, eds)),
@@ -42,6 +49,8 @@ const ActionsView: React.FC<ActionsViewProps> = ({
   );
 
   const onNodeClick = (event: any, node: any) => {
+    setSelectedNodeId(node.id);
+
     if (node.type === "custom") {
       onNodeSelected(node.data, "chatbotNode");
     }
@@ -72,9 +81,11 @@ const ActionsView: React.FC<ActionsViewProps> = ({
         maxTokens: chatbot.maxTokens,
         key: chatbot.key,
         type: "chatbotNode",
+        selectedNodeId,
       },
       position: { x: (chatbot.states.length * 300) / 2, y: 50 },
     };
+    
 
     const nodesFromStates = chatbot.states.reduce<any[]>(
       (acc, state, index) => {
@@ -90,9 +101,11 @@ const ActionsView: React.FC<ActionsViewProps> = ({
             temperature: state.temperature,
             type: "stateNode",
             isActive,
+            selectedNodeId,
           },
           position: { x: index * 370 + 450, y: 300 },
         };
+        
 
         const processorNodes = state.processors.map(
           (processor, processorIndex) => {
@@ -151,12 +164,20 @@ const ActionsView: React.FC<ActionsViewProps> = ({
     setEdges(initEdges);
   }, [chatbot]);
 
+  const onPaneClick = useCallback(() => {
+    setSelectedNodeId(null);
+    onNodeSelected(null, "");
+  }, [onNodeSelected]);
+  
+  
+
   return (
     <ReactFlow
       nodes={nodes}
       edges={edges}
       onNodeClick={onNodeClick}
       onConnect={onConnect}
+      onPaneClick={onPaneClick} 
       nodeTypes={nodeTypes}
       className="bg-teal-50"
     >

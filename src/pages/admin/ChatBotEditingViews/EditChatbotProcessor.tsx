@@ -73,10 +73,30 @@ const EditChatbotProcessor: React.FC<EditChatbotProcessorProps> = ({
   const removeParam = (index: number) => {
     setProcessorData(processorData.filter((_, i) => i !== index));
   };
-
+  
   const handleProcessorChange = (value: string) => {
-    console.log("Selected processor:", value);
+    // Find the selected processor option
+    const selectedProcessorOption = processorOptions.find(
+      (option) => option.value === value
+    );
+  
+    // If the selected processor option has a processor_data preset, apply it
+    if (
+      selectedProcessorOption &&
+      selectedProcessorOption.processor_data
+    ) {
+      const presetProcessorData = Object.entries(
+        selectedProcessorOption.processor_data
+      ).map(([key, value]) => ({ key, value: String(value) })); // Convert value to string
+  
+      setProcessorData(presetProcessorData);
+    }
+  
+    // Update the processorName
+    setProcessorName(value);
   };
+  
+  
 
   const handleSave = () => {
     const updatedProcessorData = Object.fromEntries(
@@ -122,7 +142,7 @@ const EditChatbotProcessor: React.FC<EditChatbotProcessorProps> = ({
       <SelectProcessor
         options={processorOptions}
         value={processorName}
-        onChange={(value) => setProcessorName(value)}
+        onChange={(value) => handleProcessorChange(value)}
       />
 
       {processorData.map(({ key, value }, index) => (
