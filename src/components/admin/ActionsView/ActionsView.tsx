@@ -110,7 +110,7 @@ const ActionsView: React.FC<ActionsViewProps> = ({
         const processorNodes = state.processors.map(
           (processor, processorIndex) => {
             const processorHeight = 400;
-            const positionY = 600 + (processorHeight + 110) * processorIndex;
+            const positionY = 600 + (processorHeight + 120) * processorIndex;
 
             return {
               id: `${state.name}-${processor._id}`,
@@ -121,7 +121,7 @@ const ActionsView: React.FC<ActionsViewProps> = ({
                 processor_data: processor.processor_data,
                 type: "processorNode",
               },
-              position: { x: index * 370 + 495, y: positionY },
+              position: { x: index * 480 + 495, y: positionY },
             };
           }
         );

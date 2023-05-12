@@ -52,6 +52,7 @@ const EditChatbotState: React.FC<EditChatbotStateProps> = ({
 
   return (
     <form onSubmit={handleSubmit}>
+      <div className="text-xl font-bold mb-5">Edit Chatbot State</div>
       <InputWithLabel
         id="floatingName"
         label="Name"

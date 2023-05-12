@@ -10,6 +10,7 @@ import { EditChatbot } from "./ChatBotEditingViews/EditChatbot";
 import { EditChatbotState } from "./ChatBotEditingViews/EditChatbotState";
 import { EditChatbotProcessor } from "./ChatBotEditingViews/EditChatbotProcessor";
 import { v4 as uuidv4 } from "uuid";
+import { SessionStoreView } from "./SessionStoreView";
 
 const ChatbotView: React.FC = () => {
   const { key } = useParams<{ key: string }>();
@@ -29,20 +30,6 @@ const ChatbotView: React.FC = () => {
 
   const handleNodeSelected = (data: any, type: string) => {
     setSelectedNode({ node: data, type });
-  };
-
-  const getNodeTitle = () => {
-    if (!selectedNode) return "Edit Node";
-    switch (selectedNode.type) {
-      case "chatbotNode":
-        return "Edit Chatbot";
-      case "stateNode":
-        return "Edit Chatbot State";
-      case "processorNode":
-        return "Edit State Processor";
-      default:
-        return "Edit Node";
-    }
   };
 
   const updateChatbotState = async (updatedData: any) => {
@@ -188,9 +175,8 @@ const ChatbotView: React.FC = () => {
   return (
     <>
       <div className="flex">
-        <div className="w-2/3 mr-4">
-          <div className="">
-            <div className="w-full h-[42rem] ">
+        <div className="w-2/3 bg-sky-100 border-r-2">
+            <div className="w-full h-[42rem]">
               <ReactFlowProvider>
                 <ActionsView
                   chatbot={chatbot}
@@ -198,10 +184,9 @@ const ChatbotView: React.FC = () => {
                 />
               </ReactFlowProvider>
             </div>
-            <h2 className="text-xl font-bold mb-4 mt-6">Test Chatbot</h2>
-          </div>
+            <SessionStoreView sessionId="64401d3221c6baaeec808c61" />
         </div>
-        <div className="w-1/3">          
+        <div className="w-1/3 p-5 border-t-2">          
           {selectedNode ? (
             <>
               {selectedNode.type === "chatbotNode" && (
