@@ -29,6 +29,43 @@ export const useChatbot = (key: string) => {
     }
   };
 
+  const setChatbotState = async (stateId: string) => {
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:5000/chatbots/${key}/set_state`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ state: stateId }),
+        }
+      );
+  
+      const responseData = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(responseData.error);
+      }
+  
+      console.log("Chatbot state updated", responseData);
+  
+      if (chatbot) {
+        setChatbot({
+          ...chatbot,
+          current_state: stateId,
+        });
+      }
+      
+    } catch (err) {
+      console.error("Error updating chatbot state:", err);
+    }
+  };
+  
+
+
+  
+
   useEffect(() => {
     const fetchChatbot = async () => {
       try {
@@ -46,6 +83,6 @@ export const useChatbot = (key: string) => {
     fetchChatbot();
   }, [key]);
 
-  return { chatbot, setChatbot, loading, error, updateChatbot };
+  return { chatbot, setChatbot, loading, error, updateChatbot, setChatbotState };
 
 };

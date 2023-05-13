@@ -22,7 +22,7 @@ const processorOptions = [
     processor_data: {
       key: "gptKey",
       maxTokens: "800",
-      max_history_messages: "3",
+      maxHistoryMessages: "3",
       model: "gpt-3.5-turbo",
       modifyResponse: 0,
       prompt: "based on the conversation, return an array with companies, tasks per company and log work per company in a JSON foramt",
@@ -65,7 +65,7 @@ const processorOptions = [
     secondaryText: "Set the state of the chatbot",
 
     processor_data: {
-      nextState: "get_user_input",  
+      'newState': "get_user_input",  
     } 
   },
 ];

@@ -14,7 +14,7 @@ import { SessionStoreView } from "./SessionStoreView";
 
 const ChatbotView: React.FC = () => {
   const { key } = useParams<{ key: string }>();
-  const { chatbot, loading, error, updateChatbot } = useChatbot(key || "");
+  const { chatbot, loading, error, updateChatbot, setChatbotState } = useChatbot(key || "");
   const [selectedNode, setSelectedNode] = useState<{
     node: any;
     type: string;
@@ -93,11 +93,7 @@ const ChatbotView: React.FC = () => {
   };
 
   const setActiveChatbotState = async (stateId: string) => {
-    const updatedChatbot = {
-      ...chatbot,
-      current_state: stateId,
-    };
-    await updateChatbot(updatedChatbot);
+    setChatbotState(stateId);  
   };
 
   const addChatbotProcessor = async (stateId: string) => {
