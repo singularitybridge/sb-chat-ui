@@ -31,6 +31,16 @@ const processorOptions = [
     }
   },
   {
+    value : 'ner',
+    text : 'NER - Named Entity Recognition',
+    secondaryText : 'Perform Named Entity Recognition on the GPT response',
+    processor_data : {
+      key : 'nerKey',
+      saveResponseToSessionStore: 1,
+      modifyResponse: 0,
+    }
+  },  
+  {
     value: "set_session_variable",
     text: "Set Session Variable",
     secondaryText: "Set a session variable based on the GPT response",
