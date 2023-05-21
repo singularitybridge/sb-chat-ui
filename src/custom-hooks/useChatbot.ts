@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Chatbot } from "../services/ChatbotService";
 
-export const useChatbot = (key: string) => {
+export const useChatbot = (key: string, sessionId: string) => {
   const [chatbot, setChatbot] = useState<Chatbot | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
@@ -32,7 +32,7 @@ export const useChatbot = (key: string) => {
   const setChatbotState = async (stateId: string) => {
     try {
       const response = await fetch(
-        `http://127.0.0.1:5000/chatbots/${key}/set_state`,
+        `http://127.0.0.1:5000/chat_sessions/${sessionId}/set_state`,
         {
           method: "PUT",
           headers: {
@@ -41,6 +41,7 @@ export const useChatbot = (key: string) => {
           body: JSON.stringify({ state: stateId }),
         }
       );
+      
   
       const responseData = await response.json();
   

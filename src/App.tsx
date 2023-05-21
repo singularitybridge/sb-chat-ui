@@ -3,12 +3,18 @@ import { Chat } from "./pages/Chat";
 import { Header } from "./components/Header";
 import { SideMenu } from "./components/SideMenu";
 import { Outlet, useParams } from "react-router-dom";
-import { contextData, chatBotsState, userProfileState } from "./atoms/dataStore";
+import {
+  contextData,
+  chatBotsState,
+  userProfileState,
+} from "./atoms/dataStore";
 import { useRecoilState } from "recoil";
 import { fetchContextData, fetchChatBots } from "./services/BaseRowService";
+import { Provider } from "mobx-react";
+import { RootStore } from "./store/models/RootStore";
+import { RootStoreProvider } from "./store/common/RootStoreContext";
 
 const App = () => {
-
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [screenHeight, setScreenHeight] = useState(0);
   const { id } = useParams<{ id: string }>();
@@ -17,14 +23,13 @@ const App = () => {
   const [context, setContext] = useRecoilState(contextData);
 
   useEffect(() => {
-
     if (!id) {
       return;
     }
 
     setUserProfile({
       ...userProfile,
-      activeChatBot: id ,
+      activeChatBot: id,
     });
 
     fetchChatBots().then((data) => {
@@ -34,7 +39,6 @@ const App = () => {
     fetchContextData(id).then((data) => {
       setContext(data);
     });
-
   }, [id]);
 
   const getHeight = useCallback(
@@ -69,16 +73,27 @@ const App = () => {
 
   const style = { height: `${screenHeight}px` };
 
+  const rootStore = RootStore.create({
+    chatbots: []
+  });
+
+  useEffect(() => {
+    rootStore.loadChatbots();
+  }, []);
+
+
   return (
-    <div
-      style={style}
-      className="flex flex-col h-screen inset-0"
-      onClick={handleClick}
-    >
-      <Header onMenuClick={() => setIsMenuOpen(true)} />
-      <SideMenu isOpen={isMenuOpen} closeMenu={() => setIsMenuOpen(false)} />
-      <Outlet />
-    </div>
+    <RootStoreProvider value={rootStore}>
+      <div
+        style={style}
+        className="flex flex-col h-screen inset-0"
+        onClick={handleClick}
+      >
+        <Header onMenuClick={() => setIsMenuOpen(true)} />
+        <SideMenu isOpen={isMenuOpen} closeMenu={() => setIsMenuOpen(false)} />
+        <Outlet />
+      </div>
+    </RootStoreProvider>
   );
 };
 

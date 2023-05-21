@@ -6,6 +6,7 @@ export interface ChatSession {
   chatbot_key: string;
   created_at: string;
   updated_at: string;
+  current_state: string;
   user_id: string;
 }
 

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import React, { memo } from "react";
 import ReactFlow, {
   useNodesState,
@@ -17,31 +17,23 @@ import { CustomNodeState } from "./custom-nodes/CustomNodeState";
 import { CustomNodeProcessor } from "./custom-nodes/CustomNodeProcessor";
 
 import { Chatbot } from "../../../services/ChatbotService";
+import { ChatSession } from "../chatSessions/ChatSessionCard";
 
 interface ActionsViewProps {
   chatbot: Chatbot;
+  session?: ChatSession;
   onNodeSelected: (node: any, type: string) => void;
 }
 
 const ActionsView: React.FC<ActionsViewProps> = ({
   chatbot,
   onNodeSelected,
+  session,
 }) => {
+
   const [nodes, setNodes] = useState<any[]>([]);
   const [edges, setEdges] = useState<any[]>([]);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
-
-  const nodeTypes = {
-    custom: memo((props: any) => (
-      <CustomNode {...props} selectedNodeId={selectedNodeId} />
-    )),
-    customState: memo((props: any) => (
-      <CustomNodeState {...props} selectedNodeId={selectedNodeId} />
-    )),
-    customProcessor: memo((props: any) => (
-      <CustomNodeProcessor {...props} selectedNodeId={selectedNodeId} />
-    )),
-  };
 
   const onConnect = useCallback(
     (params: any) => setEdges((eds) => addEdge(params, eds)),
@@ -61,9 +53,31 @@ const ActionsView: React.FC<ActionsViewProps> = ({
       onNodeSelected(node.data, "processorNode");
     }
   };
+  
+  const onPaneClick = useCallback(() => {
+    setSelectedNodeId(null);
+    onNodeSelected(null, "");
+  }, [onNodeSelected]);
+
+  
+  const selectedNodeIdMemo = useMemo(() => selectedNodeId, [selectedNodeId]);
+
+  const nodeTypes = useMemo(() => ({
+    custom: memo((props: any) => (
+      <CustomNode {...props} selectedNodeId={selectedNodeIdMemo} />
+    )),
+    customState: memo((props: any) => (
+      <CustomNodeState {...props} selectedNodeId={selectedNodeIdMemo} />
+    )),
+    customProcessor: memo((props: any) => (
+      <CustomNodeProcessor {...props} selectedNodeId={selectedNodeIdMemo} />
+    )),
+  }), [selectedNodeIdMemo]);
+
 
   const reactFlow = useReactFlow();
   const { setViewport } = reactFlow;
+
 
   useEffect(() => {
     setViewport({ x: 0, y: 0, zoom: 0.7 }, { duration: 600 });
@@ -85,11 +99,10 @@ const ActionsView: React.FC<ActionsViewProps> = ({
       },
       position: { x: (chatbot.states.length * 300) / 2, y: 50 },
     };
-    
 
     const nodesFromStates = chatbot.states.reduce<any[]>(
       (acc, state, index) => {
-        const isActive = chatbot.current_state === state.name;
+        const isActive = session && session.current_state === state.name;
         const stateNode = {
           id: state.name,
           type: "customState",
@@ -105,7 +118,6 @@ const ActionsView: React.FC<ActionsViewProps> = ({
           },
           position: { x: index * 370 + 450, y: 300 },
         };
-        
 
         const processorNodes = state.processors.map(
           (processor, processorIndex) => {
@@ -162,14 +174,9 @@ const ActionsView: React.FC<ActionsViewProps> = ({
 
     setNodes(nodesFromStates);
     setEdges(initEdges);
-  }, [chatbot]);
+  }, [chatbot, session]);
 
-  const onPaneClick = useCallback(() => {
-    setSelectedNodeId(null);
-    onNodeSelected(null, "");
-  }, [onNodeSelected]);
-  
-  
+
 
   return (
     <ReactFlow
@@ -177,7 +184,7 @@ const ActionsView: React.FC<ActionsViewProps> = ({
       edges={edges}
       onNodeClick={onNodeClick}
       onConnect={onConnect}
-      onPaneClick={onPaneClick} 
+      onPaneClick={onPaneClick}
       nodeTypes={nodeTypes}
       className="bg-teal-50"
     >

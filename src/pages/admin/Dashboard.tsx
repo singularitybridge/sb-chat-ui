@@ -10,29 +10,28 @@ import {
   ChatSessionCard,
 } from "../../components/admin/chatSessions/ChatSessionCard";
 import { BreadCrumbs } from "../../components/BreadCCrumbs";
+import { observer } from "mobx-react-lite";
+import { useRootStore } from "../../store/common/RootStoreContext";
 
-const Dashboard: React.FC = () => {
+const Dashboard = observer(() => {
+
   const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
-  const [chatbots, setChatbots] = useState<Chatbot[]>([]);
+  const { chatbots } = useRootStore();
+  
 
-  useEffect(() => {
+  useEffect(() => {  
+
     async function fetchSessionsData() {
       const sessions = await fetchChatSessions();
       setChatSessions(sessions);
     }
 
-    async function fetchChatbotsData() {
-      const bots = await fetchChatbots();
-      setChatbots(bots);
-    }
-
     fetchSessionsData();
-    fetchChatbotsData();
   }, []);
 
   return (
     <>
-      <div className="text-2xl font-normal leading-tight mb-4">Chatbots</div>
+      <div className="text-2xl font-normal leading-tight mb-4">Chatbots {chatbots.length}</div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mb-3">
         {chatbots.map((chatbot) => (
           <ChatbotCard key={chatbot.key} chatbot={chatbot} />
@@ -49,6 +48,6 @@ const Dashboard: React.FC = () => {
       </div>
     </>
   );
-};
+});
 
 export { Dashboard };

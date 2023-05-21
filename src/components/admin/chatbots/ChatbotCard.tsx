@@ -1,12 +1,13 @@
 import { Link } from "react-router-dom";
-import { Chatbot } from "../../../services/ChatbotService";
+// import { Chatbot } from "../../../services/ChatbotService";
 import {
   ChartPieIcon,
   DocumentTextIcon,
   PencilSquareIcon,
 } from "@heroicons/react/24/outline";
+import { IChatbot } from "../../../store/models/Chatbot";
 
-const ChatbotCard: React.FC<{ chatbot: Chatbot }> = ({ chatbot }) => {
+const ChatbotCard: React.FC<{ chatbot: IChatbot }> = ({ chatbot }) => {
   const defaultImage = "admin/chatbot.png";
 
   return (

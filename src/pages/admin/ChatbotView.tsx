@@ -11,10 +11,27 @@ import { EditChatbotState } from "./ChatBotEditingViews/EditChatbotState";
 import { EditChatbotProcessor } from "./ChatBotEditingViews/EditChatbotProcessor";
 import { v4 as uuidv4 } from "uuid";
 import { SessionStoreView } from "./SessionStoreView";
+import { useSession } from "../../custom-hooks/useSession";
+import { ChatSession } from "../../components/admin/chatSessions/ChatSessionCard";
+
+const sessionId = "64401d3221c6baaeec808c61";
+const defaultSession: ChatSession = {
+  _id: "",
+  active: false,
+  chatbot_key: "",
+  created_at: "",
+  updated_at: "",
+  user_id: "",
+  current_state: "",
+};
 
 const ChatbotView: React.FC = () => {
   const { key } = useParams<{ key: string }>();
-  const { chatbot, loading, error, updateChatbot, setChatbotState } = useChatbot(key || "");
+  const { chatbot, loading, error, updateChatbot, setChatbotState } =
+    useChatbot(key || "", sessionId || "");
+
+  const { session } = useSession(sessionId) || defaultSession;
+
   const [selectedNode, setSelectedNode] = useState<{
     node: any;
     type: string;
@@ -93,7 +110,7 @@ const ChatbotView: React.FC = () => {
   };
 
   const setActiveChatbotState = async (stateId: string) => {
-    setChatbotState(stateId);  
+    setChatbotState(stateId);
   };
 
   const addChatbotProcessor = async (stateId: string) => {
@@ -141,48 +158,50 @@ const ChatbotView: React.FC = () => {
       processor_name: "new-processor-" + uuidv4(),
       processor_data: {},
     };
-  
+
     const updatedChatbot = {
       ...chatbot,
       states: chatbot.states.map((state: any) => {
-        const processorIndex = state.processors.findIndex((processor: any) => processor._id === processorId);
-  
+        const processorIndex = state.processors.findIndex(
+          (processor: any) => processor._id === processorId
+        );
+
         if (processorIndex === -1) {
           return state;
         }
-  
+
         const updatedProcessors = [
           ...state.processors.slice(0, processorIndex + 1),
           newProcessor,
           ...state.processors.slice(processorIndex + 1),
         ];
-        
+
         return {
           ...state,
           processors: updatedProcessors,
         };
       }),
     };
-    
+
     await updateChatbot(updatedChatbot);
   };
-  
 
   return (
     <>
       <div className="flex">
         <div className="w-2/3 bg-sky-100 border-r-2">
-            <div className="w-full h-[42rem]">
-              <ReactFlowProvider>
-                <ActionsView
-                  chatbot={chatbot}
-                  onNodeSelected={handleNodeSelected}
-                />
-              </ReactFlowProvider>
-            </div>
-            <SessionStoreView sessionId="64401d3221c6baaeec808c61" />
+          <div className="w-full h-[42rem]">
+            <ReactFlowProvider>
+              <ActionsView
+                chatbot={chatbot}
+                session={session || defaultSession}
+                onNodeSelected={handleNodeSelected}
+              />
+            </ReactFlowProvider>
+          </div>
+          <SessionStoreView sessionId={sessionId} />
         </div>
-        <div className="w-1/3 p-5 border-t-2">          
+        <div className="w-1/3 p-5 border-t-2">
           {selectedNode ? (
             <>
               {selectedNode.type === "chatbotNode" && (
@@ -212,13 +231,14 @@ const ChatbotView: React.FC = () => {
               )}
             </>
           ) : (
-            <div className="text-center text-gray-500 mt-5">Please select a node to view or edit its details.</div>
+            <div className="text-center text-gray-500 mt-5">
+              Please select a node to view or edit its details.
+            </div>
           )}
         </div>
       </div>
     </>
   );
-  
 };
 
 export { ChatbotView };
