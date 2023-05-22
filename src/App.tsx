@@ -1,21 +1,19 @@
 import React, { SVGProps, useCallback, useEffect, useState } from "react";
-import { Chat } from "./pages/Chat";
 import { Header } from "./components/Header";
 import { SideMenu } from "./components/SideMenu";
 import { Outlet, useParams } from "react-router-dom";
-import {
-  contextData,
-  chatBotsState,
-  userProfileState,
-} from "./atoms/dataStore";
-import { useRecoilState } from "recoil";
-import { fetchContextData, fetchChatBots } from "./services/BaseRowService";
-import { Provider } from "mobx-react";
 import { RootStore } from "./store/models/RootStore";
 import { RootStoreProvider } from "./store/common/RootStoreContext";
 
 const rootStore = RootStore.create({
   chatbots: [],
+  userProfile : {
+    name: "Avi",
+    avatar: "/images/avatars/av3.png",
+    activeChatBot: 'remove me',
+    isAudioPlaying: false,
+
+  }
   // activeChatbot: null,
 });
 
@@ -23,27 +21,27 @@ const App = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [screenHeight, setScreenHeight] = useState(0);
   const { id } = useParams<{ id: string }>();
-  const [userProfile, setUserProfile] = useRecoilState(userProfileState);
-  const [chatBots, setChatsBots] = useRecoilState(chatBotsState);
-  const [context, setContext] = useRecoilState(contextData);
+  // const [userProfile, setUserProfile] = useRecoilState(userProfileState);
+  // const [chatBots, setChatsBots] = useRecoilState(chatBotsState);
+  // const [context, setContext] = useRecoilState(contextData);
 
   useEffect(() => {
     if (!id) {
       return;
     }
 
-    setUserProfile({
-      ...userProfile,
-      activeChatBot: id,
-    });
+    // setUserProfile({
+    //   ...userProfile,
+    //   activeChatBot: id,
+    // });
 
-    fetchChatBots().then((data) => {
-      setChatsBots(data);
-    });
+    // fetchChatBots().then((data) => {
+    //   setChatsBots(data);
+    // });
 
-    fetchContextData(id).then((data) => {
-      setContext(data);
-    });
+    // fetchContextData(id).then((data) => {
+    //   setContext(data);
+    // });
   }, [id]);
 
   const getHeight = useCallback(

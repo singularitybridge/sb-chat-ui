@@ -1,16 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
+import { observer } from "mobx-react-lite";
 import {
   Message,
-  userProfileState,
-  chatBotsState,
-  getChatBot,
   SenderType,
-  getMessageText,
-  sanitizeMessageText,
-  ChatBot,
-} from "../atoms/dataStore";
+} from "../atoms/dataStore-old";
 import { playAudio } from "../services/AudioService";
 import { Avatar, AvatarStyles } from "./Avatar";
 
@@ -25,6 +20,7 @@ import {
   BoltIcon,
   CursorArrowRippleIcon,
 } from "@heroicons/react/24/outline";
+import { useRootStore } from "../store/common/RootStoreContext";
 
 interface ChatMessageProps {
   message: Message;
@@ -170,29 +166,34 @@ const ChatMessageStyles = {
   },
 };
 
-const ChatMessage: React.FC<ChatMessageProps> = ({
+const ChatMessage: React.FC<ChatMessageProps> = observer( ({
   message,
   onUserSelection,
 }) => {
-  const [userProfile, setUserProfile] = useRecoilState(userProfileState);
-  const chatBots = useRecoilValue(chatBotsState);
+
+
+  const { activeChatbot, userProfile } = useRootStore();
+
+
+  // const [userProfile, setUserProfile] = useRecoilState(userProfileState);
+  // const chatBots = useRecoilValue(chatBotsState);
   const { sessionId } = useParams<{ sessionId: string }>();
 
   if (!sessionId) {
     return null;
   }
 
-  const [chatBot, setChatBot] = useState<ChatBot | null>(null);
+  // const [chatBot, setChatBot] = useState<ChatBot | null>(null);
 
-  useEffect(() => {
-    fetch(`http://127.0.0.1:5000/chat_sessions/${sessionId}`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.chatbot) {
-          setChatBot(data.chatbot);
-        }
-      });
-  }, [sessionId]);
+  // useEffect(() => {
+  //   fetch(`http://127.0.0.1:5000/chat_sessions/${sessionId}`)
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       if (data.chatbot) {
+  //         setChatBot(data.chatbot);
+  //       }
+  //     });
+  // }, [sessionId]);
 
   // const chatBot = getChatBot(chatBots, sessionId);
 
@@ -202,8 +203,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
       : ChatMessageStyles.bot;
   const avatarImage =
     message.role === SenderType.user
-      ? userProfile.avatar
-      : chatBot?.avatarImage;
+      ? userProfile?.avatar
+      : activeChatbot?.avatarImage;
 
   return (
     <>
@@ -218,14 +219,14 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
           />
           <div
             className={messageStyles.message}
-            style={{
-              direction:
-                chatBot &&
-                chatBot.autoTranslate &&
-                chatBot.autoTranslateTarget === "he"
-                  ? "rtl"
-                  : "ltr",
-            }}
+            // style={{
+            //   direction:
+            //     chatBot &&
+            //     chatBot.autoTranslate &&
+            //     chatBot.autoTranslateTarget === "he"
+            //       ? "rtl"
+            //       : "ltr",
+            // }}
           >
             {/* <div>{sanitizeMessageText(getMessageText(message))}</div> */}
             {/* <div>{message.content}</div> */}
@@ -237,6 +238,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
       </div>
     </>
   );
-};
+});
 
 export { ChatMessage, ChatMessageStyles };

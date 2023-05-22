@@ -1,4 +1,4 @@
-import { ContextData, getMessageTextGPT, Message } from "../atoms/dataStore";
+import { ContextData, getMessageTextGPT, Message } from "../atoms/dataStore-old";
 import Mustache from "mustache";
 import axios from "axios";
 

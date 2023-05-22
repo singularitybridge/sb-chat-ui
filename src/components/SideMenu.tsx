@@ -6,16 +6,7 @@ import {
   Cog8ToothIcon,
 } from "@heroicons/react/24/solid";
 import { observer } from "mobx-react-lite";
-
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import {
-  // ChatBot,
-  // chatBotsState,
-  defaultChatBot,
-  // getChatBot,
-  userProfileState,
-} from "../atoms/dataStore";
-import { useRecoilValue } from "recoil";
 import { useRootStore } from "../store/common/RootStoreContext";
 
 interface SideMenuProps {
@@ -42,13 +33,11 @@ const SideMenuItem: React.FC<SideMenuItemProps> = ({
   </div>
 );
 
-const SideMenu: React.FC<SideMenuProps> = observer( ({ isOpen, closeMenu }) => {
-
+const SideMenu: React.FC<SideMenuProps> = observer(({ isOpen, closeMenu }) => {
   // const userProfile = useRecoilValue(userProfileState);
   // const chatBots = useRecoilValue(chatBotsState);
 
-
-  const {activeChatbot} = useRootStore();
+  const { activeChatbot } = useRootStore();
 
   // const [chatBot, setChatBot] = useState<ChatBot>();
 
@@ -65,7 +54,10 @@ const SideMenu: React.FC<SideMenuProps> = observer( ({ isOpen, closeMenu }) => {
       } duration-300`}
     >
       <header className="flex items-center justify-between p-4 mt-4">
-        <img src={activeChatbot?.avatarImage} className="w-[8rem] object-contain" />
+        <img
+          src={activeChatbot?.avatarImage}
+          className="w-[8rem] object-contain"
+        />
         <button className="p-1 rounded-full hover:text-gray-400 w-10 h-10">
           <XMarkIcon className="h-6 w-6 text-slate-400" />
         </button>

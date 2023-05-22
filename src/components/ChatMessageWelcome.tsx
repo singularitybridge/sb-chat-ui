@@ -1,42 +1,36 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useRecoilState, useRecoilValue } from "recoil";
-import {
-  Message,
-  userProfileState,
-  chatBotsState,
-  getChatBot,
-  SenderType,
-  getMessageText,
-  ChatBot,
-} from "../atoms/dataStore";
 import { Avatar, AvatarStyles } from "./Avatar";
+import { observer } from "mobx-react-lite";
+import { useRootStore } from "../store/common/RootStoreContext";
 
 interface ChatMessageProps {
   onClickStartChat?: () => void;
 }
 
-const ChatMessageWelcome: React.FC<ChatMessageProps> = ({
+const ChatMessageWelcome: React.FC<ChatMessageProps> = observer(({
   onClickStartChat,
 }) => {
   // const chatBots = useRecoilValue(chatBotsState);
   const { sessionId } = useParams<{ sessionId: string }>();
   const [chatStarted, setChatStarted] = useState(false);
-  const [chatBot, setChatBot] = useState<ChatBot | null>(null);
+  // const [chatBot, setChatBot] = useState<ChatBot | null>(null);
+
+  const { activeChatbot, userProfile } = useRootStore();
 
   if (!sessionId) {
     return null;
   }
 
-  useEffect(() => {
-    fetch(`http://127.0.0.1:5000/chat_sessions/${sessionId}`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.chatbot) {
-          setChatBot(data.chatbot);
-        }
-      });
-  }, [sessionId]);
+  // useEffect(() => {
+  //   fetch(`http://127.0.0.1:5000/chat_sessions/${sessionId}`)
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       if (data.chatbot) {
+  //         setChatBot(data.chatbot);
+  //       }
+  //     });
+  // }, [sessionId]);
   
 
   
@@ -51,17 +45,17 @@ const ChatMessageWelcome: React.FC<ChatMessageProps> = ({
       <div className="col-start-2 col-end-12 mt-8 mb-8">
         <div
           className="flex flex-col items-center bg-white p-5 shadow rounded-xl space-y-4"
-          style={{
-            direction:
-              chatBot &&
-              chatBot.autoTranslate &&
-              chatBot.autoTranslateTarget === "he"
-                ? "rtl"
-                : "ltr",
-          }}
+          // style={{
+          //   direction:
+          //     chatBot &&
+          //     chatBot.autoTranslate &&
+          //     chatBot.autoTranslateTarget === "he"
+          //       ? "rtl"
+          //       : "ltr",
+          // }}
         >
-          <Avatar imageUrl={chatBot?.avatarImage || ''} avatarStyle={AvatarStyles.large} />
-          <div>{chatBot?.description}</div>
+          <Avatar imageUrl={activeChatbot?.avatarImage || ''} avatarStyle={AvatarStyles.large} />
+          <div>{activeChatbot?.description}</div>
           {chatStarted ? null : (
               <button
                 className="bg-stone-300 p-4 rounded-xl w-full"
@@ -74,6 +68,6 @@ const ChatMessageWelcome: React.FC<ChatMessageProps> = ({
       </div>
     </>
   );
-};
+});
 
 export { ChatMessageWelcome };

@@ -3,12 +3,14 @@ import { Chatbot } from "./Chatbot";
 import { ChatSession } from "./ChatSession";
 import { ChatSessionMessage } from "./ChatSessionMessage";
 import { ChatSessionStore } from "./ChatSessionStore";
+import { UserProfile } from "./UserProfile";
 
 const RootStore = types.model("RootStore", {
     chatbots: types.array(Chatbot),
     // activeChatbot: types.maybe(Chatbot),
     activeChatbot: types.maybe(types.reference(Chatbot)), 
-    chatbotsLoaded: types.optional(types.boolean, false),  // Add this line
+    chatbotsLoaded: types.optional(types.boolean, false),
+    userProfile : types.maybe(UserProfile),
 
     // sessions: types.map(ChatSession),
     // messages: types.map(ChatSessionMessage),
