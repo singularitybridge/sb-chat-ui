@@ -15,19 +15,19 @@ import { useRootStore } from "../../store/common/RootStoreContext";
 
 const Dashboard = observer(() => {
 
-  const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
+  // const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
   const { chatbots } = useRootStore();
   
 
-  useEffect(() => {  
+  // useEffect(() => {  
 
-    async function fetchSessionsData() {
-      const sessions = await fetchChatSessions();
-      setChatSessions(sessions);
-    }
+  //   async function fetchSessionsData() {
+  //     const sessions = await fetchChatSessions();
+  //     // setChatSessions(sessions);
+  //   }
 
-    fetchSessionsData();
-  }, []);
+  //   fetchSessionsData();
+  // }, []);
 
   return (
     <>
@@ -38,14 +38,7 @@ const Dashboard = observer(() => {
         ))}
       </div>
 
-      <div className="text-2xl font-normal leading-tight mb-4">
-        Chat Sessions
-      </div>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mb-3">
-        {chatSessions.map((session) => (
-          <ChatSessionCard key={session._id} session={session} />
-        ))}
-      </div>
+      
     </>
   );
 });

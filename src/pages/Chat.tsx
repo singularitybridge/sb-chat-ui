@@ -7,11 +7,11 @@ import {
   userProfileState,
   contextData,
   chatBotsState,
-  getChatBot,
+  // getChatBot,
   SenderType,
   getMessageText,
   ChatBotNotLoaded,
-  ChatBot,
+  // ChatBot,
   defaultChatBot,
 } from "../atoms/dataStore";
 import { getSessionMessages, getGPTCompletion } from "../services/ChatService";
@@ -28,6 +28,9 @@ import { playAudio } from "../services/AudioService";
 import { ChatState } from "../components/chat/common";
 import { AudioCircle } from "../components/chat/AudioCircle";
 import { useParams } from "react-router-dom";
+import { defaultSession, useSession } from "../custom-hooks/useSession";
+import { useRootStore } from "../store/common/RootStoreContext";
+import { observer } from "mobx-react-lite";
 
 // move to the api service
 const transformApiResponseToMessage = (message: any): Message => {
@@ -60,12 +63,12 @@ const transformUserMessage = (
   };
 };
 
-const Chat = () => {
+const Chat = observer(() => {
   const [chatData, setChatData] = useRecoilState(messagesState);
   const [chatBots, setChatBots] = useRecoilState(chatBotsState);
   const userProfile = useRecoilValue(userProfileState);
   const chatContainerRef = useRef(null);
-  const [chatBot, setChatBot] = useState<ChatBot>(defaultChatBot);
+  // const [chatBot, setChatBot] = useState<ChatBot>(defaultChatBot);
 
   const [isUserInputEnabled, setIsUserInputEnabled] = useState(false);
   const [chatState, setChatState] = useState(ChatState.GETTING_DATA);
@@ -74,8 +77,25 @@ const Chat = () => {
   const [sessionMessages, setSessionMessages] = useState<Message[]>([]);
   const { sessionId = "" } = useParams<{ sessionId?: string }>();
 
+  const { session } = useSession(sessionId) || defaultSession;
+
+  const rootStore = useRootStore();
+  const { activeChatbot } = useRootStore();
+
   useEffect(() => {
     if (!sessionId) return;
+    // if (!rootStore.chatbotsLoaded) return; // Add this line
+
+    if (rootStore.chatbotsLoaded) {
+      const chatBot = rootStore.getChatbot(session?.chatbot_key || "");
+
+      if (!chatBot) {
+        return;
+      }
+
+      console.log("loaded chatbot: ", chatBot);
+      rootStore.setActiveChatbot(chatBot);
+    }
 
     // if (!chatBot || chatBot.key === ChatBotNotLoaded) return;
 
@@ -95,17 +115,17 @@ const Chat = () => {
       .catch((err) => {
         console.log("error loading chat history: ", err);
       });
-  }, [sessionId]);
+  }, [sessionId, session, rootStore.chatbotsLoaded]);
+
+  // useEffect(() => {
+  //   if (userProfile.activeChatBot === ChatBotNotLoaded || !chatBots) return;
+  //   setChatBot(getChatBot(chatBots, userProfile.activeChatBot));
+  // }, [chatBots, userProfile]);
 
   useEffect(() => {
-    if (userProfile.activeChatBot === ChatBotNotLoaded || !chatBots) return;
-    setChatBot(getChatBot(chatBots, userProfile.activeChatBot));
-  }, [chatBots, userProfile]);
-
-  useEffect(() => {
-    if (!chatBot || chatBot.key === ChatBotNotLoaded) return;
-    document.title = chatBot.name;
-  }, [chatBot]);
+    if (!activeChatbot) return;
+    document.title = activeChatbot?.name;
+  }, [activeChatbot]);
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -120,10 +140,12 @@ const Chat = () => {
     setIsUserInputEnabled(false);
     setChatState(ChatState.GETTING_DATA);
 
-    const translatedMessage =
-      chatBot && chatBot.autoTranslate
-        ? await translateText(message, "en")
-        : "";
+    // const translatedMessage =
+    //   chatBot && chatBot.autoTranslate
+    //     ? await translateText(message, "en")
+    //     : "";
+
+    const translatedMessage = ""; 
 
     if (message !== "") {
       const userMessage = transformUserMessage(
@@ -135,17 +157,17 @@ const Chat = () => {
     }
 
     const response = await getGPTCompletion(
-      chatBot.prompt,
+      "",
       sessionId,
       userProfile.name,
       translatedMessage || message,
       chatData || [],
-      chatBot.temperature
+      0.7
     );
 
-    const translatedResponse = chatBot.autoTranslate
-      ? await translateText(response, chatBot.autoTranslateTarget)
-      : "";
+    // const translatedResponse = chatBot.autoTranslate
+    //   ? await translateText(response, chatBot.autoTranslateTarget)
+    //   : "";
 
     setSessionMessages(response.map(transformApiResponseToMessage));
     setChatState(ChatState.PLAYING);
@@ -158,7 +180,7 @@ const Chat = () => {
   return (
     <>
       <ContentContainer>
-        <ContainerBGImage bgImage={chatBot?.bgImage || ""}>
+        <ContainerBGImage bgImage={activeChatbot?.backgroundImage || ""}>
           <div className="flex flex-col flex-auto h-full p-0">
             <div className="flex flex-col flex-auto flex-shrink-0 h-full pt-3">
               <div
@@ -203,12 +225,13 @@ const Chat = () => {
         /> */}
         <ChatFooterText
           onSendMessage={onSendMessage}
-          autoTranslateTarget={chatBot?.autoTranslateTarget || "en"}
+          autoTranslateTarget={"en"}
+          // autoTranslateTarget={chatBot?.autoTranslateTarget || "en"}
           chatState={chatState}
         />
       </ChatFooterContainer>
     </>
   );
-};
+});
 
 export { Chat };

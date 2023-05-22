@@ -43,7 +43,7 @@ export interface UserProfile {
   isAudioPlaying: boolean;
 }
 
-export interface ChatBot {
+export interface ChatBotStore {
   key: string;
   name: string;
   description: string;
@@ -73,7 +73,7 @@ export const messagesState = atom<Message[]>({
   default: []
 });
 
-export const defaultChatBot: ChatBot = {
+export const defaultChatBot: ChatBotStore = {
   key: ChatBotNotLoaded,
   name: "Dr. John",
   description:
@@ -92,12 +92,12 @@ export const defaultChatBot: ChatBot = {
   ttsActor: "en-US-Wavenet-A",
 };
 
-export const chatBotsState = atom<ChatBot[]>({
+export const chatBotsState = atom<ChatBotStore[]>({
   key: "chatBots",
   default: [],
 });
 
-export const getChatBot = (chatBots: ChatBot[], id: string) => {
+export const getChatBotFromStore = (chatBots: ChatBotStore[], id: string) => {
   return chatBots?.find((chatBot) => chatBot.key === id) || chatBots[0];
 };
 

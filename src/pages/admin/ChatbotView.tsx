@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Chatbot } from "../../services/ChatbotService";
 import { useChatbot } from "../../custom-hooks/useChatbot";
@@ -11,22 +11,28 @@ import { EditChatbotState } from "./ChatBotEditingViews/EditChatbotState";
 import { EditChatbotProcessor } from "./ChatBotEditingViews/EditChatbotProcessor";
 import { v4 as uuidv4 } from "uuid";
 import { SessionStoreView } from "./SessionStoreView";
-import { useSession } from "../../custom-hooks/useSession";
+import { defaultSession, useSession } from "../../custom-hooks/useSession";
 import { ChatSession } from "../../components/admin/chatSessions/ChatSessionCard";
+import { observer } from "mobx-react-lite";
+import { useRootStore } from "../../store/common/RootStoreContext";
 
 const sessionId = "64401d3221c6baaeec808c61";
-const defaultSession: ChatSession = {
-  _id: "",
-  active: false,
-  chatbot_key: "",
-  created_at: "",
-  updated_at: "",
-  user_id: "",
-  current_state: "",
-};
 
-const ChatbotView: React.FC = () => {
+const ChatbotView: React.FC = observer(() => {
   const { key } = useParams<{ key: string }>();
+  const rootStore = useRootStore();
+
+  useEffect(() => {
+    console.log("ChatbotView: ", key);
+
+    const chatBot = rootStore.getChatbot(key || "");
+    if (chatBot) {
+      rootStore.setActiveChatbot(chatBot);
+    } else {
+      // Handle situation where chatBot is null, e.g. set a default value or show an error
+    }
+  }, [key]);
+
   const { chatbot, loading, error, updateChatbot, setChatbotState } =
     useChatbot(key || "", sessionId || "");
 
@@ -239,6 +245,6 @@ const ChatbotView: React.FC = () => {
       </div>
     </>
   );
-};
+});
 
 export { ChatbotView };

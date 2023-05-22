@@ -14,6 +14,11 @@ import { Provider } from "mobx-react";
 import { RootStore } from "./store/models/RootStore";
 import { RootStoreProvider } from "./store/common/RootStoreContext";
 
+const rootStore = RootStore.create({
+  chatbots: [],
+  // activeChatbot: null,
+});
+
 const App = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [screenHeight, setScreenHeight] = useState(0);
@@ -73,14 +78,9 @@ const App = () => {
 
   const style = { height: `${screenHeight}px` };
 
-  const rootStore = RootStore.create({
-    chatbots: []
-  });
-
   useEffect(() => {
     rootStore.loadChatbots();
   }, []);
-
 
   return (
     <RootStoreProvider value={rootStore}>

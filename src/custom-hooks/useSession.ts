@@ -2,6 +2,16 @@ import { useEffect, useState } from "react";
 import {  fetchChatSessions, fetchChatSessionById } from "../services/ChatSessionService";
 import { ChatSession } from "../components/admin/chatSessions/ChatSessionCard";
 
+export const defaultSession: ChatSession = {
+  _id: "",
+  active: false,
+  chatbot_key: "",
+  created_at: "",
+  updated_at: "",
+  user_id: "",
+  current_state: "",
+};
+
 export const useSession = (sessionId: string) => {
   const [session, setSession] = useState<ChatSession | null>(null);
   const [loading, setLoading] = useState<boolean>(true);

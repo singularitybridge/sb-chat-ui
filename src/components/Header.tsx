@@ -1,47 +1,43 @@
 import { Bars2Icon, TrashIcon } from "@heroicons/react/24/solid";
-import {
-  ChatBot,
-  ChatBotNotLoaded,
-  chatBotsState,
-  defaultChatBot,
-  getChatBot,
-  userProfileState,
-} from "../atoms/dataStore";
 import { Avatar, AvatarStyles } from "./Avatar";
 import { useRecoilValue } from "recoil";
 import { useEffect, useState } from "react";
 import { translateText } from "../services/TranslationService";
 import { clearSession } from "../services/ChatService";
 import { useParams, useLocation } from "react-router-dom";
+import { observer } from "mobx-react-lite";
+import { useRootStore } from "../store/common/RootStoreContext";
 
 interface HeaderProps {
   onMenuClick: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
+const Header: React.FC<HeaderProps> = observer( ({ onMenuClick }) => {
   const [chatBotName, setChatBotName] = useState<string>("");
   const [chatBotDescription, setChatBotDescription] = useState<string>("");
   const [chatBotAvatar, setChatBotAvatar] = useState<string>("");
-  const [chatBot, setChatBot] = useState<ChatBot | null>(null);
+  // const [chatBot, setChatBot] = useState<ChatBot | null>(null);
 
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
 
+  const { activeChatbot } = useRootStore();
+
   const { sessionId } = useParams<{ sessionId: string }>();
 
-  useEffect(() => {
-    if (isAdminRoute) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (isAdminRoute) {
+  //     return;
+  //   }
 
-    fetch(`http://127.0.0.1:5000/chat_sessions/${sessionId}`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.chatbot) {
-          setChatBot(data.chatbot);
-        }
-      });
-  }, [sessionId]);
+  //   fetch(`http://127.0.0.1:5000/chat_sessions/${sessionId}`)
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       if (data.chatbot) {
+  //         setChatBot(data.chatbot);
+  //       }
+  //     });
+  // }, [sessionId]);
 
   const handleClearChat = async () => {
     if (sessionId) {
@@ -52,30 +48,30 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
     }
   };
 
-  useEffect(() => {
-    if (!chatBot) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (!chatBot) {
+  //     return;
+  //   }
 
-    setChatBotAvatar(chatBot.avatarImage);
+  //   setChatBotAvatar(chatBot.avatarImage);
 
-    if (chatBot.autoTranslate) {
-      translateText(chatBot.name, chatBot.autoTranslateTarget).then(
-        (translatedText) => {
-          setChatBotName(translatedText);
-        }
-      );
+  //   if (chatBot.autoTranslate) {
+  //     translateText(chatBot.name, chatBot.autoTranslateTarget).then(
+  //       (translatedText) => {
+  //         setChatBotName(translatedText);
+  //       }
+  //     );
 
-      translateText(chatBot.description, chatBot.autoTranslateTarget).then(
-        (translatedText) => {
-          setChatBotDescription(translatedText);
-        }
-      );
-    } else {
-      setChatBotName(chatBot.name);
-      setChatBotDescription(chatBot.description);
-    }
-  }, [chatBot]);
+  //     translateText(chatBot.description, chatBot.autoTranslateTarget).then(
+  //       (translatedText) => {
+  //         setChatBotDescription(translatedText);
+  //       }
+  //     );
+  //   } else {
+  //     setChatBotName(chatBot.name);
+  //     setChatBotDescription(chatBot.description);
+  //   }
+  // }, [chatBot]);
 
   return (
     <>
@@ -88,10 +84,10 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
             <Bars2Icon className="h-5 w-5 text-slate-700" />
           </div>
           <div className="headerImageAndText flex flex-row items-center w-full text-left pl-5">
-            <Avatar imageUrl={chatBotAvatar} avatarStyle={AvatarStyles.logo} />
+            <Avatar imageUrl={activeChatbot?.avatarImage || ''} avatarStyle={AvatarStyles.logo} />
             <div className="ml-3">
-              <div className="text-2xl font-normal">{chatBotName}</div>
-              <div className="text-xs font-light">{chatBotDescription}</div>
+              <div className="text-2xl font-normal">{activeChatbot?.name}</div>
+              <div className="text-xs font-light">{activeChatbot?.description}</div>
             </div>
           </div>
 
@@ -105,6 +101,6 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
       )}
     </>
   );
-};
+});
 
 export { Header };
