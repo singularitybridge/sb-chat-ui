@@ -1,9 +1,9 @@
-import { getParent, types } from "mobx-state-tree";
+import { Instance, SnapshotIn, SnapshotOut, getParent, types } from "mobx-state-tree";
 import { Chatbot } from "./Chatbot";
 
 const ChatSession = types
   .model("ChatSession", {
-    id: types.identifier,
+    _id: types.identifier,
     chatbot_key: types.reference(Chatbot),
     user_id: types.string,
     created_at: types.Date,
@@ -20,4 +20,10 @@ const ChatSession = types
     // ... actions to manipulate the session
   }));
 
+type IChatSession = Instance<typeof ChatSession>;
+type ChatSessionSnapshotIn = SnapshotIn<typeof ChatSession>;
+type ChatSessionSnapshotOut = SnapshotOut<typeof ChatSession>;
+
+
 export { ChatSession };
+export type { IChatSession, ChatSessionSnapshotIn, ChatSessionSnapshotOut }

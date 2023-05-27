@@ -1,23 +1,14 @@
 import { useEffect, useState } from "react";
 import {  fetchChatSessions, fetchChatSessionById } from "../services/ChatSessionService";
-import { ChatSession } from "../components/admin/chatSessions/ChatSessionCard";
+import { IChatSession } from "../store/models/ChatSession";
 
-export const defaultSession: ChatSession = {
-  _id: "",
-  active: false,
-  chatbot_key: "",
-  created_at: "",
-  updated_at: "",
-  user_id: "",
-  current_state: "",
-};
 
 export const useSession = (sessionId: string) => {
-  const [session, setSession] = useState<ChatSession | null>(null);
+  const [session, setSession] = useState<IChatSession | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
 
-  const updateSession = async (updatedSession: ChatSession) => {
+  const updateSession = async (updatedSession: IChatSession) => {
     try {
       const { _id, ...rest } = updatedSession;
       const response = await fetch(

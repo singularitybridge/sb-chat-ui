@@ -6,7 +6,6 @@ import { Chatbot, fetchChatbots } from "../../services/ChatbotService";
 import Menu from "../../components/admin/Menu";
 import { ChatbotCard } from "../../components/admin/chatbots/ChatbotCard";
 import {
-  ChatSession,
   ChatSessionCard,
 } from "../../components/admin/chatSessions/ChatSessionCard";
 import { BreadCrumbs } from "../../components/BreadCCrumbs";

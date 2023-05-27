@@ -15,13 +15,13 @@ import "reactflow/dist/style.css";
 import { CustomNode } from "./custom-nodes/CustomNodeChatbot";
 import { CustomNodeState } from "./custom-nodes/CustomNodeState";
 import { CustomNodeProcessor } from "./custom-nodes/CustomNodeProcessor";
-
 import { Chatbot } from "../../../services/ChatbotService";
-import { ChatSession } from "../chatSessions/ChatSessionCard";
+import { IChatSession } from "../../../store/models/ChatSession";
+
 
 interface ActionsViewProps {
   chatbot: Chatbot;
-  session?: ChatSession;
+  session?: IChatSession;
   onNodeSelected: (node: any, type: string) => void;
 }
 

@@ -5,15 +5,15 @@ import { fetchChatSessions } from "../services/ChatSessionService";
 import { Chatbot, fetchChatbots } from "../services/ChatbotService";
 import Menu from "../components/admin/Menu";
 import { ChatbotCard } from "../components/admin/chatbots/ChatbotCard";
-import {
-  ChatSession,
+import {  
   ChatSessionCard,
 } from "../components/admin/chatSessions/ChatSessionCard";
 import { BreadCrumbs } from "../components/BreadCCrumbs";
 import { Outlet, useParams } from "react-router-dom";
+import { IChatSession } from "../store/models/ChatSession";
 
 const Admin: React.FC = () => {
-  const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
+  const [chatSessions, setChatSessions] = useState<IChatSession[]>([]);
   const [chatbots, setChatbots] = useState<Chatbot[]>([]);
 
   useEffect(() => {

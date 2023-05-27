@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import InputWithLabel from "../../../components/admin/InputWithLabel";
 import Button from "../../../components/core/Button";
 import { Select, initTE } from "tw-elements";
-import { SelectProcessor } from "../../../components/admin/SelectProcessor";
+import { SelectInput } from "../../../components/admin/SelectInput";
 import {
   CloudArrowUpIcon,
   Cog6ToothIcon,
@@ -139,7 +139,7 @@ const EditChatbotProcessor: React.FC<EditChatbotProcessorProps> = ({
         />
       </div>
 
-      <SelectProcessor
+      <SelectInput
         options={processorOptions}
         value={processorName}
         onChange={(value) => handleProcessorChange(value)}

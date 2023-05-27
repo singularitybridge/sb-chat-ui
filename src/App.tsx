@@ -78,6 +78,7 @@ const App = () => {
 
   useEffect(() => {
     rootStore.loadChatbots();
+    rootStore.loadChatSessions();
   }, []);
 
   return (

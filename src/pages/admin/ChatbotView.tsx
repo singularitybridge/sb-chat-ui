@@ -11,19 +11,22 @@ import { EditChatbotState } from "./ChatBotEditingViews/EditChatbotState";
 import { EditChatbotProcessor } from "./ChatBotEditingViews/EditChatbotProcessor";
 import { v4 as uuidv4 } from "uuid";
 import { SessionStoreView } from "./SessionStoreView";
-import { defaultSession, useSession } from "../../custom-hooks/useSession";
-import { ChatSession } from "../../components/admin/chatSessions/ChatSessionCard";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../store/common/RootStoreContext";
-
-const sessionId = "64401d3221c6baaeec808c61";
+import { Tab, initTE } from "tw-elements";
+import { Tabs } from "../../components/Tabs";
+import { EditorSettingsView } from "./EditorSettingsView";
 
 const ChatbotView: React.FC = observer(() => {
+  
   const { key } = useParams<{ key: string }>();
   const rootStore = useRootStore();
+  const sessionId = rootStore.selectedChatSession?._id || "";
 
   useEffect(() => {
     console.log("ChatbotView: ", key);
+
+    initTE({ Tab });
 
     const chatBot = rootStore.getChatbot(key || "");
     if (chatBot) {
@@ -35,8 +38,6 @@ const ChatbotView: React.FC = observer(() => {
 
   const { chatbot, loading, error, updateChatbot, setChatbotState } =
     useChatbot(key || "", sessionId || "");
-
-  const { session } = useSession(sessionId) || defaultSession;
 
   const [selectedNode, setSelectedNode] = useState<{
     node: any;
@@ -200,47 +201,74 @@ const ChatbotView: React.FC = observer(() => {
             <ReactFlowProvider>
               <ActionsView
                 chatbot={chatbot}
-                session={session || defaultSession}
+                session={rootStore.selectedChatSession}
                 onNodeSelected={handleNodeSelected}
               />
             </ReactFlowProvider>
           </div>
-          <SessionStoreView sessionId={sessionId} />
         </div>
         <div className="w-1/3 p-5 border-t-2">
-          {selectedNode ? (
-            <>
-              {selectedNode.type === "chatbotNode" && (
-                <EditChatbot
-                  chatbot={selectedNode.node}
-                  onUpdate={updateChatbot}
-                  onCreateNewState={createNewState}
-                />
-              )}
-              {selectedNode.type === "stateNode" && (
-                <EditChatbotState
-                  state={selectedNode.node}
-                  chatbotKey={chatbot.key}
-                  onAddProcessor={addChatbotProcessor}
-                  onUpdateState={updateChatbotState}
-                  onDeleteState={deleteChatbotState}
-                  onSetActiveState={setActiveChatbotState}
-                />
-              )}
-              {selectedNode.type === "processorNode" && (
-                <EditChatbotProcessor
-                  node={selectedNode.node}
-                  onUpdateProcessor={updateChatbotProcessor}
-                  onDeleteProcessor={deleteProcessor}
-                  onInsertProcessorAfter={insertProcessorAfter}
-                />
-              )}
-            </>
-          ) : (
-            <div className="text-center text-gray-500 mt-5">
-              Please select a node to view or edit its details.
-            </div>
-          )}
+          <Tabs
+            tabs={[
+              {
+                id: "tabs-home",
+                label: "Node Editor",
+                content: (
+                  <>
+                    {selectedNode ? (
+                      <>
+                        {selectedNode.type === "chatbotNode" && (
+                          <EditChatbot
+                            chatbot={selectedNode.node}
+                            onUpdate={updateChatbot}
+                            onCreateNewState={createNewState}
+                          />
+                        )}
+                        {selectedNode.type === "stateNode" && (
+                          <EditChatbotState
+                            state={selectedNode.node}
+                            chatbotKey={chatbot.key}
+                            onAddProcessor={addChatbotProcessor}
+                            onUpdateState={updateChatbotState}
+                            onDeleteState={deleteChatbotState}
+                            onSetActiveState={setActiveChatbotState}
+                          />
+                        )}
+                        {selectedNode.type === "processorNode" && (
+                          <EditChatbotProcessor
+                            node={selectedNode.node}
+                            onUpdateProcessor={updateChatbotProcessor}
+                            onDeleteProcessor={deleteProcessor}
+                            onInsertProcessorAfter={insertProcessorAfter}
+                          />
+                        )}
+                      </>
+                    ) : (
+                      <div className="text-center text-gray-500 mt-5">
+                        Please select a node to view or edit its details.
+                      </div>
+                    )}
+                  </>
+                ),
+              },
+              {
+                id: "tabs-profile",
+                label: "Session Store",
+                content: <SessionStoreView sessionId={sessionId} />,
+              },
+              {
+                id: "tabs-log",
+                label: "Log",
+                content: "Tab 4 Content",
+              },
+              {
+                id: "tabs-messages",
+                label: "Settings",
+                content: <EditorSettingsView /> ,
+              }
+
+            ]}
+          />
         </div>
       </div>
     </>

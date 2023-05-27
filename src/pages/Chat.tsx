@@ -22,7 +22,6 @@ import { playAudio } from "../services/AudioService";
 import { ChatState } from "../components/chat/common";
 import { AudioCircle } from "../components/chat/AudioCircle";
 import { useParams } from "react-router-dom";
-import { defaultSession, useSession } from "../custom-hooks/useSession";
 import { useRootStore } from "../store/common/RootStoreContext";
 import { observer } from "mobx-react-lite";
 
@@ -71,7 +70,6 @@ const Chat = observer(() => {
   const [sessionMessages, setSessionMessages] = useState<Message[]>([]);
   const { sessionId = "" } = useParams<{ sessionId?: string }>();
 
-  const { session } = useSession(sessionId) || defaultSession;
 
   const rootStore = useRootStore();
   const { activeChatbot } = useRootStore();
@@ -81,7 +79,8 @@ const Chat = observer(() => {
     // if (!rootStore.chatbotsLoaded) return; // Add this line
 
     if (rootStore.chatbotsLoaded) {
-      const chatBot = rootStore.getChatbot(session?.chatbot_key || "");
+
+      const chatBot = rootStore.getChatbot(rootStore.selectedChatSession?._id || "" );
 
       if (!chatBot) {
         return;
@@ -109,7 +108,7 @@ const Chat = observer(() => {
       .catch((err) => {
         console.log("error loading chat history: ", err);
       });
-  }, [sessionId, session, rootStore.chatbotsLoaded]);
+  }, [sessionId, rootStore.selectedChatSession, rootStore.chatbotsLoaded]);
 
   // useEffect(() => {
   //   if (userProfile.activeChatBot === ChatBotNotLoaded || !chatBots) return;

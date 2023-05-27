@@ -1,9 +1,13 @@
+
 const processorOptions = [
   {
     value: "response_to_ui",
     text: "Response To UI",
     secondaryText: "Map GPT response the relevant UI component (text, select)",
-    tmp : true
+    processor_data: {
+      type : "text",
+      modifyResponse: 1,
+    }
   },
   {
     value: "generate_images",
@@ -73,7 +77,6 @@ const processorOptions = [
     value: "set_state",
     text: "Set State",
     secondaryText: "Set the state of the chatbot",
-
     processor_data: {
       'newState': "get_user_input",  
     } 

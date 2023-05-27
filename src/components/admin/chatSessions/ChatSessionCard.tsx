@@ -1,16 +1,8 @@
 import { Link } from "react-router-dom";
+import { IChatSession } from "../../../store/models/ChatSession";
 
-export interface ChatSession {
-  _id: string;
-  active: boolean;
-  chatbot_key: string;
-  created_at: string;
-  updated_at: string;
-  current_state: string;
-  user_id: string;
-}
 
-const ChatSessionCard: React.FC<{ session: ChatSession }> = ({ session }) => {
+const ChatSessionCard: React.FC<{ session: IChatSession }> = ({ session }) => {
   return (
     <div className="flex flex-col rounded-lg bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700 md:max-w-xl md:flex-row mb-4">
       <img
@@ -26,10 +18,10 @@ const ChatSessionCard: React.FC<{ session: ChatSession }> = ({ session }) => {
           User ID: {session.user_id}
         </p>
         <p className="mb-4 text-base text-neutral-600 dark:text-neutral-200">
-          Chatbot Key: {session.chatbot_key}
+          Chatbot Key: {session.chatbot_key.key}
         </p>
         <p className="text-xs text-neutral-500 dark:text-neutral-300">
-          Created At: {session.created_at}
+          Created At: {session.created_at.toString()}
         </p>
         <Link
           to={`/admin/chat-sessions/${session._id}`}

@@ -7,13 +7,13 @@ interface ProcessorOption {
   secondaryText: string;
 }
 
-interface SelectProcessorProps {
+interface SelectInputProps {
   options: ProcessorOption[];
   value: string;
   onChange: (value: string) => void;
 }
 
-const SelectProcessor: React.FC<SelectProcessorProps> = ({
+const SelectInput: React.FC<SelectInputProps> = ({
   options,
   value,
   onChange,
@@ -55,4 +55,4 @@ const SelectProcessor: React.FC<SelectProcessorProps> = ({
   );
 };
 
-export { SelectProcessor };
+export { SelectInput };

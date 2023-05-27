@@ -43,7 +43,7 @@ const SessionStoreView: React.FC<SessionStoreProps> = ({ sessionId }) => {
   };
 
   return (
-    <div className="p-5">
+    <div className="p-2">
       <div className="flex justify-between items-center mb-2">
         <h2 className="text-xl font-bold">Session Store</h2>{" "}
         <div className="mr-2">
