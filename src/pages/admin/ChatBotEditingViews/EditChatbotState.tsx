@@ -86,13 +86,13 @@ const EditChatbotState: React.FC<EditChatbotStateProps> = ({
         onChange={(value) => setTemperature(parseFloat(value))}
       />
 
-      <div className="flex mt-4">
-        <Button type="submit">Save Changes</Button>
+      <div className="flex mt-2 content-stretch">
+        <Button type="submit">Save</Button>
         <Button type="button" onClick={() => onDeleteState(state._id)}>
-          Delete State
+          Delete
         </Button>
         <Button type="button" onClick={() => onSetActiveState(state.name)}>
-          Set to Active State
+          Set Active
         </Button>
         <Button type="button" onClick={() => onAddProcessor(state._id)}>
           Add Processor

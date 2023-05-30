@@ -8,6 +8,7 @@ import { RootStoreProvider } from "./store/common/RootStoreContext";
 const rootStore = RootStore.create({
   chatbots: [],
   userProfile : {
+    _id: "1",
     name: "Avi",
     avatar: "/images/avatars/av3.png",
     activeChatBot: 'remove me',
@@ -21,27 +22,12 @@ const App = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [screenHeight, setScreenHeight] = useState(0);
   const { id } = useParams<{ id: string }>();
-  // const [userProfile, setUserProfile] = useRecoilState(userProfileState);
-  // const [chatBots, setChatsBots] = useRecoilState(chatBotsState);
-  // const [context, setContext] = useRecoilState(contextData);
 
   useEffect(() => {
     if (!id) {
       return;
     }
 
-    // setUserProfile({
-    //   ...userProfile,
-    //   activeChatBot: id,
-    // });
-
-    // fetchChatBots().then((data) => {
-    //   setChatsBots(data);
-    // });
-
-    // fetchContextData(id).then((data) => {
-    //   setContext(data);
-    // });
   }, [id]);
 
   const getHeight = useCallback(
@@ -78,7 +64,7 @@ const App = () => {
 
   useEffect(() => {
     rootStore.loadChatbots();
-    rootStore.loadChatSessions();
+    rootStore.loadChatSessions();    
   }, []);
 
   return (

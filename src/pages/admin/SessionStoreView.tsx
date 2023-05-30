@@ -7,36 +7,45 @@ import {
 import { SessionStore } from "../../services/SessionStoreService";
 import { IconButton } from "../../components/admin/IconButton";
 import { ArrowPathIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { observer } from "mobx-react-lite";
+import { useRootStore } from "../../store/common/RootStoreContext";
 
-interface SessionStoreProps {
-  sessionId: string;
+interface SessionStoreProps {  
 }
 
-const SessionStoreView: React.FC<SessionStoreProps> = ({ sessionId }) => {
+const SessionStoreView: React.FC<SessionStoreProps> = observer( () => {
+
   const [sessionStore, setSessionStore] = useState<SessionStore | null>(null);
+  const { selectedChatSession, chatSessionsLoaded } = useRootStore();
+
 
   const fetchAndSetSessionStore = async () => {
-    const sessionStore = await fetchSessionStore(sessionId);
-    setSessionStore(sessionStore);
+    if (selectedChatSession) {
+      const sessionStore = await fetchSessionStore(selectedChatSession._id);
+      setSessionStore(sessionStore);
+    }
   };
 
   useEffect(() => {
     fetchAndSetSessionStore();
-  }, [sessionId]);
+  }, [selectedChatSession]);
 
   if (!sessionStore) {
     return <div>Loading...</div>;
   }
 
   const clearSessionStore = async () => {
-    try {
-      const result = await deleteSessionStore(sessionId);
-      console.log(result);
-      setSessionStore(null); // clear the sessionStore state
-    } catch (error) {
-      console.error("Failed to delete session store:", error);
+    if (selectedChatSession) {
+      try {
+        const result = await deleteSessionStore(selectedChatSession._id);
+        console.log(result);
+        setSessionStore(null); // clear the sessionStore state
+      } catch (error) {
+        console.error("Failed to delete session store:", error);
+      }
     }
   };
+  
 
   const reloadSessionStore = () => {
     fetchAndSetSessionStore();
@@ -88,6 +97,6 @@ const SessionStoreView: React.FC<SessionStoreProps> = ({ sessionId }) => {
       </div>
     </div>
   );
-};
+});
 
 export { SessionStoreView };

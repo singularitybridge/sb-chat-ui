@@ -4,6 +4,7 @@ import { ChatSession, IChatSession } from "./ChatSession";
 import { ChatSessionMessage } from "./ChatSessionMessage";
 import { ChatSessionStore } from "./ChatSessionStore";
 import { UserProfile } from "./UserProfile";
+import { createChatSession, getChatSessions } from "../../services/api/chatSessionService";
 
 const RootStore = types.model("RootStore", {
   chatbots: types.array(Chatbot),
@@ -26,30 +27,30 @@ const RootStore = types.model("RootStore", {
     }
   }),
 
+
   loadChatSessions: flow(function* () {
     try {
-      const response = yield fetch('http://127.0.0.1:5000/chat_sessions');
-      const chatSessions = yield response.json();
-  
-      const adjustedChatSessions = chatSessions.map((session: IChatSession) => ({
-        _id: session._id,
-        chatbot_key: session.chatbot_key,
-        user_id: session.user_id,
-        created_at: new Date(session.created_at),
-        updated_at: new Date(session.updated_at),
-        active: session.active,
-        current_state: session.current_state,
-      }));
-
-      applySnapshot(self.chatSessions, adjustedChatSessions);
-      self.chatSessionsLoaded = true;
-      if(!self.selectedChatSession) {
-        self.selectedChatSession = self.chatSessions[0];
-      }
+      const chatSessions = yield getChatSessions();
+      // Adjust chatSessions and apply snapshot...
     } catch (error) {
       console.error("Failed to load chat sessions", error);
     }
   }),
+  
+  createChatSession: flow(function* () {
+    try {
+      if (self.userProfile && self.activeChatbot) {
+        const chatSession = yield createChatSession({ user_id: self.userProfile._id, chatbot_key: self.activeChatbot.key });
+        self.chatSessions.push(chatSession);
+      } else {
+        console.error("Cannot create chat session without active user and chatbot.");
+      }
+    } catch (error) {
+      console.error("Failed to create chat session", error);
+    }
+  }),
+  
+
 
   setSelectedChatSession: (sessionId: string) => {
     const foundSession = self.chatSessions.find(session => session._id === sessionId);

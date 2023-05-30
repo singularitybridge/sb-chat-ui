@@ -34,18 +34,10 @@ const SideMenuItem: React.FC<SideMenuItemProps> = ({
 );
 
 const SideMenu: React.FC<SideMenuProps> = observer(({ isOpen, closeMenu }) => {
-  // const userProfile = useRecoilValue(userProfileState);
-  // const chatBots = useRecoilValue(chatBotsState);
-
+  
   const { activeChatbot } = useRootStore();
 
-  // const [chatBot, setChatBot] = useState<ChatBot>();
-
-  // useEffect(() => {
-  //   setChatBot(
-  //     getChatBot(chatBots, userProfile.activeChatBot) || defaultChatBot
-  //   );
-  // }, [chatBots]);
+  
 
   return (
     <aside

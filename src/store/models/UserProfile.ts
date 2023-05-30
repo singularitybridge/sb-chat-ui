@@ -1,6 +1,7 @@
 import { types, Instance, SnapshotIn, SnapshotOut } from "mobx-state-tree";
 
 const UserProfile = types.model("UserProfile", {
+  _id: types.identifier,
   name: types.string,
   avatar: types.string,
   activeChatBot: types.string,

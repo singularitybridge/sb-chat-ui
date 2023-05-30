@@ -23,7 +23,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
         role="tablist"
         data-te-nav-ref
       >
-        {tabs.map((tab) => (
+        {tabs.map((tab, index) => (
           <li role="presentation" key={tab.id}>
             <a
               href={`#${tab.id}`}
@@ -32,7 +32,8 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
               data-te-target={`#${tab.id}`}
               role="tab"
               aria-controls={tab.id}
-              aria-selected="false"
+              aria-selected={index === 0 ? "true" : "false"}
+              {...(index === 0 && { 'data-te-nav-active': true })}
             >
               {tab.label}
             </a>
@@ -41,13 +42,14 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
       </ul>
 
       <div className="mb-6">
-        {tabs.map((tab) => (
+        {tabs.map((tab, index) => (
           <div
             key={tab.id}
-            className="hidden opacity-0 transition-opacity duration-150 ease-linear data-[te-tab-active]:block"
+            className={`hidden opacity-${index === 0 ? '100' : '0'} transition-opacity duration-150 ease-linear data-[te-tab-active]:block`}
             id={tab.id}
             role="tabpanel"
             aria-labelledby={`${tab.id}-tab`}
+            {...(index === 0 && { 'data-te-tab-active': true })}
           >
             {tab.content}
           </div>

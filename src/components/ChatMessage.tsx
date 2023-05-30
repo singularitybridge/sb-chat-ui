@@ -173,29 +173,12 @@ const ChatMessage: React.FC<ChatMessageProps> = observer( ({
 
 
   const { activeChatbot, userProfile } = useRootStore();
-
-
-  // const [userProfile, setUserProfile] = useRecoilState(userProfileState);
-  // const chatBots = useRecoilValue(chatBotsState);
   const { sessionId } = useParams<{ sessionId: string }>();
 
   if (!sessionId) {
     return null;
   }
 
-  // const [chatBot, setChatBot] = useState<ChatBot | null>(null);
-
-  // useEffect(() => {
-  //   fetch(`http://127.0.0.1:5000/chat_sessions/${sessionId}`)
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       if (data.chatbot) {
-  //         setChatBot(data.chatbot);
-  //       }
-  //     });
-  // }, [sessionId]);
-
-  // const chatBot = getChatBot(chatBots, sessionId);
 
   const messageStyles =
     message.role === SenderType.user

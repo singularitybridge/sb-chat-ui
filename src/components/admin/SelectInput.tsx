@@ -38,6 +38,7 @@ const SelectInput: React.FC<SelectInputProps> = ({
       <select
         data-te-select-init
         data-te-select-filter="true"
+        data-te-select-size="lg"
         onChange={handleChange}
         ref={selectRef}
       >

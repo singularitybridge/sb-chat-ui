@@ -254,7 +254,7 @@ const ChatbotView: React.FC = observer(() => {
               {
                 id: "tabs-profile",
                 label: "Session Store",
-                content: <SessionStoreView sessionId={sessionId} />,
+                content: <SessionStoreView />,
               },
               {
                 id: "tabs-log",
