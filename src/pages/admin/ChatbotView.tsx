@@ -22,6 +22,19 @@ const ChatbotView: React.FC = observer(() => {
   const rootStore = useRootStore();
   const sessionIdOLD = rootStore.selectedChatSession?._id || "";
 
+  
+  const chatBotUpdateWrapper = async (updatedChatbot: Chatbot) => {
+
+    await updateChatbot(updatedChatbot);
+
+    if (key) {
+      await rootStore.loadChatbots();
+      rootStore.setActiveChatbot(key);
+    }
+
+  };
+
+
   useEffect(() => {
     const loadData = async () => {
       if (rootStore.activeChatbot?.key) {
@@ -73,7 +86,11 @@ const ChatbotView: React.FC = observer(() => {
         return state;
       }),
     };
-    await updateChatbot(updatedChatbot);
+
+    chatBotUpdateWrapper(updatedChatbot);
+
+    
+
   };
 
   const updateChatbotProcessor = async (updatedProcessor: any) => {
@@ -91,7 +108,7 @@ const ChatbotView: React.FC = observer(() => {
         };
       }),
     };
-    await updateChatbot(updatedChatbot);
+    chatBotUpdateWrapper(updatedChatbot);
   };
 
   const createNewState = async () => {
@@ -109,7 +126,8 @@ const ChatbotView: React.FC = observer(() => {
       states: [...chatbot.states, newState],
     };
 
-    await updateChatbot(updatedChatbot);
+    chatBotUpdateWrapper(updatedChatbot);
+    
   };
 
   const deleteChatbotState = async (stateId: string) => {
@@ -117,7 +135,7 @@ const ChatbotView: React.FC = observer(() => {
       ...chatbot,
       states: chatbot.states.filter((state: any) => state._id !== stateId),
     };
-    await updateChatbot(updatedChatbot);
+    chatBotUpdateWrapper(updatedChatbot);
   };
 
   const setActiveChatbotState = async (stateId: string) => {
@@ -126,6 +144,8 @@ const ChatbotView: React.FC = observer(() => {
         rootStore.selectedChatSession?._id,
         stateId
       );
+      rootStore.selectedChatSession.setState(stateId);
+      console.log('set active chatbot state', stateId);
     }
   };
 
@@ -150,7 +170,8 @@ const ChatbotView: React.FC = observer(() => {
       }),
     };
 
-    await updateChatbot(updatedChatbot);
+    chatBotUpdateWrapper(updatedChatbot);
+    
   };
 
   const deleteProcessor = async (processorId: string) => {
@@ -164,8 +185,8 @@ const ChatbotView: React.FC = observer(() => {
           ),
         };
       }),
-    };
-    await updateChatbot(updatedChatbot);
+    };    
+    chatBotUpdateWrapper(updatedChatbot);
   };
 
   const insertProcessorAfter = async (processorId: string) => {
@@ -198,8 +219,8 @@ const ChatbotView: React.FC = observer(() => {
         };
       }),
     };
-
-    await updateChatbot(updatedChatbot);
+    
+    chatBotUpdateWrapper(updatedChatbot);
   };
 
   return (
@@ -209,8 +230,7 @@ const ChatbotView: React.FC = observer(() => {
           <div className="w-full h-[42rem]">
             <ReactFlowProvider>
               <ActionsView
-                chatbot={chatbot}
-                session={rootStore.selectedChatSession}
+                chatbot={chatbot}                
                 onNodeSelected={handleNodeSelected}
               />
             </ReactFlowProvider>

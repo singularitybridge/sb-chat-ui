@@ -17,19 +17,21 @@ import { CustomNodeState } from "./custom-nodes/CustomNodeState";
 import { CustomNodeProcessor } from "./custom-nodes/CustomNodeProcessor";
 import { Chatbot } from "../../../services/ChatbotService";
 import { IChatSession } from "../../../store/models/ChatSession";
-
+import { observer } from "mobx-react-lite";
+import { useRootStore } from "../../../store/common/RootStoreContext";
+import { autorun } from "mobx";
 
 interface ActionsViewProps {
-  chatbot: Chatbot;
-  session?: IChatSession;
+  chatbot: Chatbot;  
   onNodeSelected: (node: any, type: string) => void;
 }
 
-const ActionsView: React.FC<ActionsViewProps> = ({
+const ActionsView: React.FC<ActionsViewProps> = observer(({
   chatbot,
-  onNodeSelected,
-  session,
+  onNodeSelected,  
 }) => {
+
+  const rootStore = useRootStore();
 
   const [nodes, setNodes] = useState<any[]>([]);
   const [edges, setEdges] = useState<any[]>([]);
@@ -84,97 +86,107 @@ const ActionsView: React.FC<ActionsViewProps> = ({
   }, [setViewport]);
 
   useEffect(() => {
-    const chatbotNode = {
-      id: chatbot.name,
-      type: "custom",
-      data: {
-        name: chatbot.name,
-        description: chatbot.description,
-        avatarImage: chatbot.avatarImage,
-        backgroundImage: chatbot.backgroundImage,
-        maxTokens: chatbot.maxTokens,
-        key: chatbot.key,
-        type: "chatbotNode",
-        selectedNodeId,
-      },
-      position: { x: (chatbot.states.length * 300) / 2, y: 50 },
-    };
 
-    const nodesFromStates = chatbot.states.reduce<any[]>(
-      (acc, state, index) => {
-        const isActive = session && session.current_state === state.name;
-        const stateNode = {
-          id: state.name,
-          type: "customState",
-          data: {
-            _id: state._id,
-            name: state.name,
-            prompt: state.prompt,
-            model: state.model,
-            temperature: state.temperature,
-            type: "stateNode",
-            isActive,
-            selectedNodeId,
-          },
-          position: { x: index * 370 + 450, y: 300 },
+    const disposer = autorun(() => {
+
+      const chatbotNode = {
+        id: chatbot.name,
+        type: "custom",
+        data: {
+          name: chatbot.name,
+          description: chatbot.description,
+          avatarImage: chatbot.avatarImage,
+          backgroundImage: chatbot.backgroundImage,
+          maxTokens: chatbot.maxTokens,
+          key: chatbot.key,
+          type: "chatbotNode",
+          selectedNodeId,
+        },
+        position: { x: (chatbot.states.length * 300) / 2, y: 50 },
+      };
+  
+      const nodesFromStates = chatbot.states.reduce<any[]>(
+        (acc, state, index) => {
+          const isActive = rootStore.selectedChatSession && rootStore.selectedChatSession.current_state === state.name;
+          const stateNode = {
+            id: state.name,
+            type: "customState",
+            data: {
+              _id: state._id,
+              name: state.name,
+              prompt: state.prompt,
+              model: state.model,
+              temperature: state.temperature,
+              type: "stateNode",
+              isActive,
+              selectedNodeId,
+            },
+            position: { x: index * 370 + 450, y: 300 },
+          };
+  
+          const processorNodes = state.processors.map(
+            (processor, processorIndex) => {
+              const processorHeight = 400;
+              const positionY = 600 + (processorHeight + 120) * processorIndex;
+  
+              return {
+                id: `${state.name}-${processor._id}`,
+                type: "customProcessor",
+                data: {
+                  _id: processor._id,
+                  processor_name: processor.processor_name,
+                  processor_data: processor.processor_data,
+                  type: "processorNode",
+                },
+                position: { x: index * 480 + 495, y: positionY },
+              };
+            }
+          );
+  
+          return [...acc, stateNode, ...processorNodes];
+        },
+        [chatbotNode]
+      );
+  
+      const initEdges = chatbot.states.flatMap((state) => {
+        const stateToChatbotEdge = {
+          id: `${chatbot.name}-${state.name}`,
+          source: chatbot.name,
+          target: state.name,
         };
-
-        const processorNodes = state.processors.map(
+  
+        const processorEdges = state.processors.map(
           (processor, processorIndex) => {
-            const processorHeight = 400;
-            const positionY = 600 + (processorHeight + 120) * processorIndex;
-
-            return {
-              id: `${state.name}-${processor._id}`,
-              type: "customProcessor",
-              data: {
-                _id: processor._id,
-                processor_name: processor.processor_name,
-                processor_data: processor.processor_data,
-                type: "processorNode",
-              },
-              position: { x: index * 480 + 495, y: positionY },
-            };
+            if (processorIndex === 0) {
+              return {
+                id: `${state.name}-${processor._id}`,
+                source: state.name,
+                target: `${state.name}-${processor._id}`,
+              };
+            } else {
+              const previousProcessor = state.processors[processorIndex - 1];
+              return {
+                id: `${previousProcessor._id}-${processor._id}`,
+                source: `${state.name}-${previousProcessor._id}`,
+                target: `${state.name}-${processor._id}`,
+              };
+            }
           }
         );
+  
+        return [stateToChatbotEdge, ...processorEdges];
+      });
+  
+      setNodes(nodesFromStates);
+      setEdges(initEdges);
 
-        return [...acc, stateNode, ...processorNodes];
-      },
-      [chatbotNode]
-    );
-
-    const initEdges = chatbot.states.flatMap((state) => {
-      const stateToChatbotEdge = {
-        id: `${chatbot.name}-${state.name}`,
-        source: chatbot.name,
-        target: state.name,
-      };
-
-      const processorEdges = state.processors.map(
-        (processor, processorIndex) => {
-          if (processorIndex === 0) {
-            return {
-              id: `${state.name}-${processor._id}`,
-              source: state.name,
-              target: `${state.name}-${processor._id}`,
-            };
-          } else {
-            const previousProcessor = state.processors[processorIndex - 1];
-            return {
-              id: `${previousProcessor._id}-${processor._id}`,
-              source: `${state.name}-${previousProcessor._id}`,
-              target: `${state.name}-${processor._id}`,
-            };
-          }
-        }
-      );
-
-      return [stateToChatbotEdge, ...processorEdges];
     });
+  
 
-    setNodes(nodesFromStates);
-    setEdges(initEdges);
-  }, [chatbot, session]);
+    return () => disposer();
+
+
+  }, [chatbot, rootStore]);
 
 
 
@@ -192,6 +204,6 @@ const ActionsView: React.FC<ActionsViewProps> = ({
       <Background variant={BackgroundVariant.Dots} gap={24} size={2} />
     </ReactFlow>
   );
-};
+});
 
 export { ActionsView };
