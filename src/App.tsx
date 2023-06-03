@@ -63,8 +63,7 @@ const App = () => {
   const style = { height: `${screenHeight}px` };
 
   useEffect(() => {
-    rootStore.loadChatbots();
-    rootStore.loadChatSessions();    
+    rootStore.loadChatbots();    
   }, []);
 
   return (

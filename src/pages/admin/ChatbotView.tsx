@@ -18,26 +18,30 @@ import { Tabs } from "../../components/Tabs";
 import { EditorSettingsView } from "./EditorSettingsView";
 
 const ChatbotView: React.FC = observer(() => {
-  
   const { key } = useParams<{ key: string }>();
   const rootStore = useRootStore();
-  const sessionId = rootStore.selectedChatSession?._id || "";
+  const sessionIdOLD = rootStore.selectedChatSession?._id || "";
 
   useEffect(() => {
-    console.log("ChatbotView: ", key);
+    const loadData = async () => {
+      if (rootStore.activeChatbot?.key) {
+        await rootStore.loadChatSessions(rootStore.activeChatbot.key);
+        rootStore.setSelectedChatSession(rootStore.chatSessions[0]._id);
+      }
 
+      if (rootStore.chatbotsLoaded && key) {
+        rootStore.setActiveChatbot(key);
+      }
+    };
+
+    loadData();
     initTE({ Tab });
+  }, [rootStore.activeChatbot?.key, rootStore.chatbotsLoaded, key]);
 
-    const chatBot = rootStore.getChatbot(key || "");
-    if (chatBot) {
-      rootStore.setActiveChatbot(chatBot);
-    } else {
-      // Handle situation where chatBot is null, e.g. set a default value or show an error
-    }
-  }, [key]);
-
-  const { chatbot, loading, error, updateChatbot, setChatbotState } =
-    useChatbot(key || "", sessionId || "");
+  const { chatbot, loading, error, updateChatbot } = useChatbot(
+    key || "",
+    sessionIdOLD || ""
+  );
 
   const [selectedNode, setSelectedNode] = useState<{
     node: any;
@@ -117,7 +121,12 @@ const ChatbotView: React.FC = observer(() => {
   };
 
   const setActiveChatbotState = async (stateId: string) => {
-    setChatbotState(stateId);
+    if (rootStore.selectedChatSession) {
+      rootStore.setChatSessionState(
+        rootStore.selectedChatSession?._id,
+        stateId
+      );
+    }
   };
 
   const addChatbotProcessor = async (stateId: string) => {
@@ -264,9 +273,8 @@ const ChatbotView: React.FC = observer(() => {
               {
                 id: "tabs-messages",
                 label: "Settings",
-                content: <EditorSettingsView /> ,
-              }
-
+                content: <EditorSettingsView />,
+              },
             ]}
           />
         </div>

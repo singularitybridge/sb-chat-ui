@@ -6,11 +6,12 @@ interface ICreateChatSessionData {
   chatbot_key: string;
 }
 
-export async function getChatSessions(): Promise<IChatSession[]> {
-  const response = await fetch(`${API_URL}/chat_sessions`);
+export async function getChatSessions(chatbot_key: string): Promise<IChatSession[]> {
+  const response = await fetch(`${API_URL}/chat_sessions?chatbot_key=${chatbot_key}`);
   const chatSessions = await response.json();
   return chatSessions;
 }
+
 
 export async function createChatSession(data: ICreateChatSessionData): Promise<ChatSessionSnapshotIn> {
   const response = await fetch(`${API_URL}/chat_sessions`, {
@@ -43,4 +44,18 @@ export async function getChatSessionById(id: string): Promise<IChatSession> {
   const response = await fetch(`http://127.0.0.1:5000/chat_sessions/${id}`);
   const chatSession = await response.json();
   return chatSession;
+}
+
+export async function setChatSessionState(sessionId: string, state: string): Promise<void> {
+  const response = await fetch(`${API_URL}/chat_sessions/${sessionId}/set_state`, {
+      method: 'PUT',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ state }),
+  });
+
+  if (!response.ok) {
+      throw new Error(`Failed to set chat session state! status: ${response.status}`);
+  }
 }

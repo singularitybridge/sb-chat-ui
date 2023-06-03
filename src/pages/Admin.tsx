@@ -9,13 +9,6 @@ import { Outlet } from "react-router-dom";
 import { useRootStore } from "../store/common/RootStoreContext";
 
 const Admin: React.FC = observer(() => {
-  const { loadChatSessions, loadChatbots } = useRootStore();
-
-  useEffect(() => {
-    loadChatSessions();
-    loadChatbots();
-  }, []);
-
   return (
     <>
       <Menu />

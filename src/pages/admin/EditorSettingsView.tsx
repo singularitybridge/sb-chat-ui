@@ -18,8 +18,8 @@ interface ProcessorOption {
 const EditorSettingsView: React.FC<EditorSettingsProps> = observer(() => {
 
   const { chatSessions, createChatSession, loadChatSessions } = useRootStore();
-  
   const EditorfetchAndSetSettings = async () => {};
+  const rootStore = useRootStore();
 
   useEffect(() => {
     EditorfetchAndSetSettings();
@@ -46,9 +46,7 @@ const EditorSettingsView: React.FC<EditorSettingsProps> = observer(() => {
         text: session.user_id,
         secondaryText: session.current_state,
       }));
-
       setProcessorOptions(options);
-      console.log("processorOptions: ", options);
     });
   }, [chatSessions]);
 
@@ -69,7 +67,15 @@ const EditorSettingsView: React.FC<EditorSettingsProps> = observer(() => {
         <SelectInput
           options={processorOptions}
           value={selectedProcessor}
-          onChange={setSelectedProcessor}
+          onChange={(value: string) => {
+            setSelectedProcessor(value);
+            const selectedSession = chatSessions.find(
+              (session) => session._id === value
+            );
+            if (selectedSession) {              
+              rootStore.setSelectedChatSession(selectedSession._id);              
+            }
+          }}
         />
       </div>
     </div>
