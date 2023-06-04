@@ -6,7 +6,7 @@ import { useRootStore } from "../../store/common/RootStoreContext";
 import { SelectInput } from "../../components/admin/SelectInput";
 import { observer } from "mobx-react-lite";
 import { autorun } from "mobx";
-import { PlusIcon } from "@heroicons/react/24/solid";
+import { ClipboardDocumentCheckIcon, LinkIcon, PlusIcon } from "@heroicons/react/24/solid";
 
 interface EditorSettingsProps {}
 interface ProcessorOption {
@@ -20,6 +20,15 @@ const EditorSettingsView: React.FC<EditorSettingsProps> = observer(() => {
   const { chatSessions, createChatSession, loadChatSessions } = useRootStore();
   const EditorfetchAndSetSettings = async () => {};
   const rootStore = useRootStore();
+
+  const copySessionIdToClipboard = () => {
+    navigator.clipboard.writeText(rootStore.selectedChatSession?._id || "");
+  };
+
+  const openSessionInNewTab = () => {
+    window.open(`http://localhost:5173/chat/${rootStore.selectedChatSession?._id}`, "_blank");
+  };
+
 
   useEffect(() => {
     EditorfetchAndSetSettings();
@@ -63,8 +72,8 @@ const EditorSettingsView: React.FC<EditorSettingsProps> = observer(() => {
       </div>
 
       <div className="flex flex-col mt-5 text-slate-400">
-        <div className="mb-2">select session to debug</div>
-        <SelectInput
+        
+      <SelectInput
           options={processorOptions}
           value={selectedProcessor}
           onChange={(value: string) => {
@@ -73,10 +82,25 @@ const EditorSettingsView: React.FC<EditorSettingsProps> = observer(() => {
               (session) => session._id === value
             );
             if (selectedSession) {              
-              rootStore.setSelectedChatSession(selectedSession._id);              
+              rootStore.setSelectedChatSession(selectedSession._id);             
             }
           }}
         />
+          <div className="mb-2 flex justify-between items-center text-sm rounded-md ">
+          <div>
+            {rootStore.selectedChatSession?._id}
+          </div>
+          <div>
+            <IconButton
+              icon={<ClipboardDocumentCheckIcon className="w-5 h-5 text-slate-800" />}
+              onClick={copySessionIdToClipboard}
+            />
+            <IconButton
+              icon={<LinkIcon className="w-5 h-5 text-slate-800 ml-2" />}
+              onClick={openSessionInNewTab}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
