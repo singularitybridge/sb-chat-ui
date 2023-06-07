@@ -25,8 +25,7 @@ const ChatbotView: React.FC = observer(() => {
   const chatBotUpdateWrapper = async (updatedChatbot: Chatbot) => {
     await updateChatbot(updatedChatbot);
 
-    if (key) {
-      await rootStore.loadChatbots();
+    if (key) {      
       rootStore.setActiveChatbot(key);
     }
   };

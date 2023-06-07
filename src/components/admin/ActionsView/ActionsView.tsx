@@ -32,8 +32,7 @@ const ActionsView: React.FC<ActionsViewProps> = observer(({
 }) => {
 
   const rootStore = useRootStore();
-
-  const [nodes, setNodes] = useState<any[]>([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges] = useState<any[]>([]);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
 
@@ -194,6 +193,7 @@ const ActionsView: React.FC<ActionsViewProps> = observer(({
     <ReactFlow
       nodes={nodes}
       edges={edges}
+      onNodesChange={onNodesChange}
       onNodeClick={onNodeClick}
       onConnect={onConnect}
       onPaneClick={onPaneClick}
