@@ -5,22 +5,22 @@ import { observer } from "mobx-react-lite";
 import { useRootStore } from "../store/common/RootStoreContext";
 
 interface ChatMessageProps {
+  enabled: boolean;
   onClickStartChat?: () => void;
 }
 
 const ChatMessageWelcome: React.FC<ChatMessageProps> = observer(({
   onClickStartChat,
+  enabled,
 }) => {
-  // const chatBots = useRecoilValue(chatBotsState);
-  const { sessionId } = useParams<{ sessionId: string }>();
-  const [chatStarted, setChatStarted] = useState(false);
-  // const [chatBot, setChatBot] = useState<ChatBot | null>(null);
 
   const { activeChatbot, userProfile } = useRootStore();
 
-  if (!sessionId) {
-    return null;
-  }
+  useEffect(() => {
+    console.log('activeChatbot', activeChatbot?.key);
+  }, [activeChatbot]);
+
+
 
   // useEffect(() => {
   //   fetch(`http://127.0.0.1:5000/chat_sessions/${sessionId}`)
@@ -35,8 +35,7 @@ const ChatMessageWelcome: React.FC<ChatMessageProps> = observer(({
 
   
 
-  const handleStartChat = () => {
-    setChatStarted(true);
+  const handleStartChat = () => {    
     onClickStartChat && onClickStartChat();
   };
 
@@ -56,7 +55,7 @@ const ChatMessageWelcome: React.FC<ChatMessageProps> = observer(({
         >
           <Avatar imageUrl={activeChatbot?.avatarImage || ''} avatarStyle={AvatarStyles.large} />
           <div>{activeChatbot?.description}</div>
-          {chatStarted ? null : (
+          {!enabled ? null : (
               <button
                 className="bg-stone-300 p-4 rounded-xl w-full"
                 onClick={handleStartChat}

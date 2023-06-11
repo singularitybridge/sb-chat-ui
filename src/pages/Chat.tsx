@@ -24,6 +24,7 @@ import { AudioCircle } from "../components/chat/AudioCircle";
 import { useParams } from "react-router-dom";
 import { useRootStore } from "../store/common/RootStoreContext";
 import { observer } from "mobx-react-lite";
+import { autorun, toJS } from "mobx";
 
 // move to the api service
 const transformApiResponseToMessage = (message: any): Message => {
@@ -68,47 +69,54 @@ const Chat = observer(() => {
   const [audioCircleActive, setAudioCircleActive] = useState(false);
 
   const [sessionMessages, setSessionMessages] = useState<Message[]>([]);
-  const { sessionId = "" } = useParams<{ sessionId?: string }>();
-
+  // const { sessionId = "" } = useParams<{ sessionId?: string }>();
 
   const rootStore = useRootStore();
-  const { activeChatbot } = useRootStore();
+  const { activeChatbot, selectedChatSession } = useRootStore();
+
+  // useEffect(() => {
+  //   rootStore.loadChatbots();
+  //   rootStore.loadChatSessions("");
+  // }, [rootStore]);
+
+  // useEffect(() => {
+  //   autorun(() => {
+  //     if (!rootStore.chatSessionsLoaded || !rootStore.chatbotsLoaded) return;
+  //     rootStore.setActiveChatSession(sessionId);
+  //   });
+  // }, [rootStore.chatSessionsLoaded, rootStore.chatbotsLoaded, sessionId]);
 
   useEffect(() => {
-    if (!sessionId) return;
-    // if (!rootStore.chatbotsLoaded) return; // Add this line
+    autorun(() => {
 
-    if (rootStore.chatbotsLoaded) {
+      if (!rootStore.chatSessionsLoaded || !rootStore.chatbotsLoaded || !selectedChatSession) return;
 
-      const chatBot = rootStore.getChatbot(rootStore.selectedChatSession?._id || "" );
+      // rootStore.setActiveChatbot(rootStore.selectedChatSession?.chatbot_key || "");
 
-      if (!chatBot) {
-        return;
-      }
+      console.log('we have chat sessions and chatbots loaded', selectedChatSession._id);
 
-      console.log("loaded chatbot: ", chatBot);
-      rootStore.setActiveChatbot(chatBot);
-    }
+      // Change the function call to pass the sessionId
+      getSessionMessages(selectedChatSession._id)
+        .then((chatHistoryResponse) => {
+          console.log("loaded history: ", chatHistoryResponse);
+          // if (chatHistoryResponse && chatHistoryResponse.messages) {
+          //   const chatHistory = chatHistoryResponse.messages;
 
-    // if (!chatBot || chatBot.key === ChatBotNotLoaded) return;
+          console.log('set session messages', chatHistoryResponse.map(transformApiResponseToMessage));
 
-    // Change the function call to pass the sessionId
-    getSessionMessages(sessionId)
-      .then((chatHistoryResponse) => {
-        console.log("loaded history: ", chatHistoryResponse);
-        // if (chatHistoryResponse && chatHistoryResponse.messages) {
-        //   const chatHistory = chatHistoryResponse.messages;
-        setSessionMessages(
-          chatHistoryResponse.map(transformApiResponseToMessage)
-        );
-        // } else {
-        //   console.log("No messages found in chat history response");
-        // }
-      })
-      .catch((err) => {
-        console.log("error loading chat history: ", err);
-      });
-  }, [sessionId, rootStore.selectedChatSession, rootStore.chatbotsLoaded]);
+
+          setSessionMessages(
+            chatHistoryResponse.map(transformApiResponseToMessage)
+          );
+          // } else {
+          //   console.log("No messages found in chat history response");
+          // }
+        })
+        .catch((err) => {
+          console.log("error loading chat history: ", err);
+        });
+    });
+  }, [selectedChatSession, rootStore.selectedChatSession, rootStore.chatbotsLoaded]);
 
   // useEffect(() => {
   //   if (userProfile.activeChatBot === ChatBotNotLoaded || !chatBots) return;
@@ -138,7 +146,7 @@ const Chat = observer(() => {
     //     ? await translateText(message, "en")
     //     : "";
 
-    const translatedMessage = ""; 
+    const translatedMessage = "";
 
     if (message !== "") {
       const userMessage = transformUserMessage(
@@ -151,7 +159,7 @@ const Chat = observer(() => {
 
     const response = await getGPTCompletion(
       "",
-      sessionId,
+      selectedChatSession?._id || "",
       userProfile.name,
       translatedMessage || message,
       chatData || [],
@@ -189,6 +197,7 @@ const Chat = observer(() => {
                     />
 
                     <ChatMessageWelcome
+                      enabled={ sessionMessages.length === 0 }
                       onClickStartChat={() => onSendMessage("hi")}
                     />
 

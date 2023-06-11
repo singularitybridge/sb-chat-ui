@@ -82,7 +82,7 @@ const EditorSettingsView: React.FC<EditorSettingsProps> = observer(() => {
               (session) => session._id === value
             );
             if (selectedSession) {              
-              rootStore.setSelectedChatSession(selectedSession._id);             
+              rootStore.setActiveChatSession(selectedSession._id);             
             }
           }}
         />

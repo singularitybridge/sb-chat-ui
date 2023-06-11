@@ -1,12 +1,23 @@
 import { Chat } from "./pages/Chat";
 import { NotFound } from "./pages/NotFound";
 import { Admin } from "./pages/Admin";
-import React from "react";
-import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom"; // Import the Outlet component
+import React, { ReactNode, useEffect, useState } from "react";
+import { observer } from "mobx-react-lite";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Outlet,
+  useParams,
+} from "react-router-dom"; // Import the Outlet component
 import App from "./App";
 import { ChatSessionView } from "./services/ChatSessionView";
 import { Dashboard } from "./pages/admin/Dashboard";
 import { ChatbotView } from "./pages/admin/ChatbotView";
+import { useRootStore } from "./store/common/RootStoreContext";
+import { autorun } from "mobx";
+import { ChatRouteLoader } from "./components/ChatRouteLoader";
+
+
 
 export const browserRouter = createBrowserRouter([
   {
@@ -18,7 +29,11 @@ export const browserRouter = createBrowserRouter([
       },
       {
         path: "/chat/:sessionId",
-        element: <Chat />,
+        element: (
+          <ChatRouteLoader>
+            <Chat />
+          </ChatRouteLoader>
+        ),
       },
       {
         path: "/other",
@@ -30,7 +45,7 @@ export const browserRouter = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <Dashboard />
+            element: <Dashboard />,
           },
           // {
           //   path: "/chat-sessions/:id",

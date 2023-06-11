@@ -34,6 +34,7 @@ const RootStore = types
       try {
         const chatSessions = yield getChatSessions(chatbotKey);
         applySnapshot(self.chatSessions, chatSessions);
+        self.chatSessionsLoaded = true;
       } catch (error) {
         console.error("Failed to load chat sessions", error);
       }
@@ -57,7 +58,7 @@ const RootStore = types
       }
     }),
 
-    setSelectedChatSession: (sessionId: string) => {
+    setActiveChatSession: (sessionId: string) => {
       const foundSession = self.chatSessions.find(
         (session) => session._id === sessionId
       );
@@ -80,6 +81,7 @@ const RootStore = types
     },
 
     getChatbot: (key: string) => {
+      console.log('get chatbot', key);
       return self.chatbots.find((chatbot) => chatbot.key === key);
     },
     

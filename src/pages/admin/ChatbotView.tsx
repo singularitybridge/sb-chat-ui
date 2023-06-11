@@ -16,6 +16,7 @@ import { useRootStore } from "../../store/common/RootStoreContext";
 import { Tab, initTE } from "tw-elements";
 import { Tabs } from "../../components/Tabs";
 import { EditorSettingsView } from "./EditorSettingsView";
+import { Chat } from "../Chat";
 
 const ChatbotView: React.FC = observer(() => {
   const { key } = useParams<{ key: string }>();
@@ -34,7 +35,7 @@ const ChatbotView: React.FC = observer(() => {
     const loadData = async () => {
       if (rootStore.activeChatbot?.key) {
         await rootStore.loadChatSessions(rootStore.activeChatbot.key);
-        rootStore.setSelectedChatSession(rootStore.chatSessions[0]._id);
+        rootStore.setActiveChatSession(rootStore.chatSessions[0]._id);
       }
 
       if (rootStore.chatbotsLoaded && key) {
@@ -231,7 +232,7 @@ const ChatbotView: React.FC = observer(() => {
             tabs={[
               {
                 id: "tabs-home",
-                label: "Node Editor",
+                label: "Editor",
                 content: (
                   <>
                     {selectedNode ? (
@@ -272,7 +273,7 @@ const ChatbotView: React.FC = observer(() => {
               },
               {
                 id: "tabs-profile",
-                label: "Session Store",
+                label: "Store",
                 content: <SessionStoreView />,
               },
               {
@@ -284,6 +285,11 @@ const ChatbotView: React.FC = observer(() => {
                 id: "tabs-messages",
                 label: "Settings",
                 content: <EditorSettingsView />,
+              },
+              {
+                id: "tabs-chat",
+                label: "Run",
+                content: <Chat />,
               },
             ]}
           />
