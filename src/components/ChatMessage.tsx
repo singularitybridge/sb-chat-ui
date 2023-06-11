@@ -171,13 +171,7 @@ const ChatMessage: React.FC<ChatMessageProps> = observer( ({
   onUserSelection,
 }) => {
 
-
   const { activeChatbot, userProfile } = useRootStore();
-  const { sessionId } = useParams<{ sessionId: string }>();
-
-  if (!sessionId) {
-    return null;
-  }
 
 
   const messageStyles =
@@ -191,6 +185,7 @@ const ChatMessage: React.FC<ChatMessageProps> = observer( ({
 
   return (
     <>
+    
       <div
         className={messageStyles.container}
         // onClick={() => playAudio(message.audio)}

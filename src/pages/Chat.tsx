@@ -88,12 +88,19 @@ const Chat = observer(() => {
 
   useEffect(() => {
     autorun(() => {
-
-      if (!rootStore.chatSessionsLoaded || !rootStore.chatbotsLoaded || !selectedChatSession) return;
+      if (
+        !rootStore.chatSessionsLoaded ||
+        !rootStore.chatbotsLoaded ||
+        !selectedChatSession
+      )
+        return;
 
       // rootStore.setActiveChatbot(rootStore.selectedChatSession?.chatbot_key || "");
 
-      console.log('we have chat sessions and chatbots loaded', selectedChatSession._id);
+      console.log(
+        "we have chat sessions and chatbots loaded",
+        selectedChatSession._id
+      );
 
       // Change the function call to pass the sessionId
       getSessionMessages(selectedChatSession._id)
@@ -102,8 +109,10 @@ const Chat = observer(() => {
           // if (chatHistoryResponse && chatHistoryResponse.messages) {
           //   const chatHistory = chatHistoryResponse.messages;
 
-          console.log('set session messages', chatHistoryResponse.map(transformApiResponseToMessage));
-
+          console.log(
+            "set session messages",
+            chatHistoryResponse.map(transformApiResponseToMessage)
+          );
 
           setSessionMessages(
             chatHistoryResponse.map(transformApiResponseToMessage)
@@ -116,7 +125,11 @@ const Chat = observer(() => {
           console.log("error loading chat history: ", err);
         });
     });
-  }, [selectedChatSession, rootStore.selectedChatSession, rootStore.chatbotsLoaded]);
+  }, [
+    selectedChatSession,
+    rootStore.selectedChatSession,
+    rootStore.chatbotsLoaded,
+  ]);
 
   // useEffect(() => {
   //   if (userProfile.activeChatBot === ChatBotNotLoaded || !chatBots) return;
@@ -197,7 +210,7 @@ const Chat = observer(() => {
                     />
 
                     <ChatMessageWelcome
-                      enabled={ sessionMessages.length === 0 }
+                      enabled={sessionMessages.length === 0}
                       onClickStartChat={() => onSendMessage("hi")}
                     />
 
