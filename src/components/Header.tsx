@@ -10,34 +10,18 @@ import { useRootStore } from "../store/common/RootStoreContext";
 
 interface HeaderProps {
   onMenuClick: () => void;
+  forceShow?: boolean
 }
 
-const Header: React.FC<HeaderProps> = observer( ({ onMenuClick }) => {
-  const [chatBotName, setChatBotName] = useState<string>("");
-  const [chatBotDescription, setChatBotDescription] = useState<string>("");
-  const [chatBotAvatar, setChatBotAvatar] = useState<string>("");
-  // const [chatBot, setChatBot] = useState<ChatBot | null>(null);
+const Header: React.FC<HeaderProps> = observer( ({ onMenuClick, forceShow }) => {
 
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
 
   const { activeChatbot } = useRootStore();
-
   const { sessionId } = useParams<{ sessionId: string }>();
 
-  // useEffect(() => {
-  //   if (isAdminRoute) {
-  //     return;
-  //   }
 
-  //   fetch(`http://127.0.0.1:5000/chat_sessions/${sessionId}`)
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       if (data.chatbot) {
-  //         setChatBot(data.chatbot);
-  //       }
-  //     });
-  // }, [sessionId]);
 
   const handleClearChat = async () => {
     if (sessionId) {
@@ -75,7 +59,7 @@ const Header: React.FC<HeaderProps> = observer( ({ onMenuClick }) => {
 
   return (
     <>
-      {!isAdminRoute && (
+      {(!isAdminRoute || forceShow) && (
         <header className="p-4 flex justify-between items-center">
           <div
             className="p-1 rounded-2xl bg-gray-200 hover:bg-gray-200 w-9 h-9 cursor-pointer flex items-center justify-center"

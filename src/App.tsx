@@ -23,13 +23,6 @@ const App = () => {
   const [screenHeight, setScreenHeight] = useState(0);
   const { id } = useParams<{ id: string }>();
 
-  useEffect(() => {
-    if (!id) {
-      return;
-    }
-
-  }, [id]);
-
   const getHeight = useCallback(
     () =>
       window.visualViewport ? window.visualViewport.height : window.innerHeight,

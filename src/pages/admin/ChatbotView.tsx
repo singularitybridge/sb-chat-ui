@@ -17,6 +17,7 @@ import { Tab, initTE } from "tw-elements";
 import { Tabs } from "../../components/Tabs";
 import { EditorSettingsView } from "./EditorSettingsView";
 import { Chat } from "../Chat";
+import { Header } from "../../components/Header";
 
 const ChatbotView: React.FC = observer(() => {
   const { key } = useParams<{ key: string }>();
@@ -26,7 +27,7 @@ const ChatbotView: React.FC = observer(() => {
   const chatBotUpdateWrapper = async (updatedChatbot: Chatbot) => {
     await updateChatbot(updatedChatbot);
 
-    if (key) {      
+    if (key) {
       rootStore.setActiveChatbot(key);
     }
   };
@@ -289,7 +290,12 @@ const ChatbotView: React.FC = observer(() => {
               {
                 id: "tabs-chat",
                 label: "Run",
-                content: <Chat />,
+                content: (
+                  <>
+                    <Header onMenuClick={ () => console.log('on menu click')} forceShow={true} />
+                    <Chat />
+                  </>
+                ),
               },
             ]}
           />
