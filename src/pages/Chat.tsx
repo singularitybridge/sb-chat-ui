@@ -8,7 +8,11 @@ import {
   chatBotsState,
   SenderType,
 } from "../atoms/dataStore-old";
-import { getSessionMessages, getGPTCompletion } from "../services/ChatService";
+import {
+  getSessionMessages,
+  getGPTCompletion,
+  deleteMessageFromSession,
+} from "../services/ChatService";
 import { translateText } from "../services/TranslationService";
 import { generateAudioFromText } from "../services/TTSService";
 import { ChatMessage } from "../components/ChatMessage";
@@ -29,6 +33,7 @@ import { autorun, toJS } from "mobx";
 // move to the api service
 const transformApiResponseToMessage = (message: any): Message => {
   return {
+    _id: message._id,
     content: message.content.map((contentItem: any) => ({
       ...contentItem,
       options: contentItem.options
@@ -86,6 +91,20 @@ const Chat = observer(() => {
   //   });
   // }, [rootStore.chatSessionsLoaded, rootStore.chatbotsLoaded, sessionId]);
 
+  const fetchSessionMessages = async () => {
+    try {
+      const chatHistoryResponse = await getSessionMessages(
+        selectedChatSession?._id || ""
+      );
+      console.log("loaded history: ", chatHistoryResponse);
+      setSessionMessages(
+        chatHistoryResponse.map(transformApiResponseToMessage)
+      );
+    } catch (err) {
+      console.log("error loading chat history: ", err);
+    }
+  };
+
   useEffect(() => {
     autorun(() => {
       if (
@@ -94,36 +113,7 @@ const Chat = observer(() => {
         !selectedChatSession
       )
         return;
-
-      // rootStore.setActiveChatbot(rootStore.selectedChatSession?.chatbot_key || "");
-
-      console.log(
-        "we have chat sessions and chatbots loaded",
-        selectedChatSession._id
-      );
-
-      // Change the function call to pass the sessionId
-      getSessionMessages(selectedChatSession._id)
-        .then((chatHistoryResponse) => {
-          console.log("loaded history: ", chatHistoryResponse);
-          // if (chatHistoryResponse && chatHistoryResponse.messages) {
-          //   const chatHistory = chatHistoryResponse.messages;
-
-          console.log(
-            "set session messages",
-            chatHistoryResponse.map(transformApiResponseToMessage)
-          );
-
-          setSessionMessages(
-            chatHistoryResponse.map(transformApiResponseToMessage)
-          );
-          // } else {
-          //   console.log("No messages found in chat history response");
-          // }
-        })
-        .catch((err) => {
-          console.log("error loading chat history: ", err);
-        });
+      fetchSessionMessages();
     });
   }, [
     selectedChatSession,
@@ -191,6 +181,17 @@ const Chat = observer(() => {
     setIsUserInputEnabled(true);
   };
 
+  const onDeleteMessage = async (sessionId: string, messageId: string) => {
+    try {
+      await deleteMessageFromSession(sessionId, messageId);
+      console.log("Message deleted successfully");
+      fetchSessionMessages();
+    } catch (error) {
+      console.error("Error deleting message:", error);
+    }
+  };
+  
+
   return (
     <>
       <ContentContainer>
@@ -202,7 +203,7 @@ const Chat = observer(() => {
                 ref={chatContainerRef}
               >
                 <div className="flex flex-col h-full">
-                  <div className="grid grid-cols-12 gap-y-2">
+                  <div className="grid grid-cols-12">
                     <AudioCircle
                       active={audioCircleActive}
                       scaleFrom={10}
@@ -221,6 +222,12 @@ const Chat = observer(() => {
                           message={message}
                           onUserSelection={(selection) => {
                             onSendMessage(selection);
+                          }}
+                          onDeleteMessage={() => {
+                            onDeleteMessage(
+                              selectedChatSession?._id || "",
+                              message._id || ""
+                            );
                           }}
                         />
                       );

@@ -291,10 +291,12 @@ const ChatbotView: React.FC = observer(() => {
                 id: "tabs-chat",
                 label: "Run",
                 content: (
-                  <>
-                    <Header onMenuClick={ () => console.log('on menu click')} forceShow={true} />
-                    <Chat />
-                  </>
+                  <div className=" border-secondary-100 border-2 ">
+                    <Header onMenuClick={() => console.log('on menu click')} forceShow={true} />
+                    <div style={{ maxHeight: "850px", overflowY: "auto", display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
+                      <Chat />
+                    </div>
+                  </div>
                 ),
               },
             ]}

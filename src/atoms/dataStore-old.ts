@@ -8,7 +8,7 @@ export enum SenderType {
 export const ChatBotNotLoaded = "ChatBotNotLoaded";
 
 export interface Message {
-  id?: string;
+  _id?: string;
   content: any;
   textTranslated?: string;
   role?: string;

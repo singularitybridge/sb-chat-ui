@@ -21,11 +21,14 @@ import {
   CursorArrowRippleIcon,
 } from "@heroicons/react/24/outline";
 import { useRootStore } from "../store/common/RootStoreContext";
+import { IconButton } from "./admin/IconButton";
+import { XCircleIcon } from "@heroicons/react/24/solid";
 
 interface ChatMessageProps {
   message: Message;
   autoTranslate?: boolean;
   onUserSelection?: (selection: string) => void;
+  onDeleteMessage?: () => void;
 }
 
 interface MessageTextProps {
@@ -40,7 +43,7 @@ const MessageText: React.FC<MessageTextProps> = ({ text }) => {
 const MessageInfo: React.FC<MessageTextProps> = ({ text }) => {
   return (
     <div className="flex flex-col items-center">
-      <div className=" bg-sky-500 rounded-full p-2 h-10 w-10 mb-2">
+      <div className=" bg-sky-500 rounded-full p-2 h-10 w-10 ">
         <CursorArrowRippleIcon className="text-sm mb-1" />
       </div>
       <div className="">{text}</div>
@@ -52,7 +55,7 @@ const MessageInfo: React.FC<MessageTextProps> = ({ text }) => {
 const MessageCallout: React.FC<MessageTextProps> = ({ text }) => {
   return (
     <div className="flex flex-col items-center">
-      <div className=" bg-fuchsia-600 rounded-full p-2 h-10 w-10 mb-2">
+      <div className=" bg-fuchsia-600 rounded-full p-2 h-10 w-10 ">
         <BoltIcon className=" text-sm mb-1" />
       </div>
       <div className="">{text}</div>
@@ -78,7 +81,7 @@ const MessageOptions: React.FC<MessageOptionsProps> = ({
   };
 
   return (
-    <div className="w-full mt-4 mb-2">
+    <div className="w-full mt-4 ">
       <div className="flex flex-wrap -mx-2">
         {options.map((option, index) => (
           <div key={option.text} className="w-1/2 px-2 mb-3">
@@ -155,7 +158,7 @@ const renderContent = (
 
 const ChatMessageStyles = {
   user: {
-    container: "col-start-1 col-end-10 p-3 rounded-lg",
+    container: "col-start-1 col-end-10 p-1 rounded-lg",
     flexRow: "flex flex-row items-center",
     message: "relative ml-3 text-sm bg-white py-4 px-4 shadow rounded-lg",
   },
@@ -169,6 +172,7 @@ const ChatMessageStyles = {
 const ChatMessage: React.FC<ChatMessageProps> = observer( ({
   message,
   onUserSelection,
+  onDeleteMessage,
 }) => {
 
   const { activeChatbot, userProfile } = useRootStore();
@@ -211,6 +215,12 @@ const ChatMessage: React.FC<ChatMessageProps> = observer( ({
             {/* <div>{renderContent(message.content)}</div> */}
             <div>{renderContent(message.content, onUserSelection)}</div>{" "}
             {/* Pass onUserSelection to renderContent */}
+          </div>
+          <div>
+          <IconButton
+              icon={<XCircleIcon className="w-5 h-5 text-slate-100 m-3" />}
+              onClick={onDeleteMessage || (() => {}) }
+            />
           </div>
         </div>
       </div>

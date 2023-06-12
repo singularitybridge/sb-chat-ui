@@ -18,14 +18,12 @@ const Header: React.FC<HeaderProps> = observer( ({ onMenuClick, forceShow }) => 
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
 
-  const { activeChatbot } = useRootStore();
-  const { sessionId } = useParams<{ sessionId: string }>();
-
+  const { activeChatbot, selectedChatSession } = useRootStore();
 
 
   const handleClearChat = async () => {
-    if (sessionId) {
-      await clearSession(sessionId);
+    if (selectedChatSession?._id) {
+      await clearSession(selectedChatSession._id);
       window.location.reload();
     } else {
       console.error("sessionId is undefined");
