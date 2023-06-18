@@ -6,10 +6,7 @@ import { TextareaWithLabel } from "../../../components/admin/TextareaWithLabel";
 interface EditChatbotStateProps {
   state: {
     _id: string;
-    model: string;
     name: string;
-    prompt: string;
-    temperature: number;
   };
   chatbotKey: string;
   onUpdateState: (updatedState: any) => void;
@@ -26,28 +23,20 @@ const EditChatbotState: React.FC<EditChatbotStateProps> = ({
   onSetActiveState,
   onAddProcessor,
 }) => {
-  const [model, setModel] = useState(state.model);
   const [name, setName] = useState(state.name);
-  const [prompt, setPrompt] = useState(state.prompt);
-  const [temperature, setTemperature] = useState(state.temperature);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onUpdateState({
       chatbotKey,
       _id: state._id,
-      model,
       name,
       prompt,
-      temperature,
     });
   };
 
   useEffect(() => {
-    setModel(state.model);
     setName(state.name);
-    setPrompt(state.prompt);
-    setTemperature(state.temperature);
   }, [state]);
 
   return (
@@ -59,31 +48,6 @@ const EditChatbotState: React.FC<EditChatbotStateProps> = ({
         type="text"
         value={name}
         onChange={setName}
-      />
-
-      <InputWithLabel
-        id="floatingModel"
-        label="Model"
-        type="text"
-        value={model}
-        onChange={setModel}
-      />
-
-      {<TextareaWithLabel
-        id={`textarea_prompt`}
-        label={"Prompt"}
-        rows={10}
-        placeholder={"pls enter the prompt"}
-        value={prompt}
-        onChange={(updatedPrompt) => setPrompt(updatedPrompt)}
-      />
-}
-      <InputWithLabel
-        id="floatingTemperature"
-        label="Temperature"
-        type="number"
-        value={temperature.toString()}
-        onChange={(value) => setTemperature(parseFloat(value))}
       />
 
       <div className="flex mt-2 content-stretch">

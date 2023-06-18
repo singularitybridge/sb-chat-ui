@@ -10,9 +10,6 @@ import clsx from "clsx";
 
 type CustomNodeStateData = {
   name: string;
-  prompt: string;
-  model: string;
-  temperature: number;
   isActive?: boolean;
 };
 
@@ -40,27 +37,7 @@ const CustomNodeState: React.FC<CustomNodeStateProps> = ({ data, id, selectedNod
         />
       </div>
 
-      <div className="p-4">
-        <div className="mt-3 ml-1 w-72">
-          <LabelText
-            label={<DocumentTextIcon className="h-5 w-5 text-slate-400 mr-4 mt-1" />}
-            text={<div className="text-sm line-clamp-3">{data.prompt}</div>}
-            labelVerticalAlign="top"
-          />
-        </div>
-        <div className="mt-3 ml-1 w-72">
-          <LabelText
-            label={<AcademicCapIcon className="h-5 w-5 text-slate-400 mr-4 mt-1" />}
-            text={<div className="text-sm">{data.model}</div>}
-          />
-        </div>
-        <div className="mt-3 ml-1 w-72">
-          <LabelText
-            label={<BeakerIcon className="h-5 w-5 text-slate-400 mr-4 mt-1" />}
-            text={<div className="text-sm">{data.temperature}</div>}
-          />
-        </div>
-      </div>
+      
 
       <Handle
         type="target"

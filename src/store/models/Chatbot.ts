@@ -11,10 +11,10 @@ const Processor = types.model("Processor", {
 const State = types.model("State", {
   _id: types.identifier,
   chatbotKey: types.string,
-  model: types.string,
+  // model: types.string,
   name: types.string,
-  prompt: types.maybe(types.string),
-  temperature: types.optional(types.number, 0.8),
+  // prompt: types.maybe(types.string),
+  // temperature: types.optional(types.number, 0.8),
   processors: types.array(Processor),
 });
 

@@ -10,9 +10,23 @@ const processorOptions = [
     }
   },
   {
+    value: "extract_json",
+    text: "Extract JSON",
+    secondaryText: "Extract JSON from the GPT response",
+    processor_data: {
+      modifyResponse: 1,
+      saveResponseToSessionStore: 0,
+    }
+
+  },  
+  {
     value: "generate_images",
     text: "Generate Images",
     secondaryText: "Generate images using the GPT response",
+    processor_data: {
+      modifyResponse: 1,
+      saveResponseToSessionStore: 0,
+    }
   },
   {
     value: "generate_video",
@@ -26,12 +40,12 @@ const processorOptions = [
     processor_data: {
       key: "gptKey",
       maxTokens: "800",
-      maxHistoryMessages: "3",
+      maxHistoryMessages: "4",
       model: "gpt-3.5-turbo",
-      modifyResponse: 0,
+      modifyResponse: 1,
       prompt: "based on the conversation, return an array with companies, tasks per company and log work per company in a JSON foramt",
-      saveResponseToSessionStore: 1,
-      temprature: "0.5"
+      saveResponseToSessionStore: 0,
+      temprature: "0.85"
     }
   },
   {
