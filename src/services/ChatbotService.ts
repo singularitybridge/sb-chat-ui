@@ -20,6 +20,7 @@ interface State {
   temperature: any;
   model: string;
   name: string;
+  title?: string;
   processors: Processor[];
   prompt: string;
 }
@@ -28,6 +29,7 @@ interface Processor {
   _id: any;
   processor_data: {};
   processor_name: string;
+  title: string;
 }
 
 export async function fetchChatbots(): Promise<Chatbot[]> {

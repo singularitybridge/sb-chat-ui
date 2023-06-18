@@ -5,6 +5,7 @@ const Processor = types.model("Processor", {
   _id: types.identifier,
   processor_data: types.map(types.frozen()),
   processor_name: types.string,
+  title: types.optional(types.string, ""),
   type: types.string,
 });
 
@@ -13,6 +14,7 @@ const State = types.model("State", {
   chatbotKey: types.string,
   // model: types.string,
   name: types.string,
+  title : types.optional(types.string, ""),
   // prompt: types.maybe(types.string),
   // temperature: types.optional(types.number, 0.8),
   processors: types.array(Processor),

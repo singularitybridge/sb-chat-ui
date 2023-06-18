@@ -32,6 +32,10 @@ const processorOptions = [
     value: "generate_video",
     text: "Generate Video",
     secondaryText: "Generate videos using the GPT response",
+    processor_data: {
+      modifyResponse: 1,
+      saveResponseToSessionStore: 0,
+    }
   },
   {
     value: "gpt_query",

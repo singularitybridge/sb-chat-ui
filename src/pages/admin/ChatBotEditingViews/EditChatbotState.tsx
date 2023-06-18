@@ -7,6 +7,7 @@ interface EditChatbotStateProps {
   state: {
     _id: string;
     name: string;
+    title?: string;
   };
   chatbotKey: string;
   onUpdateState: (updatedState: any) => void;
@@ -24,6 +25,7 @@ const EditChatbotState: React.FC<EditChatbotStateProps> = ({
   onAddProcessor,
 }) => {
   const [name, setName] = useState(state.name);
+  const [title, setTitle] = useState(state.title || ''); // New state for title
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,17 +33,30 @@ const EditChatbotState: React.FC<EditChatbotStateProps> = ({
       chatbotKey,
       _id: state._id,
       name,
+      title, // Include the title in the updated state
       prompt,
     });
   };
 
   useEffect(() => {
     setName(state.name);
+    setTitle(state.title || ''); // Update the title state when the state prop changes
+    console.log('set title', state.title);
   }, [state]);
 
   return (
     <form onSubmit={handleSubmit}>
       <div className="text-xl font-bold mb-5">Edit Chatbot State</div>
+
+      {/* Input for editing the title */}
+      <InputWithLabel
+        id="floatingTitle"
+        label="Title"
+        type="text"
+        value={title}
+        onChange={setTitle}
+      />
+
       <InputWithLabel
         id="floatingName"
         label="Name"

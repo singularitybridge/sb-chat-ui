@@ -31,6 +31,7 @@ const EditChatbotProcessor: React.FC<EditChatbotProcessorProps> = ({
     { key: string; value: string }[]
   >([]);
   const [processorName, setProcessorName] = useState<string>("");
+  const [title, setTitle] = useState<string>(node.title || ""); // Add this line to keep track of title
   const [focused, setFocused] = useState<number | null>(null);
   const [setupMode, setSetupMode] = useState<boolean>(false);
 
@@ -47,6 +48,7 @@ const EditChatbotProcessor: React.FC<EditChatbotProcessorProps> = ({
     );
     setProcessorData(initialProcessorData);
     setProcessorName(node.processor_name);
+    setTitle(node.title || ""); // Add this line to update the title state when the node prop changes
 
     initTE({ Select });
   }, [node]);
@@ -73,30 +75,25 @@ const EditChatbotProcessor: React.FC<EditChatbotProcessorProps> = ({
   const removeParam = (index: number) => {
     setProcessorData(processorData.filter((_, i) => i !== index));
   };
-  
+
   const handleProcessorChange = (value: string) => {
     // Find the selected processor option
     const selectedProcessorOption = processorOptions.find(
       (option) => option.value === value
     );
-  
+
     // If the selected processor option has a processor_data preset, apply it
-    if (
-      selectedProcessorOption &&
-      selectedProcessorOption.processor_data
-    ) {
+    if (selectedProcessorOption && selectedProcessorOption.processor_data) {
       const presetProcessorData = Object.entries(
         selectedProcessorOption.processor_data
       ).map(([key, value]) => ({ key, value: String(value) })); // Convert value to string
-  
+
       setProcessorData(presetProcessorData);
     }
-  
+
     // Update the processorName
     setProcessorName(value);
   };
-  
-  
 
   const handleSave = () => {
     const updatedProcessorData = Object.fromEntries(
@@ -104,7 +101,8 @@ const EditChatbotProcessor: React.FC<EditChatbotProcessorProps> = ({
     );
     onUpdateProcessor({
       ...node,
-      processor_name: processorName, // Add the updated processorName here
+      title, // Add the updated title here
+      processor_name: processorName,
       processor_data: updatedProcessorData,
     });
   };
@@ -143,6 +141,14 @@ const EditChatbotProcessor: React.FC<EditChatbotProcessorProps> = ({
         options={processorOptions}
         value={processorName}
         onChange={(value) => handleProcessorChange(value)}
+      />
+
+      <InputWithLabel // Input for editing the title
+        id="floatingTitle"
+        label="Title"
+        type="text"
+        value={title}
+        onChange={(newValue) => setTitle(newValue)}
       />
 
       {processorData.map(({ key, value }, index) => (

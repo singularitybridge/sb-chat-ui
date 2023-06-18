@@ -10,6 +10,7 @@ import clsx from "clsx";
 
 type CustomNodeStateData = {
   name: string;
+  title?: string;
   isActive?: boolean;
 };
 
@@ -34,6 +35,10 @@ const CustomNodeState: React.FC<CustomNodeStateProps> = ({ data, id, selectedNod
         <LabelText
           label={<BoltIcon className="h-8 w-8 text-slate-400 mr-2" />}
           text={<div className="text-lg font-bold">{data.name}</div>}
+        />
+        <LabelText
+          label={<div className="h-8 w-8 text-slate-400 mr-2" />}
+          text={<div className="text-base ">{data.title}</div>}
         />
       </div>
 

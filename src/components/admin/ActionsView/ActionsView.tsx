@@ -113,6 +113,7 @@ const ActionsView: React.FC<ActionsViewProps> = observer(({
             data: {
               _id: state._id,
               name: state.name,
+              title: state.title,
               prompt: state.prompt,
               model: state.model,
               temperature: state.temperature,
@@ -133,6 +134,7 @@ const ActionsView: React.FC<ActionsViewProps> = observer(({
                 type: "customProcessor",
                 data: {
                   _id: processor._id,
+                  title : processor.title,
                   processor_name: processor.processor_name,
                   processor_data: processor.processor_data,
                   type: "processorNode",
