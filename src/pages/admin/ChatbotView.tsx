@@ -18,6 +18,7 @@ import { Tabs } from "../../components/Tabs";
 import { EditorSettingsView } from "./EditorSettingsView";
 import { Chat } from "../Chat";
 import { Header } from "../../components/Header";
+import { LoggerView } from "./LoggerView";
 
 const ChatbotView: React.FC = observer(() => {
   const { key } = useParams<{ key: string }>();
@@ -280,7 +281,7 @@ const ChatbotView: React.FC = observer(() => {
               {
                 id: "tabs-log",
                 label: "Log",
-                content: "Tab 4 Content",
+                content: <LoggerView />,
               },
               {
                 id: "tabs-messages",
