@@ -6,12 +6,20 @@ import {
   ArrowRightOnRectangleIcon,
   BoltIcon,
   ChatBubbleLeftEllipsisIcon,
+  PauseCircleIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import { DataItem } from "../../components/admin/DataItem";
 import { LogItem } from "../../components/admin/LogItem";
 
 import Pusher from "pusher-js";
+import {
+  ArrowPathRoundedSquareIcon,
+  CodeBracketIcon,
+  PaintBrushIcon,
+  RocketLaunchIcon,
+} from "@heroicons/react/24/solid";
+import { JSONView } from "./JSONView";
 
 var pusher = new Pusher("7e8897731876adb4652f", {
   cluster: "eu",
@@ -20,10 +28,77 @@ var pusher = new Pusher("7e8897731876adb4652f", {
 interface LoggerViewProps {}
 
 const LoggerView: React.FC<LoggerViewProps> = observer(() => {
+  const [logs, setLogs] = useState<
+    Array<{
+      icon: React.ReactNode;
+      title: string;
+      name: string;
+      input: string;
+      output?: string;
+      status: string;
+      indent?: boolean;
+    }>
+  >([]);
+
+  const clearLogs = () => {
+    setLogs([]);
+  };
+
   useEffect(() => {
     const channel = pusher.subscribe("logger");
     channel.bind("log-message", function (data: any) {
       console.log("logger", data);
+
+      if (!data.name || !data.title || !data.input || !data.status) {
+        console.error(`Invalid log message: ${JSON.stringify(data, null, 2)}`);
+        return;
+      }
+
+      let icon: React.ReactNode;
+      let indent: boolean;
+
+      switch (data.name) {
+        case "user_input":
+          icon = <RocketLaunchIcon className="w-4 h-4" />;
+          indent = false;
+          break;
+        case "gpt_query":
+          icon = <BoltIcon className="w-4 h-4" />;
+          indent = true;
+          break;
+        case "set_state":
+          icon = <CodeBracketIcon className="w-4 h-4" />;
+          indent = true;
+          break;
+        case "extract_json":
+          icon = <ArrowPathRoundedSquareIcon className="w-4 h-4" />;
+          indent = true;
+          break;
+        case "generate_images":
+          icon = <PauseCircleIcon className="w-4 h-4" />;
+          indent = true;
+          break;
+        default:
+          console.error(`Unsupported log message name: ${data.name}`);
+          return;
+      }
+
+      const newLog = {
+        icon,
+        name: data.name,
+        title: data.title,
+        input: data.input, // Don't stringify here
+        output: data.output, // Don't stringify here
+        status:
+          typeof data.status === "boolean"
+            ? data.status
+              ? "success"
+              : "failed"
+            : data.status,
+        indent,
+      };
+
+      setLogs((prevLogs) => [...prevLogs, newLog]);
     });
   }, []);
 
@@ -34,27 +109,25 @@ const LoggerView: React.FC<LoggerViewProps> = observer(() => {
         <div className="">
           <IconButton
             icon={<TrashIcon className="w-5 h-5 text-sky-800" />}
-            onClick={() => {}}
+            onClick={clearLogs}
           />
         </div>
       </div>
 
       <div className="flex flex-col mt-8 text-slate-400">
         <ol className="border-l-2 border-info-100">
-          <LogItem
-            icon={<ChatBubbleLeftEllipsisIcon className="w-4 h-4" />}
-            title="user_input"
-            input="hi"
-            status="success"
-          />
-          <LogItem
-            icon={<BoltIcon className="w-4 h-4" />}
-            title="gpt_query"
-            input="hi"
-            output="ads dad ada da dadas "
-            status="success"
-            indent
-          />
+          {logs.map((log, index) => (
+            <LogItem
+              key={index}
+              name={log.name}
+              icon={log.icon}
+              title={log.title}
+              input={<JSONView json={log.input} />} // Use JSONView here
+              output={log.output ? <JSONView json={log.output} /> : undefined} // Use JSONView here
+              status={log.status}
+              indent={log.indent}
+            />
+          ))}
         </ol>
       </div>
     </div>
