@@ -49,7 +49,8 @@ const processorOptions = [
       modifyResponse: 1,
       prompt: "based on the conversation, return an array with companies, tasks per company and log work per company in a JSON foramt",
       saveResponseToSessionStore: 0,
-      temprature: "0.85"
+      temprature: "0.85",
+      enableDebug: 0,
     }
   },
   {

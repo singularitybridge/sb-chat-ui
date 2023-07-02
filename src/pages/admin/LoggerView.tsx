@@ -16,6 +16,7 @@ import Pusher from "pusher-js";
 import {
   ArrowPathRoundedSquareIcon,
   CodeBracketIcon,
+  CommandLineIcon,
   PaintBrushIcon,
   RocketLaunchIcon,
 } from "@heroicons/react/24/solid";
@@ -37,6 +38,7 @@ const LoggerView: React.FC<LoggerViewProps> = observer(() => {
       output?: string;
       status: string;
       indent?: boolean;
+      isDebugLog?: boolean; // New variable
     }>
   >([]);
 
@@ -49,13 +51,14 @@ const LoggerView: React.FC<LoggerViewProps> = observer(() => {
     channel.bind("log-message", function (data: any) {
       console.log("logger", data);
 
-      if (!data.name || !data.title || !data.input || !data.status) {
+      if (!data.name || !data.input || !data.status) {
         console.error(`Invalid log message: ${JSON.stringify(data, null, 2)}`);
         return;
       }
 
       let icon: React.ReactNode;
       let indent: boolean;
+      let isDebugLog: boolean = false; // Additional variable to track if it's a debug log
 
       switch (data.name) {
         case "user_input":
@@ -66,10 +69,18 @@ const LoggerView: React.FC<LoggerViewProps> = observer(() => {
           icon = <BoltIcon className="w-4 h-4" />;
           indent = true;
           break;
+        case "gpt_query_debug": // New case
+          icon = <BoltIcon className="w-4 h-4" />;
+          indent = true;
+          isDebugLog = true; // Set it as debug log
+          break;        
         case "set_state":
           icon = <CodeBracketIcon className="w-4 h-4" />;
           indent = true;
           break;
+        case "response_to_ui":
+          icon = <CommandLineIcon className="w-4 h-4" />;
+          indent = true;
         case "extract_json":
           icon = <ArrowPathRoundedSquareIcon className="w-4 h-4" />;
           indent = true;
@@ -96,6 +107,7 @@ const LoggerView: React.FC<LoggerViewProps> = observer(() => {
               : "failed"
             : data.status,
         indent,
+        isDebugLog
       };
 
       setLogs((prevLogs) => [...prevLogs, newLog]);
@@ -126,6 +138,7 @@ const LoggerView: React.FC<LoggerViewProps> = observer(() => {
               output={log.output ? <JSONView json={log.output} /> : undefined} // Use JSONView here
               status={log.status}
               indent={log.indent}
+              isDebugLog={log.isDebugLog} // Pass the isDebugLog to LogItem
             />
           ))}
         </ol>

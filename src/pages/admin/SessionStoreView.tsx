@@ -23,6 +23,9 @@ const SessionStoreView: React.FC<SessionStoreProps> = observer( () => {
     if (selectedChatSession) {
       const sessionStore = await fetchSessionStore(selectedChatSession._id);
       setSessionStore(sessionStore);
+
+      console.log('sessionStore', sessionStore);
+
     }
   };
 
@@ -78,7 +81,7 @@ const SessionStoreView: React.FC<SessionStoreProps> = observer( () => {
         layout="horizontal"
       />
       <div className="mt-5">
-        {Object.entries(sessionStore.data).map(([key, value]) => {
+        {Object.entries(sessionStore).map(([key, value]) => {
           const displayValue = JSON.stringify(value, null, 2);
 
           return (
