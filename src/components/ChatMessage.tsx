@@ -8,21 +8,10 @@ import {
 } from "../atoms/dataStore-old";
 import { playAudio } from "../services/AudioService";
 import { Avatar, AvatarStyles } from "./Avatar";
-
-import {
-  MicrophoneIcon,
-  PaperAirplaneIcon,
-  XMarkIcon,
-  UserIcon,
-  ChatBubbleLeftEllipsisIcon,
-  CloudArrowDownIcon,
-  MinusIcon,
-  BoltIcon,
-  CursorArrowRippleIcon,
-} from "@heroicons/react/24/outline";
 import { useRootStore } from "../store/common/RootStoreContext";
 import { IconButton } from "./admin/IconButton";
-import { XCircleIcon } from "@heroicons/react/24/solid";
+import { InformationCircleIcon, MegaphoneIcon, ShieldCheckIcon, StarIcon, XCircleIcon } from "@heroicons/react/24/outline";
+import { CheckIcon } from "@heroicons/react/24/solid";
 
 interface ChatMessageProps {
   message: Message;
@@ -36,29 +25,49 @@ interface MessageTextProps {
 }
 
 const MessageText: React.FC<MessageTextProps> = ({ text }) => {
-  return <div className="">{text}</div>;
+  return <div className="mb-2">{text}</div>;
 };
 
-// Create the MessageInfo component
 const MessageInfo: React.FC<MessageTextProps> = ({ text }) => {
   return (
     <div className="flex flex-col items-center">
-      <div className=" bg-sky-500 rounded-full p-2 h-10 w-10 ">
-        <CursorArrowRippleIcon className="text-sm mb-1" />
+      <div className=" bg-sky-200 rounded-full p-3 h-12 w-12 mb-2.5">
+        <InformationCircleIcon className="text-sm mb-1 text-slate-600" />
       </div>
-      <div className="">{text}</div>
+      <div className="mb-3">{text}</div>
     </div>
   );
 };
 
-// Create the MessageCallout component
+const MessageSection: React.FC<MessageTextProps> = ({ text }) => {
+  return (
+    <div className="flex flex-col items-center">
+      <div className="  bg-slate-100 rounded-full p-1 h-6 w-6 mb-2.5">
+        <StarIcon className="text-sm mb-1 text-slate-600" />
+      </div>
+      <div className="mb-3">{text}</div>
+    </div>
+  );
+};
+
+const MessageSuccess: React.FC<MessageTextProps> = ({ text }) => {
+  return (
+    <div className="flex flex-col items-center">
+      <div className="  bg-lime-200 rounded-full p-3 h-12 w-12 mb-2.5">
+        <CheckIcon className="text-sm mb-1 text-slate-600" />
+      </div>
+      <div className="mb-3">{text}</div>
+    </div>
+  );
+};
+
 const MessageCallout: React.FC<MessageTextProps> = ({ text }) => {
   return (
     <div className="flex flex-col items-center">
-      <div className=" bg-fuchsia-600 rounded-full p-2 h-10 w-10 ">
-        <BoltIcon className=" text-sm mb-1" />
+      <div className=" bg-fuchsia-200 rounded-full p-3 h-12 w-12 mb-2.5">
+        <MegaphoneIcon className=" text-sm mb-1 text-slate-600" />
       </div>
-      <div className="">{text}</div>
+      <div className="mb-3">{text}</div>
     </div>
   );
 };
@@ -81,19 +90,19 @@ const MessageOptions: React.FC<MessageOptionsProps> = ({
   };
 
   return (
-    <div className="w-full mt-4 ">
-      <div className="flex flex-wrap -mx-2">
+    <div className="w-full mt-4  ">
+      <div className="flex flex-wrap ">
         {options.map((option, index) => (
-          <div key={option.text} className="w-1/2 px-2 mb-3">
+          <div key={option.text} className=" mb-3">
             <div
-              className="bg-white hover:bg-slate-100 rounded-xl flex flex-col items-center justify-center h-full p-2"
+              className="bg-white hover:bg-slate-100 rounded-xl flex flex-col  justify-center h-full "
               onClick={() => handleClick(option.text || option)}
             >
               {option.image && (
                 <img
                   src={option.image}
                   alt={option.text || option}
-                  className=" rounded-md"
+                  className="rounded-xl"
                 />
               )}
 
@@ -101,7 +110,7 @@ const MessageOptions: React.FC<MessageOptionsProps> = ({
                 <button
                   key={index}
                   className={`text-slate-600 ${
-                    option.image ? "self-start p-3" : " my-1"
+                    option.image ? "self-start my-2" : " my-2"
                   }`}
                 >
                   {option.text || option}
@@ -147,8 +156,12 @@ const renderContent = (
 
       case "text-info":
         return <MessageInfo key={index} text={item.text} />;
+      case "text-success":
+        return <MessageSuccess key={index} text={item.text} />;
       case "text-callout":
         return <MessageCallout key={index} text={item.text} />;
+      case "text-section":
+        return <MessageSection key={index} text={item.text} />;
 
       default:
         return null;
@@ -158,12 +171,12 @@ const renderContent = (
 
 const ChatMessageStyles = {
   user: {
-    container: "col-start-1 col-end-10 p-1 rounded-lg",
+    container: "col-start-1 col-end-12 p-1 rounded-lg",
     flexRow: "flex flex-row items-center",
     message: "relative ml-3 text-sm bg-white py-4 px-4 shadow rounded-lg",
   },
   bot: {
-    container: "col-start-4 col-end-13 p-3 rounded-lg",
+    container: "col-start-2 col-end-13 p-3 rounded-lg",
     flexRow: "flex items-center justify-start flex-row-reverse",
     message: "relative mr-3 text-sm bg-indigo-100 py-4 px-4 shadow rounded-lg",
   },
