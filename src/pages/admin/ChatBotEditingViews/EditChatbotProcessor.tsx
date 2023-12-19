@@ -182,7 +182,7 @@ const EditChatbotProcessor: React.FC<EditChatbotProcessorProps> = ({
                 <MinusCircleIcon className="w-6 h-6 text-orange-400" />
               </button>
             </>
-          ) : ["text", "prompt", "textarea"].includes(key) ? (
+          ) : ["text", "prompt", "textarea", "payload", "headers"].includes(key) ? (
             <TextareaWithLabel
               id={`textarea_${key}`}
               label={key}

@@ -1,13 +1,12 @@
-
 const processorOptions = [
   {
     value: "response_to_ui",
     text: "Response To UI",
     secondaryText: "Map GPT response the relevant UI component (text, select)",
     processor_data: {
-      type : "text",
+      type: "text",
       modifyResponse: 1,
-    }
+    },
   },
   {
     value: "extract_json",
@@ -16,9 +15,23 @@ const processorOptions = [
     processor_data: {
       modifyResponse: 1,
       saveResponseToSessionStore: 0,
-    }
+    },
+  },
 
-  },  
+  {
+    value: "rest_api",
+    text: "REST API Caller",
+    secondaryText: "Make a REST API call",
+    processor_data: {
+      api_url: "https://api.example.com/data",
+      http_method: "GET",
+      headers: { Authorization: "Bearer YOUR_API_TOKEN" },
+      payload: {}, 
+      modifyResponse: 1,
+      saveResponseToSessionStore: 0,
+    },
+  },
+
   {
     value: "generate_images",
     text: "Generate Images",
@@ -26,7 +39,7 @@ const processorOptions = [
     processor_data: {
       modifyResponse: 1,
       saveResponseToSessionStore: 0,
-    }
+    },
   },
   {
     value: "generate_video",
@@ -35,7 +48,7 @@ const processorOptions = [
     processor_data: {
       modifyResponse: 1,
       saveResponseToSessionStore: 0,
-    }
+    },
   },
   {
     value: "gpt_query",
@@ -47,29 +60,30 @@ const processorOptions = [
       maxHistoryMessages: "4",
       model: "gpt-3.5-turbo",
       modifyResponse: 1,
-      prompt: "based on the conversation, return an array with companies, tasks per company and log work per company in a JSON foramt",
+      prompt:
+        "based on the conversation, return an array with companies, tasks per company and log work per company in a JSON foramt",
       saveResponseToSessionStore: 0,
       temprature: "0.85",
       enableDebug: 0,
-    }
+    },
   },
   {
-    value : 'ner',
-    text : 'NER - Named Entity Recognition',
-    secondaryText : 'Perform Named Entity Recognition on the GPT response',
-    processor_data : {
-      key : 'nerKey',
+    value: "ner",
+    text: "NER - Named Entity Recognition",
+    secondaryText: "Perform Named Entity Recognition on the GPT response",
+    processor_data: {
+      key: "nerKey",
       saveResponseToSessionStore: 1,
       modifyResponse: 0,
-    }
-  },  
+    },
+  },
   {
     value: "set_session_variable",
     text: "Set Session Variable",
     secondaryText: "Set a session variable based on the GPT response",
     processor_data: {
-      nextProcessor : "response_to_ui",
-    }
+      nextProcessor: "response_to_ui",
+    },
   },
   {
     value: "generate_audio",
@@ -97,13 +111,9 @@ const processorOptions = [
     text: "Set State",
     secondaryText: "Set the state of the chatbot",
     processor_data: {
-      'newState': "get_user_input",  
-    } 
+      newState: "get_user_input",
+    },
   },
 ];
 
 export { processorOptions };
-
-
-
-

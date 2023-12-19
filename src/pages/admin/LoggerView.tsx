@@ -6,6 +6,7 @@ import {
   ArrowRightOnRectangleIcon,
   BoltIcon,
   ChatBubbleLeftEllipsisIcon,
+  GlobeAltIcon,
   PauseCircleIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
@@ -49,9 +50,10 @@ const LoggerView: React.FC<LoggerViewProps> = observer(() => {
   useEffect(() => {
     const channel = pusher.subscribe("logger");
     channel.bind("log-message", function (data: any) {
-      console.log("logger", data);
+      
+      console.log(`Received log message: ${JSON.stringify(data, null, 2)}`); // Log the data here
 
-      if (!data.name || !data.input || !data.status) {
+      if (!data.name || !data.input ) {
         console.error(`Invalid log message: ${JSON.stringify(data, null, 2)}`);
         return;
       }
@@ -69,11 +71,16 @@ const LoggerView: React.FC<LoggerViewProps> = observer(() => {
           icon = <BoltIcon className="w-4 h-4" />;
           indent = true;
           break;
+        case "rest_api":
+          icon = <GlobeAltIcon className="w-4 h-4" />;
+          indent = true;
+          break;
+
         case "gpt_query_debug": // New case
           icon = <BoltIcon className="w-4 h-4" />;
           indent = true;
           isDebugLog = true; // Set it as debug log
-          break;        
+          break;
         case "set_state":
           icon = <CodeBracketIcon className="w-4 h-4" />;
           indent = true;
@@ -107,7 +114,7 @@ const LoggerView: React.FC<LoggerViewProps> = observer(() => {
               : "failed"
             : data.status,
         indent,
-        isDebugLog
+        isDebugLog,
       };
 
       setLogs((prevLogs) => [...prevLogs, newLog]);
@@ -135,7 +142,7 @@ const LoggerView: React.FC<LoggerViewProps> = observer(() => {
               icon={log.icon}
               title={log.title}
               input={<JSONView json={log.input} />} // Use JSONView here
-              output={log.output ? <JSONView json={log.output} /> : undefined} // Use JSONView here
+              output={<JSONView json={log.output || ''} />} // Use JSONView here
               status={log.status}
               indent={log.indent}
               isDebugLog={log.isDebugLog} // Pass the isDebugLog to LogItem
