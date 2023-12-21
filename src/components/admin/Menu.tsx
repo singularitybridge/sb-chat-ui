@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import logo from "../../assets/l3.png";
-import clsx from "clsx";
 import { useLocation } from "react-router-dom";
 
 export default function Menu() {
@@ -15,8 +14,8 @@ export default function Menu() {
       link: "/admin/chatbots",
     },
     {
-      name: "Agents",
-      link: "/admin/agents",
+      name: "Assistants",
+      link: "/admin/assistants",
     },
     {
       name: "Data",
@@ -67,10 +66,10 @@ export default function Menu() {
           data-te-collapse-item
         >
           <a
-            className="mb-4 mr-6 mt-4 flex items-center lg:mb-0 lg:mt-0"
+            className="mb-4 mt-4 mr-5 flex items-center lg:mb-0 lg:mt-0"
             href="#"
           >
-            <img className="h-7 mx-3" src={logo} loading="lazy" />
+            <img className="h-6 mr-2" src={logo} loading="lazy" />
             <h5 className=" text-blue-900 text-xl">Singularity Bridge</h5>
           </a>
 
@@ -79,7 +78,13 @@ export default function Menu() {
             data-te-navbar-nav-ref
           >
             {menuItems.map((item) => {
+              
               const isActive = item.link === location.pathname;
+const menuStyle = isActive 
+  ? "text-sm text-blue-300 hover:text-neutral-700 focus:text-neutral-700 disabled:text-black/30 dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2"
+  : "text-sm text-neutral-500 hover:text-neutral-700 focus:text-neutral-700 disabled:text-black/30 dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2";
+
+
 
               return (
                 <li
@@ -88,10 +93,7 @@ export default function Menu() {
                   key={item.name}
                 >
                   <a
-                    className={clsx(
-                      " text-sm text-neutral-500 hover:text-neutral-700 focus:text-neutral-700 disabled:text-black/30 dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2",
-                      { ' text-blue-700': isActive }
-                    )}
+                    className={menuStyle}
                     href={item.link}
                     data-te-nav-link-ref
                   >

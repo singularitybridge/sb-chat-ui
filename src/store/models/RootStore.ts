@@ -8,9 +8,18 @@ import {
   setChatSessionState,
 } from "../../services/api/chatSessionService";
 import { getChatbots } from "../../services/api/chatbotService";
+import { Assistant } from "./Assistant";
+import { getAssistants } from "../../services/api/assistantService";
 
 const RootStore = types
   .model("RootStore", {
+
+    /// refactor
+    assistants: types.array(Assistant),
+    assistantsLoaded: types.optional(types.boolean, false),
+
+
+    /// old stuff blat
     chatbots: types.array(Chatbot),
     activeChatbot: types.maybe(types.reference(Chatbot)),
     chatbotsLoaded: types.optional(types.boolean, false),
@@ -20,6 +29,21 @@ const RootStore = types
     selectedChatSession: types.maybe(types.reference(ChatSession)),
   })
   .actions((self) => ({
+
+
+    /// refactor
+    loadAssistants: flow(function* () {
+      try {
+        const assistants = yield getAssistants();
+        applySnapshot(self.assistants, assistants);
+        self.assistantsLoaded = true;
+      } catch (error) {
+        console.error("Failed to load assistants", error);
+      }
+    }),
+
+
+    /// old stuff blat
     loadChatbots: flow(function* () {
       try {
         const chatbots = yield getChatbots();

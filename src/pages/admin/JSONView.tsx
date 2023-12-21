@@ -1,4 +1,4 @@
-import ReactJson from "react-json-view";
+import ReactJson from "react18-json-view";
 
 interface JSONViewProps {
   json: string | object | number;
@@ -28,20 +28,12 @@ const JSONView: React.FC<JSONViewProps> = ({ json }) => {
   } catch (e) {
     // In case of a parse error, it's not valid JSON
     isJson = false;
-    jsonString = typeof json === "object" ? JSON.stringify(json) : json.toString();
+    jsonString =
+      typeof json === "object" ? JSON.stringify(json) : json.toString();
   }
 
   return isJson && isJsonObject ? (
-    <ReactJson
-      src={parsedJson}
-      theme="bright:inverted"
-      displayDataTypes={false}
-      displayObjectSize={false}
-      enableClipboard={false}
-      style={{
-        backgroundColor: "transparent",
-      }}
-    />
+    <ReactJson src={parsedJson} theme="default" enableClipboard={false} />
   ) : (
     <pre className="text-xs overflow-auto bg-neutral-50 dark:bg-neutral-700 rounded-lg whitespace-pre-wrap">
       {jsonString}

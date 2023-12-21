@@ -19,6 +19,7 @@ const rootStore = RootStore.create({
 });
 
 const App = () => {
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [screenHeight, setScreenHeight] = useState(0);
   const { id } = useParams<{ id: string }>();
@@ -56,9 +57,12 @@ const App = () => {
   const style = { height: `${screenHeight}px` };
 
   useEffect(() => {
+
+    rootStore.loadAssistants();
+
     rootStore.loadChatbots();    
     rootStore.loadChatSessions("");
-  }, []);
+  }, [rootStore]);
 
   return (
     <RootStoreProvider value={rootStore}>
