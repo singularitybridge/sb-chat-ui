@@ -4,8 +4,8 @@ import {
   Instance,
   SnapshotIn,
   SnapshotOut,
+  getSnapshot,
 } from "mobx-state-tree";
-import { applySnapshot } from "mobx-state-tree";
 
 const Identifier = types.model("Identifier", {
   _id: types.identifier,
@@ -29,12 +29,26 @@ type AssistantSnapshotIn = SnapshotIn<typeof Assistant>;
 type AssistantSnapshotOut = SnapshotOut<typeof Assistant>;
 type AssistantKeys = keyof IAssistant;
 
-function getFields<T extends IAssistant>(
-  model: T,
-  fields: (keyof T)[]
-): (keyof T)[] {
-  return fields.filter((field) => Object.keys(model).includes(field as string));
-}
+const createDummyInstance = () => {
+  return Assistant.create({
+    _id: "dummy",
+    assistantId: "dummy",
+    name: "dummy",
+    description: "dummy",
+    introMessage: "dummy",
+    voice: "dummy",
+    language: "dummy",
+    identifiers: [],
+  });
+};
+
+const getFields = (fields: AssistantKeys[]): string[] => {
+  const dummyInstance = createDummyInstance();
+  const tempSnapshot = getSnapshot(dummyInstance);
+  return fields
+    .filter((field) => field in tempSnapshot)
+    .map((field) => field as string);
+};
 
 export { Assistant, getFields };
 export type { IAssistant, AssistantSnapshotIn, AssistantSnapshotOut };

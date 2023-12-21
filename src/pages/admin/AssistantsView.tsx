@@ -8,11 +8,10 @@ import { toJS } from "mobx";
 import { Assistant, IAssistant, getFields } from "../../store/models/Assistant";
 
 const AssistantsView: React.FC = observer(() => {
-
+  
   const { key } = useParams<{ key: string }>();
   const rootStore = useRootStore();
-
-  const headers = ["assistantId", "name", "description"];
+  const headers = getFields(["assistantId", "name", "description", "voice"]);
 
   useEffect(() => {
     const loadData = async () => {
