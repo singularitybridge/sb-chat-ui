@@ -1,7 +1,35 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import logo from "../../assets/l3.png";
+import clsx from "clsx";
+import { useLocation } from "react-router-dom";
 
 export default function Menu() {
-  const [menuOpen, setMenuOpen] = React.useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuItems, setMenuItems] = useState([
+    {
+      name: "Home",
+      link: "/admin",
+    },
+    {
+      name: "Chatbots",
+      link: "/admin/chatbots",
+    },
+    {
+      name: "Agents",
+      link: "/admin/agents",
+    },
+    {
+      name: "Data",
+      link: "/admin/data",
+    },
+    {
+      name: "Setup",
+      link: "/admin/setup",
+    },
+  ]);
+
+  const location = useLocation();
+
   return (
     <nav
       className="flex-no-wrap relative flex w-full items-center justify-between bg-neutral-100 py-2 shadow-md shadow-black/5 dark:bg-neutral-600 dark:shadow-black/10 lg:flex-wrap lg:justify-start lg:py-4"
@@ -39,59 +67,39 @@ export default function Menu() {
           data-te-collapse-item
         >
           <a
-            className="mb-4 mr-2 mt-3 flex items-center text-neutral-900 hover:text-neutral-900 focus:text-neutral-900 dark:text-neutral-200 dark:hover:text-neutral-400 dark:focus:text-neutral-400 lg:mb-0 lg:mt-0"
+            className="mb-4 mr-6 mt-4 flex items-center lg:mb-0 lg:mt-0"
             href="#"
           >
-            <img
-              src="https://tecdn.b-cdn.net/img/logo/te-transparent-noshadows.webp"
-              style={{ height: 15 }}
-              alt=""
-              loading="lazy"
-            />
+            <img className="h-7 mx-3" src={logo} loading="lazy" />
+            <h5 className=" text-blue-900 text-xl">Singularity Bridge</h5>
           </a>
 
           <ul
             className="list-style-none mr-auto flex flex-col pl-0 lg:flex-row"
             data-te-navbar-nav-ref
           >
-            <li className="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
-              <a
-                className="text-neutral-500 hover:text-neutral-700 focus:text-neutral-700 disabled:text-black/30 dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2 [&.active]:text-black/90 dark:[&.active]:text-zinc-400"
-                href="/admin"
-                data-te-nav-link-ref
-              >
-                Dashboard
-              </a>
-            </li>
+            {menuItems.map((item) => {
+              const isActive = item.link === location.pathname;
 
-            <li className="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
-              <a
-                className=" active text-neutral-500 hover:text-neutral-700 focus:text-neutral-700 disabled:text-black/30 dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2 [&.active]:text-black/90 dark:[&.active]:text-neutral-400"
-                href="#"
-                data-te-nav-link-ref
-              >
-                Chatbots
-              </a>
-            </li>
-
-            <li className="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
-              <a
-                className="text-neutral-500 hover:text-neutral-700 focus:text-neutral-700 disabled:text-black/30 dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2 [&.active]:text-black/90 dark:[&.active]:text-neutral-400"
-                href="#"
-                data-te-nav-link-ref
-              >
-                Data
-              </a>
-            </li>
-            <li className="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
-              <a
-                className="text-neutral-500 hover:text-neutral-700 focus:text-neutral-700 disabled:text-black/30 dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2 [&.active]:text-black/90 dark:[&.active]:text-neutral-400"
-                href="#"
-                data-te-nav-link-ref
-              >
-                Setup
-              </a>
-            </li>
+              return (
+                <li
+                  className="mb-4 lg:mb-0 lg:pr-2"
+                  data-te-nav-item-ref
+                  key={item.name}
+                >
+                  <a
+                    className={clsx(
+                      " text-sm text-neutral-500 hover:text-neutral-700 focus:text-neutral-700 disabled:text-black/30 dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2",
+                      { ' text-blue-700': isActive }
+                    )}
+                    href={item.link}
+                    data-te-nav-link-ref
+                  >
+                    {item.name}
+                  </a>
+                </li>
+              );
+            })}
           </ul>
         </div>
 

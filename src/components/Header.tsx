@@ -8,6 +8,7 @@ import { useParams, useLocation } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../store/common/RootStoreContext";
 
+
 interface HeaderProps {
   onMenuClick: () => void;
   forceShow?: boolean
@@ -58,12 +59,13 @@ const Header: React.FC<HeaderProps> = observer( ({ onMenuClick, forceShow }) => 
   return (
     <>
       {(!isAdminRoute || forceShow) && (
+        
         <header className="p-4 flex justify-between items-center">
           <div
             className="p-1 rounded-2xl bg-gray-200 hover:bg-gray-200 w-9 h-9 cursor-pointer flex items-center justify-center"
             onClick={onMenuClick}
           >
-            <Bars2Icon className="h-5 w-5 text-slate-700" />
+            <Bars2Icon className="h-5 w-5 text-slate-700" />            
           </div>
           <div className="headerImageAndText flex flex-row items-center w-full text-left pl-5">
             <Avatar imageUrl={activeChatbot?.avatarImage || ''} avatarStyle={AvatarStyles.logo} />
