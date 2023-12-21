@@ -8,28 +8,22 @@ import { toJS } from "mobx";
 import { Assistant, IAssistant, getFields } from "../../store/models/Assistant";
 import { withView } from "../../components/admin/HOC/withView";
 
-const Assistants: React.FC = observer(() => {
+const EditAssistant: React.FC = observer(() => {
+  
+  const { key } = useParams<{ key: string }>();
   const rootStore = useRootStore();
   const headers = getFields(["assistantId", "name", "description", "voice"]);
   const navigate = useNavigate();
 
+ 
   return (
     <>
       <div className="flex w-full">
-        <Table
-          headers={headers}
-          data={toJS(rootStore.assistants)}
-          onRowClick={(row: IAssistant) =>
-            navigate(`/admin/assistants/${row._id}`)
-          }
-        />
+        hello
       </div>
     </>
   );
 });
 
-const AssistantsWithView = withView(
-  "AI Assistants",
-  "manage your ai agents here"
-)(Assistants);
-export { AssistantsWithView as AssistantsView };
+const EditAssistantWithView = withView('AI Assistants', 'manage your ai agents here')(EditAssistant);
+export { EditAssistantWithView as EditAssistantsView };

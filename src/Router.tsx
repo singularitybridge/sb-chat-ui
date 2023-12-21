@@ -17,6 +17,7 @@ import { useRootStore } from "./store/common/RootStoreContext";
 import { autorun } from "mobx";
 import { ChatRouteLoader } from "./components/ChatRouteLoader";
 import { AssistantsView } from "./pages/admin/AssistantsView";
+import { EditAssistantsView } from "./pages/admin/EditAssistantView";
 
 export const browserRouter = createBrowserRouter([
   {
@@ -58,6 +59,10 @@ export const browserRouter = createBrowserRouter([
             path: "assistants",
             element: <AssistantsView />,
           },
+          {
+            path: "assistants/:key",
+            element: <EditAssistantsView />,
+          }
         ],
       },
       { path: "*", element: <NotFound /> },

@@ -1,11 +1,12 @@
-import React from 'react';
+import React from "react";
 
 interface TableProps {
   headers: string[];
   data: { [key: string]: any }[];
+  onRowClick?: (row: any) => void;
 }
 
-const Table: React.FC<TableProps> = ({ headers, data }) => {
+const Table: React.FC<TableProps> = ({ headers, data, onRowClick }) => {
   return (
     <div className="flex flex-col w-full">
       <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -22,15 +23,22 @@ const Table: React.FC<TableProps> = ({ headers, data }) => {
                 </tr>
               </thead>
               <tbody>
-              {data.map((row, rowIndex) => (
-  <tr key={rowIndex} className="border-b dark:border-neutral-500 transition duration-300 ease-in-out hover:bg-neutral-100 dark:hover:bg-neutral-600">
-    {headers.map((header, headerIndex) => (
-      <td key={headerIndex} className="whitespace-nowrap px-6 py-4">
-        {row[header]}
-      </td>
-    ))}
-  </tr>
-))}
+                {data.map((row, rowIndex) => (
+                  <tr
+                    key={rowIndex}
+                    className="border-b dark:border-neutral-500 transition duration-300 ease-in-out hover:bg-neutral-100 dark:hover:bg-neutral-600"
+                    onClick={() => onRowClick?.(row)}
+                  >
+                    {headers.map((header, headerIndex) => (
+                      <td
+                        key={headerIndex}
+                        className="whitespace-nowrap px-6 py-4"
+                      >
+                        {row[header]}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
