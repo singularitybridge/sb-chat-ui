@@ -27,28 +27,8 @@ const Assistant = types.model("Assistant", {
 type IAssistant = Instance<typeof Assistant>;
 type AssistantSnapshotIn = SnapshotIn<typeof Assistant>;
 type AssistantSnapshotOut = SnapshotOut<typeof Assistant>;
-type AssistantKeys = keyof IAssistant;
+export type AssistantKeys = keyof IAssistant;
 
-const createDummyInstance = () => {
-  return Assistant.create({
-    _id: "dummy",
-    assistantId: "dummy",
-    name: "dummy",
-    description: "dummy",
-    introMessage: "dummy",
-    voice: "dummy",
-    language: "dummy",
-    identifiers: [],
-  });
-};
 
-const getFields = (fields: AssistantKeys[]): string[] => {
-  const dummyInstance = createDummyInstance();
-  const tempSnapshot = getSnapshot(dummyInstance);
-  return fields
-    .filter((field) => field in tempSnapshot)
-    .map((field) => field as string);
-};
-
-export { Assistant, getFields };
+export { Assistant };
 export type { IAssistant, AssistantSnapshotIn, AssistantSnapshotOut };
