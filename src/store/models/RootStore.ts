@@ -10,6 +10,7 @@ import {
 import { getChatbots } from "../../services/api/chatbotService";
 import { Assistant } from "./Assistant";
 import { getAssistants } from "../../services/api/assistantService";
+import { toJS } from "mobx";
 
 const RootStore = types
   .model("RootStore", {
@@ -35,12 +36,20 @@ const RootStore = types
     loadAssistants: flow(function* () {
       try {
         const assistants = yield getAssistants();
+        console.log('assistants', assistants);
         applySnapshot(self.assistants, assistants);
         self.assistantsLoaded = true;
       } catch (error) {
         console.error("Failed to load assistants", error);
       }
     }),
+
+    getAssistantById: (_id: string) => {
+      console.log('try to get assistant by id', _id);
+      console.log( toJS( self.assistants));
+      return self.assistants.find(assistant => assistant._id === _id);
+    },
+
 
 
     /// old stuff blat

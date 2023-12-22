@@ -16,8 +16,8 @@ import { ChatbotView } from "./pages/admin/ChatbotView";
 import { useRootStore } from "./store/common/RootStoreContext";
 import { autorun } from "mobx";
 import { ChatRouteLoader } from "./components/ChatRouteLoader";
-import { AssistantsView } from "./pages/admin/AssistantsView";
-import { EditAssistantsView } from "./pages/admin/EditAssistantView";
+import { AssistantsPage } from "./pages/admin/AssistantsPage";
+import { EditAssistantPage } from "./pages/admin/EditAssistantPage";
 
 export const browserRouter = createBrowserRouter([
   {
@@ -57,11 +57,11 @@ export const browserRouter = createBrowserRouter([
           },
           {
             path: "assistants",
-            element: <AssistantsView />,
+            element: <AssistantsPage />,
           },
           {
             path: "assistants/:key",
-            element: <EditAssistantsView />,
+            element: <EditAssistantPage />,
           }
         ],
       },
