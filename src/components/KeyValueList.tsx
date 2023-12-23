@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { Input } from "./Input";
 import { IconButton } from "./admin/IconButton";
-import { ArrowUturnLeftIcon, MinusCircleIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowUturnLeftIcon,
+  MinusCircleIcon,
+  PlusCircleIcon,
+} from "@heroicons/react/24/outline";
 
 interface KeyValue {
   key: string;
@@ -12,25 +16,37 @@ interface KeyValueListProps {
   title: string;
   description: string;
   initialData: KeyValue[];
+  onDataChange: (data: Record<string, string>) => void; // Add this line
 }
 
 const KeyValueList: React.FC<KeyValueListProps> = ({
   title,
   description,
   initialData,
+  onDataChange,
 }) => {
   const [keyValueData, setKeyValueData] = useState<KeyValue[]>(initialData);
+
+  const constructData = () => {
+    const data: Record<string, string> = {};
+    keyValueData.forEach(({ key, value }) => {
+      data[key] = value;
+    });
+    onDataChange(data);
+  };
 
   const handleKeyChange = (newValue: string, index: number) => {
     const updatedData = [...keyValueData];
     updatedData[index].key = newValue;
     setKeyValueData(updatedData);
+    constructData(); // Add this line
   };
 
   const handleValueChange = (newValue: string, index: number) => {
     const updatedData = [...keyValueData];
     updatedData[index].value = newValue;
     setKeyValueData(updatedData);
+    constructData(); // Add this line
   };
 
   const addParam = () => {
@@ -43,9 +59,9 @@ const KeyValueList: React.FC<KeyValueListProps> = ({
     setKeyValueData(updatedData);
   };
 
-    const resetToInitialData = () => {
-        setKeyValueData(initialData);
-    };
+  const resetToInitialData = () => {
+    setKeyValueData(initialData);
+  };
 
   return (
     <div>

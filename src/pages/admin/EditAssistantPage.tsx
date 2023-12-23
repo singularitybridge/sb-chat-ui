@@ -28,7 +28,15 @@ const EditAssistantView: React.FC = observer(() => {
     return <div>Assistant not found</div>;
   }
 
-  const fieldKeys: AssistantKeys[] = [ 'assistantId',  "name", "description" ,'introMessage', "voice", 'language', 'identifiers'];
+  const fieldKeys: AssistantKeys[] = [
+    "assistantId",
+    "name",
+    "description",
+    "introMessage",
+    "voice",
+    "language",
+    "identifiers",
+  ];
 
   const formFields: FieldConfig[] = fieldKeys.map((key) => {
     const fieldKeyString = String(key);
@@ -49,10 +57,19 @@ const EditAssistantView: React.FC = observer(() => {
       <div className="flex w-full">
         <div className="w-1/2">
           <DynamicForm fields={formFields} onSubmit={handleSubmit} />
-          <KeyValueList title="Identifiers" description="identifiers are used to connect assistant to external sources" initialData={[{
-            key: "test",
-            value: "test"
-          }]} />
+          <KeyValueList
+            title="Identifiers"
+            description="identifiers are used to connect assistant to external sources"
+            initialData={[
+              {
+                key: "test",
+                value: "test",
+              },
+            ]}
+            onDataChange={(data) => {
+              console.log(data);
+            }}
+          />
         </div>
         <div className="w-1/2">Test your assistant here</div>
       </div>
