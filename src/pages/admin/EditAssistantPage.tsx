@@ -2,13 +2,20 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../store/common/RootStoreContext";
-import { Assistant, AssistantKeys, IAssistant } from "../../store/models/Assistant";
+import {
+  Assistant,
+  AssistantKeys,
+  IAssistant,
+} from "../../store/models/Assistant";
 import { withPage } from "../../components/admin/HOC/withPage";
-import { DynamicForm, FieldConfig, FormValues } from "../../components/DynamicForm";
+import {
+  DynamicForm,
+  FieldConfig,
+  FormValues,
+} from "../../components/DynamicForm";
+import { KeyValueList } from "../../components/KeyValueList";
 
 const EditAssistantView: React.FC = observer(() => {
-
-  
   const { key } = useParams<{ key: string }>();
   const rootStore = useRootStore();
   const assistant = key ? rootStore.getAssistantById(key) : null;
@@ -21,37 +28,31 @@ const EditAssistantView: React.FC = observer(() => {
     return <div>Assistant not found</div>;
   }
 
-  // const headers = getFields(["assistantId", "name", "description", "voice"]);
-  const fieldKeys: AssistantKeys[] = ['name', 'description', 'voice' ]; 
-  // const fieldKeys: (keyof IAssistant)[] = ['name', 'description', 'voice']; 
-
+  const fieldKeys: AssistantKeys[] = [ 'assistantId',  "name", "description" ,'introMessage', "voice", 'language', 'identifiers'];
 
   const formFields: FieldConfig[] = fieldKeys.map((key) => {
     const fieldKeyString = String(key);
     return {
-      type: fieldKeyString === 'description' ? 'textarea' : 'input',
+      type: fieldKeyString === "description" ? "textarea" : "input",
       label: fieldKeyString.charAt(0).toUpperCase() + fieldKeyString.slice(1),
-      value: assistant ? (assistant as any)[fieldKeyString] : '', // Using type assertion here
-      id: fieldKeyString
+      value: assistant ? (assistant as any)[fieldKeyString] : "", // Using type assertion here
+      id: fieldKeyString,
     };
   });
 
-
-
-
-
-
-
-  const handleSubmit = (values : FormValues) => {
-    console.log('Form Values:', values);
+  const handleSubmit = (values: FormValues) => {
+    console.log("Form Values:", values);
   };
-    
 
   return (
     <>
       <div className="flex w-full">
         <div className="w-1/2">
           <DynamicForm fields={formFields} onSubmit={handleSubmit} />
+          <KeyValueList title="Identifiers" description="identifiers are used to connect assistant to external sources" initialData={[{
+            key: "test",
+            value: "test"
+          }]} />
         </div>
         <div className="w-1/2">Test your assistant here</div>
       </div>
