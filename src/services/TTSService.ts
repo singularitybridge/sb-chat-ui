@@ -1,5 +1,5 @@
-import axios, { AxiosResponse } from "axios";
-const apiKeyForGoogle = "AIzaSyChUGpxx9shF3dckbeNdR7frcwcuZ4VrGg";
+import axios, { AxiosResponse } from 'axios';
+const apiKeyForGoogle = 'AIzaSyChUGpxx9shF3dckbeNdR7frcwcuZ4VrGg';
 
 interface Input {
   text: string;
@@ -23,21 +23,19 @@ interface RequestBody {
 const generateAudioFromText = (
   text: string,
   languageCode: string,
-  voiceName: string
+  voiceName: string,
 ): Promise<ArrayBuffer> => {
-
   const trimmedText = text.substring(0, 80);
-
 
   const requestBody: RequestBody = {
     // input: { text },
     input: { text: trimmedText },
     voice: { languageCode, name: voiceName },
-    audioConfig: { audioEncoding: "MP3" },
+    audioConfig: { audioEncoding: 'MP3' },
   };
 
   const headers = {
-    "Content-Type": "application/json; charset=utf-8",
+    'Content-Type': 'application/json; charset=utf-8',
   };
 
   const config = {

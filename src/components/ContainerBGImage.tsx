@@ -9,7 +9,7 @@ const ContainerBGImage = ({ bgImage, children }: ContainerBGImageProps) => {
       className="flex flex-row h-full w-full overflow-x-hidden"
       style={{
         backgroundImage: `linear-gradient(rgba(200, 200, 200, 0.6), rgba(200, 200, 200, 0.6)), url(${bgImage})`,
-        backgroundSize: "cover",
+        backgroundSize: 'cover',
       }}
     >
       {children}

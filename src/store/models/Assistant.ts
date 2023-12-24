@@ -5,15 +5,15 @@ import {
   SnapshotIn,
   SnapshotOut,
   getSnapshot,
-} from "mobx-state-tree";
+} from 'mobx-state-tree';
 
-const Identifier = types.model("Identifier", {
-  _id: types.identifier,
-  type: types.string,
+const Identifier = types.model('Identifier', {
+  _id: types.optional(types.identifier, '-'),
+  key: types.string,
   value: types.string,
 });
 
-const Assistant = types.model("Assistant", {
+const Assistant = types.model('Assistant', {
   _id: types.identifier,
   assistantId: types.string,
   name: types.string,
@@ -28,7 +28,6 @@ type IAssistant = Instance<typeof Assistant>;
 type AssistantSnapshotIn = SnapshotIn<typeof Assistant>;
 type AssistantSnapshotOut = SnapshotOut<typeof Assistant>;
 export type AssistantKeys = keyof IAssistant;
-
 
 export { Assistant };
 export type { IAssistant, AssistantSnapshotIn, AssistantSnapshotOut };

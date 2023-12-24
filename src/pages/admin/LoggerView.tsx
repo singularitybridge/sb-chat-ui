@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { IconButton } from "../../components/admin/IconButton";
-import { observer } from "mobx-react-lite";
+import React, { useEffect, useState } from 'react';
+import { IconButton } from '../../components/admin/IconButton';
+import { observer } from 'mobx-react-lite';
 import {
   ArrowLeftOnRectangleIcon,
   ArrowRightOnRectangleIcon,
@@ -9,22 +9,22 @@ import {
   GlobeAltIcon,
   PauseCircleIcon,
   TrashIcon,
-} from "@heroicons/react/24/outline";
-import { DataItem } from "../../components/admin/DataItem";
-import { LogItem } from "../../components/admin/LogItem";
+} from '@heroicons/react/24/outline';
+import { DataItem } from '../../components/admin/DataItem';
+import { LogItem } from '../../components/admin/LogItem';
 
-import Pusher from "pusher-js";
+import Pusher from 'pusher-js';
 import {
   ArrowPathRoundedSquareIcon,
   CodeBracketIcon,
   CommandLineIcon,
   PaintBrushIcon,
   RocketLaunchIcon,
-} from "@heroicons/react/24/solid";
-import { JSONView } from "./JSONView";
+} from '@heroicons/react/24/solid';
+import { JSONView } from './JSONView';
 
-var pusher = new Pusher("7e8897731876adb4652f", {
-  cluster: "eu",
+const pusher = new Pusher('7e8897731876adb4652f', {
+  cluster: 'eu',
 });
 
 interface LoggerViewProps {}
@@ -48,12 +48,11 @@ const LoggerView: React.FC<LoggerViewProps> = observer(() => {
   };
 
   useEffect(() => {
-    const channel = pusher.subscribe("logger");
-    channel.bind("log-message", function (data: any) {
-      
+    const channel = pusher.subscribe('logger');
+    channel.bind('log-message', function (data: any) {
       console.log(`Received log message: ${JSON.stringify(data, null, 2)}`); // Log the data here
 
-      if (!data.name || !data.input ) {
+      if (!data.name || !data.input) {
         console.error(`Invalid log message: ${JSON.stringify(data, null, 2)}`);
         return;
       }
@@ -63,36 +62,36 @@ const LoggerView: React.FC<LoggerViewProps> = observer(() => {
       let isDebugLog: boolean = false; // Additional variable to track if it's a debug log
 
       switch (data.name) {
-        case "user_input":
+        case 'user_input':
           icon = <RocketLaunchIcon className="w-4 h-4" />;
           indent = false;
           break;
-        case "gpt_query":
+        case 'gpt_query':
           icon = <BoltIcon className="w-4 h-4" />;
           indent = true;
           break;
-        case "rest_api":
+        case 'rest_api':
           icon = <GlobeAltIcon className="w-4 h-4" />;
           indent = true;
           break;
 
-        case "gpt_query_debug": // New case
+        case 'gpt_query_debug': // New case
           icon = <BoltIcon className="w-4 h-4" />;
           indent = true;
           isDebugLog = true; // Set it as debug log
           break;
-        case "set_state":
+        case 'set_state':
           icon = <CodeBracketIcon className="w-4 h-4" />;
           indent = true;
           break;
-        case "response_to_ui":
+        case 'response_to_ui':
           icon = <CommandLineIcon className="w-4 h-4" />;
           indent = true;
-        case "extract_json":
+        case 'extract_json':
           icon = <ArrowPathRoundedSquareIcon className="w-4 h-4" />;
           indent = true;
           break;
-        case "generate_images":
+        case 'generate_images':
           icon = <PauseCircleIcon className="w-4 h-4" />;
           indent = true;
           break;
@@ -108,10 +107,10 @@ const LoggerView: React.FC<LoggerViewProps> = observer(() => {
         input: data.input, // Don't stringify here
         output: data.output, // Don't stringify here
         status:
-          typeof data.status === "boolean"
+          typeof data.status === 'boolean'
             ? data.status
-              ? "success"
-              : "failed"
+              ? 'success'
+              : 'failed'
             : data.status,
         indent,
         isDebugLog,
@@ -124,7 +123,7 @@ const LoggerView: React.FC<LoggerViewProps> = observer(() => {
   return (
     <div className="p-2">
       <div className="flex justify-between items-center mb-2">
-        <h2 className="text-xl font-bold">Logger</h2>{" "}
+        <h2 className="text-xl font-bold">Logger</h2>{' '}
         <div className="">
           <IconButton
             icon={<TrashIcon className="w-5 h-5 text-sky-800" />}

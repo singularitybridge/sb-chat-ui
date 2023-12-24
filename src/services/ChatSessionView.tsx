@@ -1,7 +1,7 @@
 // src/pages/ChatSessionView.tsx
 
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 interface ChatSessionData {
   chatbot: any;
@@ -9,7 +9,8 @@ interface ChatSessionData {
 }
 
 const ChatSessionView: React.FC = () => {
-  const [chatSessionData, setChatSessionData] = useState<ChatSessionData | null>(null);
+  const [chatSessionData, setChatSessionData] =
+    useState<ChatSessionData | null>(null);
   const { id } = useParams<{ id: string }>();
 
   useEffect(() => {

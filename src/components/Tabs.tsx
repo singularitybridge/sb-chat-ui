@@ -1,5 +1,5 @@
-import React, { ReactNode, useEffect } from "react";
-import { Tab, initTE } from "tw-elements";
+import React, { ReactNode, useEffect } from 'react';
+import { Tab, initTE } from 'tw-elements';
 
 interface TabItem {
   id: string;
@@ -32,7 +32,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
               data-te-target={`#${tab.id}`}
               role="tab"
               aria-controls={tab.id}
-              aria-selected={index === 0 ? "true" : "false"}
+              aria-selected={index === 0 ? 'true' : 'false'}
               {...(index === 0 && { 'data-te-nav-active': true })}
             >
               {tab.label}
@@ -45,7 +45,9 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
         {tabs.map((tab, index) => (
           <div
             key={tab.id}
-            className={`hidden opacity-${index === 0 ? '100' : '0'} transition-opacity duration-150 ease-linear data-[te-tab-active]:block`}
+            className={`hidden opacity-${
+              index === 0 ? '100' : '0'
+            } transition-opacity duration-150 ease-linear data-[te-tab-active]:block`}
             id={tab.id}
             role="tabpanel"
             aria-labelledby={`${tab.id}-tab`}

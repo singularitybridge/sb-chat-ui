@@ -1,8 +1,15 @@
-import { Instance, SnapshotIn, SnapshotOut, flow, getParent, types } from "mobx-state-tree";
-import { Chatbot } from "./Chatbot";
+import {
+  Instance,
+  SnapshotIn,
+  SnapshotOut,
+  flow,
+  getParent,
+  types,
+} from 'mobx-state-tree';
+import { Chatbot } from './Chatbot';
 
 const DateModel = types.custom({
-  name: "DateModel",
+  name: 'DateModel',
   fromSnapshot(value: string) {
     return new Date(value);
   },
@@ -14,14 +21,14 @@ const DateModel = types.custom({
   },
   getValidationMessage(value: string): string {
     if (isNaN(Date.parse(value))) {
-      return "Invalid date";
+      return 'Invalid date';
     }
-    return "";
+    return '';
   },
 });
 
 const ChatSession = types
-  .model("ChatSession", {
+  .model('ChatSession', {
     _id: types.identifier,
     chatbot_key: types.string,
     user_id: types.string,
@@ -30,16 +37,12 @@ const ChatSession = types
     active: types.boolean,
     current_state: types.string,
   })
-  .views((self) => ({
-  }))
+  .views((self) => ({}))
   .actions((self) => ({
     setState: (state: string) => {
       self.current_state = state;
     },
-  }
-  
-  
-  ));
+  }));
 
 type IChatSession = Instance<typeof ChatSession>;
 type ChatSessionSnapshotIn = SnapshotIn<typeof ChatSession>;

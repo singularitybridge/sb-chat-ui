@@ -1,21 +1,23 @@
-import React from "react";
+import React from 'react';
 
 interface LabelTextProps {
   label: JSX.Element;
   text: string | number | JSX.Element;
-  labelVerticalAlign?: "top" | "center";
-  layout?: "horizontal" | "vertical";
+  labelVerticalAlign?: 'top' | 'center';
+  layout?: 'horizontal' | 'vertical';
 }
 
 const LabelText: React.FC<LabelTextProps> = ({
   label,
   text,
-  labelVerticalAlign = "center",
-  layout = "horizontal",
+  labelVerticalAlign = 'center',
+  layout = 'horizontal',
 }) => {
-  const containerClass = layout === "vertical" ? "flex-col" : "flex";
+  const containerClass = layout === 'vertical' ? 'flex-col' : 'flex';
   const itemAlignClass =
-    layout === "vertical" || labelVerticalAlign === "top" ? "items-start" : "items-center";
+    layout === 'vertical' || labelVerticalAlign === 'top'
+      ? 'items-start'
+      : 'items-center';
   return (
     <div className={`flex ${containerClass} ${itemAlignClass}`}>
       <div className="">{label}</div>

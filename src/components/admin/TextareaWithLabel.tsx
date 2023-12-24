@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Input, initTE } from "tw-elements";
+import React, { useEffect } from 'react';
+import { Input, initTE } from 'tw-elements';
 
 interface TextareaWithLabelProps {
   id: string;
@@ -14,7 +14,7 @@ const TextareaWithLabel: React.FC<TextareaWithLabelProps> = ({
   id,
   label,
   rows = 10,
-  placeholder = "",
+  placeholder = '',
   value,
   onChange,
 }) => {

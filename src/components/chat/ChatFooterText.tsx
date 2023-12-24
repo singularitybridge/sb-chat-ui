@@ -1,7 +1,7 @@
-import { ChevronRightIcon, MicrophoneIcon } from "@heroicons/react/24/outline";
-import React, { useEffect } from "react";
-import useSpeechToText from "react-hook-speech-to-text";
-import { ChatFooterProps, getVoiceMap } from "./common";
+import { ChevronRightIcon, MicrophoneIcon } from '@heroicons/react/24/outline';
+import React, { useEffect } from 'react';
+import useSpeechToText from 'react-hook-speech-to-text';
+import { ChatFooterProps, getVoiceMap } from './common';
 
 const ChatFooterText: React.FC<ChatFooterProps> = ({
   onSendMessage,
@@ -23,7 +23,7 @@ const ChatFooterText: React.FC<ChatFooterProps> = ({
       lang: getVoiceMap(autoTranslateTarget).speeachRecognitionProperties.lang,
       interimResults: true,
     },
-    googleApiKey: "AIzaSyCmCIWBPBwiYiwHa0KoiL892ucEhRy8hZ8",
+    googleApiKey: 'AIzaSyCmCIWBPBwiYiwHa0KoiL892ucEhRy8hZ8',
     googleCloudRecognitionConfig: {
       languageCode:
         getVoiceMap(autoTranslateTarget).googleCloudRecognitionConfig?.lang,
@@ -39,17 +39,17 @@ const ChatFooterText: React.FC<ChatFooterProps> = ({
     if (results.length > 0) {
       const lastResult = results
         .map((result) =>
-          typeof result === "string" ? result : result.transcript
+          typeof result === 'string' ? result : result.transcript,
         )
-        .join(" ");
+        .join(' ');
 
       setUserInput(lastResult);
     }
   }, [results, interimResult]);
 
-  const [userInput, setUserInput] = React.useState("");
+  const [userInput, setUserInput] = React.useState('');
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
+    if (event.key === 'Enter') {
       event.preventDefault();
       handleSendMessage();
     }
@@ -57,7 +57,7 @@ const ChatFooterText: React.FC<ChatFooterProps> = ({
 
   const handleSendMessage = () => {
     onSendMessage(userInput);
-    setUserInput("");
+    setUserInput('');
     results.length = 0;
     stopSpeechToText();
   };
@@ -66,7 +66,6 @@ const ChatFooterText: React.FC<ChatFooterProps> = ({
 
   return (
     <div className="flex flex-row items-center bg-white p-3 w-full">
-      
       <div className="flex-grow mr-4">
         <div className="relative w-full">
           <input

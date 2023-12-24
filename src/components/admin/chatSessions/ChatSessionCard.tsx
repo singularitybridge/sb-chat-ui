@@ -1,6 +1,5 @@
-import { Link } from "react-router-dom";
-import { IChatSession } from "../../../store/models/ChatSession";
-
+import { Link } from 'react-router-dom';
+import { IChatSession } from '../../../store/models/ChatSession';
 
 const ChatSessionCard: React.FC<{ session: IChatSession }> = ({ session }) => {
   return (

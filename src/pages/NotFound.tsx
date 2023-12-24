@@ -1,6 +1,6 @@
-import { ContainerBGImage } from "../components/ContainerBGImage";
-import { ContentContainer } from "../components/ContentContainer";
-import { ContentPageContainer } from "../components/ContentPageContainer";
+import { ContainerBGImage } from '../components/ContainerBGImage';
+import { ContentContainer } from '../components/ContentContainer';
+import { ContentPageContainer } from '../components/ContentPageContainer';
 
 export const NotFound = () => {
   return (

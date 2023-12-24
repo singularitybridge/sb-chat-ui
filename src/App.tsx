@@ -1,25 +1,23 @@
-import React, { SVGProps, useCallback, useEffect, useState } from "react";
-import { Header } from "./components/Header";
-import { SideMenu } from "./components/SideMenu";
-import { Outlet, useParams } from "react-router-dom";
-import { RootStore } from "./store/models/RootStore";
-import { RootStoreProvider } from "./store/common/RootStoreContext";
+import React, { SVGProps, useCallback, useEffect, useState } from 'react';
+import { Header } from './components/Header';
+import { SideMenu } from './components/SideMenu';
+import { Outlet, useParams } from 'react-router-dom';
+import { RootStore } from './store/models/RootStore';
+import { RootStoreProvider } from './store/common/RootStoreContext';
 
 const rootStore = RootStore.create({
   chatbots: [],
-  userProfile : {
-    _id: "1",
-    name: "Avi",
-    avatar: "/images/avatars/av3.png",
+  userProfile: {
+    _id: '1',
+    name: 'Avi',
+    avatar: '/images/avatars/av3.png',
     activeChatBot: 'remove me',
     isAudioPlaying: false,
-
-  }
+  },
   // activeChatbot: null,
 });
 
 const App = () => {
-
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [screenHeight, setScreenHeight] = useState(0);
   const { id } = useParams<{ id: string }>();
@@ -27,7 +25,7 @@ const App = () => {
   const getHeight = useCallback(
     () =>
       window.visualViewport ? window.visualViewport.height : window.innerHeight,
-    []
+    [],
   );
 
   const handleClick = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
@@ -43,25 +41,24 @@ const App = () => {
   useEffect(() => {
     setScreenHeight(getHeight());
 
-    window.addEventListener("resize", handleResize);
-    window.addEventListener("orientationchange", handleResize);
-    window.visualViewport?.addEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleResize);
+    window.visualViewport?.addEventListener('resize', handleResize);
 
     return () => {
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("orientationchange", handleResize);
-      window.visualViewport?.removeEventListener("resize", handleResize);
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
+      window.visualViewport?.removeEventListener('resize', handleResize);
     };
   }, [getHeight]);
 
   const style = { height: `${screenHeight}px` };
 
   useEffect(() => {
-
     rootStore.loadAssistants();
 
-    rootStore.loadChatbots();    
-    rootStore.loadChatSessions("");
+    rootStore.loadChatbots();
+    rootStore.loadChatSessions('');
   }, [rootStore]);
 
   return (

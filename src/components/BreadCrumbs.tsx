@@ -2,8 +2,7 @@ import { useLocation } from 'react-router-dom';
 
 const capitalizeFirstLetter = (string: string) => {
   return string && string.charAt(0).toUpperCase() + string.slice(1);
-}
-
+};
 
 const BreadCrumbs: React.FC = () => {
   const location = useLocation();
@@ -23,7 +22,9 @@ const BreadCrumbs: React.FC = () => {
         <li>
           <span className="mx-2 text-neutral-500 dark:text-neutral-400">/</span>
         </li>
-        <li className="text-neutral-500 dark:text-neutral-400">{capitalizeFirstLetter(currentPage)}</li>
+        <li className="text-neutral-500 dark:text-neutral-400">
+          {capitalizeFirstLetter(currentPage)}
+        </li>
       </ol>
     </nav>
   );

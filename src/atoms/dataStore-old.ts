@@ -1,11 +1,11 @@
-import { atom, useRecoilValue } from "recoil";
+import { atom, useRecoilValue } from 'recoil';
 
 export enum SenderType {
-  user = "user",
-  bot = "bot",
+  user = 'user',
+  bot = 'bot',
 }
 
-export const ChatBotNotLoaded = "ChatBotNotLoaded";
+export const ChatBotNotLoaded = 'ChatBotNotLoaded';
 
 export interface Message {
   _id?: string;
@@ -26,7 +26,7 @@ export const getMessageText = (message: Message) => {
 
 export const sanitizeMessageText = (text: string) => {
   // turn "hello {{ some : data , "here" : "oi" }} world" into "hello world"
-  return text.replace(/{{.*?}}/g, "");
+  return text.replace(/{{.*?}}/g, '');
 };
 
 export const getMessageTextGPT = (message: Message) => {
@@ -69,31 +69,31 @@ export interface ContextData {
 }
 
 export const messagesState = atom<Message[]>({
-  key: "messages",
-  default: []
+  key: 'messages',
+  default: [],
 });
 
 export const defaultChatBot: ChatBotStore = {
   key: ChatBotNotLoaded,
-  name: "Dr. John",
+  name: 'Dr. John',
   description:
-    "Emotional support, stress, anxiety, depression, and relationship issues",
-  avatar: "/images/avatars/av2.png",
-  bgImage: "/chat-bg.png",
-  backgroundImage: "/chat-bg.png",
-  avatarImage: "/images/avatars/av2.png",
+    'Emotional support, stress, anxiety, depression, and relationship issues',
+  avatar: '/images/avatars/av2.png',
+  bgImage: '/chat-bg.png',
+  backgroundImage: '/chat-bg.png',
+  avatarImage: '/images/avatars/av2.png',
   prompt:
-    "The following is a conversation between {{userName}} and an AI therapist named {{agentName}}. The therapist is calm, patient and emphatic. his goal is to help {{userName}} feel better and act in positive ways.\n {{prevChatAsText}}\n {{userName}}: {{message}}\n {{agentName}}: ",
-  logo: "/parent-coach-logo.png",
+    'The following is a conversation between {{userName}} and an AI therapist named {{agentName}}. The therapist is calm, patient and emphatic. his goal is to help {{userName}} feel better and act in positive ways.\n {{prevChatAsText}}\n {{userName}}: {{message}}\n {{agentName}}: ',
+  logo: '/parent-coach-logo.png',
   autoTranslate: false,
-  autoTranslateTarget: "en",
+  autoTranslateTarget: 'en',
   temperature: 0.7,
-  ttsLanguage: "en-US",
-  ttsActor: "en-US-Wavenet-A",
+  ttsLanguage: 'en-US',
+  ttsActor: 'en-US-Wavenet-A',
 };
 
 export const chatBotsState = atom<ChatBotStore[]>({
-  key: "chatBots",
+  key: 'chatBots',
   default: [],
 });
 
@@ -102,16 +102,16 @@ export const getChatBotFromStore = (chatBots: ChatBotStore[], id: string) => {
 };
 
 export const userProfileState = atom<UserProfile>({
-  key: "userProfile",
+  key: 'userProfile',
   default: {
-    name: "Avi",
-    avatar: "/images/avatars/av3.png",
+    name: 'Avi',
+    avatar: '/images/avatars/av3.png',
     activeChatBot: ChatBotNotLoaded,
     isAudioPlaying: false,
   },
 });
 
 export const contextData = atom<ContextData[]>({
-  key: "contextData",
+  key: 'contextData',
   default: [],
 });

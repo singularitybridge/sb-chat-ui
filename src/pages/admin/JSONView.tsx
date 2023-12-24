@@ -1,4 +1,4 @@
-import ReactJson from "react18-json-view";
+import ReactJson from 'react18-json-view';
 
 interface JSONViewProps {
   json: string | object | number;
@@ -11,11 +11,11 @@ const JSONView: React.FC<JSONViewProps> = ({ json }) => {
   let isJsonObject = true;
 
   try {
-    if (typeof json === "string") {
+    if (typeof json === 'string') {
       parsedJson = JSON.parse(json);
       jsonString = json;
-      isJsonObject = typeof parsedJson === "object";
-    } else if (typeof json === "number") {
+      isJsonObject = typeof parsedJson === 'object';
+    } else if (typeof json === 'number') {
       // If the input is a number, convert it to string
       parsedJson = json;
       jsonString = json.toString();
@@ -23,13 +23,13 @@ const JSONView: React.FC<JSONViewProps> = ({ json }) => {
     } else {
       parsedJson = json;
       jsonString = JSON.stringify(json);
-      isJsonObject = typeof parsedJson === "object";
+      isJsonObject = typeof parsedJson === 'object';
     }
   } catch (e) {
     // In case of a parse error, it's not valid JSON
     isJson = false;
     jsonString =
-      typeof json === "object" ? JSON.stringify(json) : json.toString();
+      typeof json === 'object' ? JSON.stringify(json) : json.toString();
   }
 
   return isJson && isJsonObject ? (

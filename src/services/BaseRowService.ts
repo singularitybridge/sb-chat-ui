@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios from 'axios';
 
 interface ChatBotAPIResponse {
   key: string;
@@ -97,7 +97,6 @@ interface ChatBotAPIResponse {
 }
 
 const mapChatBot = (chatBot: ChatBotAPIResponse) => {
-
   return {
     key: chatBot.key,
     name: chatBot.name,
@@ -115,13 +114,14 @@ const mapChatBot = (chatBot: ChatBotAPIResponse) => {
 };
 
 const fetchContextData = async (key: string) => {
-
   try {
     const response = await axios({
-      method: "GET",
-      url: "https://api.baserow.io/api/database/rows/table/142027/?user_field_names=true&&filter__field_925007__equal=" + key,
+      method: 'GET',
+      url:
+        'https://api.baserow.io/api/database/rows/table/142027/?user_field_names=true&&filter__field_925007__equal=' +
+        key,
       headers: {
-        Authorization: "Token xYNbZuE6CN4KarOStEiUnMqQTU920uw6",
+        Authorization: 'Token xYNbZuE6CN4KarOStEiUnMqQTU920uw6',
       },
     });
     return response.data.results;
@@ -134,10 +134,10 @@ const fetchContextData = async (key: string) => {
 const fetchChatBots = async () => {
   try {
     const response = await axios({
-      method: "GET",
-      url: "https://api.baserow.io/api/database/rows/table/141893/?user_field_names=true",
+      method: 'GET',
+      url: 'https://api.baserow.io/api/database/rows/table/141893/?user_field_names=true',
       headers: {
-        Authorization: "Token xYNbZuE6CN4KarOStEiUnMqQTU920uw6",
+        Authorization: 'Token xYNbZuE6CN4KarOStEiUnMqQTU920uw6',
       },
     });
     return response.data.results.map(mapChatBot);

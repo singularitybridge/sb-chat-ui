@@ -1,17 +1,20 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { observer } from "mobx-react-lite";
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { observer } from 'mobx-react-lite';
+import { Message, SenderType } from '../atoms/dataStore-old';
+import { playAudio } from '../services/AudioService';
+import { Avatar, AvatarStyles } from './Avatar';
+import { useRootStore } from '../store/common/RootStoreContext';
+import { IconButton } from './admin/IconButton';
 import {
-  Message,
-  SenderType,
-} from "../atoms/dataStore-old";
-import { playAudio } from "../services/AudioService";
-import { Avatar, AvatarStyles } from "./Avatar";
-import { useRootStore } from "../store/common/RootStoreContext";
-import { IconButton } from "./admin/IconButton";
-import { InformationCircleIcon, MegaphoneIcon, ShieldCheckIcon, StarIcon, XCircleIcon } from "@heroicons/react/24/outline";
-import { CheckIcon } from "@heroicons/react/24/solid";
+  InformationCircleIcon,
+  MegaphoneIcon,
+  ShieldCheckIcon,
+  StarIcon,
+  XCircleIcon,
+} from '@heroicons/react/24/outline';
+import { CheckIcon } from '@heroicons/react/24/solid';
 
 interface ChatMessageProps {
   message: Message;
@@ -72,8 +75,6 @@ const MessageCallout: React.FC<MessageTextProps> = ({ text }) => {
   );
 };
 
-
-
 interface MessageOptionsProps {
   options: [any];
   onOptionClick?: (option: any) => void;
@@ -110,7 +111,7 @@ const MessageOptions: React.FC<MessageOptionsProps> = ({
                 <button
                   key={index}
                   className={`text-slate-600 ${
-                    option.image ? "self-start my-2" : " my-2"
+                    option.image ? 'self-start my-2' : ' my-2'
                   }`}
                 >
                   {option.text || option}
@@ -126,17 +127,15 @@ const MessageOptions: React.FC<MessageOptionsProps> = ({
 
 const renderContent = (
   content: any[],
-  onUserSelection?: (selection: string) => void
+  onUserSelection?: (selection: string) => void,
 ) => {
-  
-
   console.log(content);
 
   return content?.map((item, index) => {
     switch (item.type) {
-      case "text":
+      case 'text':
         return <MessageText key={index} text={item.text} />;
-      case "options":
+      case 'options':
         return (
           <MessageOptions
             key={index}
@@ -144,7 +143,7 @@ const renderContent = (
             onOptionClick={onUserSelection} // Pass onUserSelection as the onOptionClick callback
           />
         );
-      case "video":
+      case 'video':
         return (
           <video
             key={index}
@@ -154,13 +153,13 @@ const renderContent = (
           />
         );
 
-      case "text-info":
+      case 'text-info':
         return <MessageInfo key={index} text={item.text} />;
-      case "text-success":
+      case 'text-success':
         return <MessageSuccess key={index} text={item.text} />;
-      case "text-callout":
+      case 'text-callout':
         return <MessageCallout key={index} text={item.text} />;
-      case "text-section":
+      case 'text-section':
         return <MessageSection key={index} text={item.text} />;
 
       default:
@@ -171,74 +170,69 @@ const renderContent = (
 
 const ChatMessageStyles = {
   user: {
-    container: "col-start-1 col-end-12 p-1 rounded-lg",
-    flexRow: "flex flex-row items-center",
-    message: "relative ml-3 text-sm bg-white py-4 px-4 shadow rounded-lg",
+    container: 'col-start-1 col-end-12 p-1 rounded-lg',
+    flexRow: 'flex flex-row items-center',
+    message: 'relative ml-3 text-sm bg-white py-4 px-4 shadow rounded-lg',
   },
   bot: {
-    container: "col-start-2 col-end-13 p-3 rounded-lg",
-    flexRow: "flex items-center justify-start flex-row-reverse",
-    message: "relative mr-3 text-sm bg-indigo-100 py-4 px-4 shadow rounded-lg",
+    container: 'col-start-2 col-end-13 p-3 rounded-lg',
+    flexRow: 'flex items-center justify-start flex-row-reverse',
+    message: 'relative mr-3 text-sm bg-indigo-100 py-4 px-4 shadow rounded-lg',
   },
 };
 
-const ChatMessage: React.FC<ChatMessageProps> = observer( ({
-  message,
-  onUserSelection,
-  onDeleteMessage,
-}) => {
+const ChatMessage: React.FC<ChatMessageProps> = observer(
+  ({ message, onUserSelection, onDeleteMessage }) => {
+    const { activeChatbot, userProfile } = useRootStore();
 
-  const { activeChatbot, userProfile } = useRootStore();
+    const messageStyles =
+      message.role === SenderType.user
+        ? ChatMessageStyles.user
+        : ChatMessageStyles.bot;
+    const avatarImage =
+      message.role === SenderType.user
+        ? userProfile?.avatar
+        : activeChatbot?.avatarImage;
 
-
-  const messageStyles =
-    message.role === SenderType.user
-      ? ChatMessageStyles.user
-      : ChatMessageStyles.bot;
-  const avatarImage =
-    message.role === SenderType.user
-      ? userProfile?.avatar
-      : activeChatbot?.avatarImage;
-
-  return (
-    <>
-    
-      <div
-        className={messageStyles.container}
-        // onClick={() => playAudio(message.audio)}
-      >
-        <div className={messageStyles.flexRow}>
-          <Avatar
-            imageUrl={avatarImage || "/images/avatars/av1.png"}
-            avatarStyle={AvatarStyles.avatar}
-          />
-          <div
-            className={messageStyles.message}
-            // style={{
-            //   direction:
-            //     chatBot &&
-            //     chatBot.autoTranslate &&
-            //     chatBot.autoTranslateTarget === "he"
-            //       ? "rtl"
-            //       : "ltr",
-            // }}
-          >
-            {/* <div>{sanitizeMessageText(getMessageText(message))}</div> */}
-            {/* <div>{message.content}</div> */}
-            {/* <div>{renderContent(message.content)}</div> */}
-            <div>{renderContent(message.content, onUserSelection)}</div>{" "}
-            {/* Pass onUserSelection to renderContent */}
-          </div>
-          <div>
-          <IconButton
-              icon={<XCircleIcon className="w-5 h-5 text-slate-100 m-3" />}
-              onClick={onDeleteMessage || (() => {}) }
+    return (
+      <>
+        <div
+          className={messageStyles.container}
+          // onClick={() => playAudio(message.audio)}
+        >
+          <div className={messageStyles.flexRow}>
+            <Avatar
+              imageUrl={avatarImage || '/images/avatars/av1.png'}
+              avatarStyle={AvatarStyles.avatar}
             />
+            <div
+              className={messageStyles.message}
+              // style={{
+              //   direction:
+              //     chatBot &&
+              //     chatBot.autoTranslate &&
+              //     chatBot.autoTranslateTarget === "he"
+              //       ? "rtl"
+              //       : "ltr",
+              // }}
+            >
+              {/* <div>{sanitizeMessageText(getMessageText(message))}</div> */}
+              {/* <div>{message.content}</div> */}
+              {/* <div>{renderContent(message.content)}</div> */}
+              <div>{renderContent(message.content, onUserSelection)}</div>{' '}
+              {/* Pass onUserSelection to renderContent */}
+            </div>
+            <div>
+              <IconButton
+                icon={<XCircleIcon className="w-5 h-5 text-slate-100 m-3" />}
+                onClick={onDeleteMessage || (() => {})}
+              />
+            </div>
           </div>
         </div>
-      </div>
-    </>
-  );
-});
+      </>
+    );
+  },
+);
 
 export { ChatMessage, ChatMessageStyles };

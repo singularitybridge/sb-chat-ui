@@ -1,13 +1,13 @@
-import React, { SVGProps, useEffect, useState } from "react";
+import React, { SVGProps, useEffect, useState } from 'react';
 import {
   ChatBubbleBottomCenterTextIcon,
   AcademicCapIcon,
   UsersIcon,
   Cog8ToothIcon,
-} from "@heroicons/react/24/solid";
-import { observer } from "mobx-react-lite";
-import { XMarkIcon } from "@heroicons/react/24/outline";
-import { useRootStore } from "../store/common/RootStoreContext";
+} from '@heroicons/react/24/solid';
+import { observer } from 'mobx-react-lite';
+import { XMarkIcon } from '@heroicons/react/24/outline';
+import { useRootStore } from '../store/common/RootStoreContext';
 
 interface SideMenuProps {
   isOpen: boolean;
@@ -34,15 +34,12 @@ const SideMenuItem: React.FC<SideMenuItemProps> = ({
 );
 
 const SideMenu: React.FC<SideMenuProps> = observer(({ isOpen, closeMenu }) => {
-  
   const { activeChatbot } = useRootStore();
-
-  
 
   return (
     <aside
       className={`fixed z-10 inset-0  bg-orange-100 transform transition-all w-60 p-0 ${
-        isOpen ? "translate-x-0" : "-translate-x-full"
+        isOpen ? 'translate-x-0' : '-translate-x-full'
       } duration-300`}
     >
       <header className="flex items-center justify-between p-4 mt-4">

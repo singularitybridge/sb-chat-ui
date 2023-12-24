@@ -1,20 +1,19 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
-import InputWithLabel from "./admin/InputWithLabel";
-import Button from "./core/Button";
-import { TextareaWithLabel } from "./admin/TextareaWithLabel";
-import { KeyValue, KeyValueList } from "./KeyValueList";
-import { Input } from "./Input";
+import React, { useEffect, useState } from 'react';
+import InputWithLabel from './admin/InputWithLabel';
+import Button from './core/Button';
+import { TextareaWithLabel } from './admin/TextareaWithLabel';
+import { KeyValue, KeyValueList } from './KeyValueList';
 
-export type FieldType = "input" | "textarea" | "key-value-list";
+export type FieldType = 'input' | 'textarea' | 'key-value-list';
 
 export const getFieldTypeByKey = (key: string): FieldType => {
   switch (key) {
-    case "description":
-      return "textarea";
-    case "identifiers":
-      return "key-value-list";
+    case 'description':
+      return 'textarea';
+    case 'identifiers':
+      return 'key-value-list';
     default:
-      return "input";
+      return 'input';
   }
 };
 
@@ -36,12 +35,14 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ fields, onSubmit }) => {
   const [identifiersData, setIdentifiersData] = useState<KeyValue[]>([]);
 
   useEffect(() => {
+    console.log('loading fields', fields);
+
     const initialValues: FormValues = {};
     fields.forEach((field) => {
       initialValues[field.id] = field.value;
-      if (field.id === "identifiers" && Array.isArray(field.value)) {
+      if (field.id === 'identifiers' && Array.isArray(field.value)) {
         setIdentifiersData(
-          field.value.map(({ key, value }) => ({ key, value }))
+          field.value.map(({ key, value }) => ({ key, value })),
         );
       }
     });
@@ -50,7 +51,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ fields, onSubmit }) => {
 
   const handleIdentifiersDataChange = (data: Record<string, string>) => {
     setIdentifiersData(
-      Object.entries(data).map(([key, value]) => ({ key, value }))
+      Object.entries(data).map(([key, value]) => ({ key, value })),
     );
   };
 
@@ -60,14 +61,14 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ fields, onSubmit }) => {
 
   const handleSubmit = () => {
     const identifiersDataAsRecord = Object.fromEntries(
-      identifiersData.map(({ key, value }) => [key, value])
+      identifiersData.map(({ key, value }) => [key, value]),
     );
 
     const updatedValues = {
       ...values,
       identifiers: identifiersDataAsRecord,
     };
-    console.log("object", updatedValues);
+    console.log('object', updatedValues);
     onSubmit({});
     // onSubmit(updatedValues);
   };
@@ -83,7 +84,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ fields, onSubmit }) => {
         const fieldType = getFieldTypeByKey(field.id);
 
         switch (fieldType) {
-          case "textarea":
+          case 'textarea':
             return (
               <TextareaWithLabel
                 label={field.label}
@@ -92,7 +93,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ fields, onSubmit }) => {
                 onChange={(newValue) => handleChange(field.id, newValue)}
               />
             );
-          case "key-value-list":
+          case 'key-value-list':
             return (
               <KeyValueList
                 title="Identifiers"

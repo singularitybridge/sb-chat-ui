@@ -1,5 +1,5 @@
-import { getParent, types } from "mobx-state-tree";
-import { ChatSession } from "./ChatSession";
+import { getParent, types } from 'mobx-state-tree';
+import { ChatSession } from './ChatSession';
 
 const Content = types.model({
   text: types.string,
@@ -7,7 +7,7 @@ const Content = types.model({
 });
 
 const ChatSessionMessage = types
-  .model("ChatSessionMessage", {
+  .model('ChatSessionMessage', {
     id: types.identifier,
     sessionId: types.reference(ChatSession),
     content: types.array(Content),
@@ -23,7 +23,5 @@ const ChatSessionMessage = types
   .actions((self) => ({
     // ... actions to manipulate the message
   }));
-
-
 
 export { ChatSessionMessage };

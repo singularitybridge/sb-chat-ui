@@ -1,7 +1,7 @@
-import { useEffect } from "react";
-import ReactFlow, { Handle, Position } from "reactflow";
-import { CalculatorIcon, KeyIcon } from "@heroicons/react/24/outline";
-import { LabelText } from "../../../chat/LabelText";
+import { useEffect } from 'react';
+import ReactFlow, { Handle, Position } from 'reactflow';
+import { CalculatorIcon, KeyIcon } from '@heroicons/react/24/outline';
+import { LabelText } from '../../../chat/LabelText';
 
 type CustomNodeData = {
   name: string;
@@ -18,13 +18,21 @@ interface CustomNodeProps {
   selectedNodeId: string | null;
 }
 
-const CustomNode: React.FC<CustomNodeProps> = ({ data, id, selectedNodeId }) => {
+const CustomNode: React.FC<CustomNodeProps> = ({
+  data,
+  id,
+  selectedNodeId,
+}) => {
   const isSelected = id === selectedNodeId;
-  
+
   useEffect(() => {}, [data]);
 
   return (
-    <div className={`p-5 shadow-md rounded-md bg-white border-2 ${isSelected ? 'border-red-500' : 'border-stone-400'}`}>
+    <div
+      className={`p-5 shadow-md rounded-md bg-white border-2 ${
+        isSelected ? 'border-red-500' : 'border-stone-400'
+      }`}
+    >
       <div className="flex">
         <div className="w-32 h-32 flex justify-center items-center bg-gray-100">
           <img src={data.avatarImage} alt="" />

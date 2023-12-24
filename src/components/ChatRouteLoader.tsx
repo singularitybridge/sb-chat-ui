@@ -1,8 +1,8 @@
-import { ReactNode, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { useRootStore } from "../store/common/RootStoreContext";
-import { observer } from "mobx-react-lite";
-import { autorun } from "mobx";
+import { ReactNode, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { useRootStore } from '../store/common/RootStoreContext';
+import { observer } from 'mobx-react-lite';
+import { autorun } from 'mobx';
 
 interface ChatRouteLoaderProps {
   children: ReactNode;
@@ -25,7 +25,7 @@ export const ChatRouteLoader: React.FC<ChatRouteLoaderProps> = observer(
 
         rootStore.setActiveChatSession(sessionId);
         rootStore.setActiveChatbot(
-          rootStore.selectedChatSession?.chatbot_key || ""
+          rootStore.selectedChatSession?.chatbot_key || '',
         );
 
         setLoading(false);
@@ -39,5 +39,5 @@ export const ChatRouteLoader: React.FC<ChatRouteLoaderProps> = observer(
 
     if (loading) return <> loading ... </>;
     return <>{children}</>;
-  }
+  },
 );

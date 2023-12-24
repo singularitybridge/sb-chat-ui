@@ -1,29 +1,29 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { Chatbot } from "../../services/ChatbotService";
-import { useChatbot } from "../../custom-hooks/useChatbot";
-import { ChatbotCard } from "../../components/admin/chatbots/ChatbotCard";
-import { DataItem } from "../../components/admin/DataItem";
-import { ActionsView } from "../../components/admin/ActionsView/ActionsView";
-import { ReactFlowProvider } from "reactflow";
-import { EditChatbot } from "./ChatBotEditingViews/EditChatbot";
-import { EditChatbotState } from "./ChatBotEditingViews/EditChatbotState";
-import { EditChatbotProcessor } from "./ChatBotEditingViews/EditChatbotProcessor";
-import { v4 as uuidv4 } from "uuid";
-import { SessionStoreView } from "./SessionStoreView";
-import { observer } from "mobx-react-lite";
-import { useRootStore } from "../../store/common/RootStoreContext";
-import { Tab, initTE } from "tw-elements";
-import { Tabs } from "../../components/Tabs";
-import { EditorSettingsView } from "./EditorSettingsView";
-import { Chat } from "../Chat";
-import { Header } from "../../components/Header";
-import { LoggerView } from "./LoggerView";
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { Chatbot } from '../../services/ChatbotService';
+import { useChatbot } from '../../custom-hooks/useChatbot';
+import { ChatbotCard } from '../../components/admin/chatbots/ChatbotCard';
+import { DataItem } from '../../components/admin/DataItem';
+import { ActionsView } from '../../components/admin/ActionsView/ActionsView';
+import { ReactFlowProvider } from 'reactflow';
+import { EditChatbot } from './ChatBotEditingViews/EditChatbot';
+import { EditChatbotState } from './ChatBotEditingViews/EditChatbotState';
+import { EditChatbotProcessor } from './ChatBotEditingViews/EditChatbotProcessor';
+import { v4 as uuidv4 } from 'uuid';
+import { SessionStoreView } from './SessionStoreView';
+import { observer } from 'mobx-react-lite';
+import { useRootStore } from '../../store/common/RootStoreContext';
+import { Tab, initTE } from 'tw-elements';
+import { Tabs } from '../../components/Tabs';
+import { EditorSettingsView } from './EditorSettingsView';
+import { Chat } from '../Chat';
+import { Header } from '../../components/Header';
+import { LoggerView } from './LoggerView';
 
 const ChatbotView: React.FC = observer(() => {
   const { key } = useParams<{ key: string }>();
   const rootStore = useRootStore();
-  const sessionIdOLD = rootStore.selectedChatSession?._id || "";
+  const sessionIdOLD = rootStore.selectedChatSession?._id || '';
 
   const chatBotUpdateWrapper = async (updatedChatbot: Chatbot) => {
     await updateChatbot(updatedChatbot);
@@ -50,8 +50,8 @@ const ChatbotView: React.FC = observer(() => {
   }, [rootStore.activeChatbot?.key, rootStore.chatbotsLoaded, key]);
 
   const { chatbot, loading, error, updateChatbot } = useChatbot(
-    key || "",
-    sessionIdOLD || ""
+    key || '',
+    sessionIdOLD || '',
   );
 
   const [selectedNode, setSelectedNode] = useState<{
@@ -109,10 +109,10 @@ const ChatbotView: React.FC = observer(() => {
   const createNewState = async () => {
     const newState = {
       _id: uuidv4(),
-      model: "gpt-4",
-      name: "new-state-" + uuidv4(),
+      model: 'gpt-4',
+      name: 'new-state-' + uuidv4(),
       processors: [],
-      prompt: "you're an ai .. ",
+      prompt: 'you\'re an ai .. ',
       temperature: 0.8,
     };
 
@@ -136,19 +136,19 @@ const ChatbotView: React.FC = observer(() => {
     if (rootStore.selectedChatSession) {
       rootStore.setChatSessionState(
         rootStore.selectedChatSession?._id,
-        stateId
+        stateId,
       );
       rootStore.selectedChatSession.setState(stateId);
-      console.log("set active chatbot state", stateId);
+      console.log('set active chatbot state', stateId);
     }
   };
 
   const addChatbotProcessor = async (stateId: string) => {
     const newProcessor = {
       _id: uuidv4(),
-      processor_name: "new-processor-" + uuidv4(),
+      processor_name: 'new-processor-' + uuidv4(),
       processor_data: {},
-      type: "processorNode",
+      type: 'processorNode',
     };
 
     const updatedChatbot = {
@@ -174,7 +174,7 @@ const ChatbotView: React.FC = observer(() => {
         return {
           ...state,
           processors: state.processors.filter(
-            (processor: any) => processor._id !== processorId
+            (processor: any) => processor._id !== processorId,
           ),
         };
       }),
@@ -185,7 +185,7 @@ const ChatbotView: React.FC = observer(() => {
   const insertProcessorAfter = async (processorId: string) => {
     const newProcessor = {
       _id: uuidv4(),
-      processor_name: "new-processor-" + uuidv4(),
+      processor_name: 'new-processor-' + uuidv4(),
       processor_data: {},
     };
 
@@ -193,7 +193,7 @@ const ChatbotView: React.FC = observer(() => {
       ...chatbot,
       states: chatbot.states.map((state: any) => {
         const processorIndex = state.processors.findIndex(
-          (processor: any) => processor._id === processorId
+          (processor: any) => processor._id === processorId,
         );
 
         if (processorIndex === -1) {
@@ -233,20 +233,20 @@ const ChatbotView: React.FC = observer(() => {
           <Tabs
             tabs={[
               {
-                id: "tabs-home",
-                label: "Editor",
+                id: 'tabs-home',
+                label: 'Editor',
                 content: (
                   <>
                     {selectedNode ? (
                       <>
-                        {selectedNode.type === "chatbotNode" && (
+                        {selectedNode.type === 'chatbotNode' && (
                           <EditChatbot
                             chatbot={selectedNode.node}
                             onUpdate={updateChatbot}
                             onCreateNewState={createNewState}
                           />
                         )}
-                        {selectedNode.type === "stateNode" && (
+                        {selectedNode.type === 'stateNode' && (
                           <EditChatbotState
                             state={selectedNode.node}
                             chatbotKey={chatbot.key}
@@ -256,7 +256,7 @@ const ChatbotView: React.FC = observer(() => {
                             onSetActiveState={setActiveChatbotState}
                           />
                         )}
-                        {selectedNode.type === "processorNode" && (
+                        {selectedNode.type === 'processorNode' && (
                           <EditChatbotProcessor
                             node={selectedNode.node}
                             onUpdateProcessor={updateChatbotProcessor}
@@ -274,27 +274,38 @@ const ChatbotView: React.FC = observer(() => {
                 ),
               },
               {
-                id: "tabs-profile",
-                label: "Store",
+                id: 'tabs-profile',
+                label: 'Store',
                 content: <SessionStoreView />,
               },
               {
-                id: "tabs-log",
-                label: "Log",
+                id: 'tabs-log',
+                label: 'Log',
                 content: <LoggerView />,
               },
               {
-                id: "tabs-messages",
-                label: "Settings",
+                id: 'tabs-messages',
+                label: 'Settings',
                 content: <EditorSettingsView />,
               },
               {
-                id: "tabs-chat",
-                label: "Run",
+                id: 'tabs-chat',
+                label: 'Run',
                 content: (
                   <div className=" border-secondary-100 border-2 ">
-                    <Header onMenuClick={() => console.log('on menu click')} forceShow={true} />
-                    <div style={{ maxHeight: "850px", overflowY: "auto", display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
+                    <Header
+                      onMenuClick={() => console.log('on menu click')}
+                      forceShow={true}
+                    />
+                    <div
+                      style={{
+                        maxHeight: '850px',
+                        overflowY: 'auto',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'flex-end',
+                      }}
+                    >
                       <Chat />
                     </div>
                   </div>

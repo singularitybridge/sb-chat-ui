@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { Input } from "./Input";
-import { IconButton } from "./admin/IconButton";
+import React, { useState } from 'react';
+import { Input } from './Input';
+import { IconButton } from './admin/IconButton';
 import {
   ArrowUturnLeftIcon,
   MinusCircleIcon,
   PlusCircleIcon,
-} from "@heroicons/react/24/outline";
+} from '@heroicons/react/24/outline';
 
 export interface KeyValue {
   key: string;
@@ -16,7 +16,7 @@ interface KeyValueListProps {
   title: string;
   description: string;
   initialData: KeyValue[];
-  onDataChange: (data: Record<string, string>) => void; // Add this line
+  onDataChange: (data: Record<string, string>) => void;
 }
 
 const KeyValueList: React.FC<KeyValueListProps> = ({
@@ -50,7 +50,7 @@ const KeyValueList: React.FC<KeyValueListProps> = ({
   };
 
   const addParam = () => {
-    setKeyValueData([...keyValueData, { key: "", value: "" }]);
+    setKeyValueData([...keyValueData, { key: '', value: '' }]);
   };
 
   const removeParam = (index: number) => {

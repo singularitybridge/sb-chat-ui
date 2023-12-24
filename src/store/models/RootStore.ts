@@ -1,24 +1,22 @@
-import { types, flow, applySnapshot, Instance } from "mobx-state-tree";
-import { Chatbot } from "./Chatbot";
-import { ChatSession, IChatSession } from "./ChatSession";
-import { UserProfile } from "./UserProfile";
+import { types, flow, applySnapshot, Instance } from 'mobx-state-tree';
+import { Chatbot } from './Chatbot';
+import { ChatSession, IChatSession } from './ChatSession';
+import { UserProfile } from './UserProfile';
 import {
   createChatSession,
   getChatSessions,
   setChatSessionState,
-} from "../../services/api/chatSessionService";
-import { getChatbots } from "../../services/api/chatbotService";
-import { Assistant } from "./Assistant";
-import { getAssistants } from "../../services/api/assistantService";
-import { toJS } from "mobx";
+} from '../../services/api/chatSessionService';
+import { getChatbots } from '../../services/api/chatbotService';
+import { Assistant } from './Assistant';
+import { getAssistants } from '../../services/api/assistantService';
+import { toJS } from 'mobx';
 
 const RootStore = types
-  .model("RootStore", {
-
+  .model('RootStore', {
     /// refactor
     assistants: types.array(Assistant),
     assistantsLoaded: types.optional(types.boolean, false),
-
 
     /// old stuff blat
     chatbots: types.array(Chatbot),
@@ -30,8 +28,6 @@ const RootStore = types
     selectedChatSession: types.maybe(types.reference(ChatSession)),
   })
   .actions((self) => ({
-
-
     /// refactor
     loadAssistants: flow(function* () {
       try {
@@ -40,17 +36,15 @@ const RootStore = types
         applySnapshot(self.assistants, assistants);
         self.assistantsLoaded = true;
       } catch (error) {
-        console.error("Failed to load assistants", error);
+        console.error('Failed to load assistants', error);
       }
     }),
 
     getAssistantById: (_id: string) => {
       console.log('try to get assistant by id', _id);
-      console.log( toJS( self.assistants));
-      return self.assistants.find(assistant => assistant._id === _id);
+      console.log(toJS(self.assistants));
+      return self.assistants.find((assistant) => assistant._id === _id);
     },
-
-
 
     /// old stuff blat
     loadChatbots: flow(function* () {
@@ -59,7 +53,7 @@ const RootStore = types
         applySnapshot(self.chatbots, chatbots);
         self.chatbotsLoaded = true;
       } catch (error) {
-        console.error("Failed to load chatbots", error);
+        console.error('Failed to load chatbots', error);
       }
     }),
 
@@ -69,7 +63,7 @@ const RootStore = types
         applySnapshot(self.chatSessions, chatSessions);
         self.chatSessionsLoaded = true;
       } catch (error) {
-        console.error("Failed to load chat sessions", error);
+        console.error('Failed to load chat sessions', error);
       }
     }),
 
@@ -83,17 +77,17 @@ const RootStore = types
           self.chatSessions.push(chatSession);
         } else {
           console.error(
-            "Cannot create chat session without active user and chatbot."
+            'Cannot create chat session without active user and chatbot.',
           );
         }
       } catch (error) {
-        console.error("Failed to create chat session", error);
+        console.error('Failed to create chat session', error);
       }
     }),
 
     setActiveChatSession: (sessionId: string) => {
       const foundSession = self.chatSessions.find(
-        (session) => session._id === sessionId
+        (session) => session._id === sessionId,
       );
       if (foundSession) {
         self.selectedChatSession = foundSession;
@@ -102,11 +96,11 @@ const RootStore = types
 
     setActiveChatbot: (chatbotKey: string) => {
       const chatbot = self.chatbots.find(
-        (chatbot) => chatbot.key === chatbotKey
+        (chatbot) => chatbot.key === chatbotKey,
       );
 
       if (!chatbot) {
-        console.error("Cannot set active chatbot, chatbot not found");
+        console.error('Cannot set active chatbot, chatbot not found');
         return;
       }
 
@@ -117,7 +111,7 @@ const RootStore = types
       console.log('get chatbot', key);
       return self.chatbots.find((chatbot) => chatbot.key === key);
     },
-    
+
     setChatSessionState: async (sessionId: string, state: string) => {
       try {
         await setChatSessionState(sessionId, state);
@@ -129,8 +123,6 @@ const RootStore = types
         console.error(error);
       }
     },
-
-
   }));
 
 export interface IRootStore extends Instance<typeof RootStore> {}

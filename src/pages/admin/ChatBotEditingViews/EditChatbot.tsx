@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import InputWithLabel from "../../../components/admin/InputWithLabel";
-import Button from "../../../components/core/Button";
+import React, { useState } from 'react';
+import InputWithLabel from '../../../components/admin/InputWithLabel';
+import Button from '../../../components/core/Button';
 
 interface EditChatbotProps {
   chatbot: {
@@ -23,7 +23,7 @@ const EditChatbot: React.FC<EditChatbotProps> = ({
   const [name, setName] = useState(chatbot.name);
   const [avatarImage, setAvatarImage] = useState(chatbot.avatarImage);
   const [backgroundImage, setBackgroundImage] = useState(
-    chatbot.backgroundImage
+    chatbot.backgroundImage,
   );
   const [description, setDescription] = useState(chatbot.description);
   const [key, setKey] = useState(chatbot.key);

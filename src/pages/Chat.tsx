@@ -1,34 +1,34 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Avatar, AvatarStyles } from "../components/Avatar";
-import { useRecoilState, useRecoilValue } from "recoil";
+import React, { useEffect, useRef, useState } from 'react';
+import { Avatar, AvatarStyles } from '../components/Avatar';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   Message,
   messagesState,
   userProfileState,
   chatBotsState,
   SenderType,
-} from "../atoms/dataStore-old";
+} from '../atoms/dataStore-old';
 import {
   getSessionMessages,
   getGPTCompletion,
   deleteMessageFromSession,
-} from "../services/ChatService";
-import { translateText } from "../services/TranslationService";
-import { generateAudioFromText } from "../services/TTSService";
-import { ChatMessage } from "../components/ChatMessage";
-import { ContentContainer } from "../components/ContentContainer";
-import { ContainerBGImage } from "../components/ContainerBGImage";
-import { ChatFooterContainer } from "../components/chat/ChatFooterContainer";
-import { ChatFooterText } from "../components/chat/ChatFooterText";
-import { ChatFooterVoice } from "../components/chat/ChatFooterVoice";
-import { ChatMessageWelcome } from "../components/ChatMessageWelcome";
-import { playAudio } from "../services/AudioService";
-import { ChatState } from "../components/chat/common";
-import { AudioCircle } from "../components/chat/AudioCircle";
-import { useParams } from "react-router-dom";
-import { useRootStore } from "../store/common/RootStoreContext";
-import { observer } from "mobx-react-lite";
-import { autorun, toJS } from "mobx";
+} from '../services/ChatService';
+import { translateText } from '../services/TranslationService';
+import { generateAudioFromText } from '../services/TTSService';
+import { ChatMessage } from '../components/ChatMessage';
+import { ContentContainer } from '../components/ContentContainer';
+import { ContainerBGImage } from '../components/ContainerBGImage';
+import { ChatFooterContainer } from '../components/chat/ChatFooterContainer';
+import { ChatFooterText } from '../components/chat/ChatFooterText';
+import { ChatFooterVoice } from '../components/chat/ChatFooterVoice';
+import { ChatMessageWelcome } from '../components/ChatMessageWelcome';
+import { playAudio } from '../services/AudioService';
+import { ChatState } from '../components/chat/common';
+import { AudioCircle } from '../components/chat/AudioCircle';
+import { useParams } from 'react-router-dom';
+import { useRootStore } from '../store/common/RootStoreContext';
+import { observer } from 'mobx-react-lite';
+import { autorun, toJS } from 'mobx';
 
 // move to the api service
 const transformApiResponseToMessage = (message: any): Message => {
@@ -49,12 +49,12 @@ const transformApiResponseToMessage = (message: any): Message => {
 const transformUserMessage = (
   message: string,
   translatedMessage: string,
-  userProfile: any
+  userProfile: any,
 ): Message => {
   return {
     // _id: "", // You can leave this empty or generate a temporary unique ID if needed
     // chat_session_id: "", // You can leave this empty or assign the sessionId if needed
-    content: [{ text: message, type: "text" }],
+    content: [{ text: message, type: 'text' }],
     // created_at: new Date().toISOString(), // Set the current timestamp
     role: SenderType.user,
     // sender: userProfile.name,
@@ -94,14 +94,14 @@ const Chat = observer(() => {
   const fetchSessionMessages = async () => {
     try {
       const chatHistoryResponse = await getSessionMessages(
-        selectedChatSession?._id || ""
+        selectedChatSession?._id || '',
       );
-      console.log("loaded history: ", chatHistoryResponse);
+      console.log('loaded history: ', chatHistoryResponse);
       setSessionMessages(
-        chatHistoryResponse.map(transformApiResponseToMessage)
+        chatHistoryResponse.map(transformApiResponseToMessage),
       );
     } catch (err) {
-      console.log("error loading chat history: ", err);
+      console.log('error loading chat history: ', err);
     }
   };
 
@@ -135,7 +135,7 @@ const Chat = observer(() => {
     if (chatContainerRef.current) {
       (chatContainerRef.current as HTMLElement).scrollTo({
         top: (chatContainerRef.current as HTMLElement).scrollHeight,
-        behavior: "smooth",
+        behavior: 'smooth',
       });
     }
   }, [chatData]);
@@ -149,24 +149,24 @@ const Chat = observer(() => {
     //     ? await translateText(message, "en")
     //     : "";
 
-    const translatedMessage = "";
+    const translatedMessage = '';
 
-    if (message !== "") {
+    if (message !== '') {
       const userMessage = transformUserMessage(
         message,
         translatedMessage,
-        userProfile
+        userProfile,
       );
       setSessionMessages((prevChatData) => [...prevChatData, userMessage]);
     }
 
     const response = await getGPTCompletion(
-      "",
-      selectedChatSession?._id || "",
+      '',
+      selectedChatSession?._id || '',
       userProfile.name,
       translatedMessage || message,
       chatData || [],
-      0.7
+      0.7,
     );
 
     // const translatedResponse = chatBot.autoTranslate
@@ -184,18 +184,17 @@ const Chat = observer(() => {
   const onDeleteMessage = async (sessionId: string, messageId: string) => {
     try {
       await deleteMessageFromSession(sessionId, messageId);
-      console.log("Message deleted successfully");
+      console.log('Message deleted successfully');
       fetchSessionMessages();
     } catch (error) {
-      console.error("Error deleting message:", error);
+      console.error('Error deleting message:', error);
     }
   };
-  
 
   return (
     <>
       <ContentContainer>
-        <ContainerBGImage bgImage={activeChatbot?.backgroundImage || ""}>
+        <ContainerBGImage bgImage={activeChatbot?.backgroundImage || ''}>
           <div className="flex flex-col flex-auto h-full p-0">
             <div className="flex flex-col flex-auto flex-shrink-0 h-full pt-3">
               <div
@@ -212,7 +211,7 @@ const Chat = observer(() => {
 
                     <ChatMessageWelcome
                       enabled={sessionMessages.length === 0}
-                      onClickStartChat={() => onSendMessage("hi")}
+                      onClickStartChat={() => onSendMessage('hi')}
                     />
 
                     {sessionMessages.map((message: Message, index: number) => {
@@ -225,8 +224,8 @@ const Chat = observer(() => {
                           }}
                           onDeleteMessage={() => {
                             onDeleteMessage(
-                              selectedChatSession?._id || "",
-                              message._id || ""
+                              selectedChatSession?._id || '',
+                              message._id || '',
                             );
                           }}
                         />
@@ -247,7 +246,7 @@ const Chat = observer(() => {
         /> */}
         <ChatFooterText
           onSendMessage={onSendMessage}
-          autoTranslateTarget={"en"}
+          autoTranslateTarget={'en'}
           // autoTranslateTarget={chatBot?.autoTranslateTarget || "en"}
           chatState={chatState}
         />

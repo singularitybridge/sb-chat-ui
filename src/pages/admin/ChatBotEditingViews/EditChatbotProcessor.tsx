@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from "react";
-import InputWithLabel from "../../../components/admin/InputWithLabel";
-import Button from "../../../components/core/Button";
-import { Select, initTE } from "tw-elements";
-import { SelectInput } from "../../../components/admin/SelectInput";
+import React, { useState, useEffect } from 'react';
+import InputWithLabel from '../../../components/admin/InputWithLabel';
+import Button from '../../../components/core/Button';
+import { Select, initTE } from 'tw-elements';
+import { SelectInput } from '../../../components/admin/SelectInput';
 import {
   CloudArrowUpIcon,
   Cog6ToothIcon,
   MinusCircleIcon,
   PlusCircleIcon,
   TrashIcon,
-} from "@heroicons/react/24/outline";
-import { processorOptions } from "./processorOptions";
-import { TextareaWithLabel } from "../../../components/admin/TextareaWithLabel";
-import { IconButton } from "../../../components/admin/IconButton";
+} from '@heroicons/react/24/outline';
+import { processorOptions } from './processorOptions';
+import { TextareaWithLabel } from '../../../components/admin/TextareaWithLabel';
+import { IconButton } from '../../../components/admin/IconButton';
 
 interface EditChatbotProcessorProps {
   node: any;
@@ -30,8 +30,8 @@ const EditChatbotProcessor: React.FC<EditChatbotProcessorProps> = ({
   const [processorData, setProcessorData] = useState<
     { key: string; value: string }[]
   >([]);
-  const [processorName, setProcessorName] = useState<string>("");
-  const [title, setTitle] = useState<string>(node.title || ""); // Add this line to keep track of title
+  const [processorName, setProcessorName] = useState<string>('');
+  const [title, setTitle] = useState<string>(node.title || ''); // Add this line to keep track of title
   const [focused, setFocused] = useState<number | null>(null);
   const [setupMode, setSetupMode] = useState<boolean>(false);
 
@@ -44,11 +44,11 @@ const EditChatbotProcessor: React.FC<EditChatbotProcessorProps> = ({
       ([key, value]) => ({
         key,
         value: value as string,
-      })
+      }),
     );
     setProcessorData(initialProcessorData);
     setProcessorName(node.processor_name);
-    setTitle(node.title || ""); // Add this line to update the title state when the node prop changes
+    setTitle(node.title || ''); // Add this line to update the title state when the node prop changes
 
     initTE({ Select });
   }, [node]);
@@ -68,7 +68,7 @@ const EditChatbotProcessor: React.FC<EditChatbotProcessorProps> = ({
   };
 
   const addParam = () => {
-    const newParam = { key: "new_key", value: "new_value" };
+    const newParam = { key: 'new_key', value: 'new_value' };
     setProcessorData([...processorData, newParam]);
   };
 
@@ -79,13 +79,13 @@ const EditChatbotProcessor: React.FC<EditChatbotProcessorProps> = ({
   const handleProcessorChange = (value: string) => {
     // Find the selected processor option
     const selectedProcessorOption = processorOptions.find(
-      (option) => option.value === value
+      (option) => option.value === value,
     );
 
     // If the selected processor option has a processor_data preset, apply it
     if (selectedProcessorOption && selectedProcessorOption.processor_data) {
       const presetProcessorData = Object.entries(
-        selectedProcessorOption.processor_data
+        selectedProcessorOption.processor_data,
       ).map(([key, value]) => ({ key, value: String(value) })); // Convert value to string
 
       setProcessorData(presetProcessorData);
@@ -97,7 +97,7 @@ const EditChatbotProcessor: React.FC<EditChatbotProcessorProps> = ({
 
   const handleSave = () => {
     const updatedProcessorData = Object.fromEntries(
-      processorData.map(({ key, value }) => [key, value])
+      processorData.map(({ key, value }) => [key, value]),
     );
     onUpdateProcessor({
       ...node,
@@ -128,8 +128,8 @@ const EditChatbotProcessor: React.FC<EditChatbotProcessorProps> = ({
             <Cog6ToothIcon
               className={`${
                 setupMode
-                  ? " w-6 h-6 text-orange-600"
-                  : " w-6 h-6 text-stone-400"
+                  ? ' w-6 h-6 text-orange-600'
+                  : ' w-6 h-6 text-stone-400'
               } `}
             />
           }
@@ -152,7 +152,7 @@ const EditChatbotProcessor: React.FC<EditChatbotProcessorProps> = ({
       />
 
       {processorData.map(({ key, value }, index) => (
-        <div key={key} className={`${setupMode ? "flex space-x-2" : ""}`}>
+        <div key={key} className={`${setupMode ? 'flex space-x-2' : ''}`}>
           {setupMode ? (
             <>
               <InputWithLabel
@@ -182,12 +182,14 @@ const EditChatbotProcessor: React.FC<EditChatbotProcessorProps> = ({
                 <MinusCircleIcon className="w-6 h-6 text-orange-400" />
               </button>
             </>
-          ) : ["text", "prompt", "textarea", "payload", "headers"].includes(key) ? (
+          ) : ['text', 'prompt', 'textarea', 'payload', 'headers'].includes(
+              key,
+            ) ? (
             <TextareaWithLabel
               id={`textarea_${key}`}
               label={key}
               rows={10}
-              placeholder={"pls enter the prompt"}
+              placeholder={'pls enter the prompt'}
               value={value}
               onChange={(updatedPrompt) =>
                 handleValueChange(updatedPrompt, index)

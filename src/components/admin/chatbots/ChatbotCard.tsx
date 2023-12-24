@@ -1,14 +1,14 @@
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 // import { Chatbot } from "../../../services/ChatbotService";
 import {
   ChartPieIcon,
   DocumentTextIcon,
   PencilSquareIcon,
-} from "@heroicons/react/24/outline";
-import { IChatbot } from "../../../store/models/Chatbot";
+} from '@heroicons/react/24/outline';
+import { IChatbot } from '../../../store/models/Chatbot';
 
 const ChatbotCard: React.FC<{ chatbot: IChatbot }> = ({ chatbot }) => {
-  const defaultImage = "admin/chatbot.png";
+  const defaultImage = 'admin/chatbot.png';
 
   return (
     <Link to={`/admin/chatbots/${chatbot.key}`}>

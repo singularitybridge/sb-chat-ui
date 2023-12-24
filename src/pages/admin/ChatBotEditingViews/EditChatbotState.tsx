@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import InputWithLabel from "../../../components/admin/InputWithLabel";
-import Button from "../../../components/core/Button";
-import { TextareaWithLabel } from "../../../components/admin/TextareaWithLabel";
+import React, { useEffect, useState } from 'react';
+import InputWithLabel from '../../../components/admin/InputWithLabel';
+import Button from '../../../components/core/Button';
+import { TextareaWithLabel } from '../../../components/admin/TextareaWithLabel';
 
 interface EditChatbotStateProps {
   state: {

@@ -6,19 +6,16 @@ import {
   ChatBubbleLeftEllipsisIcon,
   CloudArrowDownIcon,
   MinusIcon,
-} from "@heroicons/react/24/outline";
-import React, { useEffect, useRef, useState } from "react";
-import useSpeechToText from "react-hook-speech-to-text";
-import { ChatFooterProps, ChatState, getVoiceMap } from "./common";
-import { motion } from "framer-motion";
-import { useTimer } from "../../services/useTimer";
-import { AudioCircle } from "./AudioCircle";
+} from '@heroicons/react/24/outline';
+import React, { useEffect, useRef, useState } from 'react';
+import useSpeechToText from 'react-hook-speech-to-text';
+import { ChatFooterProps, ChatState, getVoiceMap } from './common';
+import { motion } from 'framer-motion';
+import { useTimer } from '../../services/useTimer';
+import { AudioCircle } from './AudioCircle';
 import SpeechRecognition, {
   useSpeechRecognition,
-} from "react-speech-recognition";
-
-
-
+} from 'react-speech-recognition';
 
 const ChatFooterVoice: React.FC<ChatFooterProps> = ({
   onSendMessage,
@@ -35,15 +32,15 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
     isMicrophoneAvailable,
   } = useSpeechRecognition();
 
-  const [userInput, setUserInput] = React.useState("");
+  const [userInput, setUserInput] = React.useState('');
   const { timerRunning, startTimer, resetTimer } = useTimer(() => {
-    console.log("send message timer");
+    console.log('send message timer');
     SpeechRecognition.stopListening();
     handleSendMessage();
   });
 
   const [isEnabled, setIsEnabled] = useState(false);
-  const primaryActionButtonStyle = "text-gray-100";
+  const primaryActionButtonStyle = 'text-gray-100';
 
   const getActionIcon = () => {
     switch (chatState) {
@@ -64,7 +61,8 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
     }
   };
 
-  const voiceLanguage = getVoiceMap(autoTranslateTarget).googleCloudRecognitionConfig?.lang
+  const voiceLanguage =
+    getVoiceMap(autoTranslateTarget).googleCloudRecognitionConfig?.lang;
 
   useEffect(() => {
     if (chatState === ChatState.LISTENING) {
@@ -75,7 +73,6 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
   }, [chatState]);
 
   useEffect(() => {
-
     if (transcript) {
       setUserInput(transcript);
       resetTimer();
@@ -84,27 +81,33 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
   }, [transcript]);
 
   useEffect(() => {
-    if (isEnabled && !listening) {      
-      SpeechRecognition.startListening({ continuous: true , language: voiceLanguage});
+    if (isEnabled && !listening) {
+      SpeechRecognition.startListening({
+        continuous: true,
+        language: voiceLanguage,
+      });
     }
   }, [isEnabled]);
 
   const handleSendMessage = () => {
-    if (transcript === "") return;    
+    if (transcript === '') return;
     onSendMessage(transcript);
-    setUserInput("");
-    resetTranscript();    
+    setUserInput('');
+    resetTranscript();
   };
 
   const handleStartSpeechToText = () => {
     if (!isEnabled) return;
 
     resetTranscript();
-    SpeechRecognition.startListening({ continuous: true, language: voiceLanguage });
+    SpeechRecognition.startListening({
+      continuous: true,
+      language: voiceLanguage,
+    });
   };
 
   const handleClearInput = () => {
-    setUserInput("");
+    setUserInput('');
     resetTimer();
     resetTranscript();
   };
@@ -114,7 +117,7 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
     return <span>Browser doesn't support speech recognition.</span>;
   }
 
-  const actionButtonStyle = "h-5 w-5 text-gray-500";
+  const actionButtonStyle = 'h-5 w-5 text-gray-500';
 
   const breathingAnimation = {
     scale: [1, 1.01, 1],
@@ -128,14 +131,14 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
     switch (chatState) {
       case ChatState.LISTENING:
         if (listening) {
-          return "bg-rose-500 rounded-full p-4";
+          return 'bg-rose-500 rounded-full p-4';
         } else {
-          return "bg-rose-300 rounded-full p-4";
+          return 'bg-rose-300 rounded-full p-4';
         }
       case ChatState.PLAYING:
-        return "bg-sky-500 rounded-full p-4";
+        return 'bg-sky-500 rounded-full p-4';
       case ChatState.GETTING_DATA:
-        return "bg-sky-300 rounded-full p-4";
+        return 'bg-sky-300 rounded-full p-4';
     }
   };
 
@@ -155,7 +158,7 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
     <>
       <div className="flex flex-col">
         <div className="relative w-full p-4 text-lg text-slate-500 h-20 flex items-center justify-center">
-          {userInput || ""}
+          {userInput || ''}
         </div>
 
         <div className="flex flex-row justify-center pt-4 pb-4 space-x-8 bg-slate-100">

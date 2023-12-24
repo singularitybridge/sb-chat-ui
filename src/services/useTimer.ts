@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState } from 'react';
 
 const useTimer = (sendMessage: () => void) => {
   const [timerRunning, setTimerRunning] = useState(false);
@@ -25,5 +25,4 @@ const useTimer = (sendMessage: () => void) => {
   return { timerRunning, startTimer, resetTimer };
 };
 
-
-export { useTimer }
+export { useTimer };

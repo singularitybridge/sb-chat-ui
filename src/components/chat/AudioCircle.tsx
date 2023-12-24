@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from 'react';
 
 interface AudioCircleProps {
   active: boolean;
@@ -11,18 +11,17 @@ const AudioCircle: React.FC<AudioCircleProps> = ({
   active,
   scaleFrom,
   scaleTo,
-  children
+  children,
 }) => {
   const [scale, setScale] = useState(scaleFrom);
 
   const getRandomRadius = () => {
-    const minRadius = scaleFrom ;
-    const maxRadius = scaleTo ;
+    const minRadius = scaleFrom;
+    const maxRadius = scaleTo;
     return Math.floor(Math.random() * (maxRadius - minRadius + 1) + minRadius);
   };
 
   useEffect(() => {
-
     if (!active) return;
 
     const interval = setInterval(() => {
@@ -42,10 +41,10 @@ const AudioCircle: React.FC<AudioCircleProps> = ({
             left: '50%',
             top: '50%',
             transform: 'translate(-50%, -50%)',
-            overflow: "hidden",
+            overflow: 'hidden',
             width: `${scale}px`,
             height: `${scale}px`,
-            transition: "width 0.3s ease, height 0.3s ease",
+            transition: 'width 0.3s ease, height 0.3s ease',
           }}
         >
           {children}

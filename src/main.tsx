@@ -1,13 +1,13 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import "regenerator-runtime/runtime";
-import { RecoilRoot } from "recoil";
-import "./index.css";
-import { browserRouter } from "./Router";
-import { RouterProvider } from "react-router-dom";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import 'regenerator-runtime/runtime';
+import { RecoilRoot } from 'recoil';
+import './index.css';
+import { browserRouter } from './Router';
+import { RouterProvider } from 'react-router-dom';
 
-ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <RecoilRoot>
     <RouterProvider router={browserRouter} />
-  </RecoilRoot>
+  </RecoilRoot>,
 );

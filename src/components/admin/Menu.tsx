@@ -1,29 +1,29 @@
-import React, { useEffect, useState } from "react";
-import logo from "../../assets/l3.png";
-import { useLocation } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import logo from '../../assets/l3.png';
+import { useLocation } from 'react-router-dom';
 
 export default function Menu() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuItems, setMenuItems] = useState([
     {
-      name: "Home",
-      link: "/admin",
+      name: 'Home',
+      link: '/admin',
     },
     {
-      name: "Chatbots",
-      link: "/admin/chatbots",
+      name: 'Chatbots',
+      link: '/admin/chatbots',
     },
     {
-      name: "Assistants",
-      link: "/admin/assistants",
+      name: 'Assistants',
+      link: '/admin/assistants',
     },
     {
-      name: "Data",
-      link: "/admin/data",
+      name: 'Data',
+      link: '/admin/data',
     },
     {
-      name: "Setup",
-      link: "/admin/setup",
+      name: 'Setup',
+      link: '/admin/setup',
     },
   ]);
 
@@ -78,13 +78,10 @@ export default function Menu() {
             data-te-navbar-nav-ref
           >
             {menuItems.map((item) => {
-              
               const isActive = item.link === location.pathname;
-const menuStyle = isActive 
-  ? "text-sm text-blue-300 hover:text-neutral-700 focus:text-neutral-700 disabled:text-black/30 dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2"
-  : "text-sm text-neutral-500 hover:text-neutral-700 focus:text-neutral-700 disabled:text-black/30 dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2";
-
-
+              const menuStyle = isActive
+                ? 'text-sm text-blue-300 hover:text-neutral-700 focus:text-neutral-700 disabled:text-black/30 dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2'
+                : 'text-sm text-neutral-500 hover:text-neutral-700 focus:text-neutral-700 disabled:text-black/30 dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2';
 
               return (
                 <li

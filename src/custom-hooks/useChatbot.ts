@@ -1,7 +1,7 @@
 // custom-hooks/useChatbot.tsx
 
-import { useEffect, useState } from "react";
-import { Chatbot } from "../services/ChatbotService";
+import { useEffect, useState } from 'react';
+import { Chatbot } from '../services/ChatbotService';
 
 export const useChatbot = (key: string, sessionId: string) => {
   const [chatbot, setChatbot] = useState<Chatbot | null>(null);
@@ -14,18 +14,18 @@ export const useChatbot = (key: string, sessionId: string) => {
       const response = await fetch(
         `http://127.0.0.1:5000/chatbots/${updatedChatbot.key}`,
         {
-          method: "PUT",
+          method: 'PUT',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify(rest),
-        }
+        },
       );
       const updatedData = await response.json();
-      console.log("Chatbot updated", updatedData);
+      console.log('Chatbot updated', updatedData);
       setChatbot(updatedData);
     } catch (err) {
-      console.error("Error updating chatbot:", err);
+      console.error('Error updating chatbot:', err);
     }
   };
 
@@ -34,38 +34,32 @@ export const useChatbot = (key: string, sessionId: string) => {
       const response = await fetch(
         `http://127.0.0.1:5000/chat_sessions/${sessionId}/set_state`,
         {
-          method: "PUT",
+          method: 'PUT',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({ state: stateId }),
-        }
+        },
       );
-      
-  
+
       const responseData = await response.json();
-  
+
       if (!response.ok) {
         throw new Error(responseData.error);
       }
-  
-      console.log("Chatbot state updated", responseData);
-  
+
+      console.log('Chatbot state updated', responseData);
+
       if (chatbot) {
         setChatbot({
           ...chatbot,
           current_state: stateId,
         });
       }
-      
     } catch (err) {
-      console.error("Error updating chatbot state:", err);
+      console.error('Error updating chatbot state:', err);
     }
   };
-  
-
-
-  
 
   useEffect(() => {
     const fetchChatbot = async () => {
@@ -75,7 +69,7 @@ export const useChatbot = (key: string, sessionId: string) => {
         setChatbot(data);
         setLoading(false);
       } catch (err) {
-        console.error("Error fetching chatbot:", err);
+        console.error('Error fetching chatbot:', err);
         setError(true);
         setLoading(false);
       }
@@ -84,6 +78,12 @@ export const useChatbot = (key: string, sessionId: string) => {
     fetchChatbot();
   }, [key]);
 
-  return { chatbot, setChatbot, loading, error, updateChatbot, setChatbotState };
-
+  return {
+    chatbot,
+    setChatbot,
+    loading,
+    error,
+    updateChatbot,
+    setChatbotState,
+  };
 };

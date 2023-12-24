@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   ArrowLeftOnRectangleIcon,
   ArrowRightOnRectangleIcon,
-} from "@heroicons/react/24/outline";
-import { DataItem } from "../../components/admin/DataItem";
-import clsx from "clsx";
+} from '@heroicons/react/24/outline';
+import { DataItem } from '../../components/admin/DataItem';
+import clsx from 'clsx';
 
 interface LogItemProps {
   icon: React.ReactNode;
@@ -19,11 +19,11 @@ interface LogItemProps {
 
 const textLimit = (text: string, limit: number) => {
   if (text.length > limit) {
-    return text.slice(0, limit) + "...";
+    return text.slice(0, limit) + '...';
   } else {
     return text;
   }
-}
+};
 
 const LogItem: React.FC<LogItemProps> = ({
   icon,
@@ -36,12 +36,12 @@ const LogItem: React.FC<LogItemProps> = ({
   isDebugLog = false, // Default value
 }) => {
   const statusClasses = clsx(
-    "inline-block whitespace-nowrap rounded-xl p-2 text-center align-baseline text-xs font-bold leading-none",
+    'inline-block whitespace-nowrap rounded-xl p-2 text-center align-baseline text-xs font-bold leading-none',
     {
-      "bg-yellow-200  text-gray-600 ": status === "skip",
-      "bg-lime-200 text-gray-600": status === "success",
-      "bg-red-100": status !== "skip" && status !== "success",
-    }
+      'bg-yellow-200  text-gray-600 ': status === 'skip',
+      'bg-lime-200 text-gray-600': status === 'success',
+      'bg-red-100': status !== 'skip' && status !== 'success',
+    },
   );
 
   const itemBackgroundColor = isDebugLog ? 'bg-pink-100' : 'bg-neutral-50'; // Change background color if isDebugLog is true
@@ -57,7 +57,9 @@ const LogItem: React.FC<LogItemProps> = ({
           <div className="mt-3 ml-1 w-5 border-t border-indigo-200"></div>
         )}
 
-        <div className={`flex-1 mb-4 ml-4 block max-w-md rounded-lg ${itemBackgroundColor} p-4 shadow-md shadow-black/5 dark:bg-neutral-700 dark:shadow-black/10`}>
+        <div
+          className={`flex-1 mb-4 ml-4 block max-w-md rounded-lg ${itemBackgroundColor} p-4 shadow-md shadow-black/5 dark:bg-neutral-700 dark:shadow-black/10`}
+        >
           <div className="flex space-x-2 mb-2">
             <div className="inline-block whitespace-nowrap rounded-full bg-orange-100 p-2 text-center align-baseline text-[0.75em] font-bold leading-none text-gray-600 ">
               <ol className="list-reset flex">
@@ -76,10 +78,10 @@ const LogItem: React.FC<LogItemProps> = ({
             </div>
 
             <span className={statusClasses}>
-              {typeof status === "boolean"
+              {typeof status === 'boolean'
                 ? status
-                  ? "Success"
-                  : "Failure"
+                  ? 'Success'
+                  : 'Failure'
                 : status}
             </span>
           </div>

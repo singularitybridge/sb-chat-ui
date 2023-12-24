@@ -1,4 +1,7 @@
-import { ChatSessionSnapshotIn, IChatSession } from "../../store/models/ChatSession";
+import {
+  ChatSessionSnapshotIn,
+  IChatSession,
+} from '../../store/models/ChatSession';
 const API_URL = 'http://127.0.0.1:5000';
 
 interface ICreateChatSessionData {
@@ -6,18 +9,23 @@ interface ICreateChatSessionData {
   chatbot_key: string;
 }
 
-export async function getChatSessions(chatbot_key: string): Promise<IChatSession[]> {
-  const response = await fetch(`${API_URL}/chat_sessions?chatbot_key=${chatbot_key}`);
+export async function getChatSessions(
+  chatbot_key: string,
+): Promise<IChatSession[]> {
+  const response = await fetch(
+    `${API_URL}/chat_sessions?chatbot_key=${chatbot_key}`,
+  );
   const chatSessions = await response.json();
   return chatSessions;
 }
 
-
-export async function createChatSession(data: ICreateChatSessionData): Promise<ChatSessionSnapshotIn> {
+export async function createChatSession(
+  data: ICreateChatSessionData,
+): Promise<ChatSessionSnapshotIn> {
   const response = await fetch(`${API_URL}/chat_sessions`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify(data),
   });
@@ -39,23 +47,30 @@ export async function createChatSession(data: ICreateChatSessionData): Promise<C
   }
 }
 
-
 export async function getChatSessionById(id: string): Promise<IChatSession> {
   const response = await fetch(`http://127.0.0.1:5000/chat_sessions/${id}`);
   const chatSession = await response.json();
   return chatSession;
 }
 
-export async function setChatSessionState(sessionId: string, state: string): Promise<void> {
-  const response = await fetch(`${API_URL}/chat_sessions/${sessionId}/set_state`, {
+export async function setChatSessionState(
+  sessionId: string,
+  state: string,
+): Promise<void> {
+  const response = await fetch(
+    `${API_URL}/chat_sessions/${sessionId}/set_state`,
+    {
       method: 'PUT',
       headers: {
-          'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({ state }),
-  });
+    },
+  );
 
   if (!response.ok) {
-      throw new Error(`Failed to set chat session state! status: ${response.status}`);
+    throw new Error(
+      `Failed to set chat session state! status: ${response.status}`,
+    );
   }
 }
