@@ -25,7 +25,7 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
     <div className="relative mb-2">
       <input
         type={type}
-        value={value}
+        value={value || ''}
         onChange={(e) => onChange(e.target.value)}
         onFocus={onFocus}
         onBlur={onBlur}

@@ -42,7 +42,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ fields, onSubmit }) => {
       initialValues[field.id] = field.value;
       if (field.id === 'identifiers' && Array.isArray(field.value)) {
         setIdentifiersData(
-          field.value.map(({ key, value }) => ({ key, value })),
+          field.value.map(({ key, value }) => ({ key, value }))
         );
       }
     });
@@ -51,7 +51,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ fields, onSubmit }) => {
 
   const handleIdentifiersDataChange = (data: Record<string, string>) => {
     setIdentifiersData(
-      Object.entries(data).map(([key, value]) => ({ key, value })),
+      Object.entries(data).map(([key, value]) => ({ key, value }))
     );
   };
 
@@ -61,7 +61,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ fields, onSubmit }) => {
 
   const handleSubmit = () => {
     const identifiersDataAsRecord = Object.fromEntries(
-      identifiersData.map(({ key, value }) => [key, value]),
+      identifiersData.map(({ key, value }) => [key, value])
     );
 
     const updatedValues = {
@@ -87,6 +87,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ fields, onSubmit }) => {
           case 'textarea':
             return (
               <TextareaWithLabel
+                key={field.id} // Add this line
                 label={field.label}
                 id={field.id}
                 value={values[field.id]}
@@ -96,6 +97,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ fields, onSubmit }) => {
           case 'key-value-list':
             return (
               <KeyValueList
+                key={field.id} // Add this line
                 title="Identifiers"
                 description="Identifiers are used to connect assistant to external sources"
                 initialData={identifiersData}
@@ -105,6 +107,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ fields, onSubmit }) => {
           default:
             return (
               <InputWithLabel
+                key={field.id} // Add this line
                 type="text"
                 label={field.label}
                 id={field.id}

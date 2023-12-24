@@ -3,15 +3,14 @@ import React from 'react'; // Add this line
 import { useParams } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { useRootStore } from '../../store/common/RootStoreContext';
-import {
-  AssistantKeys,
-} from '../../store/models/Assistant';
+import { AssistantKeys } from '../../store/models/Assistant';
 import { withPage } from '../../components/admin/HOC/withPage';
 import {
   DynamicForm,
   FieldConfig,
   FormValues,
 } from '../../components/DynamicForm';
+import { toJS } from 'mobx';
 
 const EditAssistantView: React.FC = observer(() => {
   const { key } = useParams<{ key: string }>();
@@ -37,10 +36,12 @@ const EditAssistantView: React.FC = observer(() => {
   ];
 
   const formFields: FieldConfig[] = fieldKeys.map((key) => {
+    
     const fieldKeyString = String(key);
+
     return {
       label: fieldKeyString.charAt(0).toUpperCase() + fieldKeyString.slice(1),
-      value: assistant ? (assistant as any)[fieldKeyString] : '', // Using type assertion here
+      value: assistant ? toJS((assistant as any)[fieldKeyString]) : '', // Using type assertion here
       id: fieldKeyString,
     };
   });
@@ -63,6 +64,6 @@ const EditAssistantView: React.FC = observer(() => {
 
 const EditAssistantPage = withPage(
   'AI Assistants',
-  'manage your ai agents here',
+  'manage your ai agents here'
 )(EditAssistantView);
 export { EditAssistantPage };
