@@ -1,10 +1,8 @@
 import {
-  flow,
   types,
   Instance,
   SnapshotIn,
   SnapshotOut,
-  getSnapshot,
 } from 'mobx-state-tree';
 
 const Identifier = types.model('Identifier', {

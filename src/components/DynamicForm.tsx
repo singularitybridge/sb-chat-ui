@@ -1,3 +1,4 @@
+// src/components/DynamicForm.tsx
 import React, { useEffect, useState } from 'react';
 import InputWithLabel from './admin/InputWithLabel';
 import Button from './core/Button';
@@ -6,24 +7,32 @@ import { KeyValue, KeyValueList } from './KeyValueList';
 
 export type FieldType = 'input' | 'textarea' | 'key-value-list';
 
-export const getFieldTypeByKey = (key: string): FieldType => {
-  switch (key) {
-    case 'description':
-      return 'textarea';
-    case 'identifiers':
-      return 'key-value-list';
-    default:
-      return 'input';
-  }
-};
-
-export interface FieldConfig {
+export interface BaseFieldConfig {
   id: string;
   label: string;
+}
+
+export interface InputFieldConfig extends BaseFieldConfig {
+  type: 'input';
   value: string;
 }
 
-export interface FormValues extends Record<string, string> {}
+export interface TextareaFieldConfig extends BaseFieldConfig {
+  type: 'textarea';
+  value: string;
+}
+
+export interface KeyValueListFieldConfig extends BaseFieldConfig {
+  type: 'key-value-list';
+  value: KeyValue[];
+}
+
+export type FieldConfig =
+  | InputFieldConfig
+  | TextareaFieldConfig
+  | KeyValueListFieldConfig;
+
+export interface FormValues extends Record<string, string | KeyValue[]> {}
 
 export interface DynamicFormProps {
   fields: FieldConfig[];
@@ -32,45 +41,23 @@ export interface DynamicFormProps {
 
 const DynamicForm: React.FC<DynamicFormProps> = ({ fields, onSubmit }) => {
   const [values, setValues] = useState<FormValues>({});
-  const [identifiersData, setIdentifiersData] = useState<KeyValue[]>([]);
 
   useEffect(() => {
-    console.log('loading fields', fields);
-
     const initialValues: FormValues = {};
     fields.forEach((field) => {
       initialValues[field.id] = field.value;
-      if (field.id === 'identifiers' && Array.isArray(field.value)) {
-        setIdentifiersData(
-          field.value.map(({ key, value }) => ({ key, value }))
-        );
-      }
     });
+
     setValues(initialValues);
   }, [fields]);
 
-  const handleIdentifiersDataChange = (data: Record<string, string>) => {
-    setIdentifiersData(
-      Object.entries(data).map(([key, value]) => ({ key, value }))
-    );
-  };
-
-  const handleChange = (id: string, newValue: string) => {
+  const handleChange = (id: string, newValue: string | KeyValue[]) => {
     setValues((prevValues) => ({ ...prevValues, [id]: newValue }));
   };
 
   const handleSubmit = () => {
-    const identifiersDataAsRecord = Object.fromEntries(
-      identifiersData.map(({ key, value }) => [key, value])
-    );
-
-    const updatedValues = {
-      ...values,
-      identifiers: identifiersDataAsRecord,
-    };
-    console.log('object', updatedValues);
-    onSubmit({});
-    // onSubmit(updatedValues);
+    console.log('object', values);
+    onSubmit(values);
   };
 
   return (
@@ -81,37 +68,36 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ fields, onSubmit }) => {
       }}
     >
       {fields.map((field) => {
-        const fieldType = getFieldTypeByKey(field.id);
-
-        switch (fieldType) {
+        switch (field.type) {
           case 'textarea':
             return (
               <TextareaWithLabel
-                key={field.id} // Add this line
+                key={field.id}
                 label={field.label}
                 id={field.id}
-                value={values[field.id]}
+                value={values[field.id] as string}
                 onChange={(newValue) => handleChange(field.id, newValue)}
               />
             );
           case 'key-value-list':
             return (
               <KeyValueList
-                key={field.id} // Add this line
+                key={field.id}
                 title="Identifiers"
                 description="Identifiers are used to connect assistant to external sources"
-                initialData={identifiersData}
-                onDataChange={handleIdentifiersDataChange}
+                initialData={values[field.id] as KeyValue[] || []} 
+                // onDataChange={(newValue) => handleChange(field.id, newValue)}
+                onDataChange={(newValue) => { console.log('new value', newValue);}}
               />
             );
           default:
             return (
               <InputWithLabel
-                key={field.id} // Add this line
+                key={field.id}
                 type="text"
                 label={field.label}
                 id={field.id}
-                value={values[field.id]}
+                value={values[field.id] as string}
                 onChange={(newValue) => handleChange(field.id, newValue)}
               />
             );

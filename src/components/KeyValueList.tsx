@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Input } from './Input';
 import { IconButton } from './admin/IconButton';
 import {
@@ -26,6 +26,10 @@ const KeyValueList: React.FC<KeyValueListProps> = ({
   onDataChange,
 }) => {
   const [keyValueData, setKeyValueData] = useState<KeyValue[]>(initialData);
+
+  useEffect(() => {
+    setKeyValueData(initialData);
+  }, [initialData]); // Update state when initialData changes
 
   const constructData = () => {
     const data: Record<string, string> = {};

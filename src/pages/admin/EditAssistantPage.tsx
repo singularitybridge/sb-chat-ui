@@ -8,6 +8,7 @@ import { withPage } from '../../components/admin/HOC/withPage';
 import {
   DynamicForm,
   FieldConfig,
+  FieldType,
   FormValues,
 } from '../../components/DynamicForm';
 import { toJS } from 'mobx';
@@ -36,14 +37,17 @@ const EditAssistantView: React.FC = observer(() => {
   ];
 
   const formFields: FieldConfig[] = fieldKeys.map((key) => {
-    
+
     const fieldKeyString = String(key);
+    const fieldType : FieldType = fieldKeyString === 'identifiers' ? 'key-value-list' : 'input';
 
     return {
       label: fieldKeyString.charAt(0).toUpperCase() + fieldKeyString.slice(1),
       value: assistant ? toJS((assistant as any)[fieldKeyString]) : '', // Using type assertion here
       id: fieldKeyString,
+      type: fieldType,
     };
+
   });
 
   const handleSubmit = (values: FormValues) => {
