@@ -11,11 +11,14 @@ import { withPage } from "../../components/admin/HOC/withPage";
 import {
   DynamicForm,
   FieldConfig,
+  FieldType,
   FormValues,
 } from "../../components/DynamicForm";
 import { KeyValueList } from "../../components/KeyValueList";
 
+
 const EditAssistantView: React.FC = observer(() => {
+
   const { key } = useParams<{ key: string }>();
   const rootStore = useRootStore();
   const assistant = key ? rootStore.getAssistantById(key) : null;
@@ -41,7 +44,6 @@ const EditAssistantView: React.FC = observer(() => {
   const formFields: FieldConfig[] = fieldKeys.map((key) => {
     const fieldKeyString = String(key);
     return {
-      type: fieldKeyString === "description" ? "textarea" : "input",
       label: fieldKeyString.charAt(0).toUpperCase() + fieldKeyString.slice(1),
       value: assistant ? (assistant as any)[fieldKeyString] : "", // Using type assertion here
       id: fieldKeyString,
@@ -57,19 +59,6 @@ const EditAssistantView: React.FC = observer(() => {
       <div className="flex w-full">
         <div className="w-1/2">
           <DynamicForm fields={formFields} onSubmit={handleSubmit} />
-          <KeyValueList
-            title="Identifiers"
-            description="identifiers are used to connect assistant to external sources"
-            initialData={[
-              {
-                key: "test",
-                value: "test",
-              },
-            ]}
-            onDataChange={(data) => {
-              console.log(data);
-            }}
-          />
         </div>
         <div className="w-1/2">Test your assistant here</div>
       </div>

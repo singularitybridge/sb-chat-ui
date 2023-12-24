@@ -1,15 +1,27 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import InputWithLabel from "./admin/InputWithLabel";
 import Button from "./core/Button";
 import { TextareaWithLabel } from "./admin/TextareaWithLabel";
+import { KeyValue, KeyValueList } from "./KeyValueList";
+import { Input } from "./Input";
 
-type FieldType = "input" | "textarea";
+export type FieldType = "input" | "textarea" | "key-value-list";
+
+export const getFieldTypeByKey = (key: string): FieldType => {
+  switch (key) {
+    case "description":
+      return "textarea";
+    case "identifiers":
+      return "key-value-list";
+    default:
+      return "input";
+  }
+};
 
 export interface FieldConfig {
-  type: FieldType;
+  id: string;
   label: string;
   value: string;
-  id: string;
 }
 
 export interface FormValues extends Record<string, string> {}
@@ -20,22 +32,44 @@ export interface DynamicFormProps {
 }
 
 const DynamicForm: React.FC<DynamicFormProps> = ({ fields, onSubmit }) => {
-  const initialState = fields.reduce((acc, field) => {
-    acc[field.id] = field.value;
-    return acc;
-  }, {} as { [key: string]: string });
+  const [values, setValues] = useState<FormValues>({});
+  const [identifiersData, setIdentifiersData] = useState<KeyValue[]>([]);
 
-  const [values, setValues] = useState(initialState);
+  useEffect(() => {
+    const initialValues: FormValues = {};
+    fields.forEach((field) => {
+      initialValues[field.id] = field.value;
+      if (field.id === "identifiers" && Array.isArray(field.value)) {
+        setIdentifiersData(
+          field.value.map(({ key, value }) => ({ key, value }))
+        );
+      }
+    });
+    setValues(initialValues);
+  }, [fields]);
 
-  const handleChange =
-    (id: string) =>
-    (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const newValue = event.target.value;
-      setValues({ ...values, [id]: newValue });
-    };
+  const handleIdentifiersDataChange = (data: Record<string, string>) => {
+    setIdentifiersData(
+      Object.entries(data).map(([key, value]) => ({ key, value }))
+    );
+  };
+
+  const handleChange = (id: string, newValue: string) => {
+    setValues((prevValues) => ({ ...prevValues, [id]: newValue }));
+  };
 
   const handleSubmit = () => {
-    onSubmit(values);
+    const identifiersDataAsRecord = Object.fromEntries(
+      identifiersData.map(({ key, value }) => [key, value])
+    );
+
+    const updatedValues = {
+      ...values,
+      identifiers: identifiersDataAsRecord,
+    };
+    console.log("object", updatedValues);
+    onSubmit({});
+    // onSubmit(updatedValues);
   };
 
   return (
@@ -45,37 +79,40 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ fields, onSubmit }) => {
         handleSubmit();
       }}
     >
-      {fields.map((field) =>
-        field.type === "input" ? (
-          <InputWithLabel
-            key={field.id}
-            id={field.id}
-            label={field.label}
-            type="text"
-            value={values[field.id]}
-            onChange={(value) =>
-              handleChange(field.id)({
-                target: { value },
-              } as ChangeEvent<HTMLInputElement>)
-            }
-          />
-        ) : (
-          <TextareaWithLabel
-            key={field.id}
-            id={field.id}
-            label={field.label}
-            rows={10}
-            placeholder="Please enter the prompt"
-            value={values[field.id]}
-            onChange={(value) =>
-              handleChange(field.id)({
-                target: { value },
-              } as ChangeEvent<HTMLTextAreaElement>)
-            }
-          />
-        )
-      )}
+      {fields.map((field) => {
+        const fieldType = getFieldTypeByKey(field.id);
 
+        switch (fieldType) {
+          case "textarea":
+            return (
+              <TextareaWithLabel
+                label={field.label}
+                id={field.id}
+                value={values[field.id]}
+                onChange={(newValue) => handleChange(field.id, newValue)}
+              />
+            );
+          case "key-value-list":
+            return (
+              <KeyValueList
+                title="Identifiers"
+                description="Identifiers are used to connect assistant to external sources"
+                initialData={identifiersData}
+                onDataChange={handleIdentifiersDataChange}
+              />
+            );
+          default:
+            return (
+              <InputWithLabel
+                type="text"
+                label={field.label}
+                id={field.id}
+                value={values[field.id]}
+                onChange={(newValue) => handleChange(field.id, newValue)}
+              />
+            );
+        }
+      })}
       <Button type="submit">Save Changes</Button>
     </form>
   );

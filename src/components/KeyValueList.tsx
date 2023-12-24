@@ -7,7 +7,7 @@ import {
   PlusCircleIcon,
 } from "@heroicons/react/24/outline";
 
-interface KeyValue {
+export interface KeyValue {
   key: string;
   value: string;
 }
