@@ -1,4 +1,3 @@
-// src/components/DynamicForm.tsx
 import React, { useEffect, useState } from 'react';
 import InputWithLabel from './admin/InputWithLabel';
 import Button from './core/Button';
@@ -56,7 +55,6 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ fields, onSubmit }) => {
   };
 
   const handleSubmit = () => {
-    console.log('object', values);
     onSubmit(values);
   };
 
@@ -86,8 +84,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ fields, onSubmit }) => {
                 title="Identifiers"
                 description="Identifiers are used to connect assistant to external sources"
                 initialData={values[field.id] as KeyValue[] || []} 
-                // onDataChange={(newValue) => handleChange(field.id, newValue)}
-                onDataChange={(newValue) => { console.log('new value', newValue);}}
+                onDataChange={(newValue) => handleChange(field.id, newValue)}
               />
             );
           default:

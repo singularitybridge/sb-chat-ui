@@ -17,7 +17,7 @@ interface KeyValueListProps {
   title: string;
   description: string;
   initialData: KeyValue[];
-  onDataChange: (data: Record<string, string>) => void;
+  onDataChange: (data: KeyValue[]) => void;
 }
 
 const KeyValueList: React.FC<KeyValueListProps> = ({
@@ -26,32 +26,35 @@ const KeyValueList: React.FC<KeyValueListProps> = ({
   initialData,
   onDataChange,
 }) => {
+
   const [keyValueData, setKeyValueData] = useState<KeyValue[]>([]);
+  const [initialKeyValueData, setInitialKeyValueData] = useState<KeyValue[]>([]);
 
   useEffect(() => {
     setKeyValueData(_.cloneDeep(initialData));
+    if (initialKeyValueData.length === 0) {
+      setInitialKeyValueData(_.cloneDeep(initialData));
+    }
   }, [initialData]);
-    
-  const constructData = () => {
-    const data: Record<string, string> = {};
-    keyValueData.forEach(({ key, value }) => {
-      data[key] = value;
-    });
-    onDataChange(data);
+
+  const resetToInitialData = () => {
+    setKeyValueData(_.cloneDeep(initialKeyValueData));
+    onDataChange(initialKeyValueData);
   };
+
 
   const handleKeyChange = (newValue: string, index: number) => {
     const updatedData = [...keyValueData];
     updatedData[index].key = newValue;
     setKeyValueData(updatedData);
-    constructData();
+    onDataChange(keyValueData);
   };
 
   const handleValueChange = (newValue: string, index: number) => {
     const updatedData = [...keyValueData];
     updatedData[index].value = newValue;
     setKeyValueData(updatedData);
-    constructData();
+    onDataChange(keyValueData);
   };
 
   const addParam = () => {
@@ -62,11 +65,9 @@ const KeyValueList: React.FC<KeyValueListProps> = ({
     const updatedData = [...keyValueData];
     updatedData.splice(index, 1);
     setKeyValueData(updatedData);
+    onDataChange(updatedData);
   };
 
-  const resetToInitialData = () => {
-    setKeyValueData(initialData);
-  };
 
   return (
     <div>

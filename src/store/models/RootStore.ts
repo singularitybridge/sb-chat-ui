@@ -1,6 +1,6 @@
 import { types, flow, applySnapshot, Instance } from 'mobx-state-tree';
 import { Chatbot } from './Chatbot';
-import { ChatSession, IChatSession } from './ChatSession';
+import { ChatSession } from './ChatSession';
 import { UserProfile } from './UserProfile';
 import {
   createChatSession,
@@ -10,7 +10,6 @@ import {
 import { getChatbots } from '../../services/api/chatbotService';
 import { Assistant } from './Assistant';
 import { getAssistants } from '../../services/api/assistantService';
-import { toJS } from 'mobx';
 
 const RootStore = types
   .model('RootStore', {
@@ -31,8 +30,7 @@ const RootStore = types
     /// refactor
     loadAssistants: flow(function* () {
       try {
-        const assistants = yield getAssistants();
-        console.log('assistants', assistants);
+        const assistants = yield getAssistants();        
         applySnapshot(self.assistants, assistants);
         self.assistantsLoaded = true;
       } catch (error) {
@@ -41,8 +39,6 @@ const RootStore = types
     }),
 
     getAssistantById: (_id: string) => {
-      console.log('try to get assistant by id', _id);
-      console.log(toJS(self.assistants));
       return self.assistants.find((assistant) => assistant._id === _id);
     },
 
