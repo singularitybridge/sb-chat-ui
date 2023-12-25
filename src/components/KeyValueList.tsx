@@ -6,6 +6,7 @@ import {
   MinusCircleIcon,
   PlusCircleIcon,
 } from '@heroicons/react/24/outline';
+import _ from 'lodash';
 
 export interface KeyValue {
   key: string;
@@ -25,12 +26,12 @@ const KeyValueList: React.FC<KeyValueListProps> = ({
   initialData,
   onDataChange,
 }) => {
-  const [keyValueData, setKeyValueData] = useState<KeyValue[]>(initialData);
+  const [keyValueData, setKeyValueData] = useState<KeyValue[]>([]);
 
   useEffect(() => {
-    setKeyValueData(initialData);
-  }, [initialData]); // Update state when initialData changes
-
+    setKeyValueData(_.cloneDeep(initialData));
+  }, [initialData]);
+    
   const constructData = () => {
     const data: Record<string, string> = {};
     keyValueData.forEach(({ key, value }) => {
@@ -43,14 +44,14 @@ const KeyValueList: React.FC<KeyValueListProps> = ({
     const updatedData = [...keyValueData];
     updatedData[index].key = newValue;
     setKeyValueData(updatedData);
-    constructData(); // Add this line
+    constructData();
   };
 
   const handleValueChange = (newValue: string, index: number) => {
     const updatedData = [...keyValueData];
     updatedData[index].value = newValue;
     setKeyValueData(updatedData);
-    constructData(); // Add this line
+    constructData();
   };
 
   const addParam = () => {

@@ -648,6 +648,11 @@
   "resolved" "https://registry.npmjs.org/@types/json-schema/-/json-schema-7.0.15.tgz"
   "version" "7.0.15"
 
+"@types/lodash@^4.14.202":
+  "integrity" "sha512-OvlIYQK9tNneDlS0VN54LLd5uiPCBOp7gS5Z0f1mjoJYBrtStzgmJBxONW3U6OZqdtNzZPmn9BS/7WI7BFFcFQ=="
+  "resolved" "https://registry.npmjs.org/@types/lodash/-/lodash-4.14.202.tgz"
+  "version" "4.14.202"
+
 "@types/mustache@^4.2.2":
   "integrity" "sha512-MUSpfpW0yZbTgjekDbH0shMYBUD+X/uJJJMm9LXN1d5yjl5lCY1vN/eWKD6D1tOtjA6206K0zcIPnUaFMurdNA=="
   "resolved" "https://registry.npmjs.org/@types/mustache/-/mustache-4.2.2.tgz"
@@ -2220,7 +2225,7 @@
   "resolved" "https://registry.npmjs.org/lodash.merge/-/lodash.merge-4.6.2.tgz"
   "version" "4.6.2"
 
-"lodash@^4.13.1":
+"lodash@^4.13.1", "lodash@^4.17.21":
   "integrity" "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="
   "resolved" "https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz"
   "version" "4.17.21"
