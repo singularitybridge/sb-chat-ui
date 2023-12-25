@@ -35,12 +35,22 @@ const EditAssistantView: React.FC = observer(() => {
     'language',
     'identifiers',
   ];
-
+  const fieldTypeMap: Partial<Record<AssistantKeys, FieldType>> = {
+    assistantId: 'input',
+    name: 'input',
+    description: 'textarea',
+    introMessage: 'input',
+    voice: 'input',
+    language: 'input',
+    identifiers: 'key-value-list',
+  };
+  
+  
   const formFields: FieldConfig[] = fieldKeys.map((key) => {
 
     const fieldKeyString = String(key);
-    const fieldType : FieldType = fieldKeyString === 'identifiers' ? 'key-value-list' : 'input';
-
+    const fieldType = fieldTypeMap[key] || 'input'; 
+  
     return {
       label: fieldKeyString.charAt(0).toUpperCase() + fieldKeyString.slice(1),
       value: assistant ? toJS((assistant as any)[fieldKeyString]) : '', // Using type assertion here
