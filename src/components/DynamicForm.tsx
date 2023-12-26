@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import InputWithLabel from './admin/InputWithLabel';
-import Button from './core/Button';
 import { TextareaWithLabel } from './admin/TextareaWithLabel';
 import { KeyValue, KeyValueList } from './KeyValueList';
+import LoadingButton from './core/LoadingButton';
 
 export type FieldType = 'input' | 'textarea' | 'key-value-list';
 
@@ -36,9 +36,10 @@ export interface FormValues extends Record<string, string | KeyValue[]> {}
 export interface DynamicFormProps {
   fields: FieldConfig[];
   onSubmit: (values: FormValues) => void;
+  isLoading?: boolean;
 }
 
-const DynamicForm: React.FC<DynamicFormProps> = ({ fields, onSubmit }) => {
+const DynamicForm: React.FC<DynamicFormProps> = ({ fields, onSubmit, isLoading }) => {
   const [values, setValues] = useState<FormValues>({});
 
   useEffect(() => {
@@ -100,7 +101,10 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ fields, onSubmit }) => {
             );
         }
       })}
-      <Button type="submit">Save Changes</Button>
+      
+      <LoadingButton additionalClassName='mt-2' type="submit" isLoading={isLoading || false}>
+        Save Changes
+      </LoadingButton>
     </form>
   );
 };

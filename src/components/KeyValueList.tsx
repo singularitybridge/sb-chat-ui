@@ -71,7 +71,7 @@ const KeyValueList: React.FC<KeyValueListProps> = ({
 
   return (
     <div>
-      <div className="flex justify-between items-center mt-3">
+      <div className="flex justify-between items-center mt-4">
         <h2 className="text-xl">{title}</h2>
         <div className="space-x-2">
           <IconButton
@@ -84,7 +84,7 @@ const KeyValueList: React.FC<KeyValueListProps> = ({
           />
         </div>
       </div>
-      <p className="mb-4 text-sm">{description}</p>
+      <p className="mb-2 text-sm">{description}</p>
       {keyValueData.map(({ key, value }, index) => (
         <div key={index} className="flex items-center space-x-2 mb-2">
           <Input

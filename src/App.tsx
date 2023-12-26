@@ -1,9 +1,13 @@
-import React, { SVGProps, useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Header } from './components/Header';
 import { SideMenu } from './components/SideMenu';
-import { Outlet, useParams } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { RootStore } from './store/models/RootStore';
 import { RootStoreProvider } from './store/common/RootStoreContext';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useEventEmitter } from './services/mittEmitter';
+import { EVENT_ASSISTANT_UPDATED } from './utils/eventNames';
 
 const rootStore = RootStore.create({
   chatbots: [],
@@ -14,13 +18,23 @@ const rootStore = RootStore.create({
     activeChatBot: 'remove me',
     isAudioPlaying: false,
   },
-  // activeChatbot: null,
 });
 
+
+
+
+
 const App = () => {
+  
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [screenHeight, setScreenHeight] = useState(0);
-  const { id } = useParams<{ id: string }>();
+
+  const toastHandler = useCallback((message: string) => {    
+    toast(message);
+  }, []);
+
+  useEventEmitter<string>(EVENT_ASSISTANT_UPDATED, toastHandler);
+
 
   const getHeight = useCallback(
     () =>
@@ -70,6 +84,7 @@ const App = () => {
       >
         <Header onMenuClick={() => setIsMenuOpen(true)} />
         <SideMenu isOpen={isMenuOpen} closeMenu={() => setIsMenuOpen(false)} />
+        <ToastContainer />
         <Outlet />
       </div>
     </RootStoreProvider>

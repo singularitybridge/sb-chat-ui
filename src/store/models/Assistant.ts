@@ -20,6 +20,8 @@ const Assistant = types.model('Assistant', {
   voice: types.string,
   language: types.string,
   identifiers: types.array(Identifier),
+  llmModel: types.optional(types.string, ''),
+  llmPrompt: types.optional(types.string, ''),
 });
 
 type IAssistant = Instance<typeof Assistant>;

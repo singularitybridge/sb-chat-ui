@@ -8,8 +8,10 @@ import {
   setChatSessionState,
 } from '../../services/api/chatSessionService';
 import { getChatbots } from '../../services/api/chatbotService';
-import { Assistant } from './Assistant';
-import { getAssistants } from '../../services/api/assistantService';
+import { Assistant, IAssistant } from './Assistant';
+import { getAssistants, updateAssistant } from '../../services/api/assistantService';
+import { emitter } from '../../services/mittEmitter';
+import { EVENT_ASSISTANT_UPDATED } from '../../utils/eventNames';
 
 const RootStore = types
   .model('RootStore', {
@@ -35,6 +37,19 @@ const RootStore = types
         self.assistantsLoaded = true;
       } catch (error) {
         console.error('Failed to load assistants', error);
+      }
+    }),
+
+    updateAssistant: flow(function* (_id: string, assistant: IAssistant) {
+      try {
+        const updatedAssistant = yield updateAssistant(_id, assistant);
+        const index = self.assistants.findIndex(ass => ass._id === _id);
+        
+        self.assistants[index] = updatedAssistant;
+        emitter.emit(EVENT_ASSISTANT_UPDATED, 'Record has been updated successfully');
+
+      } catch (error) {
+        console.error('Failed to update assistant', error);
       }
     }),
 
