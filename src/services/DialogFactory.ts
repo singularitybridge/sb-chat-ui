@@ -1,4 +1,4 @@
-import { EditAssistantView } from '../pages/admin/EditAssistantPage';
+import { NewAssistantView } from '../pages/NewAssistantView';
 import { EVENT_SHOW_ADD_ASSISTANT_MODAL, EventType } from '../utils/eventNames';
 import React from 'react';
 
@@ -15,7 +15,7 @@ const dialogComponentFactory = (
     case EVENT_SHOW_ADD_ASSISTANT_MODAL:
       return {
         title: eventData.title || 'Create New Assistant',
-        component: React.createElement(EditAssistantView),
+        component: React.createElement(NewAssistantView),
       };
 
     default:
