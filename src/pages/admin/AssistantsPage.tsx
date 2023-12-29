@@ -1,13 +1,10 @@
-import React  from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { useRootStore } from '../../store/common/RootStoreContext';
 import { Table } from '../../components/Table';
 import { toJS } from 'mobx';
-import {
-  AssistantKeys,
-  IAssistant,
-} from '../../store/models/Assistant';
+import { AssistantKeys, IAssistant } from '../../store/models/Assistant';
 import { withPage } from '../../components/admin/HOC/withPage';
 import { convertToStringArray } from '../../utils/utils';
 
@@ -39,6 +36,6 @@ const AssistantsView: React.FC = observer(() => {
 
 const AssistantsPage = withPage(
   'AI Assistants',
-  'manage your ai agents here',
+  'manage your ai agents here'
 )(AssistantsView);
 export { AssistantsPage };

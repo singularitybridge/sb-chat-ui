@@ -9,6 +9,7 @@ interface LoadingButtonProps extends ButtonProps {
 const LoadingButton: React.FC<LoadingButtonProps> = ({
     isLoading,
     children,
+    additionalClassName,
     ...props
 }) => {
     const className = clsx(
@@ -19,7 +20,7 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({
         'mr-2 mb-2',
         'rounded-md',
         'text-base',
-        props.additionalClassName,
+        additionalClassName,
     );
 
     return (

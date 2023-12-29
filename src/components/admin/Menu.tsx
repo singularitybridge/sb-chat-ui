@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import logo from '../../assets/l3.png';
 import { useLocation } from 'react-router-dom';
 
 export default function Menu() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [menuItems, setMenuItems] = useState([
+  const menuItems = [
     {
       name: 'Home',
       link: '/admin',
@@ -25,9 +24,15 @@ export default function Menu() {
       name: 'Setup',
       link: '/admin/setup',
     },
-  ]);
+  ];
 
   const location = useLocation();
+  const isMenuItemActive = (menuItemLink: string) => {
+    if (menuItemLink === '/admin') {
+      return location.pathname === menuItemLink;
+    }
+    return location.pathname.startsWith(menuItemLink);
+  };
 
   return (
     <nav
@@ -78,7 +83,8 @@ export default function Menu() {
             data-te-navbar-nav-ref
           >
             {menuItems.map((item) => {
-              const isActive = item.link === location.pathname;
+              const isActive = isMenuItemActive(item.link);
+
               const menuStyle = isActive
                 ? 'text-sm text-blue-300 hover:text-neutral-700 focus:text-neutral-700 disabled:text-black/30 dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2'
                 : 'text-sm text-neutral-500 hover:text-neutral-700 focus:text-neutral-700 disabled:text-black/30 dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2';
