@@ -1,24 +1,15 @@
 import React from 'react';
 import { IconButton } from '../IconButton';
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
-import { ModalDialog } from '../../core/ModalDialog';
+import { emitter } from '../../../services/mittEmitter';
+import { EVENT_SHOW_ADD_ASSISTANT_MODAL } from '../../../utils/eventNames';
 
 const withPage =
   (title: string, description: string) =>
   (WrappedComponent: React.ComponentType<any>) => {
     const WithPageComponent = (props: any) => {
-      const [isOpen, setIsOpen] = React.useState(false);
-
       return (
         <>
-          <ModalDialog
-            title="Add new"
-            body="body"
-            isOpen={isOpen}
-            onClose={() => setIsOpen(false)}
-            onSave={() => {}}
-          />
-
           <div className="flex justify-between items-center">
             <div>
               <h3 className="text-3xl font-bold mb-1">{title}</h3>
@@ -30,7 +21,7 @@ const withPage =
               <IconButton
                 icon={<PlusCircleIcon className="w-6 h-6 text-stone-400" />}
                 onClick={() => {
-                  setIsOpen(true);
+                  emitter.emit(EVENT_SHOW_ADD_ASSISTANT_MODAL, 'Add Assistant');
                 }}
                 data-te-toggle="modal"
                 data-te-target="#exampleModal"

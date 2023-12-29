@@ -8,6 +8,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useEventEmitter } from './services/mittEmitter';
 import { EVENT_ASSISTANT_UPDATED } from './utils/eventNames';
+import { DialogManager } from './components/admin/DialogManager';
 
 const rootStore = RootStore.create({
   chatbots: [],
@@ -20,26 +21,20 @@ const rootStore = RootStore.create({
   },
 });
 
-
-
-
-
 const App = () => {
-  
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [screenHeight, setScreenHeight] = useState(0);
 
-  const toastHandler = useCallback((message: string) => {    
+  const toastHandler = useCallback((message: string) => {
     toast(message);
   }, []);
 
   useEventEmitter<string>(EVENT_ASSISTANT_UPDATED, toastHandler);
 
-
   const getHeight = useCallback(
     () =>
       window.visualViewport ? window.visualViewport.height : window.innerHeight,
-    [],
+    []
   );
 
   const handleClick = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
@@ -85,6 +80,7 @@ const App = () => {
         <Header onMenuClick={() => setIsMenuOpen(true)} />
         <SideMenu isOpen={isMenuOpen} closeMenu={() => setIsMenuOpen(false)} />
         <ToastContainer />
+        <DialogManager />
         <Outlet />
       </div>
     </RootStoreProvider>

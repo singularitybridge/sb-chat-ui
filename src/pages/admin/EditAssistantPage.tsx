@@ -91,4 +91,4 @@ const EditAssistantPage = withPage(
   'Edit AI Assistant',
   'update your ai agents here'
 )(EditAssistantView);
-export { EditAssistantPage };
+export { EditAssistantPage, EditAssistantView };
