@@ -19,6 +19,12 @@ const AssistantsView: React.FC = observer(() => {
     'voice',
   ];
 
+  const handleDelete = (row: IAssistant) => {
+    
+    rootStore.deleteAssistant(row._id);
+    
+  }
+
   return (
     <>
       <div className="flex w-full">
@@ -28,6 +34,7 @@ const AssistantsView: React.FC = observer(() => {
           onRowClick={(row: IAssistant) =>
             navigate(`/admin/assistants/${row._id}`)
           }
+          onDelete={handleDelete}
         />
       </div>
     </>

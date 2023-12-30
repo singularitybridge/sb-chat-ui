@@ -9,9 +9,9 @@ import {
 } from '../../services/api/chatSessionService';
 import { getChatbots } from '../../services/api/chatbotService';
 import { Assistant, IAssistant } from './Assistant';
-import { getAssistants, updateAssistant } from '../../services/api/assistantService';
+import { addAssistant, deleteAssistant, getAssistants, updateAssistant } from '../../services/api/assistantService';
 import { emitter } from '../../services/mittEmitter';
-import { EVENT_ASSISTANT_UPDATED } from '../../utils/eventNames';
+import { EVENT_ASSISTANT_CREATED, EVENT_ASSISTANT_DELETED, EVENT_ASSISTANT_UPDATED, EVENT_CLOSE_MODAL } from '../../utils/eventNames';
 
 const RootStore = types
   .model('RootStore', {
@@ -40,6 +40,17 @@ const RootStore = types
       }
     }),
 
+    createAssistant: flow(function* (assistant: IAssistant) {
+      try {
+        const newAssistant = yield addAssistant(assistant);
+        self.assistants.push(newAssistant);
+        emitter.emit(EVENT_ASSISTANT_CREATED, 'New assistant has been created successfully');
+        emitter.emit(EVENT_CLOSE_MODAL); // Emit the close modal event
+      } catch (error) {
+        console.error('Failed to create assistant', error);
+      }
+    }),   
+
     updateAssistant: flow(function* (_id: string, assistant: IAssistant) {
       try {
         const updatedAssistant = yield updateAssistant(_id, assistant);
@@ -53,9 +64,24 @@ const RootStore = types
       }
     }),
 
+    deleteAssistant: flow(function* (_id: string) {
+      try {
+        yield deleteAssistant(_id);
+        const index = self.assistants.findIndex(assistant => assistant._id === _id);
+        if (index !== -1) {
+          self.assistants.splice(index, 1);
+        }
+        emitter.emit(EVENT_ASSISTANT_DELETED, 'Record has been deleted successfully');
+      } catch (error) {
+        console.error('Failed to delete assistant', error);
+      }
+    }),
+
     getAssistantById: (_id: string) => {
       return self.assistants.find((assistant) => assistant._id === _id);
     },
+
+    
 
     /// old stuff blat
     loadChatbots: flow(function* () {

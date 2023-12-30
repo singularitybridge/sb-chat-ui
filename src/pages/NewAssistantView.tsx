@@ -6,8 +6,13 @@ import {
   KeyValueListFieldConfig,
 } from '../components/DynamicForm';
 import { assistantFieldConfigs } from '../store/formConfigs/assistantFormConfigs';
+import { observer } from 'mobx-react';
+import { useRootStore } from '../store/common/RootStoreContext';
+import { IAssistant } from '../store/models/Assistant';
 
-const NewAssistantView: React.FC = () => {
+const NewAssistantView: React.FC = observer(() => {
+
+  const rootStore = useRootStore();
   const [isLoading, setIsLoading] = useState(false);
   const [formFields, setFormFields] = useState<FieldConfig[]>([]);
 
@@ -30,11 +35,9 @@ const NewAssistantView: React.FC = () => {
 
   const handleSubmit = async (values: FormValues) => {
     setIsLoading(true);
-    console.log('values', values);
-    // await rootStore.createAssistant(values as unknown as IAssistant);
+    await rootStore.createAssistant(values as unknown as IAssistant);
     setIsLoading(false);
   };
-
   return (
     <DynamicForm
       fields={formFields}
@@ -43,6 +46,6 @@ const NewAssistantView: React.FC = () => {
       formType="create"
     />
   );
-};
+});
 
 export { NewAssistantView };

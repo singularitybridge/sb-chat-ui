@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useEventEmitter } from '../../services/mittEmitter';
 import {
+  EVENT_CLOSE_MODAL,
   EVENT_SHOW_ADD_ASSISTANT_MODAL,
   EventType,
 } from '../../utils/eventNames';
@@ -31,6 +32,8 @@ const DialogManager = () => {
     (eventData: DialogComponentEventData) =>
       updateContent(EVENT_SHOW_ADD_ASSISTANT_MODAL, eventData)
   );
+
+  useEventEmitter(EVENT_CLOSE_MODAL, () => setIsOpen(false));
 
   return (
     <ModalDialog

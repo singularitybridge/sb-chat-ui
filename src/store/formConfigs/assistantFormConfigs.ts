@@ -55,7 +55,7 @@ export const assistantFieldConfigs: FieldConfig[] = [
     label: 'LLM Model',
     type: 'input',
     value: 'gpt-3.5-turbo-1106',
-    visibility: { create: false, view: true, update: true },
+    visibility: { create: true, view: true, update: true },
   },
   {
     id: 'llmPrompt',

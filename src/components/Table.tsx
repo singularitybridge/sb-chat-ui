@@ -4,9 +4,15 @@ interface TableProps {
   headers: string[];
   data: { [key: string]: any }[];
   onRowClick?: (row: any) => void;
+  onDelete?: (row: any) => void;
 }
 
-const Table: React.FC<TableProps> = ({ headers, data, onRowClick }) => {
+const Table: React.FC<TableProps> = ({
+  headers,
+  data,
+  onRowClick,
+  onDelete,
+}) => {
   return (
     <div className="flex flex-col w-full">
       <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -37,6 +43,17 @@ const Table: React.FC<TableProps> = ({ headers, data, onRowClick }) => {
                         {row[header]}
                       </td>
                     ))}
+                    <td className="px-6 py-4">
+                      <button
+                        className=" text-danger-500"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          onDelete?.(row);
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
