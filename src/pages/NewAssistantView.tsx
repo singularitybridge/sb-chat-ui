@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   DynamicForm,
   FieldConfig,
@@ -9,29 +9,24 @@ import { assistantFieldConfigs } from '../store/formConfigs/assistantFormConfigs
 
 const NewAssistantView: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [formFields, setFormFields] = useState<FieldConfig[]>([]);
 
-  const formFields: FieldConfig[] = assistantFieldConfigs.map(
-    ({ key, type }) => {
-      const fieldKeyString = String(key);
-
-      if (type === 'key-value-list') {
+  useEffect(() => {
+    const initialFormFields = assistantFieldConfigs.map(
+      ({ id, key, label, type, visibility, value }) => {
         return {
-          label:
-            fieldKeyString.charAt(0).toUpperCase() + fieldKeyString.slice(1),
-          value: [], // KeyValueListFieldConfig requires an array
-          id: fieldKeyString,
+          id: id,
+          key: key,
+          label: label,
+          value: value,
           type: type,
+          visibility: visibility,
         } as KeyValueListFieldConfig;
       }
+    );
 
-      return {
-        label: fieldKeyString.charAt(0).toUpperCase() + fieldKeyString.slice(1),
-        value: '', // Set default value to empty string
-        id: fieldKeyString,
-        type: type,
-      };
-    }
-  );
+    setFormFields(initialFormFields);
+  }, []); // Empty dependency array ensures this runs only once
 
   const handleSubmit = async (values: FormValues) => {
     setIsLoading(true);
@@ -45,6 +40,7 @@ const NewAssistantView: React.FC = () => {
       fields={formFields}
       onSubmit={handleSubmit}
       isLoading={isLoading}
+      formType="create"
     />
   );
 };

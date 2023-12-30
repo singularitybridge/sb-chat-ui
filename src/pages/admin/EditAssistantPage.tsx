@@ -20,7 +20,7 @@ const EditAssistantView: React.FC = observer(() => {
   const [isLoading, setIsLoading] = React.useState(false);
 
   if (rootStore.assistantsLoaded === false) {
-    return <div>Loading...</div>; // Fix the problem here
+    return <div>Loading...</div>;
   }
 
   if (!assistant) {
@@ -28,14 +28,15 @@ const EditAssistantView: React.FC = observer(() => {
   }
 
   const formFields: FieldConfig[] = assistantFieldConfigs.map(
-    ({ key, type }) => {
+    ({ id, label, key, type, visibility }) => {
       const fieldKeyString = String(key);
-
       return {
-        label: fieldKeyString.charAt(0).toUpperCase() + fieldKeyString.slice(1),
+        key: key,
+        label: label,
         value: assistant ? toJS((assistant as any)[fieldKeyString]) : '',
-        id: fieldKeyString,
+        id: id,
         type: type,
+        visibility: visibility,
       };
     }
   );
@@ -58,6 +59,7 @@ const EditAssistantView: React.FC = observer(() => {
             fields={formFields}
             onSubmit={handleSubmit}
             isLoading={isLoading}
+            formType="update"
           />
         </div>
         <div className="w-1/2">Test your assistant here</div>
