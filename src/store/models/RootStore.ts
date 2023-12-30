@@ -11,7 +11,7 @@ import { getChatbots } from '../../services/api/chatbotService';
 import { Assistant, IAssistant } from './Assistant';
 import { addAssistant, deleteAssistant, getAssistants, updateAssistant } from '../../services/api/assistantService';
 import { emitter } from '../../services/mittEmitter';
-import { EVENT_ASSISTANT_CREATED, EVENT_ASSISTANT_DELETED, EVENT_ASSISTANT_UPDATED, EVENT_CLOSE_MODAL } from '../../utils/eventNames';
+import { EVENT_ASSISTANT_CREATED, EVENT_ASSISTANT_DELETED, EVENT_ASSISTANT_UPDATED, EVENT_CLOSE_MODAL, EVENT_ERROR } from '../../utils/eventNames';
 
 const RootStore = types
   .model('RootStore', {
@@ -46,10 +46,11 @@ const RootStore = types
         self.assistants.push(newAssistant);
         emitter.emit(EVENT_ASSISTANT_CREATED, 'New assistant has been created successfully');
         emitter.emit(EVENT_CLOSE_MODAL); // Emit the close modal event
-      } catch (error) {
+      } catch (error: any) {
         console.error('Failed to create assistant', error);
+        emitter.emit(EVENT_ERROR, 'Failed to add assistant: ' + error.message);
       }
-    }),   
+    }), 
 
     updateAssistant: flow(function* (_id: string, assistant: IAssistant) {
       try {
