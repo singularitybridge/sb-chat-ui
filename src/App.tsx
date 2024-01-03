@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useEventEmitter } from './services/mittEmitter';
 import { EVENT_ASSISTANT_CREATED, EVENT_ASSISTANT_DELETED, EVENT_ASSISTANT_UPDATED, EVENT_ERROR } from './utils/eventNames';
 import { DialogManager } from './components/admin/DialogManager';
+import { ChatContainer } from './components/chat-container/ChatContainer';
 
 const rootStore = RootStore.create({
   chatbots: [],
@@ -84,6 +85,7 @@ const App = () => {
         <SideMenu isOpen={isMenuOpen} closeMenu={() => setIsMenuOpen(false)} />
         <ToastContainer />
         <DialogManager />
+        <ChatContainer />
         <Outlet />
       </div>
     </RootStoreProvider>
