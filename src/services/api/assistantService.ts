@@ -3,7 +3,8 @@ import { IAssistant } from '../../store/models/Assistant';
 
 export async function addThread(): Promise<string> {
   try {
-    return await axios.post('http://localhost:3000/assistant/thread');
+    const newThread = await axios.post('http://localhost:3000/assistant/thread');    
+    return newThread.data;
   } catch (error) {
     console.error('Failed to add thread:', error);
     throw error;
@@ -27,7 +28,8 @@ interface HandleUserInputBody {
 
 export async function handleUserInput(body: HandleUserInputBody): Promise<string> {
   try {
-    return await axios.post('http://localhost:3000/assistant/user-input', body);
+    const response = await axios.post('http://localhost:3000/assistant/user-input', body);
+    return response.data;
   } catch (error) {
     console.error('Failed to handle user input:', error);
     throw error;

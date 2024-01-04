@@ -1,11 +1,11 @@
 import React from 'react';
 import { SparklesIcon } from '@heroicons/react/24/solid';
 
-interface MessageProps {
+interface AssistantMessageProps {
   text: string;
 }
 
-const Message: React.FC<MessageProps> = ({ text }) => {
+const AssistantMessage: React.FC<AssistantMessageProps> = ({ text }) => {
   return (
     <div className="flex gap-3 my-4 text-gray-600 text-sm flex-1">
       <span className="relative flex shrink-0 overflow-hidden rounded-full w-8 h-8">
@@ -21,4 +21,4 @@ const Message: React.FC<MessageProps> = ({ text }) => {
   );
 };
 
-export { Message };
+export { AssistantMessage };
