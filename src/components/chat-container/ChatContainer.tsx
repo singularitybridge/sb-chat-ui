@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Header } from './Header';
 import { AssistantMessage } from './AssistantMessage';
 import { UserMessage } from './UserMessage';
@@ -14,6 +14,8 @@ import {
 } from '../../services/api/assistantService';
 
 const ChatContainer = () => {
+
+  const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const [message, setMessage] = useState('');
   const [isMinimized, setIsMinimized] = useState(false);
   const [activeThreadId, setActiveThreadId] = useState(
@@ -24,6 +26,12 @@ const ChatContainer = () => {
   >([]);
 
   const assistantId = 'asst_yWABKCx3V3GHjRsuR06DOovh';
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
 
   useEffect(() => {
     if (!activeThreadId) {
@@ -104,6 +112,8 @@ const ChatContainer = () => {
               <AssistantMessage key={index} text={message.content} />
             )
           )}
+            <div ref={messagesEndRef} />
+
         </div>
         <div className="flex items-center pt-0 mt-1">
           <div className="flex items-center justify-center w-full space-x-2">

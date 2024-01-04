@@ -13,10 +13,10 @@ const AssistantMessage: React.FC<AssistantMessageProps> = ({ text }) => {
           <SparklesIcon className="w-5 h-5 text-gray-700" />
         </div>
       </span>
-      <p className="leading-relaxed">
+      <div className="leading-relaxed">
         <span className="block font-bold text-gray-800">AI </span>
-        {text}
-      </p>
+        <div className="whitespace-pre-wrap">{text}</div>
+      </div>
     </div>
   );
 };
