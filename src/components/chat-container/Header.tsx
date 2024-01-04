@@ -1,5 +1,6 @@
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import React from 'react';
+import logo from '../../assets/l3.png';
 
 interface HeaderProps {
   onMinimize: () => void;
@@ -7,11 +8,11 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ onMinimize }) => {
   return (
-    <div className="flex justify-between items-start space-y-1.5 pb-5">
-
+    <div className="flex justify-between items-center space-y-2 pb-5 ">
+      <img className="h-8 mt-2" src={logo} loading="lazy" />      
       <div>
         <h2 className="font-semibold text-lg tracking-tight">ArchitectAI</h2>
-        <p className="text-sm text-[#6b7280] leading-3 ">
+        <p className="text-sm text-[#6b7280] leading-4 max-w-52">
           Streamline the creation of AI agents
         </p>
       </div>

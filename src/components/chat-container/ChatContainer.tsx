@@ -10,22 +10,45 @@ import {
 import {
   addThread,
   deleteThread,
+  getThreadMessages,
   handleUserInput,
 } from '../../services/api/assistantService';
 
-const ChatContainer = () => {
+interface ChatMessage {
+  content: string;
+  role: string;
+}
 
+const ChatContainer = () => {
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const [message, setMessage] = useState('');
   const [isMinimized, setIsMinimized] = useState(false);
   const [activeThreadId, setActiveThreadId] = useState(
     localStorage.getItem('activeThreadId')
   );
-  const [messages, setMessages] = useState<
-    { type: 'user' | 'assistant'; content: string }[]
-  >([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
 
   const assistantId = 'asst_yWABKCx3V3GHjRsuR06DOovh';
+
+  useEffect(() => {
+    const loadMessages = async () => {
+      if (activeThreadId) {
+        const threadMessages = await getThreadMessages(activeThreadId);
+        const chatMessages = threadMessages.map(mapToChatMessage);
+        setMessages(chatMessages.reverse());
+      }
+    };
+
+    loadMessages();
+  }, [activeThreadId]);
+
+  const mapToChatMessage = (message: any): ChatMessage => {
+    return {
+      // type: message.content[0].type,
+      content: message.content[0].text.value,
+      role: message.role,
+    };
+  };
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -46,7 +69,7 @@ const ChatContainer = () => {
     setMessage('');
     setMessages((prevMessages) => [
       ...prevMessages,
-      { type: 'user', content: message },
+      { content: message, role: 'user' },
     ]);
 
     if (activeThreadId) {
@@ -55,10 +78,9 @@ const ChatContainer = () => {
         assistantId: assistantId,
         threadId: activeThreadId,
       }).then((response) => {
-        console.log(response);
         setMessages((prevMessages) => [
           ...prevMessages,
-          { type: 'assistant', content: response },
+          { content: response, role: 'assistant' },
         ]);
       });
     }
@@ -106,14 +128,13 @@ const ChatContainer = () => {
           }}
         >
           {messages.map((message, index) =>
-            message.type === 'user' ? (
-              <UserMessage key={index} text={message.content} />
-            ) : (
+            message.role === 'assistant' ? (
               <AssistantMessage key={index} text={message.content} />
+            ) : (
+              <UserMessage key={index} text={message.content} />
             )
           )}
-            <div ref={messagesEndRef} />
-
+          <div ref={messagesEndRef} />
         </div>
         <div className="flex items-center pt-0 mt-1">
           <div className="flex items-center justify-center w-full space-x-2">

@@ -11,6 +11,16 @@ export async function addThread(): Promise<string> {
   }
 }
 
+export async function getThreadMessages(threadId: string): Promise<any> {
+  try {
+    const response = await axios.get(`http://localhost:3000/assistant/thread/${threadId}/messages`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to get thread messages:', error);
+    throw error;
+  }
+}
+
 export async function deleteThread(threadId: string): Promise<void> {
   try {
     await axios.delete(`http://localhost:3000/assistant/thread/${threadId}`);
