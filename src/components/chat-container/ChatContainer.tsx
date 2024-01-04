@@ -14,12 +14,14 @@ import {
 } from '../../services/api/assistantService';
 
 const ChatContainer = () => {
-
   const [message, setMessage] = useState('');
   const [isMinimized, setIsMinimized] = useState(false);
   const [activeThreadId, setActiveThreadId] = useState(
     localStorage.getItem('activeThreadId')
   );
+  const [messages, setMessages] = useState<
+    { type: 'user' | 'assistant'; content: string }[]
+  >([]);
 
   const assistantId = 'asst_yWABKCx3V3GHjRsuR06DOovh';
 
@@ -33,8 +35,11 @@ const ChatContainer = () => {
   }, [activeThreadId]);
 
   const handleSubmitMessage = (message: string) => {
-
     setMessage('');
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { type: 'user', content: message },
+    ]);
 
     if (activeThreadId) {
       handleUserInput({
@@ -43,6 +48,10 @@ const ChatContainer = () => {
         threadId: activeThreadId,
       }).then((response) => {
         console.log(response);
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { type: 'assistant', content: response },
+        ]);
       });
     }
   };
@@ -88,8 +97,13 @@ const ChatContainer = () => {
             minWidth: '100%',
           }}
         >
-          <AssistantMessage text="hi, how can i help you  today?" />
-          <UserMessage text="I'd like to build a perosonal assitant" />
+          {messages.map((message, index) =>
+            message.type === 'user' ? (
+              <UserMessage key={index} text={message.content} />
+            ) : (
+              <AssistantMessage key={index} text={message.content} />
+            )
+          )}
         </div>
         <div className="flex items-center pt-0 mt-1">
           <div className="flex items-center justify-center w-full space-x-2">
