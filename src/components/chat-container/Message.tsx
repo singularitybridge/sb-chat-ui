@@ -1,7 +1,11 @@
 import React from 'react';
 import { SparklesIcon } from '@heroicons/react/24/solid';
 
-const Message = () => {
+interface MessageProps {
+  text: string;
+}
+
+const Message: React.FC<MessageProps> = ({ text }) => {
   return (
     <div className="flex gap-3 my-4 text-gray-600 text-sm flex-1">
       <span className="relative flex shrink-0 overflow-hidden rounded-full w-8 h-8">
@@ -10,8 +14,8 @@ const Message = () => {
         </div>
       </span>
       <p className="leading-relaxed">
-        <span className="block font-bold text-gray-800">AI </span>Hi, how can I
-        help you today?
+        <span className="block font-bold text-gray-800">AI </span>
+        {text}
       </p>
     </div>
   );

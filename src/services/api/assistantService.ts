@@ -1,6 +1,9 @@
 import axios from 'axios';
 import { IAssistant } from '../../store/models/Assistant';
 
+
+
+
 export async function getAssistants(): Promise<IAssistant[]> {
   try {
     const response = await axios.get('http://localhost:3000/assistant');
