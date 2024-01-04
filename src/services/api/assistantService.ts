@@ -1,7 +1,38 @@
 import axios from 'axios';
 import { IAssistant } from '../../store/models/Assistant';
 
+export async function addThread(): Promise<string> {
+  try {
+    return await axios.post('http://localhost:3000/assistant/thread');
+  } catch (error) {
+    console.error('Failed to add thread:', error);
+    throw error;
+  }
+}
 
+export async function deleteThread(threadId: string): Promise<void> {
+  try {
+    await axios.delete(`http://localhost:3000/assistant/thread/${threadId}`);
+  } catch (error) {
+    console.error('Failed to delete thread:', error);
+    throw error;
+  }
+}
+
+interface HandleUserInputBody {
+  userInput: string;
+  assistantId: string;
+  threadId: string;
+}
+
+export async function handleUserInput(body: HandleUserInputBody): Promise<string> {
+  try {
+    return await axios.post('http://localhost:3000/assistant/user-input', body);
+  } catch (error) {
+    console.error('Failed to handle user input:', error);
+    throw error;
+  }
+}
 
 
 export async function getAssistants(): Promise<IAssistant[]> {

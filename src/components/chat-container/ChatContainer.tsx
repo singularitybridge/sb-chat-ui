@@ -1,23 +1,72 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Header } from './Header';
 import { Message } from './Message';
 import { UserMessage } from './UserMessage';
+import {
+  PaperAirplaneIcon,
+  PlusIcon,
+  TrashIcon,
+} from '@heroicons/react/24/outline';
+import {
+  addThread,
+  deleteThread,
+  handleUserInput,
+} from '../../services/api/assistantService';
 
 const ChatContainer = () => {
   const [message, setMessage] = useState('');
+  const [isMinimized, setIsMinimized] = useState(false);
+  const [activeThreadId, setActiveThreadId] = useState(
+    localStorage.getItem('activeThreadId')
+  );
+
+  const assistantId = 'asst_yWABKCx3V3GHjRsuR06DOovh';
+
+  useEffect(() => {
+    if (!activeThreadId) {
+      addThread().then((newThreadId) => {
+        setActiveThreadId(newThreadId);
+        localStorage.setItem('activeThreadId', newThreadId);
+      });
+    }
+  }, [activeThreadId]);
 
   const handleSubmitMessage = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    console.log(message);
-    setMessage('');
+    if (activeThreadId) {
+      handleUserInput({
+        userInput: event.currentTarget.message.value,
+        assistantId: assistantId,
+        threadId: activeThreadId,
+      }).then((response) => {
+        console.log(response);
+      });
+    }
   };
 
   const handleReload = () => {
-    console.log('Reload');
-  }
+    if (activeThreadId) {
+      deleteThread(activeThreadId).then(() => {
+        addThread().then((newThreadId) => {
+          setActiveThreadId(newThreadId);
+          localStorage.setItem('activeThreadId', newThreadId);
+        });
+      });
+    }
+  };
 
   const handleMinimize = () => {
-    console.log('Minimize');
+    setIsMinimized(!isMinimized);
+  };
+
+  if (isMinimized) {
+    return (
+      <button
+        className="fixed mr-3 mb-3 bottom-4 right-4 w-12 h-12 bg-slate-500 rounded-full flex items-center justify-center"
+        onClick={handleMinimize}
+      >
+        <PlusIcon className="h-6 w-6 text-white" />
+      </button>
+    );
   }
 
   return (
@@ -28,17 +77,15 @@ const ChatContainer = () => {
         }}
         className="fixed bottom-[calc(2rem)] right-0 mr-7 bg-white p-5 rounded-lg border border-[#e5e7eb] w-[340px] h-[534px] flex flex-col"
       >
-        <Header onReload={handleReload} onMinimize={handleMinimize} />
+        <Header onMinimize={handleMinimize} />
         <div
           className="flex-grow overflow-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-300"
           style={{
             minWidth: '100%',
           }}
         >
-          <Message text='hello, how its going?' />
-          <UserMessage text='not too bad i guess, working hard on my shit to make it work.' />
-         
-          
+          <Message text="hi, how can i help you  today?" />
+          <UserMessage text="I'd like to build a perosonal assitant" />
         </div>
         <div className="flex items-center pt-0 mt-1">
           <form
@@ -53,9 +100,15 @@ const ChatContainer = () => {
             />
             <button
               type="submit"
-              className="inline-flex items-center justify-center rounded-md text-sm font-medium text-[#f9fafb] disabled:pointer-events-none disabled:opacity-50 bg-black hover:bg-[#111827E6] h-10 px-4 py-2"
+              className="inline-flex items-center justify-center rounded-lg  disabled:pointer-events-none disabled:opacity-50 bg-gray-800 hover:bg-[#111827E6] h-10 px-2 py-2"
             >
-              Send
+              <PaperAirplaneIcon className="h-5 w-5 text-zinc-50 " />
+            </button>
+            <button
+              onClick={handleReload}
+              className="inline-flex items-center justify-center rounded-lg  disabled:pointer-events-none disabled:opacity-50 bg-gray-800 hover:bg-[#111827E6] h-10 px-2 py-2"
+            >
+              <TrashIcon className="h-5 w-5 text-warning-200" />
             </button>
           </form>
         </div>

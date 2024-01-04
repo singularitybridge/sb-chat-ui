@@ -13,7 +13,10 @@ const UserMessage: React.FC<UserMessageProps> = ({ text }) => {
           <UserIcon className="w-5 h-5 text-gray-800" />
         </div>
       </span>
-      {text}
+      <p className="leading-relaxed">
+        <span className="block font-bold text-gray-800">Human</span>
+        {text}
+      </p>
     </div>
   );
 };
