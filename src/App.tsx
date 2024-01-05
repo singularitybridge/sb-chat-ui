@@ -7,7 +7,7 @@ import { RootStoreProvider } from './store/common/RootStoreContext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useEventEmitter } from './services/mittEmitter';
-import { EVENT_ASSISTANT_CREATED, EVENT_ASSISTANT_DELETED, EVENT_ASSISTANT_UPDATED, EVENT_ERROR } from './utils/eventNames';
+import { EVENT_ASSISTANT_CREATED, EVENT_ASSISTANT_DELETED, EVENT_ASSISTANT_UPDATED, EVENT_CHAT_SESSION_DELETED, EVENT_ERROR } from './utils/eventNames';
 import { DialogManager } from './components/admin/DialogManager';
 import { ChatContainer } from './components/chat-container/ChatContainer';
 
@@ -33,6 +33,7 @@ const App = () => {
   useEventEmitter<string>(EVENT_ASSISTANT_UPDATED, toastHandler);
   useEventEmitter<string>(EVENT_ASSISTANT_DELETED, toastHandler);
   useEventEmitter<string>(EVENT_ASSISTANT_CREATED, toastHandler);
+  useEventEmitter<string>(EVENT_CHAT_SESSION_DELETED, toastHandler);
   useEventEmitter<string>(EVENT_ERROR, toastHandler);
 
   const getHeight = useCallback(

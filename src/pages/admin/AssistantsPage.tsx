@@ -7,6 +7,13 @@ import { toJS } from 'mobx';
 import { AssistantKeys, IAssistant } from '../../store/models/Assistant';
 import { withPage } from '../../components/admin/HOC/withPage';
 import { convertToStringArray } from '../../utils/utils';
+import {
+  ChatBubbleLeftEllipsisIcon,
+  TrashIcon,
+} from '@heroicons/react/24/outline';
+import { IconButton } from '../../components/admin/IconButton';
+import { emitter } from '../../services/mittEmitter';
+import { EVENT_SET_ACTIVE_ASSISTANT } from '../../utils/eventNames';
 
 const AssistantsView: React.FC = observer(() => {
   const rootStore = useRootStore();
@@ -20,10 +27,37 @@ const AssistantsView: React.FC = observer(() => {
   ];
 
   const handleDelete = (row: IAssistant) => {
-    
     rootStore.deleteAssistant(row._id);
-    
-  }
+  };
+
+  const handleSetAssistant = (row: IAssistant) => {
+    emitter.emit(EVENT_SET_ACTIVE_ASSISTANT,  {
+      assistantId: row.assistantId,
+      name: row.name,
+      description: row.description,      
+    });
+  };
+
+  const Actions = (row: IAssistant) => (
+    <div className="flex space-x-2 items-center mx-1">
+      <IconButton
+        icon={<TrashIcon className="w-5 h-5  text-warning-900" />}
+        onClick={(event) => {
+          event.stopPropagation();
+          handleDelete(row);
+        }}
+      />
+      <IconButton
+        icon={
+          <ChatBubbleLeftEllipsisIcon className="w-5 h-5  text-warning-900" />
+        }
+        onClick={(event) => {
+          event.stopPropagation();
+          handleSetAssistant(row);
+        }}
+      />
+    </div>
+  );
 
   return (
     <>
@@ -34,7 +68,7 @@ const AssistantsView: React.FC = observer(() => {
           onRowClick={(row: IAssistant) =>
             navigate(`/admin/assistants/${row._id}`)
           }
-          onDelete={handleDelete}
+          Actions={Actions}
         />
       </div>
     </>

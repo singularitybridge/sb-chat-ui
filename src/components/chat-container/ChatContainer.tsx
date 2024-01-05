@@ -13,13 +13,25 @@ import {
   getThreadMessages,
   handleUserInput,
 } from '../../services/api/assistantService';
+import {
+  EVENT_CHAT_SESSION_DELETED,
+  EVENT_SET_ACTIVE_ASSISTANT,
+} from '../../utils/eventNames';
+import { emitter, useEventEmitter } from '../../services/mittEmitter';
 
 interface ChatMessage {
   content: string;
   role: string;
 }
 
+export interface ChatAssistantInfo {
+  assistantId: string;
+  name: string;
+  description: string;
+}
+
 const ChatContainer = () => {
+
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const [message, setMessage] = useState('');
   const [isMinimized, setIsMinimized] = useState(false);
@@ -27,8 +39,15 @@ const ChatContainer = () => {
     localStorage.getItem('activeThreadId')
   );
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [assistantId, setAssistantId] = useState(
+    localStorage.getItem('assistantId') || ''
+  );
 
-  const assistantId = 'asst_yWABKCx3V3GHjRsuR06DOovh';
+  const [assistantInfo, setAssistantInfo] = useState<ChatAssistantInfo>({
+    assistantId: '',
+    name: '',
+    description: '',
+  });
 
   useEffect(() => {
     const loadMessages = async () => {
@@ -42,9 +61,19 @@ const ChatContainer = () => {
     loadMessages();
   }, [activeThreadId]);
 
+  const handleAssistantUpdated = (assistantInfo: ChatAssistantInfo) => {
+    setAssistantId(assistantInfo.assistantId);
+    localStorage.setItem('assistantId', assistantId);
+    setAssistantInfo(assistantInfo);
+  };
+
+  useEventEmitter<ChatAssistantInfo>(
+    EVENT_SET_ACTIVE_ASSISTANT,
+    handleAssistantUpdated
+  );
+
   const mapToChatMessage = (message: any): ChatMessage => {
     return {
-      // type: message.content[0].type,
       content: message.content[0].text.value,
       role: message.role,
     };
@@ -92,6 +121,7 @@ const ChatContainer = () => {
         addThread().then((newThreadId) => {
           setActiveThreadId(newThreadId);
           localStorage.setItem('activeThreadId', newThreadId);
+          emitter.emit(EVENT_CHAT_SESSION_DELETED, 'Chat session deleted');
         });
       });
     }
@@ -120,7 +150,7 @@ const ChatContainer = () => {
         }}
         className="fixed bottom-[calc(2rem)] right-0 mr-7 bg-white p-5 rounded-lg border border-[#e5e7eb] w-[340px] h-[534px] flex flex-col"
       >
-        <Header onMinimize={handleMinimize} />
+        <Header title={assistantInfo.name} description={assistantInfo.description} onMinimize={handleMinimize} />
         <div
           className="flex-grow overflow-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-300"
           style={{

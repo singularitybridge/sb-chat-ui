@@ -2,7 +2,7 @@ import React from 'react';
 
 interface IconButtonProps {
   icon: React.ReactNode;
-  onClick: () => void;
+  onClick: (event?: any) => void;
   className?: string;
 }
 

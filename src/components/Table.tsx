@@ -4,14 +4,14 @@ interface TableProps {
   headers: string[];
   data: { [key: string]: any }[];
   onRowClick?: (row: any) => void;
-  onDelete?: (row: any) => void;
+  Actions?: (row: any) => JSX.Element; // Add this line
 }
 
 const Table: React.FC<TableProps> = ({
   headers,
   data,
   onRowClick,
-  onDelete,
+  Actions,
 }) => {
   return (
     <div className="flex flex-col w-full">
@@ -43,17 +43,7 @@ const Table: React.FC<TableProps> = ({
                         {row[header]}
                       </td>
                     ))}
-                    <td className="px-6 py-4">
-                      <button
-                        className=" text-danger-500"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          onDelete?.(row);
-                        }}
-                      >
-                        Delete
-                      </button>
-                    </td>
+                    {Actions && <td>{Actions(row)}</td>}
                   </tr>
                 ))}
               </tbody>
