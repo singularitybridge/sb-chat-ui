@@ -31,11 +31,7 @@ const AssistantsView: React.FC = observer(() => {
   };
 
   const handleSetAssistant = (row: IAssistant) => {
-    emitter.emit(EVENT_SET_ACTIVE_ASSISTANT,  {
-      assistantId: row.assistantId,
-      name: row.name,
-      description: row.description,      
-    });
+    emitter.emit(EVENT_SET_ACTIVE_ASSISTANT,  row._id);
   };
 
   const Actions = (row: IAssistant) => (

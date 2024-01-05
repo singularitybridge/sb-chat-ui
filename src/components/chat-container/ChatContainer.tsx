@@ -18,20 +18,19 @@ import {
   EVENT_SET_ACTIVE_ASSISTANT,
 } from '../../utils/eventNames';
 import { emitter, useEventEmitter } from '../../services/mittEmitter';
+import { observer } from 'mobx-react';
+import { useRootStore } from '../../store/common/RootStoreContext';
+import { IAssistant } from '../../store/models/Assistant';
 
 interface ChatMessage {
   content: string;
   role: string;
 }
 
-export interface ChatAssistantInfo {
-  assistantId: string;
-  name: string;
-  description: string;
-}
 
-const ChatContainer = () => {
+const ChatContainer = observer(() => {
 
+  const rootStore = useRootStore();
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const [message, setMessage] = useState('');
   const [isMinimized, setIsMinimized] = useState(false);
@@ -39,15 +38,16 @@ const ChatContainer = () => {
     localStorage.getItem('activeThreadId')
   );
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [assistantId, setAssistantId] = useState(
-    localStorage.getItem('assistantId') || ''
-  );
+  const [assistant, setAssistant] = useState<IAssistant>();
 
-  const [assistantInfo, setAssistantInfo] = useState<ChatAssistantInfo>({
-    assistantId: '',
-    name: '',
-    description: '',
-  });
+
+  useEffect(() => {
+    const activeAssistantId = localStorage.getItem('activeAssistantId');
+    if (activeAssistantId && rootStore.assistantsLoaded) {
+      setAssistant(rootStore.getAssistantById(activeAssistantId));
+    }
+  }
+  , [rootStore.assistantsLoaded]);
 
   useEffect(() => {
     const loadMessages = async () => {
@@ -61,13 +61,12 @@ const ChatContainer = () => {
     loadMessages();
   }, [activeThreadId]);
 
-  const handleAssistantUpdated = (assistantInfo: ChatAssistantInfo) => {
-    setAssistantId(assistantInfo.assistantId);
-    localStorage.setItem('assistantId', assistantId);
-    setAssistantInfo(assistantInfo);
+  const handleAssistantUpdated = (assistantId: string) => {
+    localStorage.setItem('activeAssistantId', assistantId);
+    setAssistant(rootStore.getAssistantById(assistantId));
   };
 
-  useEventEmitter<ChatAssistantInfo>(
+  useEventEmitter<string>(
     EVENT_SET_ACTIVE_ASSISTANT,
     handleAssistantUpdated
   );
@@ -101,10 +100,10 @@ const ChatContainer = () => {
       { content: message, role: 'user' },
     ]);
 
-    if (activeThreadId) {
+    if (activeThreadId && assistant) {
       handleUserInput({
         userInput: message,
-        assistantId: assistantId,
+        assistantId: assistant.assistantId,
         threadId: activeThreadId,
       }).then((response) => {
         setMessages((prevMessages) => [
@@ -150,7 +149,7 @@ const ChatContainer = () => {
         }}
         className="fixed bottom-[calc(2rem)] right-0 mr-7 bg-white p-5 rounded-lg border border-[#e5e7eb] w-[340px] h-[534px] flex flex-col"
       >
-        <Header title={assistantInfo.name} description={assistantInfo.description} onMinimize={handleMinimize} />
+        <Header title={assistant?.name || ''} description={assistant?.description || ''} onMinimize={handleMinimize} />
         <div
           className="flex-grow overflow-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-300"
           style={{
@@ -197,6 +196,6 @@ const ChatContainer = () => {
       </div>
     </>
   );
-};
+});
 
 export { ChatContainer };
