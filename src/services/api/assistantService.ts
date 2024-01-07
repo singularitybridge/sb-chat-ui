@@ -33,7 +33,7 @@ export async function deleteThread(threadId: string): Promise<void> {
 interface HandleUserInputBody {
   userInput: string;
   assistantId: string;
-  threadId: string;
+  userId: string; // add userId to the interface
 }
 
 export async function handleUserInput(body: HandleUserInputBody): Promise<string> {

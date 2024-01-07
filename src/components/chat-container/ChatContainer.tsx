@@ -40,6 +40,9 @@ const ChatContainer = observer(() => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [assistant, setAssistant] = useState<IAssistant>();
 
+  const [userId, setUserId] = useState(localStorage.getItem('userId') || '');
+
+
 
   useEffect(() => {
     const activeAssistantId = localStorage.getItem('activeAssistantId');
@@ -99,12 +102,12 @@ const ChatContainer = observer(() => {
       ...prevMessages,
       { content: message, role: 'user' },
     ]);
-
-    if (activeThreadId && assistant) {
+  
+    if (assistant) {
       handleUserInput({
         userInput: message,
         assistantId: assistant.assistantId,
-        threadId: activeThreadId,
+        userId: userId, // include userId in the request body
       }).then((response) => {
         setMessages((prevMessages) => [
           ...prevMessages,
@@ -113,7 +116,6 @@ const ChatContainer = observer(() => {
       });
     }
   };
-
   const handleReload = () => {
     if (activeThreadId) {
       deleteThread(activeThreadId).then(() => {
