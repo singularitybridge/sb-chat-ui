@@ -8,9 +8,8 @@ import {
   TrashIcon,
 } from '@heroicons/react/24/outline';
 import {
-  addThread,
-  deleteThread,
-  getThreadMessages,
+  endSession,
+  getSessionMessages,
   handleUserInput,
 } from '../../services/api/assistantService';
 import {
@@ -27,52 +26,46 @@ interface ChatMessage {
   role: string;
 }
 
-
 const ChatContainer = observer(() => {
-
   const rootStore = useRootStore();
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const [message, setMessage] = useState('');
   const [isMinimized, setIsMinimized] = useState(false);
-  const [activeThreadId, setActiveThreadId] = useState(
-    localStorage.getItem('activeThreadId')
-  );
+  // const [activeThreadId, setActiveThreadId] = useState(
+  //   localStorage.getItem('activeThreadId')
+  // );
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [assistant, setAssistant] = useState<IAssistant>();
-
   const [userId, setUserId] = useState(localStorage.getItem('userId') || '');
-
-
 
   useEffect(() => {
     const activeAssistantId = localStorage.getItem('activeAssistantId');
     if (activeAssistantId && rootStore.assistantsLoaded) {
       setAssistant(rootStore.getAssistantById(activeAssistantId));
     }
-  }
-  , [rootStore.assistantsLoaded]);
+  }, [rootStore.assistantsLoaded]);
+
+  const loadMessages = async () => {
+    if (assistant && userId) {
+      const sessionMessages = await getSessionMessages(
+        assistant.assistantId,
+        userId
+      );
+      const chatMessages = sessionMessages.map(mapToChatMessage);
+      setMessages(chatMessages.reverse());
+    }
+  };
 
   useEffect(() => {
-    const loadMessages = async () => {
-      if (activeThreadId) {
-        const threadMessages = await getThreadMessages(activeThreadId);
-        const chatMessages = threadMessages.map(mapToChatMessage);
-        setMessages(chatMessages.reverse());
-      }
-    };
-
     loadMessages();
-  }, [activeThreadId]);
+  }, [userId, assistant?._id]);
 
   const handleAssistantUpdated = (assistantId: string) => {
     localStorage.setItem('activeAssistantId', assistantId);
     setAssistant(rootStore.getAssistantById(assistantId));
   };
 
-  useEventEmitter<string>(
-    EVENT_SET_ACTIVE_ASSISTANT,
-    handleAssistantUpdated
-  );
+  useEventEmitter<string>(EVENT_SET_ACTIVE_ASSISTANT, handleAssistantUpdated);
 
   const mapToChatMessage = (message: any): ChatMessage => {
     return {
@@ -87,27 +80,18 @@ const ChatContainer = observer(() => {
     }
   }, [messages]);
 
-  useEffect(() => {
-    if (!activeThreadId) {
-      addThread().then((newThreadId) => {
-        setActiveThreadId(newThreadId);
-        localStorage.setItem('activeThreadId', newThreadId);
-      });
-    }
-  }, [activeThreadId]);
-
   const handleSubmitMessage = (message: string) => {
     setMessage('');
     setMessages((prevMessages) => [
       ...prevMessages,
       { content: message, role: 'user' },
     ]);
-  
+
     if (assistant) {
       handleUserInput({
         userInput: message,
         assistantId: assistant.assistantId,
-        userId: userId, // include userId in the request body
+        userId: userId,
       }).then((response) => {
         setMessages((prevMessages) => [
           ...prevMessages,
@@ -116,15 +100,11 @@ const ChatContainer = observer(() => {
       });
     }
   };
-  const handleReload = () => {
-    if (activeThreadId) {
-      deleteThread(activeThreadId).then(() => {
-        addThread().then((newThreadId) => {
-          setActiveThreadId(newThreadId);
-          localStorage.setItem('activeThreadId', newThreadId);
-          emitter.emit(EVENT_CHAT_SESSION_DELETED, 'Chat session deleted');
-        });
-      });
+  const handleReload = async () => {
+    if (assistant && userId) {
+      await endSession(assistant.assistantId, userId);
+      await loadMessages();
+      emitter.emit(EVENT_CHAT_SESSION_DELETED, 'Chat session deleted');
     }
   };
 
@@ -151,7 +131,11 @@ const ChatContainer = observer(() => {
         }}
         className="fixed bottom-[calc(2rem)] right-0 mr-7 bg-white p-5 rounded-lg border border-[#e5e7eb] w-[340px] h-[534px] flex flex-col"
       >
-        <Header title={assistant?.name || ''} description={assistant?.description || ''} onMinimize={handleMinimize} />
+        <Header
+          title={assistant?.name || ''}
+          description={assistant?.description || ''}
+          onMinimize={handleMinimize}
+        />
         <div
           className="flex-grow overflow-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-300"
           style={{

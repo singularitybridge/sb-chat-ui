@@ -21,6 +21,16 @@ export async function getThreadMessages(threadId: string): Promise<any> {
   }
 }
 
+export async function getSessionMessages(assistantId: string, userId: string): Promise<any> {
+  try {
+    const response = await axios.get(`http://localhost:3000/session/messages/${assistantId}/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to get session messages:', error);
+    throw error;
+  }
+}
+
 export async function deleteThread(threadId: string): Promise<void> {
   try {
     await axios.delete(`http://localhost:3000/assistant/thread/${threadId}`);
@@ -30,10 +40,19 @@ export async function deleteThread(threadId: string): Promise<void> {
   }
 }
 
+export async function endSession(assistantId: string, userId: string): Promise<void> {
+  try {
+    await axios.delete(`http://localhost:3000/session/end/${assistantId}/${userId}`);
+  } catch (error) {
+    console.error('Failed to end session:', error);
+    throw error;
+  }
+}
+
 interface HandleUserInputBody {
   userInput: string;
   assistantId: string;
-  userId: string; // add userId to the interface
+  userId: string;
 }
 
 export async function handleUserInput(body: HandleUserInputBody): Promise<string> {

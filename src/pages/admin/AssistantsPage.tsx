@@ -19,19 +19,14 @@ const AssistantsView: React.FC = observer(() => {
   const rootStore = useRootStore();
   const navigate = useNavigate();
 
-  const headers: AssistantKeys[] = [
-    'assistantId',
-    'name',
-    'description',
-    'voice',
-  ];
+  const headers: AssistantKeys[] = ['name', 'description', 'voice'];
 
   const handleDelete = (row: IAssistant) => {
     rootStore.deleteAssistant(row._id);
   };
 
   const handleSetAssistant = (row: IAssistant) => {
-    emitter.emit(EVENT_SET_ACTIVE_ASSISTANT,  row._id);
+    emitter.emit(EVENT_SET_ACTIVE_ASSISTANT, row._id);
   };
 
   const Actions = (row: IAssistant) => (
@@ -57,15 +52,20 @@ const AssistantsView: React.FC = observer(() => {
 
   return (
     <>
-      <div className="flex w-full">
-        <Table
-          headers={convertToStringArray(headers)}
-          data={toJS(rootStore.assistants)}
-          onRowClick={(row: IAssistant) =>
-            navigate(`/admin/assistants/${row._id}`)
-          }
-          Actions={Actions}
-        />
+      <div className="flex w-full justify-center">
+        <div className=" flex-auto">
+          <Table
+            headers={convertToStringArray(headers)}
+            data={toJS(rootStore.assistants)}
+            onRowClick={(row: IAssistant) =>
+              navigate(`/admin/assistants/${row._id}`)
+            }
+            Actions={Actions}
+          />
+        </div>
+        <div className=" flex-0 w-96">
+          
+        </div>
       </div>
     </>
   );
