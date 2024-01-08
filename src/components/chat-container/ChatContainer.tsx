@@ -128,6 +128,7 @@ const ChatContainer = observer(() => {
       <div
         style={{
           boxShadow: '0 0 #0000, 0 0 #0000, 0 1px 2px 0 rgb(0 0 0 / 0.05)',
+          zIndex: 5000,
         }}
         className="fixed bottom-[calc(2rem)] right-0 mr-7 bg-white p-5 rounded-lg border border-[#e5e7eb] w-[340px] h-[534px] flex flex-col"
       >

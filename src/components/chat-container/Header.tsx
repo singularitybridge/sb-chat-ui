@@ -11,8 +11,8 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ title, description, onMinimize }) => {
   return (
     <div className="flex justify-between items-center space-y-2 space-x-3 pb-5 ">
-      <img className="h-12 bg-lime-200 rounded-full p-2" src={logo} loading="lazy" />      
-      <div>
+      <img className="h-12 bg-lime-200 rounded-full mt-2 p-2" src={logo} loading="lazy" />      
+      <div className=' flex-1'>
         <h2 className="font-semibold text-lg tracking-tight">{title}</h2>
         <p className="text-sm text-[#6b7280] leading-4 max-w-52">
           {description}

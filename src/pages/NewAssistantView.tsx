@@ -9,12 +9,39 @@ import { assistantFieldConfigs } from '../store/formConfigs/assistantFormConfigs
 import { observer } from 'mobx-react';
 import { useRootStore } from '../store/common/RootStoreContext';
 import { IAssistant } from '../store/models/Assistant';
+import { useEventEmitter } from '../services/mittEmitter';
+import { EVENT_SET_ASSISTANT_VALUES } from '../utils/eventNames';
 
 const NewAssistantView: React.FC = observer(() => {
-
   const rootStore = useRootStore();
   const [isLoading, setIsLoading] = useState(false);
   const [formFields, setFormFields] = useState<FieldConfig[]>([]);
+
+  const handleUpdateFormFields = (data: {
+    name: string;
+    description: string;
+    prompt: string;
+  }) => {
+    console.log('set assistant data', data);
+    setFormFields((prev) => {
+      const newFormFields = prev.map((field) => {
+        if (field.key === 'name') {
+          field.value = data.name;
+        } else if (field.key === 'description') {
+          field.value = data.description;
+        } else if (field.key === 'llmPrompt') {
+          field.value = data.prompt;
+        }
+        return field;
+      });
+      return newFormFields;
+    });
+  };
+
+  useEventEmitter<{ name: string; description: string; prompt: string }>(
+    EVENT_SET_ASSISTANT_VALUES,
+    handleUpdateFormFields
+  );
 
   useEffect(() => {
     const initialFormFields = assistantFieldConfigs.map(
