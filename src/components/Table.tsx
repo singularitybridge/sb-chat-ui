@@ -38,7 +38,7 @@ const Table: React.FC<TableProps> = ({
                     {headers.map((header, headerIndex) => (
                       <td
                         key={headerIndex}
-                        className="whitespace-nowrap px-6 py-4"
+                        className="max-w-36 px-6 py-4 align-top"
                       >
                         {row[header]}
                       </td>
