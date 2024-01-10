@@ -13,23 +13,27 @@ import {
 } from '@heroicons/react/24/outline';
 import { IconButton } from '../../components/admin/IconButton';
 import { emitter } from '../../services/mittEmitter';
-import { EVENT_SET_ACTIVE_ASSISTANT, EVENT_SHOW_ADD_ASSISTANT_MODAL } from '../../utils/eventNames';
+import { EVENT_SET_ACTIVE_ASSISTANT, EVENT_SHOW_ADD_ASSISTANT_MODAL, EVENT_SHOW_ADD_COMPANY_MODAL } from '../../utils/eventNames';
+import { CompanyKeys, ICompany } from '../../store/models/Company';
 
-const AssistantsView: React.FC = observer(() => {
+const CompaniesView: React.FC = observer(() => {
+
   const rootStore = useRootStore();
   const navigate = useNavigate();
 
-  const headers: AssistantKeys[] = ['name', 'description', 'voice'];
+  const headers: CompanyKeys[] = ['name', 'openai_api_key'];
 
-  const handleDelete = (row: IAssistant) => {
-    rootStore.deleteAssistant(row._id);
+  const handleDelete = (row: ICompany) => {
+    console.log('delete', row);
+    rootStore.deleteCompany(row._id);    
   };
 
-  const handleSetAssistant = (row: IAssistant) => {
-    emitter.emit(EVENT_SET_ACTIVE_ASSISTANT, row._id);
+  const handleSetCompany = (row: ICompany) => {
+    console.log('set active company', row);
+    // emitter.emit(EVENT_SET_ACTIVE_ASSISTANT, row._id);
   };
 
-  const Actions = (row: IAssistant) => (
+  const Actions = (row: ICompany) => (
     <div className="flex space-x-2 items-center mx-1">
       <IconButton
         icon={<TrashIcon className="w-5 h-5  text-warning-900" />}
@@ -44,7 +48,7 @@ const AssistantsView: React.FC = observer(() => {
         }
         onClick={(event) => {
           event.stopPropagation();
-          handleSetAssistant(row);
+          handleSetCompany(row);
         }}
       />
     </div>
@@ -56,8 +60,8 @@ const AssistantsView: React.FC = observer(() => {
         <div className=" flex-auto">
           <Table
             headers={convertToStringArray(headers)}
-            data={toJS(rootStore.assistants)}
-            onRowClick={(row: IAssistant) =>
+            data={toJS(rootStore.comapnies)}
+            onRowClick={(row: ICompany) =>
               navigate(`/admin/assistants/${row._id}`)
             }
             Actions={Actions}
@@ -71,11 +75,11 @@ const AssistantsView: React.FC = observer(() => {
   );
 });
 
-const AssistantsPage = withPage(
-  'AI Assistants',
-  'manage your ai agents here',
+const CompaniesPage = withPage(
+  'Comapnies',
+  'list of companies',
   () => {
-    emitter.emit(EVENT_SHOW_ADD_ASSISTANT_MODAL, 'Add Assistant');
+    emitter.emit(EVENT_SHOW_ADD_COMPANY_MODAL, 'Add Company');
   }
-)(AssistantsView);
-export { AssistantsPage };
+)(CompaniesView);
+export { CompaniesPage };

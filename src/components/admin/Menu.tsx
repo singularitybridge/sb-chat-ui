@@ -9,6 +9,11 @@ export default function Menu() {
       link: '/admin',
     },
     {
+      name : 'Companies',
+      link : '/admin/companies'
+
+    },
+    {
       name: 'Chatbots',
       link: '/admin/chatbots',
     },

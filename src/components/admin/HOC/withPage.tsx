@@ -1,11 +1,9 @@
 import React from 'react';
 import { IconButton } from '../IconButton';
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
-import { emitter } from '../../../services/mittEmitter';
-import { EVENT_SHOW_ADD_ASSISTANT_MODAL } from '../../../utils/eventNames';
 
 const withPage =
-  (title: string, description: string) =>
+  (title: string, description: string, onAction: () => void) =>
   (WrappedComponent: React.ComponentType<any>) => {
     const WithPageComponent = (props: any) => {
       return (
@@ -20,9 +18,7 @@ const withPage =
             <div>
               <IconButton
                 icon={<PlusCircleIcon className="w-6 h-6 text-stone-400" />}
-                onClick={() => {
-                  emitter.emit(EVENT_SHOW_ADD_ASSISTANT_MODAL, 'Add Assistant');
-                }}
+                onClick={onAction}
                 data-te-toggle="modal"
                 data-te-target="#exampleModal"
               />

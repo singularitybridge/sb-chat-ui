@@ -5,7 +5,7 @@ import {
   FormValues,
   KeyValueListFieldConfig,
 } from '../components/DynamicForm';
-import { assistantFieldConfigs } from '../store/formConfigs/assistantFormConfigs';
+import { assistantFieldConfigs } from '../store/fieldConfigs/assistantFieldConfigs';
 import { observer } from 'mobx-react';
 import { useRootStore } from '../store/common/RootStoreContext';
 import { IAssistant } from '../store/models/Assistant';

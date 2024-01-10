@@ -9,14 +9,32 @@ import {
 } from '../../services/api/chatSessionService';
 import { getChatbots } from '../../services/api/chatbotService';
 import { Assistant, IAssistant } from './Assistant';
-import { addAssistant, deleteAssistant, getAssistants, updateAssistant } from '../../services/api/assistantService';
+import {
+  addAssistant,
+  deleteAssistant,
+  getAssistants,
+  updateAssistant,
+} from '../../services/api/assistantService';
 import { emitter } from '../../services/mittEmitter';
-import { EVENT_ASSISTANT_CREATED, EVENT_ASSISTANT_DELETED, EVENT_ASSISTANT_UPDATED, EVENT_CLOSE_MODAL, EVENT_ERROR } from '../../utils/eventNames';
+import {
+  EVENT_ASSISTANT_CREATED,
+  EVENT_ASSISTANT_DELETED,
+  EVENT_ASSISTANT_UPDATED,
+  EVENT_CLOSE_MODAL,
+  EVENT_ERROR,
+} from '../../utils/eventNames';
+import { Company, ICompany } from './Company';
+import {
+  addCompany,
+  deleteCompany,
+  getCompanies,
+} from '../../services/api/companyService';
 
 const RootStore = types
   .model('RootStore', {
     /// refactor
     assistants: types.array(Assistant),
+    comapnies: types.array(Company),
     assistantsLoaded: types.optional(types.boolean, false),
 
     /// old stuff blat
@@ -32,7 +50,7 @@ const RootStore = types
     /// refactor
     loadAssistants: flow(function* () {
       try {
-        const assistants = yield getAssistants();        
+        const assistants = yield getAssistants();
         applySnapshot(self.assistants, assistants);
         self.assistantsLoaded = true;
       } catch (error) {
@@ -40,26 +58,73 @@ const RootStore = types
       }
     }),
 
+    loadCompanies: flow(function* () {
+      try {
+        const companies = yield getCompanies();
+        applySnapshot(self.comapnies, companies);
+      } catch (error) {
+        console.error('Failed to load assistants', error);
+      }
+    }),
+
+    addCompany: flow(function* (company: ICompany) {
+      try {
+        const newCompany = yield addCompany(company);
+        self.comapnies.push(newCompany);
+        emitter.emit(
+          EVENT_ASSISTANT_CREATED,
+          'New company has been created successfully'
+        );
+        emitter.emit(EVENT_CLOSE_MODAL); // Emit the close modal event
+      } catch (error: any) {
+        console.error('Failed to create company', error);
+        emitter.emit(EVENT_ERROR, 'Failed to add company: ' + error.message);
+      }
+    }),
+
+    deleteCompany: flow(function* (_id: string) {
+      try {
+        yield deleteCompany(_id);
+        const index = self.comapnies.findIndex(
+          (company) => company._id === _id
+        );
+        if (index !== -1) {
+          self.comapnies.splice(index, 1);
+        }
+        emitter.emit(
+          EVENT_ASSISTANT_DELETED,
+          'Record has been deleted successfully'
+        );
+      } catch (error) {
+        console.error('Failed to delete assistant', error);
+      }
+    }),
+
     createAssistant: flow(function* (assistant: IAssistant) {
       try {
         const newAssistant = yield addAssistant(assistant);
         self.assistants.push(newAssistant);
-        emitter.emit(EVENT_ASSISTANT_CREATED, 'New assistant has been created successfully');
+        emitter.emit(
+          EVENT_ASSISTANT_CREATED,
+          'New assistant has been created successfully'
+        );
         emitter.emit(EVENT_CLOSE_MODAL); // Emit the close modal event
       } catch (error: any) {
         console.error('Failed to create assistant', error);
         emitter.emit(EVENT_ERROR, 'Failed to add assistant: ' + error.message);
       }
-    }), 
+    }),
 
     updateAssistant: flow(function* (_id: string, assistant: IAssistant) {
       try {
         const updatedAssistant = yield updateAssistant(_id, assistant);
-        const index = self.assistants.findIndex(ass => ass._id === _id);
-        
-        self.assistants[index] = updatedAssistant;
-        emitter.emit(EVENT_ASSISTANT_UPDATED, 'Record has been updated successfully');
+        const index = self.assistants.findIndex((ass) => ass._id === _id);
 
+        self.assistants[index] = updatedAssistant;
+        emitter.emit(
+          EVENT_ASSISTANT_UPDATED,
+          'Record has been updated successfully'
+        );
       } catch (error) {
         console.error('Failed to update assistant', error);
       }
@@ -68,11 +133,16 @@ const RootStore = types
     deleteAssistant: flow(function* (_id: string) {
       try {
         yield deleteAssistant(_id);
-        const index = self.assistants.findIndex(assistant => assistant._id === _id);
+        const index = self.assistants.findIndex(
+          (assistant) => assistant._id === _id
+        );
         if (index !== -1) {
           self.assistants.splice(index, 1);
         }
-        emitter.emit(EVENT_ASSISTANT_DELETED, 'Record has been deleted successfully');
+        emitter.emit(
+          EVENT_ASSISTANT_DELETED,
+          'Record has been deleted successfully'
+        );
       } catch (error) {
         console.error('Failed to delete assistant', error);
       }
@@ -81,8 +151,6 @@ const RootStore = types
     getAssistantById: (_id: string) => {
       return self.assistants.find((assistant) => assistant._id === _id);
     },
-
-    
 
     /// old stuff blat
     loadChatbots: flow(function* () {
@@ -115,7 +183,7 @@ const RootStore = types
           self.chatSessions.push(chatSession);
         } else {
           console.error(
-            'Cannot create chat session without active user and chatbot.',
+            'Cannot create chat session without active user and chatbot.'
           );
         }
       } catch (error) {
@@ -125,7 +193,7 @@ const RootStore = types
 
     setActiveChatSession: (sessionId: string) => {
       const foundSession = self.chatSessions.find(
-        (session) => session._id === sessionId,
+        (session) => session._id === sessionId
       );
       if (foundSession) {
         self.selectedChatSession = foundSession;
@@ -134,7 +202,7 @@ const RootStore = types
 
     setActiveChatbot: (chatbotKey: string) => {
       const chatbot = self.chatbots.find(
-        (chatbot) => chatbot.key === chatbotKey,
+        (chatbot) => chatbot.key === chatbotKey
       );
 
       if (!chatbot) {

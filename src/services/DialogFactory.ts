@@ -1,5 +1,6 @@
 import { NewAssistantView } from '../pages/NewAssistantView';
-import { EVENT_SHOW_ADD_ASSISTANT_MODAL, EventType } from '../utils/eventNames';
+import { NewCompanyView } from '../pages/NewCompanyView';
+import { EVENT_SHOW_ADD_ASSISTANT_MODAL, EVENT_SHOW_ADD_COMPANY_MODAL, EventType } from '../utils/eventNames';
 import React from 'react';
 
 export interface DialogComponentEventData {
@@ -16,6 +17,12 @@ const dialogComponentFactory = (
       return {
         title: eventData.title || 'Create New Assistant',
         component: React.createElement(NewAssistantView),
+      };
+
+    case EVENT_SHOW_ADD_COMPANY_MODAL:
+      return {
+        title: eventData.title || 'Create New Company',
+        component: React.createElement(NewCompanyView),
       };
 
     default:

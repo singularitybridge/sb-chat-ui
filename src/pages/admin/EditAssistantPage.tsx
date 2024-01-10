@@ -11,7 +11,7 @@ import {
   FormValues,
 } from '../../components/DynamicForm';
 import { toJS } from 'mobx';
-import { assistantFieldConfigs } from '../../store/formConfigs/assistantFormConfigs';
+import { assistantFieldConfigs } from '../../store/fieldConfigs/assistantFieldConfigs';
 
 const EditAssistantView: React.FC = observer(() => {
   const { key } = useParams<{ key: string }>();
@@ -70,6 +70,7 @@ const EditAssistantView: React.FC = observer(() => {
 
 const EditAssistantPage = withPage(
   'Edit AI Assistant',
-  'update your ai agents here'
+  'update your ai agents here', 
+  () => { console.log('edit assistant');}
 )(EditAssistantView);
 export { EditAssistantPage, EditAssistantView };

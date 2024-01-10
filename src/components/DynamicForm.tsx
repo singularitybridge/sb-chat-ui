@@ -4,6 +4,7 @@ import { TextareaWithLabel } from './admin/TextareaWithLabel';
 import { KeyValue, KeyValueList } from './KeyValueList';
 import LoadingButton from './core/LoadingButton';
 import { AssistantKeys } from '../store/models/Assistant';
+import { CompanyKeys } from '../store/models/Company';
 
 export type FieldType = 'input' | 'textarea' | 'key-value-list';
 export type FormType = 'create' | 'update';
@@ -16,7 +17,7 @@ export interface FieldVisibility {
 
 export interface BaseFieldConfig {
   id: string;
-  key: AssistantKeys;
+  key: AssistantKeys | CompanyKeys;
   type: FieldType;
   label: string;
   visibility: FieldVisibility;

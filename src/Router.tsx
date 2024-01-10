@@ -18,6 +18,7 @@ import { autorun } from 'mobx';
 import { ChatRouteLoader } from './components/ChatRouteLoader';
 import { AssistantsPage } from './pages/admin/AssistantsPage';
 import { EditAssistantPage } from './pages/admin/EditAssistantPage';
+import { CompaniesPage } from './pages/admin/CompaniesPage';
 
 export const browserRouter = createBrowserRouter([
   {
@@ -63,6 +64,10 @@ export const browserRouter = createBrowserRouter([
             path: 'assistants/:key',
             element: <EditAssistantPage />,
           },
+          {
+            path: 'companies',
+            element: <CompaniesPage />,
+          }
         ],
       },
       { path: '*', element: <NotFound /> },

@@ -101,6 +101,7 @@ const App = () => {
 
   useEffect(() => {
     rootStore.loadAssistants();
+    rootStore.loadCompanies();
 
     // rootStore.loadChatbots();
     // rootStore.loadChatSessions('');
