@@ -7,7 +7,7 @@ import { RootStoreProvider } from './store/common/RootStoreContext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { emitter, useEventEmitter } from './services/mittEmitter';
-import { EVENT_ASSISTANT_CREATED, EVENT_ASSISTANT_DELETED, EVENT_ASSISTANT_UPDATED, EVENT_CHAT_SESSION_DELETED, EVENT_ERROR, EVENT_SET_ASSISTANT_VALUES, EVENT_SHOW_ADD_ASSISTANT_MODAL } from './utils/eventNames';
+import { EVENT_ASSISTANT_CREATED, EVENT_ASSISTANT_DELETED, EVENT_ASSISTANT_UPDATED, EVENT_CHAT_SESSION_DELETED, EVENT_ERROR, EVENT_SET_ACTIVE_ASSISTANT, EVENT_SET_ASSISTANT_VALUES, EVENT_SHOW_ADD_ASSISTANT_MODAL } from './utils/eventNames';
 import { DialogManager } from './components/admin/DialogManager';
 import { ChatContainer } from './components/chat-container/ChatContainer';
 import { pusher } from './services/PusherService';
@@ -49,9 +49,16 @@ const App = () => {
       emitter.emit(EVENT_SHOW_ADD_ASSISTANT_MODAL, 'Add Assistant');
       await new Promise((resolve) => setTimeout(resolve, 100));
       emitter.emit(EVENT_SET_ASSISTANT_VALUES, newAssistantData);
-
       
     });
+
+    channel.bind('setAssistant', async function(data: any) {
+        
+        const assistantData = data.message; // contains name, description, prompt
+        console.log(assistantData);
+        emitter.emit(EVENT_SET_ACTIVE_ASSISTANT, assistantData._id);
+        
+      });
 
     return () => {
       channel.unbind_all();

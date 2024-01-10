@@ -1,9 +1,13 @@
 import React from 'react';
 import { SparklesIcon } from '@heroicons/react/24/solid';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface AssistantMessageProps {
   text: string;
 }
+
+
 
 const AssistantMessage: React.FC<AssistantMessageProps> = ({ text }) => {
   return (
@@ -15,7 +19,7 @@ const AssistantMessage: React.FC<AssistantMessageProps> = ({ text }) => {
       </span>
       <div className="leading-relaxed">
         <span className="block font-bold text-gray-800">AI </span>
-        <div className="whitespace-pre-wrap">{text}</div>
+        <ReactMarkdown className="prose prose-sm ">{text}</ReactMarkdown>
       </div>
     </div>
   );

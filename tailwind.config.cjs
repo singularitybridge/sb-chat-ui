@@ -19,6 +19,8 @@ module.exports = {
     // require('tw-elements/dist/plugin.cjs')
     require('tw-elements-react/dist/plugin.cjs'),
     require('tailwind-scrollbar'),
+    require('@tailwindcss/typography'),
+
   ],
   darkMode: 'class',
 };
