@@ -11,10 +11,7 @@ import {
   TrashIcon,
 } from '@heroicons/react/24/outline';
 import { IconButton } from '../../components/admin/IconButton';
-import { emitter } from '../../services/mittEmitter';
-// import { EVENT_SHOW_ADD_SESSION_MODAL } from '../../utils/eventNames';
 import { SessionKeys, ISession } from '../../store/models/Session';
-import { deleteSession } from '../../services/api/sessionService';
 
 const SessionsView: React.FC = observer(() => {
   const rootStore = useRootStore();
@@ -23,7 +20,7 @@ const SessionsView: React.FC = observer(() => {
   const headers: SessionKeys[] = ['userName', 'assistantName', 'threadId', 'active'];
 
   const handleDelete = (row: ISession) => {    
-    deleteSession(row._id);
+    rootStore.deleteSession(row._id);
   };
 
   const handleSetActiveSession = (row: ISession) => {

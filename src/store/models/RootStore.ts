@@ -28,7 +28,7 @@ import {
   getCompanies,
 } from '../../services/api/companyService';
 import { Session } from './Session';
-import { getAllSessions } from '../../services/api/sessionService';
+import { deleteSession, getAllSessions } from '../../services/api/sessionService';
 import { IUser, User } from './User';
 import { addUser, deleteUser, getAllUsers } from '../../services/api/userService';
 
@@ -79,6 +79,24 @@ const RootStore = types
         applySnapshot(self.sessions, sessions);
       } catch (error) {
         console.error('Failed to load assistants', error);
+      }
+    }),
+
+    deleteSession: flow(function* (_id: string) {
+      try {
+        yield deleteSession(_id);
+        const index = self.sessions.findIndex(
+          (session) => session._id === _id
+        );
+        if (index !== -1) {
+          self.sessions[index].active = false;
+        }
+        emitter.emit(
+          EVENT_SHOW_NOTIFICATION,
+          'Session has been ended successfully'
+        );        
+      } catch (error) {
+        console.error('Failed to delete session', error);
       }
     }),
 
