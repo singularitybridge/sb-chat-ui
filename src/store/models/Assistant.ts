@@ -29,5 +29,5 @@ type AssistantSnapshotIn = SnapshotIn<typeof Assistant>;
 type AssistantSnapshotOut = SnapshotOut<typeof Assistant>;
 export type AssistantKeys = keyof IAssistant;
 
-export { Assistant };
+export { Assistant, Identifier };
 export type { IAssistant, AssistantSnapshotIn, AssistantSnapshotOut };

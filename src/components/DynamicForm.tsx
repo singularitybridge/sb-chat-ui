@@ -5,6 +5,7 @@ import { KeyValue, KeyValueList } from './KeyValueList';
 import LoadingButton from './core/LoadingButton';
 import { AssistantKeys } from '../store/models/Assistant';
 import { CompanyKeys } from '../store/models/Company';
+import { UserKeys } from '../store/models/User';
 
 export type FieldType = 'input' | 'textarea' | 'key-value-list';
 export type FormType = 'create' | 'update';
@@ -17,7 +18,7 @@ export interface FieldVisibility {
 
 export interface BaseFieldConfig {
   id: string;
-  key: AssistantKeys | CompanyKeys;
+  key: AssistantKeys | CompanyKeys | UserKeys;
   type: FieldType;
   label: string;
   visibility: FieldVisibility;

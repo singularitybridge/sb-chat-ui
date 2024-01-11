@@ -1,6 +1,12 @@
 import { NewAssistantView } from '../pages/NewAssistantView';
 import { NewCompanyView } from '../pages/NewCompanyView';
-import { EVENT_SHOW_ADD_ASSISTANT_MODAL, EVENT_SHOW_ADD_COMPANY_MODAL, EventType } from '../utils/eventNames';
+import { NewUserView } from '../pages/NewUserView';
+import {
+  EVENT_SHOW_ADD_ASSISTANT_MODAL,
+  EVENT_SHOW_ADD_COMPANY_MODAL,
+  EVENT_SHOW_ADD_USER_MODAL,
+  EventType,
+} from '../utils/eventNames';
 import React from 'react';
 
 export interface DialogComponentEventData {
@@ -23,6 +29,12 @@ const dialogComponentFactory = (
       return {
         title: eventData.title || 'Create New Company',
         component: React.createElement(NewCompanyView),
+      };
+
+    case EVENT_SHOW_ADD_USER_MODAL:
+      return {
+        title: eventData.title || 'Create New User',
+        component: React.createElement(NewUserView),
       };
 
     default:

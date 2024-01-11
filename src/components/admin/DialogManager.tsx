@@ -4,6 +4,7 @@ import {
   EVENT_CLOSE_MODAL,
   EVENT_SHOW_ADD_ASSISTANT_MODAL,
   EVENT_SHOW_ADD_COMPANY_MODAL,
+  EVENT_SHOW_ADD_USER_MODAL,
   EventType,
 } from '../../utils/eventNames';
 import { ModalDialog } from '../core/ModalDialog';
@@ -38,6 +39,11 @@ const DialogManager = () => {
     EVENT_SHOW_ADD_COMPANY_MODAL,
     (eventData: DialogComponentEventData) =>
       updateContent(EVENT_SHOW_ADD_COMPANY_MODAL, eventData)
+  );
+
+  useEventEmitter(EVENT_SHOW_ADD_USER_MODAL,
+    (eventData: DialogComponentEventData) =>
+      updateContent(EVENT_SHOW_ADD_USER_MODAL, eventData)
   );
 
   useEventEmitter(EVENT_CLOSE_MODAL, () => setIsOpen(false));

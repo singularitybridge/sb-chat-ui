@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 interface TableProps {
   headers: string[];
@@ -13,6 +13,17 @@ const Table: React.FC<TableProps> = ({
   onRowClick,
   Actions,
 }) => {
+  useEffect(() => {
+    console.log(data);
+  }, []);
+
+  const renderCellContent = (value: any) => {
+    if (typeof value === 'boolean') {
+      return value.toString();
+    }
+    return value;
+  };
+
   return (
     <div className="flex flex-col w-full">
       <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -21,9 +32,15 @@ const Table: React.FC<TableProps> = ({
             <table className="min-w-full text-left text-sm font-light">
               <thead className="border-b font-medium dark:border-neutral-500">
                 <tr>
-                  {headers.map((header, index) => (
-                    <th key={index} scope="col" className="px-6 py-4">
-                      {header}
+                  {headers.map((row, index) => (
+                    <th
+                      key={index}
+                      scope="col"
+                      className="px-6 py-4 max-w-xs truncate"
+                      
+
+                    >
+                      {row}
                     </th>
                   ))}
                 </tr>
@@ -38,12 +55,14 @@ const Table: React.FC<TableProps> = ({
                     {headers.map((header, headerIndex) => (
                       <td
                         key={headerIndex}
-                        className="max-w-36 px-6 py-4 align-top"
+                        className={`px-6 py-4 truncate ${
+                          header === 'specificColumn' ? 'max-w-md' : 'max-w-xs'
+                        }`}
                       >
-                        {row[header]}
+                        {renderCellContent(row[header])}
                       </td>
                     ))}
-                    {Actions && <td>{Actions(row)}</td>}
+                    {Actions && <td className="px-6 py-4">{Actions(row)}</td>}
                   </tr>
                 ))}
               </tbody>

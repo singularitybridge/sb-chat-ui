@@ -12,30 +12,29 @@ import {
 } from '@heroicons/react/24/outline';
 import { IconButton } from '../../components/admin/IconButton';
 import { emitter } from '../../services/mittEmitter';
-import { EVENT_SHOW_ADD_COMPANY_MODAL } from '../../utils/eventNames';
-import { CompanyKeys, ICompany } from '../../store/models/Company';
+// import { EVENT_SHOW_ADD_SESSION_MODAL } from '../../utils/eventNames';
+import { SessionKeys, ISession } from '../../store/models/Session';
+import { deleteSession } from '../../services/api/sessionService';
 
-const CompaniesView: React.FC = observer(() => {
-
+const SessionsView: React.FC = observer(() => {
   const rootStore = useRootStore();
   const navigate = useNavigate();
 
-  const headers: CompanyKeys[] = ['name', 'openai_api_key'];
+  const headers: SessionKeys[] = ['userName', 'assistantName', 'threadId', 'active'];
 
-  const handleDelete = (row: ICompany) => {
-    console.log('delete', row);
-    rootStore.deleteCompany(row._id);    
+  const handleDelete = (row: ISession) => {    
+    deleteSession(row._id);
   };
 
-  const handleSetCompany = (row: ICompany) => {
-    console.log('set active company', row);
-    // emitter.emit(EVENT_SET_ACTIVE_ASSISTANT, row._id);
+  const handleSetActiveSession = (row: ISession) => {
+    console.log('set active session', row);
+    // emitter.emit(EVENT_SET_ACTIVE_SESSION, row._id);
   };
 
-  const Actions = (row: ICompany) => (
+  const Actions = (row: ISession) => (
     <div className="flex space-x-2 items-center mx-1">
       <IconButton
-        icon={<TrashIcon className="w-5 h-5  text-warning-900" />}
+        icon={<TrashIcon className="w-5 h-5 text-warning-900" />}
         onClick={(event) => {
           event.stopPropagation();
           handleDelete(row);
@@ -43,11 +42,11 @@ const CompaniesView: React.FC = observer(() => {
       />
       <IconButton
         icon={
-          <ChatBubbleLeftEllipsisIcon className="w-5 h-5  text-warning-900" />
+          <ChatBubbleLeftEllipsisIcon className="w-5 h-5 text-warning-900" />
         }
         onClick={(event) => {
           event.stopPropagation();
-          handleSetCompany(row);
+          handleSetActiveSession(row);
         }}
       />
     </div>
@@ -59,26 +58,26 @@ const CompaniesView: React.FC = observer(() => {
         <div className=" flex-auto">
           <Table
             headers={convertToStringArray(headers)}
-            data={toJS(rootStore.comapnies)}
-            onRowClick={(row: ICompany) =>
-              navigate(`/admin/assistants/${row._id}`)
+            data={toJS(rootStore.sessions)}
+            onRowClick={(row: ISession) =>
+              navigate(`/admin/sessions/${row._id}`)
             }
             Actions={Actions}
           />
         </div>
         <div className=" flex-0 w-96">
-          
+          {/* Additional UI elements can be added here */}
         </div>
       </div>
     </>
   );
 });
 
-const CompaniesPage = withPage(
-  'Comapnies',
-  'list of companies',
+const SessionsPage = withPage(
+  'Sessions',
+  'list of sessions',
   () => {
-    emitter.emit(EVENT_SHOW_ADD_COMPANY_MODAL, 'Add Company');
+    // emitter.emit(EVENT_SHOW_ADD_SESSION_MODAL, 'Add Session');
   }
-)(CompaniesView);
-export { CompaniesPage };
+)(SessionsView);
+export { SessionsPage };

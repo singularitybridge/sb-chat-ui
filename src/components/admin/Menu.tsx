@@ -14,12 +14,17 @@ export default function Menu() {
 
     },
     {
-      name: 'Chatbots',
-      link: '/admin/chatbots',
-    },
-    {
       name: 'Assistants',
       link: '/admin/assistants',
+    },
+    {
+      name: 'Users',
+      link: '/admin/users',
+
+    },
+    {
+      name: 'Sessions',
+      link: '/admin/sessions',
     },
     {
       name: 'Data',

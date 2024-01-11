@@ -7,7 +7,14 @@ import { RootStoreProvider } from './store/common/RootStoreContext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { emitter, useEventEmitter } from './services/mittEmitter';
-import { EVENT_ASSISTANT_CREATED, EVENT_ASSISTANT_DELETED, EVENT_ASSISTANT_UPDATED, EVENT_CHAT_SESSION_DELETED, EVENT_ERROR, EVENT_SET_ACTIVE_ASSISTANT, EVENT_SET_ASSISTANT_VALUES, EVENT_SHOW_ADD_ASSISTANT_MODAL } from './utils/eventNames';
+import {
+  EVENT_CHAT_SESSION_DELETED,
+  EVENT_ERROR,
+  EVENT_SET_ACTIVE_ASSISTANT,
+  EVENT_SET_ASSISTANT_VALUES,
+  EVENT_SHOW_ADD_ASSISTANT_MODAL,
+  EVENT_SHOW_NOTIFICATION,
+} from './utils/eventNames';
 import { DialogManager } from './components/admin/DialogManager';
 import { ChatContainer } from './components/chat-container/ChatContainer';
 import { pusher } from './services/PusherService';
@@ -24,6 +31,7 @@ const rootStore = RootStore.create({
 });
 
 const App = () => {
+  
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [screenHeight, setScreenHeight] = useState(0);
 
@@ -31,34 +39,27 @@ const App = () => {
     toast(message);
   }, []);
 
-  useEventEmitter<string>(EVENT_ASSISTANT_UPDATED, toastHandler);
-  useEventEmitter<string>(EVENT_ASSISTANT_DELETED, toastHandler);
-  useEventEmitter<string>(EVENT_ASSISTANT_CREATED, toastHandler);
   useEventEmitter<string>(EVENT_CHAT_SESSION_DELETED, toastHandler);
   useEventEmitter<string>(EVENT_ERROR, toastHandler);
+  useEventEmitter<string>(EVENT_SHOW_NOTIFICATION, toastHandler);
 
   useEffect(() => {
 
     const channel = pusher.subscribe('sb');
 
-    channel.bind('createNewAssistant', async function(data: any) {
-
+    channel.bind('createNewAssistant', async function (data: any) {
       const newAssistantData = data.message; // contains name, description, prompt
       console.log(newAssistantData);
-
       emitter.emit(EVENT_SHOW_ADD_ASSISTANT_MODAL, 'Add Assistant');
       await new Promise((resolve) => setTimeout(resolve, 100));
       emitter.emit(EVENT_SET_ASSISTANT_VALUES, newAssistantData);
-      
     });
 
-    channel.bind('setAssistant', async function(data: any) {
-        
-        const assistantData = data.message; // contains name, description, prompt
-        console.log(assistantData);
-        emitter.emit(EVENT_SET_ACTIVE_ASSISTANT, assistantData._id);
-        
-      });
+    channel.bind('setAssistant', async function (data: any) {
+      const assistantData = data.message; // contains name, description, prompt
+      console.log(assistantData);
+      emitter.emit(EVENT_SET_ACTIVE_ASSISTANT, assistantData._id);
+    });
 
     return () => {
       channel.unbind_all();
@@ -66,7 +67,6 @@ const App = () => {
     };
   }, []);
 
-  
   const getHeight = useCallback(
     () =>
       window.visualViewport ? window.visualViewport.height : window.innerHeight,
@@ -102,6 +102,8 @@ const App = () => {
   useEffect(() => {
     rootStore.loadAssistants();
     rootStore.loadCompanies();
+    rootStore.loadSessions();
+    rootStore.loadUsers();
 
     // rootStore.loadChatbots();
     // rootStore.loadChatSessions('');

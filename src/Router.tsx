@@ -19,6 +19,8 @@ import { ChatRouteLoader } from './components/ChatRouteLoader';
 import { AssistantsPage } from './pages/admin/AssistantsPage';
 import { EditAssistantPage } from './pages/admin/EditAssistantPage';
 import { CompaniesPage } from './pages/admin/CompaniesPage';
+import { SessionsPage } from './pages/admin/SessionsPage';
+import { UsersPage } from './pages/admin/UsersPage';
 
 export const browserRouter = createBrowserRouter([
   {
@@ -67,6 +69,14 @@ export const browserRouter = createBrowserRouter([
           {
             path: 'companies',
             element: <CompaniesPage />,
+          },
+          {
+            path: 'sessions',
+            element: <SessionsPage />,
+          },
+          {
+            path: 'users',
+            element: <UsersPage />,
           }
         ],
       },

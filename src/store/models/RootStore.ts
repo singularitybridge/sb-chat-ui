@@ -16,12 +16,10 @@ import {
   updateAssistant,
 } from '../../services/api/assistantService';
 import { emitter } from '../../services/mittEmitter';
-import {
-  EVENT_ASSISTANT_CREATED,
-  EVENT_ASSISTANT_DELETED,
-  EVENT_ASSISTANT_UPDATED,
+import {  
   EVENT_CLOSE_MODAL,
   EVENT_ERROR,
+  EVENT_SHOW_NOTIFICATION,
 } from '../../utils/eventNames';
 import { Company, ICompany } from './Company';
 import {
@@ -29,13 +27,21 @@ import {
   deleteCompany,
   getCompanies,
 } from '../../services/api/companyService';
+import { Session } from './Session';
+import { getAllSessions } from '../../services/api/sessionService';
+import { IUser, User } from './User';
+import { addUser, deleteUser, getAllUsers } from '../../services/api/userService';
 
 const RootStore = types
   .model('RootStore', {
     /// refactor
     assistants: types.array(Assistant),
     comapnies: types.array(Company),
+    sessions: types.array(Session),
+    users: types.array(User),
+    
     assistantsLoaded: types.optional(types.boolean, false),
+
 
     /// old stuff blat
     chatbots: types.array(Chatbot),
@@ -67,12 +73,66 @@ const RootStore = types
       }
     }),
 
+    loadSessions: flow(function* () {
+      try {
+        const sessions = yield getAllSessions();
+        applySnapshot(self.sessions, sessions);
+      } catch (error) {
+        console.error('Failed to load assistants', error);
+      }
+    }),
+
+    loadUsers: flow(function* () {
+      try {
+        const users = yield getAllUsers();
+        applySnapshot(self.users, users);
+      } catch (error) {
+        console.error('Failed to load assistants', error);
+      }
+    }),
+
+    addUser : flow(function* (user: IUser) {
+      try {
+        const newUser = yield addUser(user);
+        self.users.push(newUser);
+        emitter.emit(
+          EVENT_SHOW_NOTIFICATION,
+          'New user has been created successfully'
+        );
+
+        emitter.emit(EVENT_CLOSE_MODAL); // Emit the close modal event
+      } catch (error: any) {
+        console.error('Failed to create user', error);
+        emitter.emit(EVENT_ERROR, 'Failed to add user: ' + error.message);
+      }
+    }),
+
+    deleteUser : flow(function* (_id: string) {
+      try {
+        yield deleteUser(_id);
+        const index = self.users.findIndex(
+          (user) => user._id === _id
+        );
+        if (index !== -1) {
+          self.users.splice(index, 1);
+        }
+        emitter.emit(
+          EVENT_SHOW_NOTIFICATION,
+          'User has been deleted successfully'
+        );
+
+      } catch (error) {
+        console.error('Failed to delete user', error);
+      }
+    }),
+
+
     addCompany: flow(function* (company: ICompany) {
       try {
         const newCompany = yield addCompany(company);
         self.comapnies.push(newCompany);
         emitter.emit(
-          EVENT_ASSISTANT_CREATED,
+          EVENT_SHOW_NOTIFICATION,
           'New company has been created successfully'
         );
         emitter.emit(EVENT_CLOSE_MODAL); // Emit the close modal event
@@ -92,8 +152,8 @@ const RootStore = types
           self.comapnies.splice(index, 1);
         }
         emitter.emit(
-          EVENT_ASSISTANT_DELETED,
-          'Record has been deleted successfully'
+          EVENT_SHOW_NOTIFICATION,
+          'Company has been deleted successfully'
         );
       } catch (error) {
         console.error('Failed to delete assistant', error);
@@ -105,7 +165,7 @@ const RootStore = types
         const newAssistant = yield addAssistant(assistant);
         self.assistants.push(newAssistant);
         emitter.emit(
-          EVENT_ASSISTANT_CREATED,
+          EVENT_SHOW_NOTIFICATION,
           'New assistant has been created successfully'
         );
         emitter.emit(EVENT_CLOSE_MODAL); // Emit the close modal event
@@ -122,8 +182,8 @@ const RootStore = types
 
         self.assistants[index] = updatedAssistant;
         emitter.emit(
-          EVENT_ASSISTANT_UPDATED,
-          'Record has been updated successfully'
+          EVENT_SHOW_NOTIFICATION,
+          'assistant has been deleted successfully'          
         );
       } catch (error) {
         console.error('Failed to update assistant', error);
@@ -140,8 +200,8 @@ const RootStore = types
           self.assistants.splice(index, 1);
         }
         emitter.emit(
-          EVENT_ASSISTANT_DELETED,
-          'Record has been deleted successfully'
+          EVENT_SHOW_NOTIFICATION,
+          'Assistant has been deleted successfully'
         );
       } catch (error) {
         console.error('Failed to delete assistant', error);
