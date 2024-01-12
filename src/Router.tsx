@@ -21,6 +21,7 @@ import { EditAssistantPage } from './pages/admin/EditAssistantPage';
 import { CompaniesPage } from './pages/admin/CompaniesPage';
 import { SessionsPage } from './pages/admin/SessionsPage';
 import { UsersPage } from './pages/admin/UsersPage';
+import { InboxPage } from './pages/admin/InboxPage';
 
 export const browserRouter = createBrowserRouter([
   {
@@ -77,7 +78,12 @@ export const browserRouter = createBrowserRouter([
           {
             path: 'users',
             element: <UsersPage />,
-          }
+          },
+          {
+            path: 'inbox',
+            element: <InboxPage />,
+          },
+
         ],
       },
       { path: '*', element: <NotFound /> },
