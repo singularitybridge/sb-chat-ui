@@ -18,6 +18,7 @@ import {
 import { DialogManager } from './components/admin/DialogManager';
 import { ChatContainer } from './components/chat-container/ChatContainer';
 import { pusher } from './services/PusherService';
+import { jwtDecode} from 'jwt-decode';
 
 const rootStore = RootStore.create({
   chatbots: [],
@@ -31,7 +32,6 @@ const rootStore = RootStore.create({
 });
 
 const App = () => {
-  
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [screenHeight, setScreenHeight] = useState(0);
 
@@ -44,7 +44,6 @@ const App = () => {
   useEventEmitter<string>(EVENT_SHOW_NOTIFICATION, toastHandler);
 
   useEffect(() => {
-
     const channel = pusher.subscribe('sb');
 
     channel.bind('createNewAssistant', async function (data: any) {
@@ -104,6 +103,25 @@ const App = () => {
     rootStore.loadCompanies();
     rootStore.loadSessions();
     rootStore.loadUsers();
+
+    const sessionToken = localStorage.getItem('sessionToken');
+    if (sessionToken) {
+      try {
+
+        const decoded: any = jwtDecode(sessionToken);
+
+        rootStore.userSession?.setSessionData(
+          decoded.userId,
+          decoded.companyId,
+          decoded.assistantId
+        );
+      } catch (error) {
+        console.error('Error decoding the token:', error);
+        // Handle the error appropriately
+      }
+    }
+    
+    
 
     // rootStore.loadChatbots();
     // rootStore.loadChatSessions('');

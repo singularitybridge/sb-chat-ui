@@ -31,6 +31,7 @@ import { Session } from './Session';
 import { deleteSession, getAllSessions } from '../../services/api/sessionService';
 import { IUser, User } from './User';
 import { addUser, deleteUser, getAllUsers } from '../../services/api/userService';
+import { UserSession } from './UserSession';
 
 const RootStore = types
   .model('RootStore', {
@@ -39,6 +40,7 @@ const RootStore = types
     comapnies: types.array(Company),
     sessions: types.array(Session),
     users: types.array(User),
+    userSession : types.maybe(types.reference(UserSession)),
     
     assistantsLoaded: types.optional(types.boolean, false),
 

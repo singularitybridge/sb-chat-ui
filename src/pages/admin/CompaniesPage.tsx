@@ -7,7 +7,7 @@ import { toJS } from 'mobx';
 import { withPage } from '../../components/admin/HOC/withPage';
 import { convertToStringArray } from '../../utils/utils';
 import {
-  ChatBubbleLeftEllipsisIcon,
+  PlayIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
 import { IconButton } from '../../components/admin/IconButton';
@@ -33,7 +33,7 @@ const CompaniesView: React.FC = observer(() => {
   };
 
   const Actions = (row: ICompany) => (
-    <div className="flex space-x-2 items-center mx-1">
+    <div className="flex space-x-3 items-center mx-1">
       <IconButton
         icon={<TrashIcon className="w-5 h-5  text-warning-900" />}
         onClick={(event) => {
@@ -43,7 +43,7 @@ const CompaniesView: React.FC = observer(() => {
       />
       <IconButton
         icon={
-          <ChatBubbleLeftEllipsisIcon className="w-5 h-5  text-warning-900" />
+          <PlayIcon className="w-5 h-5  text-warning-900" />
         }
         onClick={(event) => {
           event.stopPropagation();
