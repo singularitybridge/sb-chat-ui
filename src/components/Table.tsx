@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 interface TableProps {
   headers: string[];
@@ -13,9 +13,8 @@ const Table: React.FC<TableProps> = ({
   onRowClick,
   Actions,
 }) => {
-  useEffect(() => {
-    console.log(data);
-  }, []);
+
+  
 
   const renderCellContent = (value: any) => {
     if (typeof value === 'boolean') {

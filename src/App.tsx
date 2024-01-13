@@ -21,14 +21,9 @@ import { pusher } from './services/PusherService';
 import { jwtDecode} from 'jwt-decode';
 
 const rootStore = RootStore.create({
-  chatbots: [],
-  userProfile: {
-    _id: '1',
-    name: 'Avi',
-    avatar: '/images/avatars/av3.png',
-    activeChatBot: 'remove me',
-    isAudioPlaying: false,
-  },
+  assistants: [],
+  sessions: [],
+  users: [],
 });
 
 const App = () => {
@@ -108,13 +103,13 @@ const App = () => {
     if (sessionToken) {
       try {
 
-        const decoded: any = jwtDecode(sessionToken);
+        // const decoded: any = jwtDecode(sessionToken);
 
-        rootStore.userSession?.setSessionData(
-          decoded.userId,
-          decoded.companyId,
-          decoded.assistantId
-        );
+        // rootStore.userSession?.setSessionData(
+        //   decoded.userId,
+        //   decoded.companyId,
+        //   decoded.assistantId
+        // );
       } catch (error) {
         console.error('Error decoding the token:', error);
         // Handle the error appropriately

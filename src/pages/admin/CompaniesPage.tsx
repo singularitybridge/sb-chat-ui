@@ -28,7 +28,9 @@ const CompaniesView: React.FC = observer(() => {
   };
 
   const handleSetCompany = (row: ICompany) => {
+
     console.log('set active company', row);
+    
     // emitter.emit(EVENT_SET_ACTIVE_ASSISTANT, row._id);
   };
 

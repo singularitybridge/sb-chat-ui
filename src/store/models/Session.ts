@@ -2,6 +2,7 @@ import { types, Instance, SnapshotIn, SnapshotOut } from 'mobx-state-tree';
 
 const Session = types.model('Session', {
   _id: types.identifier,
+  companyId: types.string,
   userId: types.string,
   assistantId: types.string,
   threadId: types.string,
