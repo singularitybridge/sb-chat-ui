@@ -22,10 +22,10 @@ const Header: React.FC<HeaderProps> = ({ title, description, onMinimize }) => {
         </div>
         <div className="flex space-x-2">
           <button
-            className="bg-gray-200 rounded-full p-1 hover:bg-gray-300  "
+            className="bg-gray-200 rounded-full p-2 hover:bg-gray-300  "
             onClick={onMinimize}
           >
-            <ChevronDownIcon className="h-5 w-5 text-gray-500" />
+            <ChevronDownIcon className="h-3 w-3 text-gray-700" />
           </button>
         </div>
       </div>

@@ -17,6 +17,7 @@ const Assistant = types.model('Assistant', {
   name: types.string,
   description: types.string,
   introMessage: types.string,
+  companyId: types.string,
   voice: types.string,
   language: types.string,
   identifiers: types.optional(types.array(Identifier), []),

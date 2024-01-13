@@ -45,9 +45,9 @@ export const updateSession = async (
   }
 };
 
-export const getAllSessions = async (): Promise<ISession[]> => {
+export const getAllSessions = async (companyId: string): Promise<ISession[]> => {
   try {
-    const response = await axios.get('http://localhost:3000/session/friendly');
+    const response = await axios.get(`http://localhost:3000/session/friendly/${companyId}`);
     return response.data;
   } catch (error) {
     console.error('Failed to fetch sessions', error);

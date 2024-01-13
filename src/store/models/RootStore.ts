@@ -20,9 +20,11 @@ import {
 } from '../../services/api/companyService';
 import { Session } from './Session';
 import {
+  LOCALSTORAGE_COMPANY_ID,
   LOCALSTORAGE_SESSION_ID,
   deleteSession,
   getAllSessions,
+  getLocalStorageItem,
   setLocalStorageItem,
 } from '../../services/api/sessionService';
 import { IUser, User } from './User';
@@ -44,10 +46,10 @@ const RootStore = types
     assistantsLoaded: types.optional(types.boolean, false),
   })
   .actions((self) => ({
-    /// refactor
+    
     loadAssistants: flow(function* () {
       try {
-        const assistants = yield getAssistants();
+        const assistants = yield getAssistants(self.activeSession?.companyId || '');
         applySnapshot(self.assistants, assistants);
         self.assistantsLoaded = true;
       } catch (error) {
@@ -66,7 +68,7 @@ const RootStore = types
 
     loadSessions: flow(function* () {
       try {
-        const sessions = yield getAllSessions();
+        const sessions = yield getAllSessions(getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) || '');
         applySnapshot(self.sessions, sessions);
       } catch (error) {
         console.error('Failed to load sessions', error);
@@ -194,6 +196,9 @@ const RootStore = types
 
     createAssistant: flow(function* (assistant: IAssistant) {
       try {
+
+        // set companyId to activeSession companyId
+        assistant.companyId = self.activeSession?.companyId || '';
         const newAssistant = yield addAssistant(assistant);
         self.assistants.push(newAssistant);
         emitter.emit(

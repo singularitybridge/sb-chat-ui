@@ -95,9 +95,10 @@ const App = () => {
   const style = { height: `${screenHeight}px` };
 
   useEffect(() => {
-    rootStore.loadAssistants();
-    rootStore.loadCompanies();
+    
     rootStore.loadSessions();
+    
+    rootStore.loadCompanies();    
     rootStore.loadUsers();
 
     autorun(() => {
@@ -106,6 +107,7 @@ const App = () => {
         const currentSessionId = getLocalStorageItem(LOCALSTORAGE_SESSION_ID);
         if (currentSessionId) {          
           rootStore.setActiveSession(currentSessionId);
+          rootStore.loadAssistants();
         }
       }
     });
