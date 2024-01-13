@@ -18,7 +18,8 @@ import {
 import { DialogManager } from './components/admin/DialogManager';
 import { ChatContainer } from './components/chat-container/ChatContainer';
 import { pusher } from './services/PusherService';
-import { jwtDecode} from 'jwt-decode';
+import { autorun } from 'mobx';
+import { LOCALSTORAGE_SESSION_ID, getLocalStorageItem } from './services/api/sessionService';
 
 const rootStore = RootStore.create({
   assistants: [],
@@ -99,27 +100,15 @@ const App = () => {
     rootStore.loadSessions();
     rootStore.loadUsers();
 
-    const sessionToken = localStorage.getItem('sessionToken');
-    if (sessionToken) {
-      try {
-
-        // const decoded: any = jwtDecode(sessionToken);
-
-        // rootStore.userSession?.setSessionData(
-        //   decoded.userId,
-        //   decoded.companyId,
-        //   decoded.assistantId
-        // );
-      } catch (error) {
-        console.error('Error decoding the token:', error);
-        // Handle the error appropriately
+    autorun(() => {
+      const sessionsLoaded = rootStore.sessions.length > 0;
+      if (sessionsLoaded) {
+        const currentSessionId = getLocalStorageItem(LOCALSTORAGE_SESSION_ID);
+        if (currentSessionId) {          
+          rootStore.setActiveSession(currentSessionId);
+        }
       }
-    }
-    
-    
-
-    // rootStore.loadChatbots();
-    // rootStore.loadChatSessions('');
+    });
   }, [rootStore]);
 
   return (

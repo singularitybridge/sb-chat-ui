@@ -6,8 +6,12 @@ import {
   ChatBubbleLeftEllipsisIcon,
   UserIcon,
 } from '@heroicons/react/24/outline';
+import { observer } from 'mobx-react';
+import { useRootStore } from '../../store/common/RootStoreContext';
 
-export default function Menu() {
+export const Menu = observer(() => {
+  const rootStore = useRootStore();
+
   const menuItems = [
     {
       name: 'Home',
@@ -128,18 +132,24 @@ export default function Menu() {
         <div className="relative flex px-3 space-x-3 mr-4 bg-primary-200 py-3 rounded-2xl bg-opacity-30">
           <div className="flex items-center space-x-0.5">
             <BuildingOffice2Icon className="w-4 h-4 text-sky-900" />
-            <div className=" text-zinc-600  text-sm">Company Name</div>
+            <div className=" text-zinc-600  text-sm">
+              {rootStore.activeSession?.companyName}
+            </div>
           </div>
           <div className="flex items-center space-x-0.5">
             <ChatBubbleLeftEllipsisIcon className="w-4 h-4  text-sky-900" />
-            <div className=" text-sm text-zinc-600">Agent Name</div>
+            <div className=" text-sm text-zinc-600">
+              {rootStore.activeSession?.assistantName}
+            </div>
           </div>
           <div className="flex items-center space-x-0.5">
             <UserIcon className="w-4 h-4  text-sky-900" />
-            <div className="text-zinc-600 text-sm">User Name</div>
+            <div className="text-zinc-600 text-sm">
+              {rootStore.activeSession?.userName}
+            </div>
           </div>
         </div>
       </div>
     </nav>
   );
-}
+});

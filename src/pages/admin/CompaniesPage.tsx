@@ -6,17 +6,22 @@ import { Table } from '../../components/Table';
 import { toJS } from 'mobx';
 import { withPage } from '../../components/admin/HOC/withPage';
 import { convertToStringArray } from '../../utils/utils';
-import {
-  PlayIcon,
-  TrashIcon,
-} from '@heroicons/react/24/outline';
+import { PlayIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { IconButton } from '../../components/admin/IconButton';
 import { emitter } from '../../services/mittEmitter';
-import { EVENT_SHOW_ADD_COMPANY_MODAL } from '../../utils/eventNames';
+import { EVENT_SHOW_ADD_COMPANY_MODAL, EVENT_SHOW_NOTIFICATION } from '../../utils/eventNames';
 import { CompanyKeys, ICompany } from '../../store/models/Company';
+import {
+  LOCALSTORAGE_ASSISTANT_ID,
+  LOCALSTORAGE_COMPANY_ID,
+  LOCALSTORAGE_SESSION_ID,
+  LOCALSTORAGE_USER_ID,
+  getLocalStorageItem,
+  setLocalStorageItem,
+  updateSession,
+} from '../../services/api/sessionService';
 
 const CompaniesView: React.FC = observer(() => {
-
   const rootStore = useRootStore();
   const navigate = useNavigate();
 
@@ -24,14 +29,23 @@ const CompaniesView: React.FC = observer(() => {
 
   const handleDelete = (row: ICompany) => {
     console.log('delete', row);
-    rootStore.deleteCompany(row._id);    
+    rootStore.deleteCompany(row._id);
   };
 
-  const handleSetCompany = (row: ICompany) => {
+  const handleSetCompany = async (row: ICompany) => {
 
-    console.log('set active company', row);
-    
-    // emitter.emit(EVENT_SET_ACTIVE_ASSISTANT, row._id);
+    setLocalStorageItem(LOCALSTORAGE_COMPANY_ID, row._id);
+
+    const session = await updateSession(
+      getLocalStorageItem(LOCALSTORAGE_USER_ID) || '',
+      row._id      
+    );
+
+    setLocalStorageItem(LOCALSTORAGE_ASSISTANT_ID, session.assistantId);
+    setLocalStorageItem(LOCALSTORAGE_SESSION_ID, session._id);
+    rootStore.setActiveSession(session._id);
+    emitter.emit(EVENT_SHOW_NOTIFICATION, 'Company set successfully');
+
   };
 
   const Actions = (row: ICompany) => (
@@ -44,9 +58,7 @@ const CompaniesView: React.FC = observer(() => {
         }}
       />
       <IconButton
-        icon={
-          <PlayIcon className="w-5 h-5  text-warning-900" />
-        }
+        icon={<PlayIcon className="w-5 h-5  text-warning-900" />}
         onClick={(event) => {
           event.stopPropagation();
           handleSetCompany(row);
@@ -68,19 +80,13 @@ const CompaniesView: React.FC = observer(() => {
             Actions={Actions}
           />
         </div>
-        <div className=" flex-0 w-96">
-          
-        </div>
+        <div className=" flex-0 w-96"></div>
       </div>
     </>
   );
 });
 
-const CompaniesPage = withPage(
-  'Comapnies',
-  'list of companies',
-  () => {
-    emitter.emit(EVENT_SHOW_ADD_COMPANY_MODAL, 'Add Company');
-  }
-)(CompaniesView);
+const CompaniesPage = withPage('Comapnies', 'list of companies', () => {
+  emitter.emit(EVENT_SHOW_ADD_COMPANY_MODAL, 'Add Company');
+})(CompaniesView);
 export { CompaniesPage };

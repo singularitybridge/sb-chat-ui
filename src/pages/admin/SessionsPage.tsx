@@ -6,32 +6,34 @@ import { Table } from '../../components/Table';
 import { toJS } from 'mobx';
 import { withPage } from '../../components/admin/HOC/withPage';
 import { convertToStringArray } from '../../utils/utils';
-import {
-  ChatBubbleLeftEllipsisIcon,
+import {  
+  PlayIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
 import { IconButton } from '../../components/admin/IconButton';
 import { SessionKeys, ISession } from '../../store/models/Session';
+import { EVENT_SHOW_NOTIFICATION } from '../../utils/eventNames';
+import { emitter } from '../../services/mittEmitter';
 
 const SessionsView: React.FC = observer(() => {
   const rootStore = useRootStore();
   const navigate = useNavigate();
 
-  const headers: SessionKeys[] = ['userName', 'assistantName', 'threadId', 'active'];
+  const headers: SessionKeys[] = [ 'companyName' , 'userName', 'assistantName' ,  'threadId', 'active'];
 
   const handleDelete = (row: ISession) => {    
     rootStore.deleteSession(row._id);
   };
 
   const handleSetActiveSession = (row: ISession) => {
-    console.log('set active session', row);
-    // emitter.emit(EVENT_SET_ACTIVE_SESSION, row._id);
+    rootStore.setActiveSession(row._id);
+    emitter.emit(EVENT_SHOW_NOTIFICATION, 'Session set successfully');
   };
 
   const Actions = (row: ISession) => (
-    <div className="flex space-x-2 items-center mx-1">
+    <div className="flex space-x-3 items-center mx-1">
       <IconButton
-        icon={<TrashIcon className="w-5 h-5 text-warning-900" />}
+        icon={<TrashIcon className="w-5 h-5 text-warning-900 hover:text-warning-700" />}
         onClick={(event) => {
           event.stopPropagation();
           handleDelete(row);
@@ -39,7 +41,7 @@ const SessionsView: React.FC = observer(() => {
       />
       <IconButton
         icon={
-          <ChatBubbleLeftEllipsisIcon className="w-5 h-5 text-warning-900" />
+          <PlayIcon className="w-5 h-5 text-warning-900 hover:text-lime-600" />
         }
         onClick={(event) => {
           event.stopPropagation();

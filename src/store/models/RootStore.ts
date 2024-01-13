@@ -20,8 +20,10 @@ import {
 } from '../../services/api/companyService';
 import { Session } from './Session';
 import {
+  LOCALSTORAGE_SESSION_ID,
   deleteSession,
   getAllSessions,
+  setLocalStorageItem,
 } from '../../services/api/sessionService';
 import { IUser, User } from './User';
 import {
@@ -29,6 +31,7 @@ import {
   deleteUser,
   getAllUsers,
 } from '../../services/api/userService';
+import { toJS } from 'mobx';
 
 const RootStore = types
   .model('RootStore', {
@@ -69,6 +72,35 @@ const RootStore = types
         console.error('Failed to load sessions', error);
       }
     }),
+
+    setActiveSession: (_id: string) => {
+      const session = self.sessions.find((session) => session._id === _id);
+      console.log('sessions', toJS( self.sessions));
+      if (session) {
+        self.activeSession = session;                
+        setLocalStorageItem(LOCALSTORAGE_SESSION_ID, _id);
+        console.log('set setActiveSession', _id);
+      }
+    },
+
+    updateActiveSessionCompanyId: (companyId: string) => {
+      if (self.activeSession) {
+        self.activeSession.companyId = companyId;
+      }
+    },
+
+    updateActiveSessionAssistantId: (assistantId: string) => {
+      if (self.activeSession) {
+        self.activeSession.assistantId = assistantId;
+      }
+    },
+
+    updateActiveSessionUserId: (userId: string) => {
+      if (self.activeSession) {
+        self.activeSession.userId = userId;
+      }
+    },
+
 
     deleteSession: flow(function* (_id: string) {
       try {

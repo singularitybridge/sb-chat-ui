@@ -20,6 +20,7 @@ import { emitter, useEventEmitter } from '../../services/mittEmitter';
 import { observer } from 'mobx-react';
 import { useRootStore } from '../../store/common/RootStoreContext';
 import { IAssistant } from '../../store/models/Assistant';
+import { LOCALSTORAGE_ASSISTANT_ID, LOCALSTORAGE_USER_ID, getLocalStorageItem, setLocalStorageItem } from '../../services/api/sessionService';
 
 interface ChatMessage {
   content: string;
@@ -36,11 +37,11 @@ const ChatContainer = observer(() => {
   // );
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [assistant, setAssistant] = useState<IAssistant>();
-  const [userId, setUserId] = useState(localStorage.getItem('userId') || '');
+  const [userId, setUserId] = useState(getLocalStorageItem(LOCALSTORAGE_USER_ID) || '');
 
   useEffect(() => {
-    const activeAssistantId = localStorage.getItem('activeAssistantId');
-    if (activeAssistantId && rootStore.assistantsLoaded) {
+    const activeAssistantId = getLocalStorageItem(LOCALSTORAGE_ASSISTANT_ID);
+    if (activeAssistantId && rootStore.assistantsLoaded) {      
       setAssistant(rootStore.getAssistantById(activeAssistantId));
     }
   }, [rootStore.assistantsLoaded]);
@@ -48,7 +49,7 @@ const ChatContainer = observer(() => {
   const loadMessages = async () => {
     if (assistant && userId) {
       const sessionMessages = await getSessionMessages(
-        assistant.assistantId,
+        assistant._id,
         userId
       );
       const chatMessages = sessionMessages.map(mapToChatMessage);
@@ -60,8 +61,8 @@ const ChatContainer = observer(() => {
     loadMessages();
   }, [userId, assistant?._id]);
 
-  const handleAssistantUpdated = (assistantId: string) => {
-    localStorage.setItem('activeAssistantId', assistantId);
+  const handleAssistantUpdated = (assistantId: string) => {    
+    setLocalStorageItem(LOCALSTORAGE_ASSISTANT_ID, assistantId);
     setAssistant(rootStore.getAssistantById(assistantId));
   };
 

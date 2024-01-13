@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ContentContainer } from '../../components/ContentContainer';
 import { useEffect } from 'react';
 // import { Chatbot, fetchChatbots } from "../../services/ChatbotService";
-import Menu from '../../components/admin/Menu';
+import  {Menu }  from '../../components/admin/Menu';
 import { ChatbotCard } from '../../components/admin/chatbots/ChatbotCard';
 import { ChatSessionCard } from '../../components/admin/chatSessions/ChatSessionCard';
 import { BreadCrumbs } from '../../components/BreadCrumbs';

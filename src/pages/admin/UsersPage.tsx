@@ -7,10 +7,11 @@ import { toJS } from 'mobx';
 import { UserKeys, IUser } from '../../store/models/User';
 import { withPage } from '../../components/admin/HOC/withPage';
 import { convertToStringArray } from '../../utils/utils';
-import { TrashIcon } from '@heroicons/react/24/outline';
+import { PlayIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { IconButton } from '../../components/admin/IconButton';
 import { emitter } from '../../services/mittEmitter';
-import { EVENT_SHOW_ADD_USER_MODAL } from '../../utils/eventNames';
+import { EVENT_SHOW_ADD_USER_MODAL, EVENT_SHOW_NOTIFICATION } from '../../utils/eventNames';
+import { LOCALSTORAGE_ASSISTANT_ID, LOCALSTORAGE_COMPANY_ID, LOCALSTORAGE_SESSION_ID, LOCALSTORAGE_USER_ID, getLocalStorageItem, setLocalStorageItem, updateSession } from '../../services/api/sessionService';
 // import { EVENT_SHOW_ADD_USER_MODAL } from '../../utils/eventNames';
 
 const UsersView: React.FC = observer(() => {
@@ -23,8 +24,24 @@ const UsersView: React.FC = observer(() => {
     rootStore.deleteUser(row._id);
   };
 
+  const handleSetUser = async (row: IUser) => {
+    
+    setLocalStorageItem(LOCALSTORAGE_USER_ID, row._id);
+
+    const session = await updateSession(      
+      row._id,
+      getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) || '',
+    );
+
+    setLocalStorageItem(LOCALSTORAGE_ASSISTANT_ID, session.assistantId);
+    setLocalStorageItem(LOCALSTORAGE_SESSION_ID, session._id);
+    rootStore.setActiveSession(session._id);
+    emitter.emit(EVENT_SHOW_NOTIFICATION, 'User set successfully');
+    
+  };
+
   const Actions = (row: IUser) => (
-    <div className="flex space-x-2 items-center mx-1">
+    <div className="flex space-x-3 items-center mx-1">
       <IconButton
         icon={<TrashIcon className="w-5 h-5  text-warning-900" />}
         onClick={(event) => {
@@ -32,6 +49,14 @@ const UsersView: React.FC = observer(() => {
           handleDelete(row);
         }}
       />
+      <IconButton
+        icon={<PlayIcon className="w-5 h-5  text-warning-900" />}
+        onClick={(event) => {
+          event.stopPropagation();
+          handleSetUser(row);
+        }}
+      />
+
     </div>
   );
 

@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Chatbot } from '../../services/ChatbotService';
 import { useChatbot } from '../../custom-hooks/useChatbot';
-import { ChatbotCard } from '../../components/admin/chatbots/ChatbotCard';
-import { DataItem } from '../../components/admin/DataItem';
 import { ActionsView } from '../../components/admin/ActionsView/ActionsView';
 import { ReactFlowProvider } from 'reactflow';
 import { EditChatbot } from './ChatBotEditingViews/EditChatbot';
