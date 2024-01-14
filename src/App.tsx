@@ -105,8 +105,10 @@ const App = () => {
       const sessionsLoaded = rootStore.sessions.length > 0;
       if (sessionsLoaded) {
         const currentSessionId = getLocalStorageItem(LOCALSTORAGE_SESSION_ID);
-        if (currentSessionId) {          
-          rootStore.setActiveSession(currentSessionId);
+        if (currentSessionId) {      
+
+          console.log(`loading session ${currentSessionId} from localstorage`); 
+          rootStore.setActiveSessionById(currentSessionId);
           rootStore.loadAssistants();
         }
       }

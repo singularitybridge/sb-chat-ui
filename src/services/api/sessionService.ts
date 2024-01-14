@@ -23,6 +23,20 @@ export const setLocalStorageItem = (key: LocalStorageKeys, value: string): void 
   return localStorage.setItem(key, value);
 }
 
+export const updateSessionAssistant = async (
+  sessionId: string,
+  assistantId: string
+): Promise<void> => {
+  try {
+    await axios.put(`http://localhost:3000/session/${sessionId}`, {
+      assistantId,
+    });
+  } catch (error) {
+    console.error(`Failed to update assistant for session with id ${sessionId}`, error);
+    throw error;
+  }
+};
+
 
 export const updateSession = async (
   userId: string,

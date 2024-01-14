@@ -17,6 +17,7 @@ import {
   LOCALSTORAGE_SESSION_ID,
   LOCALSTORAGE_USER_ID,
   getLocalStorageItem,
+  getSessionById,
   setLocalStorageItem,
   updateSession,
 } from '../../services/api/sessionService';
@@ -41,10 +42,16 @@ const CompaniesView: React.FC = observer(() => {
       row._id      
     );
 
+    const sessionData = await getSessionById(session._id);
+
+
     setLocalStorageItem(LOCALSTORAGE_ASSISTANT_ID, session.assistantId);
     setLocalStorageItem(LOCALSTORAGE_SESSION_ID, session._id);
-    rootStore.setActiveSession(session._id);
-    emitter.emit(EVENT_SHOW_NOTIFICATION, 'Company set successfully');
+
+    rootStore.setActiveSession(sessionData);
+    rootStore.loadAssistants();
+
+    // emitter.emit(EVENT_SHOW_NOTIFICATION, 'Company set successfully');
 
   };
 

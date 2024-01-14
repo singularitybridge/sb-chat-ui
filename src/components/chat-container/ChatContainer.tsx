@@ -20,7 +20,15 @@ import { emitter, useEventEmitter } from '../../services/mittEmitter';
 import { observer } from 'mobx-react';
 import { useRootStore } from '../../store/common/RootStoreContext';
 import { IAssistant } from '../../store/models/Assistant';
-import { LOCALSTORAGE_ASSISTANT_ID, LOCALSTORAGE_USER_ID, getLocalStorageItem, setLocalStorageItem } from '../../services/api/sessionService';
+import {
+  LOCALSTORAGE_ASSISTANT_ID,
+  LOCALSTORAGE_COMPANY_ID,
+  LOCALSTORAGE_SESSION_ID,
+  LOCALSTORAGE_USER_ID,
+  getLocalStorageItem,
+  setLocalStorageItem,
+  updateSessionAssistant,
+} from '../../services/api/sessionService';
 
 interface ChatMessage {
   content: string;
@@ -37,21 +45,26 @@ const ChatContainer = observer(() => {
   // );
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [assistant, setAssistant] = useState<IAssistant>();
-  const [userId, setUserId] = useState(getLocalStorageItem(LOCALSTORAGE_USER_ID) || '');
+
+  const [userId, setUserId] = useState(
+    getLocalStorageItem(LOCALSTORAGE_USER_ID) || ''
+  );
+  const [companyId, setCompanyId] = useState(
+    getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) || ''
+  );
+  const [assistantId, setAssistantId] = useState(
+    getLocalStorageItem(LOCALSTORAGE_ASSISTANT_ID) || ''
+  );
 
   useEffect(() => {
-    const activeAssistantId = getLocalStorageItem(LOCALSTORAGE_ASSISTANT_ID);
-    if (activeAssistantId && rootStore.assistantsLoaded) {      
-      setAssistant(rootStore.getAssistantById(activeAssistantId));
+    if (assistantId && rootStore.assistantsLoaded) {
+      setAssistant(rootStore.getAssistantById(assistantId));
     }
   }, [rootStore.assistantsLoaded]);
 
   const loadMessages = async () => {
     if (assistant && userId) {
-      const sessionMessages = await getSessionMessages(
-        assistant._id,
-        userId
-      );
+      const sessionMessages = await getSessionMessages(companyId || '', userId);
       const chatMessages = sessionMessages.map(mapToChatMessage);
       setMessages(chatMessages.reverse());
     }
@@ -61,7 +74,10 @@ const ChatContainer = observer(() => {
     loadMessages();
   }, [userId, assistant?._id]);
 
-  const handleAssistantUpdated = (assistantId: string) => {    
+  const handleAssistantUpdated = async (assistantId: string) => {
+
+    console.log('set assistantId', assistantId);
+    await updateSessionAssistant(getLocalStorageItem(LOCALSTORAGE_SESSION_ID) || '', assistantId);
     setLocalStorageItem(LOCALSTORAGE_ASSISTANT_ID, assistantId);
     setAssistant(rootStore.getAssistantById(assistantId));
   };
@@ -91,7 +107,7 @@ const ChatContainer = observer(() => {
     if (assistant) {
       handleUserInput({
         userInput: message,
-        assistantId: assistant.assistantId,
+        companyId: companyId,
         userId: userId,
       }).then((response) => {
         setMessages((prevMessages) => [
@@ -103,7 +119,7 @@ const ChatContainer = observer(() => {
   };
   const handleReload = async () => {
     if (assistant && userId) {
-      await endSession(assistant.assistantId, userId);
+      await endSession(companyId, userId);
       await loadMessages();
       emitter.emit(EVENT_CHAT_SESSION_DELETED, 'Chat session deleted');
     }

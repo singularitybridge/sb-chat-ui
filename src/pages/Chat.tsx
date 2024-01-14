@@ -29,6 +29,7 @@ import { useParams } from 'react-router-dom';
 import { useRootStore } from '../store/common/RootStoreContext';
 import { observer } from 'mobx-react-lite';
 import { autorun, toJS } from 'mobx';
+import { LOCALSTORAGE_COMPANY_ID, getLocalStorageItem } from '../services/api/sessionService';
 
 // move to the api service
 const transformApiResponseToMessage = (message: any): Message => {
@@ -94,7 +95,7 @@ const Chat = observer(() => {
   const fetchSessionMessages = async () => {
     try {
       const chatHistoryResponse = await getSessionMessages(
-        selectedChatSession?._id || '',
+        getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) || '',
       );
       console.log('loaded history: ', chatHistoryResponse);
       setSessionMessages(

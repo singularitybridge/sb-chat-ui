@@ -9,11 +9,13 @@ import { withPage } from '../../components/admin/HOC/withPage';
 import { convertToStringArray } from '../../utils/utils';
 import {
   ChatBubbleLeftEllipsisIcon,
+  PlayIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
 import { IconButton } from '../../components/admin/IconButton';
 import { emitter } from '../../services/mittEmitter';
 import { EVENT_SET_ACTIVE_ASSISTANT, EVENT_SHOW_ADD_ASSISTANT_MODAL } from '../../utils/eventNames';
+import { LOCALSTORAGE_COMPANY_ID, LOCALSTORAGE_SESSION_ID, getLocalStorageItem, updateSessionAssistant } from '../../services/api/sessionService';
 
 const AssistantsView: React.FC = observer(() => {
   const rootStore = useRootStore();
@@ -25,7 +27,7 @@ const AssistantsView: React.FC = observer(() => {
     rootStore.deleteAssistant(row._id);
   };
 
-  const handleSetAssistant = (row: IAssistant) => {
+  const handleSetAssistant = async (row: IAssistant) => {    
     emitter.emit(EVENT_SET_ACTIVE_ASSISTANT, row._id);
   };
 
@@ -40,7 +42,7 @@ const AssistantsView: React.FC = observer(() => {
       />
       <IconButton
         icon={
-          <ChatBubbleLeftEllipsisIcon className="w-5 h-5  text-warning-900" />
+          <PlayIcon className="w-5 h-5  text-warning-900" />
         }
         onClick={(event) => {
           event.stopPropagation();

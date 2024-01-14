@@ -21,9 +21,9 @@ export async function getThreadMessages(threadId: string): Promise<any> {
   }
 }
 
-export async function getSessionMessages(assistantId: string, userId: string): Promise<any> {
+export async function getSessionMessages(companyId: string, userId: string): Promise<any> {
   try {
-    const response = await axios.get(`http://localhost:3000/session/messages/${assistantId}/${userId}`);
+    const response = await axios.get(`http://localhost:3000/session/messages/${companyId}/${userId}`);
     return response.data;
   } catch (error) {
     console.error('Failed to get session messages:', error);
@@ -40,9 +40,9 @@ export async function deleteThread(threadId: string): Promise<void> {
   }
 }
 
-export async function endSession(assistantId: string, userId: string): Promise<void> {
+export async function endSession(companyId: string, userId: string): Promise<void> {
   try {
-    await axios.delete(`http://localhost:3000/session/end/${assistantId}/${userId}`);
+    await axios.delete(`http://localhost:3000/session/end/${companyId}/${userId}`);
   } catch (error) {
     console.error('Failed to end session:', error);
     throw error;
@@ -51,7 +51,7 @@ export async function endSession(assistantId: string, userId: string): Promise<v
 
 interface HandleUserInputBody {
   userInput: string;
-  assistantId: string;
+  companyId: string;
   userId: string;
 }
 
@@ -67,7 +67,7 @@ export async function handleUserInput(body: HandleUserInputBody): Promise<string
 
 
 export async function getAssistants(companyId : string): Promise<IAssistant[]> {
-  try {
+  try {    
     const response = await axios.get(`http://localhost:3000/assistant/company/${companyId}`);
     return response.data;
   } catch (error) {

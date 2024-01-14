@@ -1,4 +1,4 @@
-import { types, flow, applySnapshot, Instance } from 'mobx-state-tree';
+import { types, flow, applySnapshot, Instance, clone } from 'mobx-state-tree';
 import { Assistant, IAssistant } from './Assistant';
 import {
   addAssistant,
@@ -18,7 +18,7 @@ import {
   deleteCompany,
   getCompanies,
 } from '../../services/api/companyService';
-import { Session } from './Session';
+import { ISession, Session } from './Session';
 import {
   LOCALSTORAGE_COMPANY_ID,
   LOCALSTORAGE_SESSION_ID,
@@ -41,15 +41,16 @@ const RootStore = types
     assistants: types.array(Assistant),
     comapnies: types.array(Company),
     sessions: types.array(Session),
-    users: types.array(User),
-    activeSession: types.maybe(types.reference(Session)),
+    users: types.array(User),    
+    activeSession: types.maybe(Session), 
     assistantsLoaded: types.optional(types.boolean, false),
   })
   .actions((self) => ({
-    
     loadAssistants: flow(function* () {
       try {
-        const assistants = yield getAssistants(self.activeSession?.companyId || '');
+        const assistants = yield getAssistants(
+          getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) || ''
+        );
         applySnapshot(self.assistants, assistants);
         self.assistantsLoaded = true;
       } catch (error) {
@@ -68,20 +69,25 @@ const RootStore = types
 
     loadSessions: flow(function* () {
       try {
-        const sessions = yield getAllSessions(getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) || '');
+        const sessions = yield getAllSessions(
+          getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) || ''
+        );
         applySnapshot(self.sessions, sessions);
       } catch (error) {
         console.error('Failed to load sessions', error);
       }
     }),
 
-    setActiveSession: (_id: string) => {
+    setActiveSession: (session: ISession) => {      
+      self.activeSession = session;
+    },
+
+    setActiveSessionById: (_id: string) => {
       const session = self.sessions.find((session) => session._id === _id);
-      console.log('sessions', toJS( self.sessions));
       if (session) {
-        self.activeSession = session;                
-        setLocalStorageItem(LOCALSTORAGE_SESSION_ID, _id);
-        console.log('set setActiveSession', _id);
+        self.activeSession = clone(session);
+      } else {
+        console.error('Session not found with ID:', _id);
       }
     },
 
@@ -102,7 +108,6 @@ const RootStore = types
         self.activeSession.userId = userId;
       }
     },
-
 
     deleteSession: flow(function* (_id: string) {
       try {
@@ -196,7 +201,6 @@ const RootStore = types
 
     createAssistant: flow(function* (assistant: IAssistant) {
       try {
-
         // set companyId to activeSession companyId
         assistant.companyId = self.activeSession?.companyId || '';
         const newAssistant = yield addAssistant(assistant);

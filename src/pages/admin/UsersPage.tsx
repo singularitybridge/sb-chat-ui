@@ -35,7 +35,7 @@ const UsersView: React.FC = observer(() => {
 
     setLocalStorageItem(LOCALSTORAGE_ASSISTANT_ID, session.assistantId);
     setLocalStorageItem(LOCALSTORAGE_SESSION_ID, session._id);
-    rootStore.setActiveSession(session._id);
+    rootStore.setActiveSessionById(session._id);
     emitter.emit(EVENT_SHOW_NOTIFICATION, 'User set successfully');
     
   };

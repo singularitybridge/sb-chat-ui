@@ -26,7 +26,7 @@ const SessionsView: React.FC = observer(() => {
   };
 
   const handleSetActiveSession = (row: ISession) => {
-    rootStore.setActiveSession(row._id);
+    rootStore.setActiveSessionById(row._id);
     emitter.emit(EVENT_SHOW_NOTIFICATION, 'Session set successfully');
   };
 
