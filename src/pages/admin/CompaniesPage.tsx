@@ -9,17 +9,15 @@ import { convertToStringArray } from '../../utils/utils';
 import { PlayIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { IconButton } from '../../components/admin/IconButton';
 import { emitter } from '../../services/mittEmitter';
-import { EVENT_SHOW_ADD_COMPANY_MODAL, EVENT_SHOW_NOTIFICATION } from '../../utils/eventNames';
+import { EVENT_SHOW_ADD_COMPANY_MODAL } from '../../utils/eventNames';
 import { CompanyKeys, ICompany } from '../../store/models/Company';
 import {
-  LOCALSTORAGE_ASSISTANT_ID,
   LOCALSTORAGE_COMPANY_ID,
-  LOCALSTORAGE_SESSION_ID,
   LOCALSTORAGE_USER_ID,
   getLocalStorageItem,
   getSessionById,
   setLocalStorageItem,
-  updateSession,
+  createSession,
 } from '../../services/api/sessionService';
 
 const CompaniesView: React.FC = observer(() => {
@@ -29,7 +27,6 @@ const CompaniesView: React.FC = observer(() => {
   const headers: CompanyKeys[] = ['name', 'openai_api_key'];
 
   const handleDelete = (row: ICompany) => {
-    console.log('delete', row);
     rootStore.deleteCompany(row._id);
   };
 
@@ -37,18 +34,13 @@ const CompaniesView: React.FC = observer(() => {
 
     setLocalStorageItem(LOCALSTORAGE_COMPANY_ID, row._id);
 
-    const session = await updateSession(
+    const session = await createSession(
       getLocalStorageItem(LOCALSTORAGE_USER_ID) || '',
       row._id      
     );
 
     const sessionData = await getSessionById(session._id);
-
-
-    setLocalStorageItem(LOCALSTORAGE_ASSISTANT_ID, session.assistantId);
-    setLocalStorageItem(LOCALSTORAGE_SESSION_ID, session._id);
-
-    rootStore.setActiveSession(sessionData);
+    rootStore.sessionStore.setActiveSession(sessionData);
     rootStore.loadAssistants();
 
     // emitter.emit(EVENT_SHOW_NOTIFICATION, 'Company set successfully');

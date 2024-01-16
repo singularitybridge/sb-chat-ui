@@ -8,14 +8,12 @@ import { AssistantKeys, IAssistant } from '../../store/models/Assistant';
 import { withPage } from '../../components/admin/HOC/withPage';
 import { convertToStringArray } from '../../utils/utils';
 import {
-  ChatBubbleLeftEllipsisIcon,
   PlayIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
 import { IconButton } from '../../components/admin/IconButton';
 import { emitter } from '../../services/mittEmitter';
 import { EVENT_SET_ACTIVE_ASSISTANT, EVENT_SHOW_ADD_ASSISTANT_MODAL } from '../../utils/eventNames';
-import { LOCALSTORAGE_COMPANY_ID, LOCALSTORAGE_SESSION_ID, getLocalStorageItem, updateSessionAssistant } from '../../services/api/sessionService';
 
 const AssistantsView: React.FC = observer(() => {
   const rootStore = useRootStore();

@@ -49,7 +49,7 @@ export const browserRouter = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <Dashboard />,
+            element: <CompaniesPage />,
           },
           // {
           //   path: "/chat-sessions/:id",

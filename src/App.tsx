@@ -18,13 +18,16 @@ import {
 import { DialogManager } from './components/admin/DialogManager';
 import { ChatContainer } from './components/chat-container/ChatContainer';
 import { pusher } from './services/PusherService';
-import { autorun } from 'mobx';
-import { LOCALSTORAGE_SESSION_ID, getLocalStorageItem } from './services/api/sessionService';
+import {
+  LOCALSTORAGE_COMPANY_ID,
+  LOCALSTORAGE_USER_ID,
+  getLocalStorageItem,
+  getSessionByCompanyAndUserId,
+} from './services/api/sessionService';
 
 const rootStore = RootStore.create({
-  assistants: [],
-  sessions: [],
-  users: [],
+  assistants: [],  
+  users: [],  
 });
 
 const App = () => {
@@ -94,25 +97,35 @@ const App = () => {
 
   const style = { height: `${screenHeight}px` };
 
+  const loadUserSession = async () => {
+
+    try {
+
+      const session = await getSessionByCompanyAndUserId(
+        getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) as string,
+        getLocalStorageItem(LOCALSTORAGE_USER_ID) as string
+      );
+
+      rootStore.sessionStore.setActiveSession(session);
+
+      console.log('session loaded', session);
+  
+    } catch (error) {
+      console.log('session not found');
+    }
+
+    
+    
+  };
+
   useEffect(() => {
-    
-    rootStore.loadSessions();
-    
-    rootStore.loadCompanies();    
+    rootStore.sessionStore.loadSessions();
+    rootStore.loadAssistants();
+    rootStore.loadCompanies();
     rootStore.loadUsers();
 
-    autorun(() => {
-      const sessionsLoaded = rootStore.sessions.length > 0;
-      if (sessionsLoaded) {
-        const currentSessionId = getLocalStorageItem(LOCALSTORAGE_SESSION_ID);
-        if (currentSessionId) {      
+    loadUserSession();
 
-          console.log(`loading session ${currentSessionId} from localstorage`); 
-          rootStore.setActiveSessionById(currentSessionId);
-          rootStore.loadAssistants();
-        }
-      }
-    });
   }, [rootStore]);
 
   return (

@@ -1,19 +1,12 @@
 import axios from 'axios';
 import { ISession } from '../../store/models/Session';
 
-export const LOCALSTORAGE_SESSION_ID = 'sessionId';
 export const LOCALSTORAGE_USER_ID = 'userId';
 export const LOCALSTORAGE_COMPANY_ID = 'companyId';
-export const LOCALSTORAGE_ASSISTANT_ID = 'assistantId';
 
-// define a type for the different keys of the localStorage
 export type LocalStorageKeys =
-  | typeof LOCALSTORAGE_SESSION_ID
   | typeof LOCALSTORAGE_USER_ID
   | typeof LOCALSTORAGE_COMPANY_ID
-  | typeof LOCALSTORAGE_ASSISTANT_ID;
-
-
 
 export const getLocalStorageItem = (key: LocalStorageKeys): string | null => {
   return localStorage.getItem(key);
@@ -22,6 +15,22 @@ export const getLocalStorageItem = (key: LocalStorageKeys): string | null => {
 export const setLocalStorageItem = (key: LocalStorageKeys, value: string): void => {
   return localStorage.setItem(key, value);
 }
+
+export const getCompanyId = (): string | null => {
+  return getLocalStorageItem(LOCALSTORAGE_COMPANY_ID);
+};
+
+export const getUserId = (): string | null => {
+  return getLocalStorageItem(LOCALSTORAGE_USER_ID);
+};
+
+export const setCompanyId = (companyId: string): void => {
+  setLocalStorageItem(LOCALSTORAGE_COMPANY_ID, companyId);
+};
+
+export const setUserId = (userId: string): void => {
+  setLocalStorageItem(LOCALSTORAGE_USER_ID, userId);
+};
 
 export const updateSessionAssistant = async (
   sessionId: string,
@@ -38,7 +47,7 @@ export const updateSessionAssistant = async (
 };
 
 
-export const updateSession = async (
+export const createSession = async (
   userId: string,
   companyId: string,
   assistantId?: string
@@ -68,6 +77,24 @@ export const getAllSessions = async (companyId: string): Promise<ISession[]> => 
     throw error;
   }
 };
+
+export const getSessionByCompanyAndUserId = async (
+  companyId: string,
+  userId: string
+): Promise<ISession> => {
+  try {
+    const response = await axios.get(
+      `http://localhost:3000/session/${companyId}/${userId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error(
+      `Failed to fetch session for user ${userId} and company ${companyId}`,
+      error
+    );
+    throw error;
+  }
+}
 
 export const getSessionById = async (sessionId: string): Promise<ISession> => {
   try {

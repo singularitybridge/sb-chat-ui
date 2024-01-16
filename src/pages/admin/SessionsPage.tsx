@@ -22,11 +22,11 @@ const SessionsView: React.FC = observer(() => {
   const headers: SessionKeys[] = [ 'companyName' , 'userName', 'assistantName' ,  'threadId', 'active'];
 
   const handleDelete = (row: ISession) => {    
-    rootStore.deleteSession(row._id);
+    rootStore.sessionStore.deleteSession(row._id);
   };
 
   const handleSetActiveSession = (row: ISession) => {
-    rootStore.setActiveSessionById(row._id);
+    rootStore.sessionStore.setActiveSessionById(row._id);
     emitter.emit(EVENT_SHOW_NOTIFICATION, 'Session set successfully');
   };
 
@@ -57,7 +57,7 @@ const SessionsView: React.FC = observer(() => {
         <div className=" flex-auto">
           <Table
             headers={convertToStringArray(headers)}
-            data={toJS(rootStore.sessions)}
+            data={toJS(rootStore.sessionStore.sessions)}
             onRowClick={(row: ISession) =>
               navigate(`/admin/sessions/${row._id}`)
             }
