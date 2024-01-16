@@ -24,7 +24,6 @@ import {
   getSessionById,
   updateSessionAssistant,
 } from '../../services/api/sessionService';
-import { getSession } from '../../services/ChatService';
 
 interface ChatMessage {
   content: string;
