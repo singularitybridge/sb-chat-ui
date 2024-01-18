@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { ICompany } from '../../store/models/Company';
 
-export const getCompanies = async () : Promise<ICompany[]> =>  {
+export const getCompanies = async (): Promise<ICompany[]> => {
   try {
     const response = await axios.get('http://localhost:3000/company');
     return response.data;
@@ -11,7 +11,7 @@ export const getCompanies = async () : Promise<ICompany[]> =>  {
   }
 };
 
-export const addCompany = async (company: ICompany) : Promise<ICompany> => {
+export const addCompany = async (company: ICompany): Promise<ICompany> => {
   try {
     const response = await axios.post('http://localhost:3000/company', company);
     return response.data;
@@ -21,7 +21,7 @@ export const addCompany = async (company: ICompany) : Promise<ICompany> => {
   }
 };
 
-export const deleteCompany = async (companyId: string) : Promise<void> => {
+export const deleteCompany = async (companyId: string): Promise<void> => {
   try {
     await axios.delete(`http://localhost:3000/company/${companyId}`);
   } catch (error) {
@@ -29,3 +29,13 @@ export const deleteCompany = async (companyId: string) : Promise<void> => {
     throw error;
   }
 };
+
+export const updateCompany = async ( _id : string, company: ICompany): Promise<ICompany> => {
+  try {
+    const response = await axios.put(`http://localhost:3000/company/${_id}`, company);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to update company', error);
+    throw error;
+  }
+}

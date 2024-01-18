@@ -65,18 +65,5 @@ export const assistantFieldConfigs: FieldConfig[] = [
     value:
       'You are chatting with an AI assistant. The assistant is helpful, creative, clever, and very friendly.',
     visibility: { create: true, view: true, update: true },
-  },
-  {
-    id: 'identifiers',
-    key: 'identifiers',
-    label: 'Identifiers',
-    type: 'key-value-list',
-    value: [
-      {
-        key: 'phone',
-        value: '+972xxxxxxxxx',
-      },
-    ],
-    visibility: { create: true, view: true, update: true },
-  },
+  }
 ];

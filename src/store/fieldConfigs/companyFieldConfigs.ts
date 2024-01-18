@@ -17,4 +17,17 @@ export const companyFieldConfigs: FieldConfig[] = [
     value: 'New Assistant Intro Message',
     visibility: { create: true, view: true, update: true },
   },
+  {
+    id: 'identifiers',
+    key: 'identifiers',
+    label: 'Identifiers',
+    type: 'key-value-list',
+    value: [
+      {
+        key: 'phone',
+        value: '+972xxxxxxxxx',
+      },
+    ],
+    visibility: { create: true, view: true, update: true },
+  }
 ];

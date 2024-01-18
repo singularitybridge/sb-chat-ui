@@ -17,6 +17,7 @@ import {
   addCompany,
   deleteCompany,
   getCompanies,
+  updateCompany,
 } from '../../services/api/companyService';
 import {
   LOCALSTORAGE_COMPANY_ID,
@@ -33,7 +34,8 @@ import { SessionStore } from './SessionStore';
 const RootStore = types
   .model('RootStore', {
     assistants: types.array(Assistant),
-    comapnies: types.array(Company),
+    companies: types.array(Company),
+    companiesLoaded: types.optional(types.boolean, false),
     users: types.array(User),
     assistantsLoaded: types.optional(types.boolean, false),
     sessionStore: types.optional(SessionStore, {}),
@@ -54,9 +56,29 @@ const RootStore = types
     loadCompanies: flow(function* () {
       try {
         const companies = yield getCompanies();
-        applySnapshot(self.comapnies, companies);
+        applySnapshot(self.companies, companies);
+        self.companiesLoaded = true; // Set this to true after loading companies
       } catch (error) {
-        console.error('Failed to load assistants', error);
+        console.error('Failed to load companies', error);
+      }
+    }),
+
+    getCompanyById: (_id: string) => {
+      return self.companies.find((company) => company._id === _id);
+    },
+    updateCompany: flow(function* (_id: string, company: ICompany) {
+      try {
+        const updatedCompany = yield updateCompany(_id, company);
+        const index = self.companies.findIndex((comp) => comp._id === _id);
+        if (index !== -1) {
+          self.companies[index] = updatedCompany;
+          emitter.emit(
+            EVENT_SHOW_NOTIFICATION,
+            'Company has been updated successfully'
+          );
+        }
+      } catch (error) {
+        console.error('Failed to update company', error);
       }
     }),
 
@@ -104,7 +126,7 @@ const RootStore = types
     addCompany: flow(function* (company: ICompany) {
       try {
         const newCompany = yield addCompany(company);
-        self.comapnies.push(newCompany);
+        self.companies.push(newCompany);
         emitter.emit(
           EVENT_SHOW_NOTIFICATION,
           'New company has been created successfully'
@@ -119,11 +141,11 @@ const RootStore = types
     deleteCompany: flow(function* (_id: string) {
       try {
         yield deleteCompany(_id);
-        const index = self.comapnies.findIndex(
+        const index = self.companies.findIndex(
           (company) => company._id === _id
         );
         if (index !== -1) {
-          self.comapnies.splice(index, 1);
+          self.companies.splice(index, 1);
         }
         emitter.emit(
           EVENT_SHOW_NOTIFICATION,

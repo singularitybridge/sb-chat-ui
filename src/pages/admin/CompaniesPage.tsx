@@ -72,9 +72,9 @@ const CompaniesView: React.FC = observer(() => {
         <div className=" flex-auto">
           <Table
             headers={convertToStringArray(headers)}
-            data={toJS(rootStore.comapnies)}
+            data={toJS(rootStore.companies)}
             onRowClick={(row: ICompany) =>
-              navigate(`/admin/assistants/${row._id}`)
+              navigate(`/admin/companies/${row._id}`)
             }
             Actions={Actions}
           />

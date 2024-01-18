@@ -19,8 +19,7 @@ const Assistant = types.model('Assistant', {
   introMessage: types.string,
   companyId: types.string,
   voice: types.string,
-  language: types.string,
-  identifiers: types.optional(types.array(Identifier), []),
+  language: types.string,  
   llmModel: types.optional(types.string, ''),
   llmPrompt: types.optional(types.string, ''),
 });

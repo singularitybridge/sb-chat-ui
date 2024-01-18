@@ -1,9 +1,11 @@
 import { types, Instance, SnapshotIn, SnapshotOut } from 'mobx-state-tree';
+import { Identifier } from './Assistant';
 
 const Company = types.model('Company', {
   _id: types.identifier,
   name: types.string,
   openai_api_key: types.string,
+  identifiers: types.optional(types.array(Identifier), []),
   __v: types.number,
 });
 

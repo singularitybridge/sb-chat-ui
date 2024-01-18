@@ -1,20 +1,12 @@
 import { Chat } from './pages/Chat';
 import { NotFound } from './pages/NotFound';
 import { Admin } from './pages/Admin';
-import React, { ReactNode, useEffect, useState } from 'react';
-import { observer } from 'mobx-react-lite';
+import React from 'react';
 import {
   createBrowserRouter,
-  RouterProvider,
-  Outlet,
-  useParams,
 } from 'react-router-dom'; // Import the Outlet component
 import App from './App';
-import { ChatSessionView } from './services/ChatSessionView';
-import { Dashboard } from './pages/admin/Dashboard';
 import { ChatbotView } from './pages/admin/ChatbotView';
-import { useRootStore } from './store/common/RootStoreContext';
-import { autorun } from 'mobx';
 import { ChatRouteLoader } from './components/ChatRouteLoader';
 import { AssistantsPage } from './pages/admin/AssistantsPage';
 import { EditAssistantPage } from './pages/admin/EditAssistantPage';
@@ -22,6 +14,7 @@ import { CompaniesPage } from './pages/admin/CompaniesPage';
 import { SessionsPage } from './pages/admin/SessionsPage';
 import { UsersPage } from './pages/admin/UsersPage';
 import { InboxPage } from './pages/admin/InboxPage';
+import { EditCompanyPage } from './pages/admin/EditCompanyPage';
 
 export const browserRouter = createBrowserRouter([
   {
@@ -72,6 +65,10 @@ export const browserRouter = createBrowserRouter([
             element: <CompaniesPage />,
           },
           {
+            path: 'companies/:id',
+            element: <EditCompanyPage />,
+          },
+          {
             path: 'sessions',
             element: <SessionsPage />,
           },
@@ -83,7 +80,6 @@ export const browserRouter = createBrowserRouter([
             path: 'inbox',
             element: <InboxPage />,
           },
-
         ],
       },
       { path: '*', element: <NotFound /> },
