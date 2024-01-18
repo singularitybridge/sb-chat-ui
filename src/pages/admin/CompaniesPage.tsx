@@ -41,7 +41,9 @@ const CompaniesView: React.FC = observer(() => {
 
     const sessionData = await getSessionById(session._id);
     rootStore.sessionStore.setActiveSession(sessionData);
+
     rootStore.loadAssistants();
+    rootStore.loadInboxMessages();
 
     // emitter.emit(EVENT_SHOW_NOTIFICATION, 'Company set successfully');
 

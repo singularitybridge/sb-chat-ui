@@ -1,30 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { withPage } from '../../components/admin/HOC/withPage';
 import { emitter } from '../../services/mittEmitter';
 import { EVENT_SHOW_ADD_USER_MODAL } from '../../utils/eventNames';
 import { IInbox } from '../../store/models/Inbox';
+import { useRootStore } from '../../store/common/RootStoreContext';
 
-const messages: IInbox[] = [
-  {
-    _id: '1',
-    sessionId: '1',
-    message: 'Hello this is bobo',
-    created: new Date('2021-08-01T12:00:00.000Z'),
-    senderName: 'Akhil Gautam',
-    timeAgo: '2 hours ago',
-    __v: 0,
-  },
-  {
-    _id: '2',
-    sessionId: '2',
-    message: 'Hello, how are you doing?',
-    created: new Date('2021-08-01T12:00:00.000Z'),
-    senderName: 'Tom Alsk',
-    timeAgo: '2 hours ago',
-    __v: 0,
-  },
-];
+
 
 interface MessageInfoProps {
   message: IInbox;
@@ -37,20 +19,23 @@ const MessageInfo: React.FC<MessageInfoProps> = ({
   isActive,
   onClick,
 }) => {
+
   const activeClass = isActive ? 'bg-primary-300 text-white' : '';
+
 
   return (
     <li
       className={`py-4 border-b px-4 transition hover:bg-indigo-100 ${activeClass}`}
     >
       <a href="#" className="flex justify-between items-center">
-        <h3 className="font-semibold">{message.senderName}</h3>
-        <p className="text-sm text-gray-400">{message.timeAgo}</p>
+        <h3 className="font-semibold">{message.userName}</h3>
+        <p className="text-sm text-gray-400">{message.createdAt}</p>
       </a>
       <div className="text-sm text-gray-400">{message.message}</div>
     </li>
   );
 };
+
 interface DisplayMessageProps {
   message: IInbox;
 }
@@ -66,9 +51,14 @@ const DisplayMessage: React.FC<DisplayMessageProps> = ({ message }) => {
 };
 
 const InboxView: React.FC = observer(() => {
-  const [selectedMessage, setSelectedMessage] = React.useState<IInbox>(
-    messages[0]
-  );
+  const rootStore = useRootStore();
+  const [selectedMessage, setSelectedMessage] = useState<IInbox | null>(null);
+
+  useEffect(() => {
+    if (rootStore.inboxMessages.length > 0) {
+      setSelectedMessage(rootStore.inboxMessages[0]);
+    }
+  }, [rootStore.inboxMessages]);
 
   return (
     <>
@@ -83,11 +73,12 @@ const InboxView: React.FC = observer(() => {
             </label>
 
             <ul className="mt-4">
-              {messages.map((message, index) => (
+              {rootStore.inboxMessages.map((message) => (
                 <MessageInfo
+                  onClick={() => setSelectedMessage(message)}
                   key={message._id}
                   message={message}
-                  isActive={index === 0}
+                  isActive={selectedMessage?._id === message._id}
                 />
               ))}
             </ul>
@@ -97,13 +88,14 @@ const InboxView: React.FC = observer(() => {
               <div className="flex space-x-4 items-center">
                 <div className="flex flex-col">
                   <h3 className="font-semibold text-lg">
-                    {selectedMessage.senderName}
+                    {selectedMessage?.userName}
                   </h3>
                   <p className="text-light text-gray-400">email@address.com</p>
                 </div>
               </div>
             </div>
-            <DisplayMessage message={selectedMessage} />
+
+            {selectedMessage && <DisplayMessage message={selectedMessage} />}
 
             <section className="mt-6 border rounded-xl bg-gray-50 mb-3">
               <textarea

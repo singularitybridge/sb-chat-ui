@@ -106,7 +106,10 @@ const App = () => {
         getLocalStorageItem(LOCALSTORAGE_USER_ID) as string
       );
 
+      
+      await rootStore.loadAssistants();
       rootStore.sessionStore.setActiveSession(session);
+      await rootStore.loadInboxMessages();
 
       console.log('session loaded', session);
   
@@ -119,12 +122,12 @@ const App = () => {
   };
 
   useEffect(() => {
-    rootStore.sessionStore.loadSessions();
-    rootStore.loadAssistants();
-    rootStore.loadCompanies();
-    rootStore.loadUsers();
 
+    rootStore.sessionStore.loadSessions();    
+    rootStore.loadCompanies();
+    rootStore.loadUsers();    
     loadUserSession();
+    
 
   }, [rootStore]);
 
