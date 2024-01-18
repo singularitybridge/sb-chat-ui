@@ -5,8 +5,7 @@ import { emitter } from '../../services/mittEmitter';
 import { EVENT_SHOW_ADD_USER_MODAL } from '../../utils/eventNames';
 import { IInbox } from '../../store/models/Inbox';
 import { useRootStore } from '../../store/common/RootStoreContext';
-
-
+import { autorun } from 'mobx';
 
 interface MessageInfoProps {
   message: IInbox;
@@ -19,19 +18,18 @@ const MessageInfo: React.FC<MessageInfoProps> = ({
   isActive,
   onClick,
 }) => {
-
-  const activeClass = isActive ? 'bg-primary-300 text-white' : '';
-
+  const activeClass = isActive ? 'bg-sky-100' : '';
 
   return (
     <li
-      className={`py-4 border-b px-4 transition hover:bg-indigo-100 ${activeClass}`}
+      className={`py-3 px-3 transition hover:bg-indigo-100 cursor-pointer ${activeClass}`}
+      onClick={onClick} // Added onClick handler here
     >
-      <a href="#" className="flex justify-between items-center">
-        <h3 className="font-semibold">{message.userName}</h3>
-        <p className="text-sm text-gray-400">{message.createdAt}</p>
-      </a>
-      <div className="text-sm text-gray-400">{message.message}</div>
+      <div className="flex justify-between items-center">
+        <h3 className="font-semibold text-sm">{message.userName}</h3>
+        <p className="text-xs text-gray-500">{message.createdAt}</p>
+      </div>
+      <div className="text-sm text-gray-500">{message.message}</div>
     </li>
   );
 };
@@ -55,19 +53,23 @@ const InboxView: React.FC = observer(() => {
   const [selectedMessage, setSelectedMessage] = useState<IInbox | null>(null);
 
   useEffect(() => {
-    if (rootStore.inboxMessages.length > 0) {
-      setSelectedMessage(rootStore.inboxMessages[0]);
-    }
+    const dispose = autorun(() => {
+      if (rootStore.inboxMessages.length > 0) {
+        setSelectedMessage(rootStore.inboxMessages[0]);
+      }
+    });
+    return () => dispose(); // Clean up the autorun effect when the component unmounts
+
   }, [rootStore.inboxMessages]);
 
   return (
     <>
       <div className="flex w-full justify-center">
         <main className="flex w-full h-full ">
-          <section className="flex flex-col pt-3 w-4/12 bg-gray-50 h-full overflow-y-scroll">
-            <label className="px-3">
+          <section className="flex flex-col w-4/12  h-full overflow-y-scroll border-r-2 border-sky-100">
+            <label className="px-2">
               <input
-                className="rounded-lg p-4 bg-gray-100 transition duration-200 focus:outline-none focus:ring-2 w-full"
+                className="rounded-lg p-4 bg-gray-200 transition duration-200 focus:outline-none focus:ring-2 w-full"
                 placeholder="Search..."
               />
             </label>
