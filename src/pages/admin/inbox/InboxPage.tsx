@@ -1,56 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
-import { withPage } from '../../components/admin/HOC/withPage';
-import { emitter } from '../../services/mittEmitter';
-import { EVENT_SHOW_ADD_USER_MODAL } from '../../utils/eventNames';
-import { IInboxSession, IMessage } from '../../store/models/Inbox';
-import { useRootStore } from '../../store/common/RootStoreContext';
+import { withPage } from '../../../components/admin/HOC/withPage';
+import { emitter } from '../../../services/mittEmitter';
+import { EVENT_SHOW_ADD_USER_MODAL } from '../../../utils/eventNames';
+import { IInboxSession, IMessage } from '../../../store/models/Inbox';
+import { useRootStore } from '../../../store/common/RootStoreContext';
 import { autorun } from 'mobx';
-
-interface SessionInfoProps {
-  session: IInboxSession;
-  isActive: boolean;
-  onClick: () => void;
-}
-
-const SessionInfo: React.FC<SessionInfoProps> = ({
-  session,
-  isActive,
-  onClick,
-}) => {
-  const activeClass = isActive ? 'bg-sky-100' : '';
-
-  return (
-    <li
-      key={session.sessionId}
-      className={`py-3 px-3 transition hover:bg-indigo-100 cursor-pointer ${activeClass}`}
-      onClick={onClick}
-    >
-      <div className="flex justify-between items-center">
-        <h3 className="font-semibold text-sm">
-          {session.messages[session.messages.length - 1].userName}
-        </h3>
-        {/* Display latest message preview */}
-        <p className="text-xs text-gray-500">
-          {session.messages[session.messages.length - 1].createdAt}
-        </p>
-      </div>
-      <div className="text-sm text-gray-500">
-        {session.messages[session.messages.length - 1].message}
-      </div>
-    </li>
-  );
-};
+import { InboxMessage } from './InboxMessage';
+import { SessionInfo } from './SessionInfo';
+import { handleUserInput } from '../../../services/api/assistantService';
 
 const DisplayMessages: React.FC<{ session: IInboxSession }> = ({ session }) => {
   return (
-    <section>
-      {session.messages.map((message: IMessage) => (
-        <article key={message._id} className="mt-2 text-gray-500">
-          <p>{message.message}</p>
-        </article>
-      ))}
-    </section>
+    <>
+      {session.messages.map((message: IMessage) =>
+        InboxMessage({ message: message })
+      )}
+    </>
   );
 };
 
@@ -60,10 +26,34 @@ const InboxView: React.FC = observer(() => {
   const [selectedSession, setSelectedSession] = useState<IInboxSession | null>(
     null
   );
+  const [message, setMessage] = useState('');
+
+  const handleSendMessage = async () => {
+
+    const sessionId = selectedSession?.sessionId;
+
+    if (!sessionId) {
+      console.error('No session selected');
+      return;
+    }
+
+    try {
+
+      const responsePrefix = `this is a response to ${selectedSession?.messages[0].userName} from the company, you can process it and send it to the user. response: `;
+      const response = await handleUserInput({
+        userInput : responsePrefix + message,
+        companyId: rootStore.sessionStore.activeSession?.companyId || '',
+        userId: rootStore.sessionStore.activeSession?.userId || '',
+      });
+      console.log('Message sent successfully', response);
+      setMessage(''); // clear the message input after sending
+    } catch (error) {
+      console.error('Failed to send message', error);
+    }
+  };
 
   useEffect(() => {
     const dispose = autorun(() => {
-
       if (rootStore.inboxSessions.length > 0) {
         setSelectedSession(rootStore.inboxSessions[0]);
       }
@@ -104,7 +94,7 @@ const InboxView: React.FC = observer(() => {
                       {selectedSession.messages[0].userName}
                     </h3>
                     <p className="text-light text-gray-400">
-                      email@address.com
+                      topic of the session / short intro
                     </p>
                   </div>
                 )}
@@ -118,6 +108,8 @@ const InboxView: React.FC = observer(() => {
                 className="w-full bg-gray-50 p-2 rounded-xl"
                 placeholder="Type your reply here..."
                 rows={3}
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
               ></textarea>
               <div className="flex items-center justify-between p-2">
                 <button className="h-6 w-6 text-gray-400">
@@ -135,7 +127,10 @@ const InboxView: React.FC = observer(() => {
                     />
                   </svg>
                 </button>
-                <button className="bg-purple-600 text-white px-6 py-2 rounded-xl">
+                <button
+                  onClick={handleSendMessage}
+                  className="bg-purple-600 text-white px-6 py-2 rounded-xl"
+                >
                   Reply
                 </button>
               </div>

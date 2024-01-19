@@ -44,8 +44,6 @@ const ChatContainer = observer(() => {
   const companyId = rootStore.sessionStore.activeSession?.companyId;
 
   useEffect(() => {
-
-
     if (assistantId && rootStore.assistantsLoaded) {
       setAssistant(rootStore.getAssistantById(assistantId));
     }

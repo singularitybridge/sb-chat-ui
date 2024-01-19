@@ -13,7 +13,7 @@ import { EditAssistantPage } from './pages/admin/EditAssistantPage';
 import { CompaniesPage } from './pages/admin/CompaniesPage';
 import { SessionsPage } from './pages/admin/SessionsPage';
 import { UsersPage } from './pages/admin/UsersPage';
-import { InboxPage } from './pages/admin/InboxPage';
+import { InboxPage } from './pages/admin/inbox/InboxPage';
 import { EditCompanyPage } from './pages/admin/EditCompanyPage';
 
 export const browserRouter = createBrowserRouter([
