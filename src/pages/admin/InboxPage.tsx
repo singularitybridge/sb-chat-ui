@@ -3,18 +3,18 @@ import { observer } from 'mobx-react-lite';
 import { withPage } from '../../components/admin/HOC/withPage';
 import { emitter } from '../../services/mittEmitter';
 import { EVENT_SHOW_ADD_USER_MODAL } from '../../utils/eventNames';
-import { IInbox } from '../../store/models/Inbox';
+import { IInboxSession, IMessage } from '../../store/models/Inbox';
 import { useRootStore } from '../../store/common/RootStoreContext';
 import { autorun } from 'mobx';
 
-interface MessageInfoProps {
-  message: IInbox;
+interface SessionInfoProps {
+  session: IInboxSession;
   isActive: boolean;
   onClick: () => void;
 }
 
-const MessageInfo: React.FC<MessageInfoProps> = ({
-  message,
+const SessionInfo: React.FC<SessionInfoProps> = ({
+  session,
   isActive,
   onClick,
 }) => {
@@ -22,45 +22,54 @@ const MessageInfo: React.FC<MessageInfoProps> = ({
 
   return (
     <li
+      key={session.sessionId}
       className={`py-3 px-3 transition hover:bg-indigo-100 cursor-pointer ${activeClass}`}
-      onClick={onClick} // Added onClick handler here
+      onClick={onClick}
     >
       <div className="flex justify-between items-center">
-        <h3 className="font-semibold text-sm">{message.userName}</h3>
-        <p className="text-xs text-gray-500">{message.createdAt}</p>
+        <h3 className="font-semibold text-sm">
+          {session.messages[session.messages.length - 1].userName}
+        </h3>
+        {/* Display latest message preview */}
+        <p className="text-xs text-gray-500">
+          {session.messages[session.messages.length - 1].createdAt}
+        </p>
       </div>
-      <div className="text-sm text-gray-500">{message.message}</div>
+      <div className="text-sm text-gray-500">
+        {session.messages[session.messages.length - 1].message}
+      </div>
     </li>
   );
 };
 
-interface DisplayMessageProps {
-  message: IInbox;
-}
-
-const DisplayMessage: React.FC<DisplayMessageProps> = ({ message }) => {
+const DisplayMessages: React.FC<{ session: IInboxSession }> = ({ session }) => {
   return (
     <section>
-      <article className="mt-2 text-gray-500">
-        <p>{message.message}</p>
-      </article>
+      {session.messages.map((message: IMessage) => (
+        <article key={message._id} className="mt-2 text-gray-500">
+          <p>{message.message}</p>
+        </article>
+      ))}
     </section>
   );
 };
 
 const InboxView: React.FC = observer(() => {
   const rootStore = useRootStore();
-  const [selectedMessage, setSelectedMessage] = useState<IInbox | null>(null);
+
+  const [selectedSession, setSelectedSession] = useState<IInboxSession | null>(
+    null
+  );
 
   useEffect(() => {
     const dispose = autorun(() => {
-      if (rootStore.inboxMessages.length > 0) {
-        setSelectedMessage(rootStore.inboxMessages[0]);
+
+      if (rootStore.inboxSessions.length > 0) {
+        setSelectedSession(rootStore.inboxSessions[0]);
       }
     });
-    return () => dispose(); // Clean up the autorun effect when the component unmounts
-
-  }, [rootStore.inboxMessages]);
+    return () => dispose();
+  }, [rootStore.inboxSessions]);
 
   return (
     <>
@@ -75,29 +84,34 @@ const InboxView: React.FC = observer(() => {
             </label>
 
             <ul className="mt-4">
-              {rootStore.inboxMessages.map((message) => (
-                <MessageInfo
-                  onClick={() => setSelectedMessage(message)}
-                  key={message._id}
-                  message={message}
-                  isActive={selectedMessage?._id === message._id}
-                />
-              ))}
+              {rootStore.inboxSessions.length > 0 &&
+                rootStore.inboxSessions.map((session) => (
+                  <SessionInfo
+                    key={session.sessionId}
+                    session={session}
+                    onClick={() => setSelectedSession(session)}
+                    isActive={selectedSession?.sessionId === session.sessionId}
+                  />
+                ))}
             </ul>
           </section>
           <section className="w-8/12 px-4 flex flex-col ">
             <div className="flex justify-between items-center border-b-2 mb-4 pb-4">
               <div className="flex space-x-4 items-center">
-                <div className="flex flex-col">
-                  <h3 className="font-semibold text-lg">
-                    {selectedMessage?.userName}
-                  </h3>
-                  <p className="text-light text-gray-400">email@address.com</p>
-                </div>
+                {selectedSession && selectedSession.messages.length > 0 && (
+                  <div className="flex flex-col">
+                    <h3 className="font-semibold text-lg">
+                      {selectedSession.messages[0].userName}
+                    </h3>
+                    <p className="text-light text-gray-400">
+                      email@address.com
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
 
-            {selectedMessage && <DisplayMessage message={selectedMessage} />}
+            {selectedSession && <DisplayMessages session={selectedSession} />}
 
             <section className="mt-6 border rounded-xl bg-gray-50 mb-3">
               <textarea

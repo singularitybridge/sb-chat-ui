@@ -30,8 +30,8 @@ import {
   getAllUsers,
 } from '../../services/api/userService';
 import { SessionStore } from './SessionStore';
-import { Inbox } from './Inbox';
 import { getInboxMessages } from '../../services/api/inboxService';
+import { InboxSession } from './Inbox';
 
 const RootStore = types
   .model('RootStore', {
@@ -42,20 +42,21 @@ const RootStore = types
     assistantsLoaded: types.optional(types.boolean, false),
     sessionStore: types.optional(SessionStore, {}),
 
-    inboxMessages: types.array(Inbox),
-    inboxMessagesLoaded: types.optional(types.boolean, false),
+    inboxSessions: types.array(InboxSession),
+    inboxSessionsLoaded: types.optional(types.boolean, false),
+
   })
   .actions((self) => ({
     loadInboxMessages: flow(function* () {
       try {
         const inboxMessages = yield getInboxMessages(self.sessionStore.activeSession?.companyId || '');
-        applySnapshot(self.inboxMessages, inboxMessages);
-        self.inboxMessagesLoaded = true;
+        applySnapshot(self.inboxSessions, inboxMessages);
+        self.inboxSessionsLoaded = true;
       } catch (error) {
         console.error('Failed to load inboxMessages', error);
       }
-    
     }),
+
 
     loadAssistants: flow(function* () {
       try {
