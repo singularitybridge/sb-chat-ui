@@ -6,8 +6,8 @@ const Message = types.model('Message', {
   createdAt: types.maybeNull(types.string), // Use 'maybe' for optional fields
   userName: types.optional(types.string, ''),
   sessionActive: types.boolean,
-  assistantName: types.string,
-  assistantId: types.string,
+  assistantName: types.maybeNull(types.string),
+  assistantId: types.maybeNull(types.string),
 });
 
 const InboxSession = types.model('InboxSession', {
