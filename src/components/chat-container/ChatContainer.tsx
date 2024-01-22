@@ -24,14 +24,20 @@ import {
   getSessionById,
   updateSessionAssistant,
 } from '../../services/api/sessionService';
+import { HumanAgentResponseMessage } from './HumanAgentResponseMessage';
+
+interface Metadata {
+  message_type: string;
+}
 
 interface ChatMessage {
   content: string;
   role: string;
+  metadata?: Metadata;
+  assistantName?: string;
 }
 
 const ChatContainer = observer(() => {
-
   const rootStore = useRootStore();
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const [message, setMessage] = useState('');
@@ -62,10 +68,14 @@ const ChatContainer = observer(() => {
   }, [userId, assistant?._id]);
 
   const handleAssistantUpdated = async (assistantId: string) => {
-
     console.log('set assistantId', assistantId);
-    await updateSessionAssistant(rootStore.sessionStore.activeSession?._id || '', assistantId);    
-    const session = await getSessionById(rootStore.sessionStore.activeSession?._id || '');
+    await updateSessionAssistant(
+      rootStore.sessionStore.activeSession?._id || '',
+      assistantId
+    );
+    const session = await getSessionById(
+      rootStore.sessionStore.activeSession?._id || ''
+    );
     rootStore.sessionStore.setActiveSession(session);
     setAssistant(rootStore.getAssistantById(assistantId));
   };
@@ -76,6 +86,8 @@ const ChatContainer = observer(() => {
     return {
       content: message.content[0].text.value,
       role: message.role,
+      metadata: message.metadata,
+      assistantName: message.assistantName,
     };
   };
 
@@ -135,7 +147,7 @@ const ChatContainer = observer(() => {
           boxShadow: '0 0 #0000, 0 0 #0000, 0 1px 2px 0 rgb(0 0 0 / 0.05)',
           zIndex: 5000,
         }}
-        className="fixed bottom-[calc(2rem)] right-0 mr-7 bg-white p-5 rounded-lg border border-[#e5e7eb] w-[340px] h-[534px] flex flex-col"
+        className="fixed bottom-[calc(2rem)] right-0 mr-7 bg-white p-5 rounded-lg border border-[#e5e7eb] w-[340px] h-[575px] flex flex-col"
       >
         <Header
           title={assistant?.name || ''}
@@ -148,13 +160,18 @@ const ChatContainer = observer(() => {
             minWidth: '100%',
           }}
         >
-          {messages.map((message, index) =>
-            message.role === 'assistant' ? (
-              <AssistantMessage key={index} text={message.content} />
-            ) : (
-              <UserMessage key={index} text={message.content} />
-            )
-          )}
+          {messages.map((message, index) => {
+            if (message.metadata?.message_type === 'human-agent-response') {
+              return (
+                <HumanAgentResponseMessage key={index} text={message.content} />
+              );
+            } else if (message.role === 'assistant') {
+              return <AssistantMessage key={index} text={message.content} assistantName={message.assistantName} />;
+            } else {
+              return <UserMessage key={index} text={message.content} />;
+            }
+          })}
+
           <div ref={messagesEndRef} />
         </div>
         <div className="flex items-center pt-0 mt-1">

@@ -8,7 +8,7 @@ import { useRootStore } from '../../../store/common/RootStoreContext';
 import { autorun } from 'mobx';
 import { InboxMessage } from './InboxMessage';
 import { SessionInfo } from './SessionInfo';
-import { handleUserInput } from '../../../services/api/assistantService';
+import { addInboxResponse } from '../../../services/api/inboxService';
 
 const DisplayMessages: React.FC<{ session: IInboxSession }> = ({ session }) => {
   return (
@@ -21,34 +21,34 @@ const DisplayMessages: React.FC<{ session: IInboxSession }> = ({ session }) => {
 };
 
 const InboxView: React.FC = observer(() => {
+
   const rootStore = useRootStore();
 
   const [selectedSession, setSelectedSession] = useState<IInboxSession | null>(
     null
   );
   const [message, setMessage] = useState('');
+  const [ isLoading, setIsLoading ] = useState(false); 
 
   const handleSendMessage = async () => {
 
+    setIsLoading(true);
     const sessionId = selectedSession?.sessionId;
 
     if (!sessionId) {
+      setIsLoading(false);
       console.error('No session selected');
       return;
     }
 
     try {
-
-      const responsePrefix = `this is a response to ${selectedSession?.messages[0].userName} from the company, you can process it and send it to the user. response: `;
-      const response = await handleUserInput({
-        userInput : responsePrefix + message,
-        companyId: rootStore.sessionStore.activeSession?.companyId || '',
-        userId: rootStore.sessionStore.activeSession?.userId || '',
-      });
+      const response = await addInboxResponse(sessionId, message);
       console.log('Message sent successfully', response);
-      setMessage(''); // clear the message input after sending
+      setMessage('');
+      setIsLoading(false); 
     } catch (error) {
       console.error('Failed to send message', error);
+      setIsLoading(false); 
     }
   };
 
@@ -105,9 +105,10 @@ const InboxView: React.FC = observer(() => {
 
             <section className="mt-6 border rounded-xl bg-gray-50 mb-3">
               <textarea
-                className="w-full bg-gray-50 p-2 rounded-xl"
+                className="w-full bg-gray-50 p-2 rounded-xl disabled:text-slate-400"
                 placeholder="Type your reply here..."
                 rows={3}
+                disabled={isLoading}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
               ></textarea>
@@ -129,7 +130,8 @@ const InboxView: React.FC = observer(() => {
                 </button>
                 <button
                   onClick={handleSendMessage}
-                  className="bg-purple-600 text-white px-6 py-2 rounded-xl"
+                  disabled={isLoading}
+                  className="bg-purple-600 text-white px-6 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Reply
                 </button>

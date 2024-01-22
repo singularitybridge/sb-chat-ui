@@ -20,3 +20,14 @@ export const addInboxMessage = async (sessionId: string, message: string) : Prom
     throw error;
   }
 };
+
+
+export const addInboxResponse = async (sessionId: string, message: string) : Promise<IInboxSession> => {
+  try {
+    const response = await axios.post(`http://localhost:3000/inbox/reply/${sessionId}`, { message });
+    return response.data;
+  } catch (error) {
+    console.error('Failed to add inbox response', error);
+    throw error;
+  }
+};
