@@ -19,6 +19,7 @@ import {
   setLocalStorageItem,
   createSession,
 } from '../../services/api/sessionService';
+import { TagsInput } from '../../components/InputTags';
 
 const CompaniesView: React.FC = observer(() => {
   const rootStore = useRootStore();
@@ -31,12 +32,11 @@ const CompaniesView: React.FC = observer(() => {
   };
 
   const handleSetCompany = async (row: ICompany) => {
-
     setLocalStorageItem(LOCALSTORAGE_COMPANY_ID, row._id);
 
     const session = await createSession(
       getLocalStorageItem(LOCALSTORAGE_USER_ID) || '',
-      row._id      
+      row._id
     );
 
     const sessionData = await getSessionById(session._id);
@@ -46,7 +46,6 @@ const CompaniesView: React.FC = observer(() => {
     rootStore.loadInboxMessages();
 
     // emitter.emit(EVENT_SHOW_NOTIFICATION, 'Company set successfully');
-
   };
 
   const Actions = (row: ICompany) => (
@@ -70,6 +69,12 @@ const CompaniesView: React.FC = observer(() => {
 
   return (
     <>
+      <TagsInput
+        selectedTags={[
+          { name: 'da', id: 'da' },
+          { id: 'net', name: 'net' },
+        ]}
+      />
       <div className="flex w-full justify-center">
         <div className=" flex-auto">
           <Table
