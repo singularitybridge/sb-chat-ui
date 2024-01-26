@@ -1,4 +1,6 @@
-import React, {  } from 'react';
+import React from 'react';
+import { IconButton } from './admin/IconButton';
+import { XMarkIcon } from '@heroicons/react/24/solid';
 
 interface TagInputProps {
   title: string;
@@ -7,16 +9,14 @@ interface TagInputProps {
 
 const TagInput: React.FC<TagInputProps> = ({ title, onRemove }) => {
   return (
-    <span className="tag inline-flex items-center bg-gray-200 text-gray-800 text-sm font-medium mr-2 px-3 py-1 rounded-lg dark:bg-gray-600 dark:text-gray-300">
+    <span className="tag inline-flex items-center bg-violet-100  text-slate-700 text-sm font-normal  mr-2.5 px-3 py-1.5 rounded-xl">
       {title}
-      <button
-        className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+      <IconButton
+        icon={<XMarkIcon className="ml-3 w-3 h-3 text-stone-900" />}
         onClick={() => onRemove(title)}
-      >
-        ×
-      </button>
+      />
     </span>
   );
 };
 
-export { TagInput }
+export { TagInput };

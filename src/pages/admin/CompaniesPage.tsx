@@ -70,9 +70,18 @@ const CompaniesView: React.FC = observer(() => {
   return (
     <>
       <TagsInput
-        selectedTags={[
-          { name: 'da', id: 'da' },
-          { id: 'net', name: 'net' },
+        title="Actions"
+        description="Select actions to perform on selected rows"
+        selectedTags={[]}
+        availableTags={[
+          {
+            id: 'add-user',
+            name: 'add-user',
+          },
+          {
+            id: 'remove-user',
+            name: 'remove-user',
+          },
         ]}
       />
       <div className="flex w-full justify-center">
