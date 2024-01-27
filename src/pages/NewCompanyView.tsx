@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   DynamicForm,
-  FieldConfig,
   FormValues,
-  KeyValueListFieldConfig,
 } from '../components/DynamicForm';
 
 import { observer } from 'mobx-react';
@@ -14,24 +12,6 @@ import { ICompany } from '../store/models/Company';
 const NewCompanyView: React.FC = observer(() => {
   const rootStore = useRootStore();
   const [isLoading, setIsLoading] = useState(false);
-  const [formFields, setFormFields] = useState<FieldConfig[]>([]);
-
-  useEffect(() => {
-    const initialFormFields = companyFieldConfigs.map(
-      ({ id, key, label, type, visibility, value }) => {
-        return {
-          id: id,
-          key: key,
-          label: label,
-          value: value,
-          type: type,
-          visibility: visibility,
-        } as KeyValueListFieldConfig;
-      }
-    );
-
-    setFormFields(initialFormFields);
-  }, []); // Empty dependency array ensures this runs only once
 
   const handleSubmit = async (values: FormValues) => {
     setIsLoading(true);
@@ -40,7 +20,7 @@ const NewCompanyView: React.FC = observer(() => {
   };
   return (
     <DynamicForm
-      fields={formFields}
+      fields={companyFieldConfigs}
       onSubmit={handleSubmit}
       isLoading={isLoading}
       formType="create"

@@ -14,6 +14,7 @@ import { UsersPage } from './pages/admin/UsersPage';
 import { InboxPage } from './pages/admin/inbox/InboxPage';
 import { EditCompanyPage } from './pages/admin/EditCompanyPage';
 import { ActionsPage } from './pages/admin/ActionsPage';
+import { EditActionPage } from './pages/admin/EditActionPage';
 
 export const browserRouter = createBrowserRouter([
   {
@@ -66,6 +67,11 @@ export const browserRouter = createBrowserRouter([
           {
             path: 'actions',
             element: <ActionsPage />,
+          },
+          {
+            path: 'actions/:id',
+            element: <EditActionPage />,
+
           },
           {
             path: 'companies/:id',

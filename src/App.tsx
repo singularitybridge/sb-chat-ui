@@ -105,13 +105,10 @@ const App = () => {
         getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) as string,
         getLocalStorageItem(LOCALSTORAGE_USER_ID) as string
       );
-
       
       await rootStore.loadAssistants();
       rootStore.sessionStore.setActiveSession(session);
       await rootStore.loadInboxMessages();
-
-      console.log('session loaded', session);
   
     } catch (error) {
       console.log('session not found');

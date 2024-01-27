@@ -127,6 +127,8 @@ const App = () => {
     rootStore.sessionStore.loadSessions();    
     rootStore.loadCompanies();
     rootStore.loadUsers();    
+    rootStore.loadActions();
+
     loadUserSession();
     
 
@@ -158,9 +160,7 @@ import { Chat } from './pages/Chat';
 import { NotFound } from './pages/NotFound';
 import { Admin } from './pages/Admin';
 import React from 'react';
-import {
-  createBrowserRouter,
-} from 'react-router-dom'; // Import the Outlet component
+import { createBrowserRouter } from 'react-router-dom'; // Import the Outlet component
 import App from './App';
 import { ChatbotView } from './pages/admin/ChatbotView';
 import { ChatRouteLoader } from './components/ChatRouteLoader';
@@ -171,6 +171,7 @@ import { SessionsPage } from './pages/admin/SessionsPage';
 import { UsersPage } from './pages/admin/UsersPage';
 import { InboxPage } from './pages/admin/inbox/InboxPage';
 import { EditCompanyPage } from './pages/admin/EditCompanyPage';
+import { ActionsPage } from './pages/admin/ActionsPage';
 
 export const browserRouter = createBrowserRouter([
   {
@@ -219,6 +220,10 @@ export const browserRouter = createBrowserRouter([
           {
             path: 'companies',
             element: <CompaniesPage />,
+          },
+          {
+            path: 'actions',
+            element: <ActionsPage />,
           },
           {
             path: 'companies/:id',
@@ -1510,9 +1515,6 @@ const Table: React.FC<TableProps> = ({
   onRowClick,
   Actions,
 }) => {
-
-  
-
   const renderCellContent = (value: any) => {
     if (typeof value === 'boolean') {
       return value.toString();
@@ -1533,8 +1535,6 @@ const Table: React.FC<TableProps> = ({
                       key={index}
                       scope="col"
                       className="px-6 py-4 max-w-xs truncate"
-                      
-
                     >
                       {row}
                     </th>
@@ -2200,7 +2200,7 @@ import { IconButton } from '../IconButton';
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
 
 const withPage =
-  (title: string, description: string, onAction: () => void) =>
+  (title: string, description: string, onAction?: () => void) =>
   (WrappedComponent: React.ComponentType<any>) => {
     const WithPageComponent = (props: any) => {
       return (
@@ -2213,12 +2213,14 @@ const withPage =
               </span>
             </div>
             <div>
-              <IconButton
-                icon={<PlusCircleIcon className="w-6 h-6 text-stone-400" />}
-                onClick={onAction}
-                data-te-toggle="modal"
-                data-te-target="#exampleModal"
-              />
+              {onAction && (
+                <IconButton
+                  icon={<PlusCircleIcon className="w-6 h-6 text-stone-400" />}
+                  onClick={onAction}
+                  data-te-toggle="modal"
+                  data-te-target="#exampleModal"
+                />
+              )}
             </div>
           </div>
           <hr className="my-4 h-0.5 border-t-0 bg-neutral-100 opacity-100 dark:opacity-50" />
@@ -2425,18 +2427,10 @@ components/admin/Menu.tsx:
 import React from 'react';
 import logo from '../../assets/l3.png';
 import { useLocation } from 'react-router-dom';
-import {
-  BuildingOffice2Icon,
-  ChatBubbleLeftEllipsisIcon,
-  UserIcon,
-} from '@heroicons/react/24/outline';
 import { observer } from 'mobx-react';
-import { useRootStore } from '../../store/common/RootStoreContext';
 import { SessionView } from './SessionView';
 
 export const Menu = observer(() => {
-  const rootStore = useRootStore();
-
   const menuItems = [
     {
       name: 'Home',
@@ -2463,12 +2457,8 @@ export const Menu = observer(() => {
       link: '/admin/inbox',
     },
     {
-      name: 'Data',
-      link: '/admin/data',
-    },
-    {
-      name: 'Setup',
-      link: '/admin/setup',
+      name: 'Actions',
+      link: '/admin/actions',
     },
   ];
 
@@ -2553,10 +2543,8 @@ export const Menu = observer(() => {
             })}
           </ul>
         </div>
-        
-        <SessionView />
 
-       
+        <SessionView />
       </div>
     </nav>
   );
@@ -4452,6 +4440,56 @@ export const NotFound = () => {
     </ContentContainer>
   );
 };
+
+
+pages/admin/ActionsPage.tsx:
+import React from 'react';
+import { observer } from 'mobx-react-lite';
+import { ActionKeys, IAction } from '../../store/models/Action';
+import { useRootStore } from '../../store/common/RootStoreContext';
+import { IconButton } from '../../components/admin/IconButton';
+import { TrashIcon } from '@heroicons/react/24/outline';
+import { Table } from '../../components/Table';
+import { withPage } from '../../components/admin/HOC/withPage';
+import { convertToStringArray } from '../../utils/utils';
+import { toJS } from 'mobx';
+
+const ActionsView: React.FC = observer(() => {
+  const rootStore = useRootStore();
+  const headers: ActionKeys[] = ['_id', 'type', 'name', 'description'];
+
+  const handleDelete = async (actionId: string) => {
+    await rootStore.deleteAction(actionId);
+  };
+
+  const ActionsColumn = (action: IAction) => (
+    <div className="flex space-x-3 items-center">
+      <IconButton
+        icon={<TrashIcon className="w-5 h-5" />}
+        onClick={() => handleDelete(action._id)}
+      />
+      {/* <IconButton icon={<EditIcon className="w-5 h-5" />} onClick={() => navigate(`/admin/actions/${action._id}`)} /> */}
+    </div>
+  );
+
+  return (
+    <div className="flex w-full justify-center">
+      <div className="flex-auto">
+        <Table
+          headers={convertToStringArray(headers)}
+          data={toJS(rootStore.actions)}
+          Actions={ActionsColumn}
+        />
+      </div>
+    </div>
+  );
+});
+
+const ActionsPage = withPage(
+  'Actions',
+  'Manage your actions here'
+)(ActionsView);
+export { ActionsPage };
 
 
 pages/admin/AssistantsPage.tsx:
@@ -7061,6 +7099,37 @@ export const translateText = async (
 };
 
 
+services/api/actionService.ts:
+import axios from 'axios';
+import { IAction } from '../../store/models/Action';
+
+
+const BASE_URL = 'http://localhost:3000/action';
+
+export const getActions = async (): Promise<IAction[]> => {
+  const response = await axios.get(BASE_URL);
+  return response.data;
+};
+
+export const addAction = async (action: IAction): Promise<IAction> => {
+  const response = await axios.post(BASE_URL, action);
+  return response.data;
+};
+
+export const deleteAction = async (actionId: string): Promise<void> => {
+  await axios.delete(`${BASE_URL}/${actionId}`);
+};
+
+export const updateAction = async (actionId: string, action: IAction): Promise<IAction> => {
+  const response = await axios.put(`${BASE_URL}/${actionId}`, action);
+  return response.data;
+};
+
+export const getActionById = async (actionId: string): Promise<IAction> => {
+  const response = await axios.get(`${BASE_URL}/${actionId}`);
+  return response.data;
+};
+
 services/api/assistantService.ts:
 import axios from 'axios';
 import { IAssistant } from '../../store/models/Assistant';
@@ -7717,6 +7786,26 @@ export const userFieldConfigs: FieldConfig[] = [
 ];
 
 
+store/models/Action.ts:
+import { types, Instance, SnapshotIn, SnapshotOut } from 'mobx-state-tree';
+
+const Action = types.model('Action', {
+  _id: types.identifier,
+  name: types.string,
+  description: types.string,
+  type: types.string,
+  parameters: types.string,
+});
+
+type IAction = Instance<typeof Action>;
+type ActionSnapshotIn = SnapshotIn<typeof Action>;
+type ActionSnapshotOut = SnapshotOut<typeof Action>;
+
+export type ActionKeys = keyof IAction;
+export { Action };
+export type { IAction, ActionSnapshotIn, ActionSnapshotOut };
+
+
 store/models/Assistant.ts:
 import {
   types,
@@ -7847,6 +7936,13 @@ import {
 import { SessionStore } from './SessionStore';
 import { getInboxMessages } from '../../services/api/inboxService';
 import { InboxSession } from './Inbox';
+import { Action, IAction } from './Action';
+import {
+  addAction,
+  deleteAction,
+  getActions,
+  updateAction,
+} from '../../services/api/actionService';
 
 const RootStore = types
   .model('RootStore', {
@@ -7860,18 +7956,63 @@ const RootStore = types
     inboxSessions: types.array(InboxSession),
     inboxSessionsLoaded: types.optional(types.boolean, false),
 
+    actions: types.array(Action),
+    actionsLoaded: types.optional(types.boolean, false),
   })
   .actions((self) => ({
+    loadActions: flow(function* () {
+      try {
+        const actions = yield getActions();
+        applySnapshot(self.actions, actions);
+        self.actionsLoaded = true;
+      } catch (error) {
+        console.error('Failed to load actions', error);
+      }
+    }),
+    addAction: flow(function* (action: IAction) {
+      try {
+        const newAction = yield addAction(action);
+        self.actions.push(newAction);
+        emitter.emit(EVENT_SHOW_NOTIFICATION, 'Action added successfully');
+      } catch (error) {
+        console.error('Failed to add action', error);
+      }
+    }),
+    updateAction: flow(function* (actionId: string, action: IAction) {
+      try {
+        const updatedAction = yield updateAction(actionId, action);
+        const index = self.actions.findIndex((act) => act._id === actionId);
+        if (index !== -1) {
+          self.actions[index] = updatedAction;
+          emitter.emit(EVENT_SHOW_NOTIFICATION, 'Action updated successfully');
+        }
+      } catch (error) {
+        console.error('Failed to update action', error);
+      }
+    }),
+    deleteAction: flow(function* (actionId: string) {
+      try {
+        yield deleteAction(actionId);
+        self.actions.replace(
+          self.actions.filter((act) => act._id !== actionId)
+        );
+        emitter.emit(EVENT_SHOW_NOTIFICATION, 'Action deleted successfully');
+      } catch (error) {
+        console.error('Failed to delete action', error);
+      }
+    }),
+
     loadInboxMessages: flow(function* () {
       try {
-        const inboxMessages = yield getInboxMessages(self.sessionStore.activeSession?.companyId || '');
+        const inboxMessages = yield getInboxMessages(
+          self.sessionStore.activeSession?.companyId || ''
+        );
         applySnapshot(self.inboxSessions, inboxMessages);
         self.inboxSessionsLoaded = true;
       } catch (error) {
         console.error('Failed to load inboxMessages', error);
       }
     }),
-
 
     loadAssistants: flow(function* () {
       try {

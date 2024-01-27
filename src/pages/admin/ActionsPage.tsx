@@ -8,9 +8,13 @@ import { Table } from '../../components/Table';
 import { withPage } from '../../components/admin/HOC/withPage';
 import { convertToStringArray } from '../../utils/utils';
 import { toJS } from 'mobx';
+import { EVENT_SHOW_ADD_ACTION_MODAL } from '../../utils/eventNames';
+import { emitter } from '../../services/mittEmitter';
+import { useNavigate } from 'react-router-dom';
 
 const ActionsView: React.FC = observer(() => {
   const rootStore = useRootStore();
+  const navigate = useNavigate();
   const headers: ActionKeys[] = ['_id', 'type', 'name', 'description'];
 
   const handleDelete = async (actionId: string) => {
@@ -34,6 +38,10 @@ const ActionsView: React.FC = observer(() => {
           headers={convertToStringArray(headers)}
           data={toJS(rootStore.actions)}
           Actions={ActionsColumn}
+          onRowClick={(row: IAction) =>
+            navigate(`/admin/actions/${row._id}`)
+          }
+
         />
       </div>
     </div>
@@ -42,6 +50,9 @@ const ActionsView: React.FC = observer(() => {
 
 const ActionsPage = withPage(
   'Actions',
-  'Manage your actions here'
+  'Manage your actions here',
+  () => {
+    emitter.emit(EVENT_SHOW_ADD_ACTION_MODAL, 'Add Action');
+  }
 )(ActionsView);
 export { ActionsPage };

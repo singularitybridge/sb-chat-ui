@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useEventEmitter } from '../../services/mittEmitter';
 import {
   EVENT_CLOSE_MODAL,
+  EVENT_SHOW_ADD_ACTION_MODAL,
   EVENT_SHOW_ADD_ASSISTANT_MODAL,
   EVENT_SHOW_ADD_COMPANY_MODAL,
   EVENT_SHOW_ADD_USER_MODAL,
@@ -41,7 +42,14 @@ const DialogManager = () => {
       updateContent(EVENT_SHOW_ADD_COMPANY_MODAL, eventData)
   );
 
-  useEventEmitter(EVENT_SHOW_ADD_USER_MODAL,
+  useEventEmitter(
+    EVENT_SHOW_ADD_ACTION_MODAL,
+    (eventData: DialogComponentEventData) =>
+      updateContent(EVENT_SHOW_ADD_ACTION_MODAL, eventData)
+  );
+
+  useEventEmitter(
+    EVENT_SHOW_ADD_USER_MODAL,
     (eventData: DialogComponentEventData) =>
       updateContent(EVENT_SHOW_ADD_USER_MODAL, eventData)
   );
