@@ -3,7 +3,7 @@ import { IconButton } from '../IconButton';
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
 
 const withPage =
-  (title: string, description: string, onAction: () => void) =>
+  (title: string, description: string, onAction?: () => void) =>
   (WrappedComponent: React.ComponentType<any>) => {
     const WithPageComponent = (props: any) => {
       return (
@@ -16,12 +16,14 @@ const withPage =
               </span>
             </div>
             <div>
-              <IconButton
-                icon={<PlusCircleIcon className="w-6 h-6 text-stone-400" />}
-                onClick={onAction}
-                data-te-toggle="modal"
-                data-te-target="#exampleModal"
-              />
+              {onAction && (
+                <IconButton
+                  icon={<PlusCircleIcon className="w-6 h-6 text-stone-400" />}
+                  onClick={onAction}
+                  data-te-toggle="modal"
+                  data-te-target="#exampleModal"
+                />
+              )}
             </div>
           </div>
           <hr className="my-4 h-0.5 border-t-0 bg-neutral-100 opacity-100 dark:opacity-50" />

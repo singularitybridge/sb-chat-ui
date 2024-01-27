@@ -126,6 +126,8 @@ const App = () => {
     rootStore.sessionStore.loadSessions();    
     rootStore.loadCompanies();
     rootStore.loadUsers();    
+    rootStore.loadActions();
+
     loadUserSession();
     
 

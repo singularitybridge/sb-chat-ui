@@ -13,9 +13,6 @@ const Table: React.FC<TableProps> = ({
   onRowClick,
   Actions,
 }) => {
-
-  
-
   const renderCellContent = (value: any) => {
     if (typeof value === 'boolean') {
       return value.toString();
@@ -36,8 +33,6 @@ const Table: React.FC<TableProps> = ({
                       key={index}
                       scope="col"
                       className="px-6 py-4 max-w-xs truncate"
-                      
-
                     >
                       {row}
                     </th>

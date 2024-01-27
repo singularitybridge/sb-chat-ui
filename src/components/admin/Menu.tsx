@@ -1,18 +1,10 @@
 import React from 'react';
 import logo from '../../assets/l3.png';
 import { useLocation } from 'react-router-dom';
-import {
-  BuildingOffice2Icon,
-  ChatBubbleLeftEllipsisIcon,
-  UserIcon,
-} from '@heroicons/react/24/outline';
 import { observer } from 'mobx-react';
-import { useRootStore } from '../../store/common/RootStoreContext';
 import { SessionView } from './SessionView';
 
 export const Menu = observer(() => {
-  const rootStore = useRootStore();
-
   const menuItems = [
     {
       name: 'Home',
@@ -39,12 +31,8 @@ export const Menu = observer(() => {
       link: '/admin/inbox',
     },
     {
-      name: 'Data',
-      link: '/admin/data',
-    },
-    {
-      name: 'Setup',
-      link: '/admin/setup',
+      name: 'Actions',
+      link: '/admin/actions',
     },
   ];
 
@@ -129,10 +117,8 @@ export const Menu = observer(() => {
             })}
           </ul>
         </div>
-        
-        <SessionView />
 
-       
+        <SessionView />
       </div>
     </nav>
   );

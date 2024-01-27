@@ -2,9 +2,7 @@ import { Chat } from './pages/Chat';
 import { NotFound } from './pages/NotFound';
 import { Admin } from './pages/Admin';
 import React from 'react';
-import {
-  createBrowserRouter,
-} from 'react-router-dom'; // Import the Outlet component
+import { createBrowserRouter } from 'react-router-dom'; // Import the Outlet component
 import App from './App';
 import { ChatbotView } from './pages/admin/ChatbotView';
 import { ChatRouteLoader } from './components/ChatRouteLoader';
@@ -15,6 +13,7 @@ import { SessionsPage } from './pages/admin/SessionsPage';
 import { UsersPage } from './pages/admin/UsersPage';
 import { InboxPage } from './pages/admin/inbox/InboxPage';
 import { EditCompanyPage } from './pages/admin/EditCompanyPage';
+import { ActionsPage } from './pages/admin/ActionsPage';
 
 export const browserRouter = createBrowserRouter([
   {
@@ -63,6 +62,10 @@ export const browserRouter = createBrowserRouter([
           {
             path: 'companies',
             element: <CompaniesPage />,
+          },
+          {
+            path: 'actions',
+            element: <ActionsPage />,
           },
           {
             path: 'companies/:id',
