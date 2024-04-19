@@ -19,7 +19,6 @@ import {
   setLocalStorageItem,
   createSession,
 } from '../../services/api/sessionService';
-import { TagsInput } from '../../components/InputTags';
 
 const CompaniesView: React.FC = observer(() => {
   const rootStore = useRootStore();
@@ -69,21 +68,7 @@ const CompaniesView: React.FC = observer(() => {
 
   return (
     <>
-      <TagsInput
-        title="Actions"
-        description="Select actions to perform on selected rows"
-        selectedTags={[]}
-        availableTags={[
-          {
-            id: 'add-user',
-            name: 'add-user',
-          },
-          {
-            id: 'remove-user',
-            name: 'remove-user',
-          },
-        ]}
-      />
+
       <div className="flex w-full justify-center">
         <div className=" flex-auto">
           <Table

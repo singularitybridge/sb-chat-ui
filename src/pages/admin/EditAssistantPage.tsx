@@ -12,8 +12,10 @@ import {
 } from '../../components/DynamicForm';
 import { toJS } from 'mobx';
 import { assistantFieldConfigs } from '../../store/fieldConfigs/assistantFieldConfigs';
+import { TagsInput } from '../../components/InputTags';
 
 const EditAssistantView: React.FC = observer(() => {
+  
   const { key } = useParams<{ key: string }>();
   const rootStore = useRootStore();
   const assistant = key ? rootStore.getAssistantById(key) : null;
@@ -53,7 +55,7 @@ const EditAssistantView: React.FC = observer(() => {
 
   return (
     <>
-      <div className="flex w-full">
+      <div className="flex w-full space-x-5">
         <div className="w-1/2">
           <DynamicForm
             fields={formFields}
@@ -62,7 +64,26 @@ const EditAssistantView: React.FC = observer(() => {
             formType="update"
           />
         </div>
-        <div className="w-1/2">Test your assistant here</div>
+        <div className="w-1/2">
+          <TagsInput
+            title="Actions"
+            description="Actions allow assitant/agent to use tools and exhange information"
+            selectedTags={[]}
+            availableTags={[
+              {
+                id: 'add-user',
+                name: 'add-user',
+              },
+              {
+                id: 'remove-user',
+                name: 'remove-user',
+              },
+            ]}
+            onTagsChange={(updatedTags) => {
+              console.log(updatedTags);
+            }}
+          />
+        </div>
       </div>
     </>
   );
@@ -70,7 +91,9 @@ const EditAssistantView: React.FC = observer(() => {
 
 const EditAssistantPage = withPage(
   'Edit AI Assistant',
-  'update your ai agents here', 
-  () => { console.log('edit assistant');}
+  'update your ai agents here',
+  () => {
+    console.log('edit assistant');
+  }
 )(EditAssistantView);
 export { EditAssistantPage, EditAssistantView };

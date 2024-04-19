@@ -7,6 +7,10 @@ import Mustache from 'mustache';
 import axios from 'axios';
 
 const getGPTResponse = async (sessionId: string, message: string) => {
+  if (!sessionId || !message) {
+    throw new Error('Session ID and message cannot be null');
+  }
+
   const response = await axios.post(
     `http://127.0.0.1:5000/chat_sessions/${sessionId}/messages`,
     {
