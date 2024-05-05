@@ -8,13 +8,15 @@ import { AssistantKeys } from '../store/models/Assistant';
 import { CompanyKeys } from '../store/models/Company';
 import { UserKeys } from '../store/models/User';
 import { ActionKeys } from '../store/models/Action';
+import TokenInput from './admin/TokenInput';
 
 export type FieldType =
   | 'input'
   | 'textarea'
   | 'key-value-list'
   | 'verified-input'
-  | 'api-key-list';
+  | 'api-key-list'
+  | 'token-input';
 export type FormType = 'create' | 'update';
 
 export interface FieldVisibility {
@@ -51,11 +53,17 @@ export interface KeyValueListFieldConfig extends BaseFieldConfig {
   value: KeyValue[];
 }
 
+export interface TokenInputFieldConfig extends BaseFieldConfig {
+  type: 'token-input';
+  value: string;
+}
+
 export type FieldConfig =
   | InputFieldConfig
   | TextareaFieldConfig
   | KeyValueListFieldConfig
-  | ApiKeysListFieldConfig;
+  | ApiKeysListFieldConfig
+  | TokenInputFieldConfig;
 
 export interface FormValues
   extends Record<string, string | KeyValue[] | ApiKey[]> {}
@@ -63,6 +71,7 @@ export interface FormValues
 export interface DynamicFormProps {
   fields: FieldConfig[];
   onSubmit: (values: FormValues) => void;
+  refreshToken: (values: FormValues) => void;
   onVerify: (value: string) => Promise<boolean>;
   isLoading?: boolean;
   formType: FormType;
@@ -72,6 +81,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   fields,
   onSubmit,
   onVerify,
+  refreshToken,
   isLoading,
   formType,
 }) => {
@@ -92,6 +102,11 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
 
     setValues(initialValues);
   }, [fields, formType]);
+
+  const handleRefreshToken = () => {
+    debugger;
+    refreshToken(values);
+  };
 
   const handleChange = (id: string, newValue: string | KeyValue[]) => {
     setValues((prevValues) => ({ ...prevValues, [id]: newValue }));
@@ -139,6 +154,22 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                 description="Identifiers are used to connect assistants to external sources"
                 initialData={(values[field.id] as KeyValue[]) || []}
                 onDataChange={(newValue) => handleChange(field.id, newValue)}
+              />
+            );
+          case 'token-input':
+            return (
+              <TokenInput
+                key={field.id}
+                label={field.label}
+                id={field.id}
+                type="password"
+                value={values[field.id] as string}
+                onChange={(newValue: string) =>
+                  handleChange(field.id, newValue)
+                }
+                onRefresh={() => {
+                  handleRefreshToken();
+                }}
               />
             );
           default:

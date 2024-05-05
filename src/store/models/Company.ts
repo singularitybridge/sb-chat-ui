@@ -9,6 +9,7 @@ const ApiKey = types.model('ApiKey', {
 const Company = types.model('Company', {
   _id: types.identifier,
   name: types.string,
+  token: types.string,
   api_keys: types.array(ApiKey),
   identifiers: types.optional(types.array(Identifier), []),
   __v: types.number,

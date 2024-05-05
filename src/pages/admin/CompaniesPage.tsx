@@ -23,13 +23,16 @@ import {
   createSession,
 } from '../../services/api/sessionService';
 import { TagsInput } from '../../components/InputTags';
+import { useTranslation } from 'react-i18next';
+
 
 const CompaniesView: React.FC = observer(() => {
   debugger;
   const rootStore = useRootStore();
   const navigate = useNavigate();
 
-  const headers: CompanyKeys[] = ['name', '_id'];
+  const { t } = useTranslation();
+  const headers: CompanyKeys[] = ['name', 'token'];
 
   const handleDelete = (row: ICompany) => {
     rootStore.deleteCompany(row._id);
@@ -37,15 +40,16 @@ const CompaniesView: React.FC = observer(() => {
 
   const handleSetCompany = async (row: ICompany) => {
     setLocalStorageItem(LOCALSTORAGE_COMPANY_ID, row._id);
-
+    debugger
     const session = await createSession(
       getLocalStorageItem(LOCALSTORAGE_USER_ID) || '',
       row._id
     );
-
+      debugger
     const sessionData = await getSessionById(session._id);
+    debugger
     rootStore.sessionStore.setActiveSession(sessionData);
-
+      debugger
     rootStore.loadAssistants();
     rootStore.loadInboxMessages();
 
@@ -75,7 +79,7 @@ const CompaniesView: React.FC = observer(() => {
     <>
       <TagsInput
         title="Actions"
-        description="Select actions to perform on selected rows"
+        description={t('CompaniesPage.action_msg')}
         selectedTags={[]}
         availableTags={[
           {
@@ -93,6 +97,7 @@ const CompaniesView: React.FC = observer(() => {
           <Table
             headers={convertToStringArray(headers)}
             data={toJS(rootStore.companies)}
+            Page='CompaniesPage'
             onRowClick={(row: ICompany) =>
               navigate(`/admin/companies/${row._id}`)
             }
@@ -105,7 +110,7 @@ const CompaniesView: React.FC = observer(() => {
   );
 });
 
-const CompaniesPage = withPage('Companies', 'list of companies', () => {
+const CompaniesPage = withPage('Companies', 'CompaniesPage.description', () => {
   emitter.emit(EVENT_SHOW_ADD_COMPANY_MODAL, 'Add Company');
 })(CompaniesView);
 export { CompaniesPage };

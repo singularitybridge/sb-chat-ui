@@ -11,12 +11,13 @@ import { toJS } from 'mobx';
 import { EVENT_SHOW_ADD_ACTION_MODAL } from '../../utils/eventNames';
 import { emitter } from '../../services/mittEmitter';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const ActionsView: React.FC = observer(() => {
   const rootStore = useRootStore();
   const navigate = useNavigate();
   const headers: ActionKeys[] = ['_id', 'type', 'name', 'description'];
-
+  
   const handleDelete = async (actionId: string) => {
     await rootStore.deleteAction(actionId);
   };
@@ -37,6 +38,7 @@ const ActionsView: React.FC = observer(() => {
         <Table
           headers={convertToStringArray(headers)}
           data={toJS(rootStore.actions)}
+          Page='ActionsPage'
           Actions={ActionsColumn}
           onRowClick={(row: IAction) =>
             navigate(`/admin/actions/${row._id}`)
@@ -50,7 +52,7 @@ const ActionsView: React.FC = observer(() => {
 
 const ActionsPage = withPage(
   'Actions',
-  'Manage your actions here',
+  'ActionsPage.description',
   () => {
     emitter.emit(EVENT_SHOW_ADD_ACTION_MODAL, 'Add Action');
   }

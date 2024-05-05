@@ -10,6 +10,14 @@ export const companyFieldConfigs: FieldConfig[] = [
     visibility: { create: true, view: true, update: true },
   },
   {
+    id: 'token',
+    key: 'token',
+    label: 'Token',
+    type: 'token-input',
+    value: '************',
+    visibility: { create: true, view: true, update: true },
+  },
+  {
     id: 'api_keys',
     key: 'api_keys',
     label: 'API Keys',

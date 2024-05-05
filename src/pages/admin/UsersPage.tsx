@@ -72,6 +72,7 @@ const UsersView: React.FC = observer(() => {
           <Table
             headers={convertToStringArray(headers)}
             data={toJS(rootStore.users)}
+            Page='UsersPage'
             onRowClick={(row: IUser) => navigate(`/admin/users/${row._id}`)}
             Actions={Actions}
           />
@@ -84,7 +85,7 @@ const UsersView: React.FC = observer(() => {
   );
 });
 
-const UsersPage = withPage('Users', 'manage your users here', () => {
+const UsersPage = withPage('Users', 'UsersPage.description', () => {
   emitter.emit(EVENT_SHOW_ADD_USER_MODAL, 'Add User');
 })(UsersView);
 export { UsersPage };

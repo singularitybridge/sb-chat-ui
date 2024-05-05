@@ -18,7 +18,6 @@ export const getDecryptedCompanyById = async (
     const response = await axios.get(
       `http://localhost:3000/company/decrypted/${_id}`
     );
-    debugger;
     return response.data;
   } catch (error) {
     console.error('Failed to fetch decrypted company', error);
@@ -28,7 +27,6 @@ export const getDecryptedCompanyById = async (
 
 export const addCompany = async (company: ICompany): Promise<ICompany> => {
   try {
-    debugger;
     const response = await axios.post('http://localhost:3000/company', company);
     return response.data;
   } catch (error) {
@@ -51,7 +49,6 @@ export const updateCompany = async (
   company: ICompany
 ): Promise<ICompany> => {
   try {
-    debugger;
     const response = await axios.put(
       `http://localhost:3000/company/${_id}`,
       company
@@ -59,6 +56,22 @@ export const updateCompany = async (
     return response.data;
   } catch (error) {
     console.error('Failed to update company', error);
+    throw error;
+  }
+};
+
+export const refreshCompanyToken = async (
+  _id: string,
+  company: ICompany
+): Promise<ICompany> => {
+  try {
+    const response = await axios.put(
+      `http://localhost:3000/company/refresh-token/${_id}`,
+      company
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Failed to refresh company token', error);
     throw error;
   }
 };

@@ -18,7 +18,6 @@ const EditCompanyView: React.FC = observer(() => {
   const [company, setCompany] = useState<ICompany | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  debugger;
   useEffect(() => {
     const fetchCompany = async () => {
       if (id && !rootStore.companiesLoaded) {
@@ -67,6 +66,19 @@ const EditCompanyView: React.FC = observer(() => {
     setIsLoading(false);
   };
 
+  const handleRefreshToken = async (values: FormValues) => {
+    if (!id) {
+      return;
+    }
+    setIsLoading(true);
+    const updatedCompany = await rootStore.refreshToken(
+      id,
+      values as unknown as ICompany
+    );
+    setCompany(updatedCompany);
+    setIsLoading(false);
+  };
+
   return (
     <>
       <div className="flex w-full">
@@ -74,6 +86,7 @@ const EditCompanyView: React.FC = observer(() => {
           <DynamicForm
             fields={formFields}
             onSubmit={handleSubmit}
+            refreshToken={handleRefreshToken}
             isLoading={isLoading}
             formType="update"
           />

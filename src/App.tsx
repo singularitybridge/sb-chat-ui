@@ -25,9 +25,12 @@ import {
   getSessionByCompanyAndUserId,
 } from './services/api/sessionService';
 
+const initialLanguage = localStorage.getItem('appLanguage') || 'en';
+
 const rootStore = RootStore.create({
   assistants: [],  
-  users: [],  
+  users: [],
+  language: initialLanguage,  
 });
 
 const App = () => {

@@ -1,7 +1,10 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+
 
 interface TableProps {
   headers: string[];
+  Page: string;
   data: { [key: string]: any }[];
   onRowClick?: (row: any) => void;
   Actions?: (row: any) => JSX.Element; // Add this line
@@ -9,6 +12,7 @@ interface TableProps {
 
 const Table: React.FC<TableProps> = ({
   headers,
+  Page,
   data,
   onRowClick,
   Actions,
@@ -19,6 +23,8 @@ const Table: React.FC<TableProps> = ({
     }
     return value;
   };
+
+  const { t } = useTranslation();
 
   return (
     <div className="flex flex-col w-full">
@@ -34,7 +40,8 @@ const Table: React.FC<TableProps> = ({
                       scope="col"
                       className="px-6 py-4 max-w-xs truncate"
                     >
-                      {row}
+                      {t(`${Page}.table.${row}`)}
+                      {/* {row} */}
                     </th>
                   ))}
                 </tr>

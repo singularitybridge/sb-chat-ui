@@ -25,6 +25,7 @@ export const getUserById = async (userId: string): Promise<IUser> => {
 
 export const addUser = async (userData: IUser): Promise<IUser> => {
   try {
+    debugger
     const response = await axios.post(baseUrl, userData);
     return response.data;
   } catch (error) {
