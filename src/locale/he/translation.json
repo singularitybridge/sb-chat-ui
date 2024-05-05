@@ -1,53 +1,53 @@
 {
     "CompaniesPage": {
-      "description": "list of companies",
-      "action_msg": "Select actions to perform on selected rows",
+      "description": "רשימת חברות",
+      "action_msg": "בחר פעולות לביצוע על שורות שנבחרו",
       "table": {
-        "name": "name",
-        "token": "token"
+        "name": "שם",
+        "token": "טוקן"
       }
     },
     "AssistantsPage": {
-      "description": "manage your ai agents here",
+      "description": "ניהול סוכני הבינה המלאכותית שלך כאן",
       "table": {
-        "name": "name",
-        "description": "description",
-        "voice": "voice"
+        "name": "שם",
+        "description": "תיאור",
+        "voice": "קול"
       }
     },
     "UsersPage": {
-      "description": "manage your users here",
+      "description": "ניהול המשתמשים שלך כאן",
       "table": {
-        "nickname": "nickname",
-        "name": "name"
+        "nickname": "כינוי",
+        "name": "שם"
       }
     },
     "SessionsPage": {
-      "description": "list of sessions",
+      "description": "רשימת הפעלות",
       "table": {
-        "companyName": "companyName",
-        "userName": "userName",
-        "assistantName": "assistantName",
-        "threadId": "threadId",
-        "active": "active"
+        "companyName": "שם החברה",
+        "userName": "שם משתמש",
+        "assistantName": "שם העוזר",
+        "threadId": "מזהה נושא",
+        "active": "פעיל"
       }
     },
     "InboxPage": {
-      "description": "manage communication with your users here",
+      "description": "ניהול תקשורת עם המשתמשים שלך כאן",
       "table": {
-        "_id": "id",
-        "type": "type",
-        "name": "name",
-        "description": "description"
+        "_id": "מזהה",
+        "type": "סוג",
+        "name": "שם",
+        "description": "תיאור"
       }
     },
     "ActionsPage": {
-      "description": "Manage your actions here",
+      "description": "נהל את הפעולות שלך כאן",
       "table": {
-        "_id": "id",
-        "type": "type",
-        "name": "name",
-        "description": "description"
+        "_id": "מזהה",
+        "type": "סוג",
+        "name": "שם",
+        "description": "תיאור"
       }
     }
   }
