@@ -146,7 +146,7 @@ const InboxView: React.FC = observer(() => {
 
 const InboxPage = withPage(
   'Inbox',
-  'manage communication with your users here',
+  'InboxPage.description',
   () => {
     emitter.emit(EVENT_SHOW_ADD_USER_MODAL, 'Add User');
   }

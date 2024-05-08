@@ -25,6 +25,7 @@ import {
   updateSessionAssistant,
 } from '../../services/api/sessionService';
 import { HumanAgentResponseMessage } from './HumanAgentResponseMessage';
+import { nullType } from 'mobx-state-tree/dist/internal';
 
 interface Metadata {
   message_type: string;
@@ -117,6 +118,7 @@ const ChatContainer = observer(() => {
       });
     }
   };
+
   const handleReload = async () => {
     if (assistant && userId && companyId) {
       await endSession(companyId, userId);

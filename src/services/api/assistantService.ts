@@ -67,7 +67,7 @@ export async function handleUserInput(body: HandleUserInputBody): Promise<string
 
 
 export async function getAssistants(companyId : string): Promise<IAssistant[]> {
-  try {    
+  try { 
     const response = await axios.get(`http://localhost:3000/assistant/company/${companyId}`);
     return response.data;
   } catch (error) {
@@ -87,6 +87,7 @@ export async function deleteAssistant(id: string): Promise<void> {
 
 export async function addAssistant(assistant: IAssistant): Promise<IAssistant> {
   try {
+    debugger
     const response = await axios.post('http://localhost:3000/assistant', assistant);
     return response.data;
   } catch (error) {

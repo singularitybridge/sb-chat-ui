@@ -10,9 +10,18 @@ import { convertToStringArray } from '../../utils/utils';
 import { PlayIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { IconButton } from '../../components/admin/IconButton';
 import { emitter } from '../../services/mittEmitter';
-import { EVENT_SHOW_ADD_USER_MODAL, EVENT_SHOW_NOTIFICATION } from '../../utils/eventNames';
-import { LOCALSTORAGE_COMPANY_ID, LOCALSTORAGE_USER_ID, getLocalStorageItem, setLocalStorageItem, createSession, getSessionById } from '../../services/api/sessionService';
-// import { EVENT_SHOW_ADD_USER_MODAL } from '../../utils/eventNames';
+import {
+  EVENT_SHOW_ADD_USER_MODAL,
+  EVENT_SHOW_NOTIFICATION,
+} from '../../utils/eventNames';
+import {
+  LOCALSTORAGE_COMPANY_ID,
+  LOCALSTORAGE_USER_ID,
+  getLocalStorageItem,
+  setLocalStorageItem,
+  createSession,
+  getSessionById,
+} from '../../services/api/sessionService';
 
 const UsersView: React.FC = observer(() => {
   const rootStore = useRootStore();
@@ -25,18 +34,16 @@ const UsersView: React.FC = observer(() => {
   };
 
   const handleSetUser = async (row: IUser) => {
-    
     setLocalStorageItem(LOCALSTORAGE_USER_ID, row._id);
 
-    const session = await createSession(      
+    const session = await createSession(
       row._id,
-      getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) || '',
+      getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) || ''
     );
 
     const sessionData = await getSessionById(session._id);
     rootStore.sessionStore.setActiveSession(sessionData);
     emitter.emit(EVENT_SHOW_NOTIFICATION, 'User set successfully');
-    
   };
 
   const Actions = (row: IUser) => (
@@ -55,7 +62,6 @@ const UsersView: React.FC = observer(() => {
           handleSetUser(row);
         }}
       />
-
     </div>
   );
 
@@ -66,6 +72,7 @@ const UsersView: React.FC = observer(() => {
           <Table
             headers={convertToStringArray(headers)}
             data={toJS(rootStore.users)}
+            Page='UsersPage'
             onRowClick={(row: IUser) => navigate(`/admin/users/${row._id}`)}
             Actions={Actions}
           />
@@ -78,11 +85,7 @@ const UsersView: React.FC = observer(() => {
   );
 });
 
-const UsersPage = withPage(
-  'Users',
-  'manage your users here',
-  () => {
-    emitter.emit(EVENT_SHOW_ADD_USER_MODAL, 'Add User');
-  }
-)(UsersView);
+const UsersPage = withPage('Users', 'UsersPage.description', () => {
+  emitter.emit(EVENT_SHOW_ADD_USER_MODAL, 'Add User');
+})(UsersView);
 export { UsersPage };

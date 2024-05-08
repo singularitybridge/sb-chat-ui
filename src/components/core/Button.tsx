@@ -22,7 +22,7 @@ const Button: React.FC<ButtonProps> = ({
     'mr-2 mb-2',
     'rounded-md',
     'text-base',
-    additionalClassName,
+    additionalClassName
   );
 
   return (

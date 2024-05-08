@@ -58,6 +58,7 @@ const SessionsView: React.FC = observer(() => {
           <Table
             headers={convertToStringArray(headers)}
             data={toJS(rootStore.sessionStore.sessions)}
+            Page='SessionsPage'
             onRowClick={(row: ISession) =>
               navigate(`/admin/sessions/${row._id}`)
             }
@@ -74,7 +75,7 @@ const SessionsView: React.FC = observer(() => {
 
 const SessionsPage = withPage(
   'Sessions',
-  'list of sessions',
+  'SessionsPage.description',
   () => {
     // emitter.emit(EVENT_SHOW_ADD_SESSION_MODAL, 'Add Session');
   }

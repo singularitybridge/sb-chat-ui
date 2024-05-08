@@ -1,18 +1,28 @@
 import React from 'react';
 
 interface IconButtonProps {
+  id?: string;
   icon: React.ReactNode;
-  onClick: (event?: any) => void;
+  disabled?: boolean;
+  onClick?: (event?: any) => void;
   className?: string;
 }
 
 const IconButton: React.FC<IconButtonProps> = ({
+  id,
   icon,
+  disabled,
   onClick,
   className,
 }) => {
   return (
-    <button type="button" onClick={onClick} className={className}>
+    <button
+      disabled={disabled}
+      id={id}
+      type="button"
+      onClick={onClick}
+      className={className}
+    >
       {icon}
     </button>
   );

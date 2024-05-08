@@ -1,0 +1,53 @@
+{
+    "CompaniesPage": {
+      "description": "list of companies",
+      "action_msg": "Select actions to perform on selected rows",
+      "table": {
+        "name": "name",
+        "token": "token"
+      }
+    },
+    "AssistantsPage": {
+      "description": "manage your ai agents here",
+      "table": {
+        "name": "name",
+        "description": "description",
+        "voice": "voice"
+      }
+    },
+    "UsersPage": {
+      "description": "manage your users here",
+      "table": {
+        "nickname": "nickname",
+        "name": "name"
+      }
+    },
+    "SessionsPage": {
+      "description": "list of sessions",
+      "table": {
+        "companyName": "companyName",
+        "userName": "userName",
+        "assistantName": "assistantName",
+        "threadId": "threadId",
+        "active": "active"
+      }
+    },
+    "InboxPage": {
+      "description": "manage communication with your users here",
+      "table": {
+        "_id": "id",
+        "type": "type",
+        "name": "name",
+        "description": "description"
+      }
+    },
+    "ActionsPage": {
+      "description": "Manage your actions here",
+      "table": {
+        "_id": "id",
+        "type": "type",
+        "name": "name",
+        "description": "description"
+      }
+    }
+  }

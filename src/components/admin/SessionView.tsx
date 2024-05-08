@@ -46,21 +46,21 @@ export const SessionView = observer(() => {
 
   return (
     <div className="relative flex px-4 space-x-3 mr-4 bg-cyan-500 py-3 rounded-3xl bg-opacity-30">
-      <div className="flex items-center space-x-0.5">
+      <div className="flex items-center space-x-1">
         <BuildingOffice2Icon className="w-3.5 h-3.5 text-cyan-700" />
         <div className="   text-cyan-950  text-sm font-light">
           {rootStore.sessionStore.activeSession.companyName}
         </div>
       </div>
-      <div className="flex items-center space-x-0.5">
+      <div className="flex items-center space-x-1">
         <ChatBubbleLeftEllipsisIcon className="w-3.5 h-3.5 text-cyan-700" />
-        <div className=" text-sm font-light  text-cyan-950">
+        <div className=" text-sm  text-cyan-950">
           {rootStore.sessionStore.activeSession.assistantName}
         </div>
       </div>
-      <div className="flex items-center space-x-0.5">
+      <div className="flex items-center space-x-1">
         <UserIcon className="w-3.5 h-3.5  cyan-violet-700" />
-        <div className=" text-cyan-950 text-sm font-light">
+        <div className=" text-cyan-950 text-sm">
           {rootStore.sessionStore.activeSession.userName}
         </div>
       </div>

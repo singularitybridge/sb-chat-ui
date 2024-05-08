@@ -4,23 +4,37 @@ import { observer } from 'mobx-react-lite';
 import { useRootStore } from '../../store/common/RootStoreContext';
 import { ICompany } from '../../store/models/Company';
 import { withPage } from '../../components/admin/HOC/withPage';
-import { DynamicForm, FieldConfig, FormValues } from '../../components/DynamicForm';
+import {
+  DynamicForm,
+  FieldConfig,
+  FormValues,
+} from '../../components/DynamicForm';
 import { toJS } from 'mobx';
-import { companyFieldConfigs } from '../../store/fieldConfigs/companyFieldConfigs'; // Assuming similar structure as assistantFieldConfigs
+import { companyFieldConfigs } from '../../store/fieldConfigs/companyFieldConfigs';
 
 const EditCompanyView: React.FC = observer(() => {
   const { id } = useParams<{ id: string }>();
   const rootStore = useRootStore();
-  const company = id ? rootStore.getCompanyById(id) : null;
-  const [isLoading, setIsLoading] = useState(false);
+  const [company, setCompany] = useState<ICompany | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!rootStore.companiesLoaded) {
-      // Logic to load companies if not already loaded
-    }
-  }, [rootStore]);
+    const fetchCompany = async () => {
+      if (id && !rootStore.companiesLoaded) {
+        // Optionally, load companies here if not already loaded
+      }
 
-  if (rootStore.companiesLoaded === false) {
+      if (id) {
+        const fetchedCompany = await rootStore.getCompanyById(id);
+        setCompany(fetchedCompany);
+        setIsLoading(false);
+      }
+    };
+
+    fetchCompany();
+  }, [id, rootStore, rootStore.companiesLoaded]);
+
+  if (isLoading) {
     return <div>Loading...</div>;
   }
 
@@ -28,17 +42,19 @@ const EditCompanyView: React.FC = observer(() => {
     return <div>Company not found</div>;
   }
 
-  const formFields: FieldConfig[] = companyFieldConfigs.map(({ id, label, key, type, visibility }) => {
-    const fieldKeyString = String(key);
-    return {
-      key: key,
-      label: label,
-      value: company ? toJS((company as any)[fieldKeyString]) : '',
-      id: id,
-      type: type,
-      visibility: visibility,
-    };
-  });
+  const formFields: FieldConfig[] = companyFieldConfigs.map(
+    ({ id, label, key, type, visibility }) => {
+      const fieldKeyString = String(key);
+      return {
+        key: key,
+        label: label,
+        value: company ? toJS((company as any)[fieldKeyString]) : '',
+        id: id,
+        type: type,
+        visibility: visibility,
+      };
+    }
+  );
 
   const handleSubmit = async (values: FormValues) => {
     console.log('Form Values:', values);
@@ -50,6 +66,19 @@ const EditCompanyView: React.FC = observer(() => {
     setIsLoading(false);
   };
 
+  const handleRefreshToken = async (values: FormValues) => {
+    if (!id) {
+      return;
+    }
+    setIsLoading(true);
+    const updatedCompany = await rootStore.refreshToken(
+      id,
+      values as unknown as ICompany
+    );
+    setCompany(updatedCompany);
+    setIsLoading(false);
+  };
+
   return (
     <>
       <div className="flex w-full">
@@ -57,13 +86,12 @@ const EditCompanyView: React.FC = observer(() => {
           <DynamicForm
             fields={formFields}
             onSubmit={handleSubmit}
+            refreshToken={handleRefreshToken}
             isLoading={isLoading}
             formType="update"
           />
         </div>
-        <div className="w-1/2">
-          {/* Additional UI or functionality related to company can be added here */}
-        </div>
+        <div className="w-1/2"></div>
       </div>
     </>
   );
@@ -72,7 +100,9 @@ const EditCompanyView: React.FC = observer(() => {
 const EditCompanyPage = withPage(
   'Edit Company',
   'Update company details here',
-  () => { console.log('edit company'); }
+  () => {
+    console.log('edit company');
+  }
 )(EditCompanyView);
 
 export { EditCompanyPage, EditCompanyView };

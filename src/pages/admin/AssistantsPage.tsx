@@ -57,6 +57,7 @@ const AssistantsView: React.FC = observer(() => {
           <Table
             headers={convertToStringArray(headers)}
             data={toJS(rootStore.assistants)}
+            Page='AssistantsPage'
             onRowClick={(row: IAssistant) =>
               navigate(`/admin/assistants/${row._id}`)
             }
@@ -73,7 +74,7 @@ const AssistantsView: React.FC = observer(() => {
 
 const AssistantsPage = withPage(
   'AI Assistants',
-  'manage your ai agents here',
+  'AssistantsPage.description',
   () => {
     emitter.emit(EVENT_SHOW_ADD_ASSISTANT_MODAL, 'Add Assistant');
   }

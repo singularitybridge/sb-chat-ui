@@ -11,6 +11,20 @@ export const getCompanies = async (): Promise<ICompany[]> => {
   }
 };
 
+export const getDecryptedCompanyById = async (
+  _id: string
+): Promise<ICompany> => {
+  try {
+    const response = await axios.get(
+      `http://localhost:3000/company/decrypted/${_id}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch decrypted company', error);
+    throw error;
+  }
+};
+
 export const addCompany = async (company: ICompany): Promise<ICompany> => {
   try {
     const response = await axios.post('http://localhost:3000/company', company);
@@ -30,12 +44,34 @@ export const deleteCompany = async (companyId: string): Promise<void> => {
   }
 };
 
-export const updateCompany = async ( _id : string, company: ICompany): Promise<ICompany> => {
+export const updateCompany = async (
+  _id: string,
+  company: ICompany
+): Promise<ICompany> => {
   try {
-    const response = await axios.put(`http://localhost:3000/company/${_id}`, company);
+    const response = await axios.put(
+      `http://localhost:3000/company/${_id}`,
+      company
+    );
     return response.data;
   } catch (error) {
     console.error('Failed to update company', error);
     throw error;
   }
-}
+};
+
+export const refreshCompanyToken = async (
+  _id: string,
+  company: ICompany
+): Promise<ICompany> => {
+  try {
+    const response = await axios.put(
+      `http://localhost:3000/company/refresh-token/${_id}`,
+      company
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Failed to refresh company token', error);
+    throw error;
+  }
+};

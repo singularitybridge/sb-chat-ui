@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import 'regenerator-runtime/runtime';
 import { RecoilRoot } from 'recoil';
 import './index.css';
+import './i18n';
 import { browserRouter } from './Router';
 import { RouterProvider } from 'react-router-dom';
 // import 'tw-elements-react/dist/css/tw-elements-react.min.css';

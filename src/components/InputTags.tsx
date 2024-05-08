@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { TagInput } from './TagInput';
 import { CustomDropdown } from './CustomDropdown';
 
@@ -12,7 +12,6 @@ export interface TagsInputProps {
   availableTags: TagType[];
   title: string;
   description: string;
-  onTagsChange?: (tags: TagType[]) => void;
 }
 
 const TagsInput: React.FC<TagsInputProps> = ({
@@ -20,16 +19,8 @@ const TagsInput: React.FC<TagsInputProps> = ({
   availableTags,
   title,
   description,
-  onTagsChange,
 }) => {
   const [tags, setTags] = useState<TagType[]>(selectedTags);
-
-  useEffect(() => {
-    if (onTagsChange) {
-      onTagsChange(tags);
-    }
-  }, [tags, onTagsChange]);
-
   const noTagsText = tags.length === 0 ? 'no action selected' : null;
 
   const removeTag = (tagToRemove: string) => {

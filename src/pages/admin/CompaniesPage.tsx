@@ -9,7 +9,10 @@ import { convertToStringArray } from '../../utils/utils';
 import { PlayIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { IconButton } from '../../components/admin/IconButton';
 import { emitter } from '../../services/mittEmitter';
-import { EVENT_SHOW_ADD_COMPANY_MODAL } from '../../utils/eventNames';
+import {
+  EVENT_SHOW_ADD_COMPANY_MODAL,
+  EVENT_SHOW_NOTIFICATION,
+} from '../../utils/eventNames';
 import { CompanyKeys, ICompany } from '../../store/models/Company';
 import {
   LOCALSTORAGE_COMPANY_ID,
@@ -19,12 +22,17 @@ import {
   setLocalStorageItem,
   createSession,
 } from '../../services/api/sessionService';
+import { TagsInput } from '../../components/InputTags';
+import { useTranslation } from 'react-i18next';
+
 
 const CompaniesView: React.FC = observer(() => {
+  debugger;
   const rootStore = useRootStore();
   const navigate = useNavigate();
 
-  const headers: CompanyKeys[] = ['name', 'openai_api_key'];
+  const { t } = useTranslation();
+  const headers: CompanyKeys[] = ['name', 'token'];
 
   const handleDelete = (row: ICompany) => {
     rootStore.deleteCompany(row._id);
@@ -32,19 +40,20 @@ const CompaniesView: React.FC = observer(() => {
 
   const handleSetCompany = async (row: ICompany) => {
     setLocalStorageItem(LOCALSTORAGE_COMPANY_ID, row._id);
-
+    debugger
     const session = await createSession(
       getLocalStorageItem(LOCALSTORAGE_USER_ID) || '',
       row._id
     );
-
+      debugger
     const sessionData = await getSessionById(session._id);
+    debugger
     rootStore.sessionStore.setActiveSession(sessionData);
-
+      debugger
     rootStore.loadAssistants();
     rootStore.loadInboxMessages();
 
-    // emitter.emit(EVENT_SHOW_NOTIFICATION, 'Company set successfully');
+    emitter.emit(EVENT_SHOW_NOTIFICATION, 'Company set successfully');
   };
 
   const Actions = (row: ICompany) => (
@@ -68,12 +77,27 @@ const CompaniesView: React.FC = observer(() => {
 
   return (
     <>
-
+      <TagsInput
+        title="Actions"
+        description={t('CompaniesPage.action_msg')}
+        selectedTags={[]}
+        availableTags={[
+          {
+            id: 'add-user',
+            name: 'add-user',
+          },
+          {
+            id: 'remove-user',
+            name: 'remove-user',
+          },
+        ]}
+      />
       <div className="flex w-full justify-center">
         <div className=" flex-auto">
           <Table
             headers={convertToStringArray(headers)}
             data={toJS(rootStore.companies)}
+            Page='CompaniesPage'
             onRowClick={(row: ICompany) =>
               navigate(`/admin/companies/${row._id}`)
             }
@@ -86,7 +110,7 @@ const CompaniesView: React.FC = observer(() => {
   );
 });
 
-const CompaniesPage = withPage('Comapnies', 'list of companies', () => {
+const CompaniesPage = withPage('Companies', 'CompaniesPage.description', () => {
   emitter.emit(EVENT_SHOW_ADD_COMPANY_MODAL, 'Add Company');
 })(CompaniesView);
 export { CompaniesPage };

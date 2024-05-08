@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
-import {
-  DynamicForm,
-  FormValues,
-} from '../components/DynamicForm';
+import { DynamicForm, FormValues } from '../components/DynamicForm';
 
 import { observer } from 'mobx-react';
 import { useRootStore } from '../store/common/RootStoreContext';
@@ -14,14 +11,22 @@ const NewCompanyView: React.FC = observer(() => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (values: FormValues) => {
+    debugger;
+
     setIsLoading(true);
     await rootStore.addCompany(values as unknown as ICompany);
     setIsLoading(false);
   };
+
+  const handleVerfication = async (value: string): Promise<boolean> => {
+    return true;
+  };
+
   return (
     <DynamicForm
       fields={companyFieldConfigs}
       onSubmit={handleSubmit}
+      onVerify={handleVerfication}
       isLoading={isLoading}
       formType="create"
     />

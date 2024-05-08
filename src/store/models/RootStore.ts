@@ -17,6 +17,8 @@ import {
   addCompany,
   deleteCompany,
   getCompanies,
+  getDecryptedCompanyById,
+  refreshCompanyToken,
   updateCompany,
 } from '../../services/api/companyService';
 import {
@@ -39,6 +41,7 @@ import {
   getActions,
   updateAction,
 } from '../../services/api/actionService';
+import i18n from '../../i18n';
 
 const RootStore = types
   .model('RootStore', {
@@ -54,8 +57,15 @@ const RootStore = types
 
     actions: types.array(Action),
     actionsLoaded: types.optional(types.boolean, false),
+
+    language: types.optional(types.string, 'en'), // Default language is English
   })
   .actions((self) => ({
+    changeLanguage: flow(function* (newLanguage: string) {
+      self.language = newLanguage;
+      yield i18n.changeLanguage(newLanguage);
+      localStorage.setItem('appLanguage', newLanguage);
+    }),
     loadActions: flow(function* () {
       try {
         const actions = yield getActions();
@@ -131,6 +141,9 @@ const RootStore = types
     loadCompanies: flow(function* () {
       try {
         const companies = yield getCompanies();
+        companies.forEach((company: any) => {
+          company.token = company.token.value;
+        });
         applySnapshot(self.companies, companies);
         self.companiesLoaded = true; // Set this to true after loading companies
       } catch (error) {
@@ -138,12 +151,21 @@ const RootStore = types
       }
     }),
 
-    getCompanyById: (_id: string) => {
-      return self.companies.find((company) => company._id === _id);
-    },
+    getCompanyById: flow(function* (_id: string) {
+      try {
+        const decryptedCompany: any = yield getDecryptedCompanyById(_id);
+        decryptedCompany.token = decryptedCompany.token.value;
+        return decryptedCompany;
+      } catch (error) {
+        console.error('Failed to load decrypted company', error);
+        return null;
+      }
+    }),
+
     updateCompany: flow(function* (_id: string, company: ICompany) {
       try {
         const updatedCompany = yield updateCompany(_id, company);
+        updatedCompany.token = updatedCompany.token.value;
         const index = self.companies.findIndex((comp) => comp._id === _id);
         if (index !== -1) {
           self.companies[index] = updatedCompany;
@@ -152,6 +174,26 @@ const RootStore = types
             'Company has been updated successfully'
           );
         }
+      } catch (error) {
+        console.error('Failed to update company', error);
+      }
+    }),
+
+    refreshToken: flow(function* (_id: string, company: ICompany) {
+      try {
+        debugger;
+        const updatedCompany = yield refreshCompanyToken(_id, company);
+        debugger;
+        updatedCompany.token = updatedCompany.token.value;
+        const index = self.companies.findIndex((comp) => comp._id === _id);
+        if (index !== -1) {
+          self.companies[index] = updatedCompany;
+          emitter.emit(
+            EVENT_SHOW_NOTIFICATION,
+            'New token generated successfully'
+          );
+        }
+        return updatedCompany;
       } catch (error) {
         console.error('Failed to update company', error);
       }
@@ -201,6 +243,7 @@ const RootStore = types
     addCompany: flow(function* (company: ICompany) {
       try {
         const newCompany = yield addCompany(company);
+        newCompany.token = newCompany.token.value;
         self.companies.push(newCompany);
         emitter.emit(
           EVENT_SHOW_NOTIFICATION,
