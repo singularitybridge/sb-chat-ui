@@ -14,6 +14,7 @@ interface ApiKeyListProps {
   description: string;
   initialData: ApiKey[];
   onDataChange: (data: ApiKey[]) => void;
+  onVerify: (value: string, key: string) => Promise<boolean>; // Add this line
 }
 
 const ApiKeyList: React.FC<ApiKeyListProps> = ({
