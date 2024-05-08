@@ -1,13 +1,47 @@
 {
+  "Menu": {
+    "Companies": "Companies",
+    "Assistants": "Assistants",
+    "Users": "Users",
+    "Sessions": "Sessions",
+    "Inbox": "Inbox",
+    "Actions": "Actions",
+    "Home": "Home"
+  },
+  "Navigation": {
+    "home": "Home",
+    "companies": "Companies",
+    "assistants": "Assistants",
+    "users": "Users",
+    "sessions": "Sessions",
+    "inbox": "Inbox",
+    "actions": "Actions",
+    "undefined": ""
+  },
+  "Dialog": {
+    "title": "",
+    "content": "This action cannot be undone",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
   "CompaniesPage": {
+    "title": "Companies",
     "description": "list of companies",
+    "actionTitle": "Actions",
     "action_msg": "Select actions to perform on selected rows",
+    "noActionSelected": "No action selected",
+    "selectAction": "select action",
+    "actionTags": {
+      "addUser": "add-user",
+      "removeUser": "remove-user"
+    },
     "table": {
       "name": "name",
       "token": "token"
     }
   },
   "AssistantsPage": {
+    "title": "AI Assistants",
     "description": "manage your ai agents here",
     "table": {
       "name": "name",
@@ -16,6 +50,7 @@
     }
   },
   "UsersPage": {
+    "title": "Users",
     "description": "manage your users here",
     "table": {
       "nickname": "nickname",
@@ -23,6 +58,7 @@
     }
   },
   "SessionsPage": {
+    "title": "Sessions",
     "description": "list of sessions",
     "table": {
       "companyName": "companyName",
@@ -33,7 +69,11 @@
     }
   },
   "InboxPage": {
+    "title": "Inbox",
     "description": "manage communication with your users here",
+    "placeholder": "Search...",
+    "replyPlaceholder": "Type your reply here...",
+    "button": "Reply",
     "table": {
       "_id": "id",
       "type": "type",
@@ -42,6 +82,7 @@
     }
   },
   "ActionsPage": {
+    "title": "Actions",
     "description": "Manage your actions here",
     "table": {
       "_id": "id",
@@ -49,5 +90,53 @@
       "name": "name",
       "description": "description"
     }
+  },
+  "CreateNewCompanyPage": {
+    "title": "Create New Company",
+    "APIKeys": {
+      "title": "API Keys",
+      "description": "Api keys are used to validate and connect to external sources",
+      "placeholders": {
+        "openai_api_key": "your OpenAI API key here",
+        "gcp_key": "your GCP key here",
+        "notion_api_key": "your Notion API key here",
+        "labs11_api_key": "your 11Labs API key here",
+        "twilio_account_sid": "your Twilio account SID here",
+        "twilio_auth_token": "your Twilio auth token here"
+      }
+    },
+    "Identifiers": {
+      "title": "Identifiers",
+      "description": "Identifiers are used to connect assistants to external sources",
+      "placeholders": {
+        "phone": "phone"
+      }
+    },
+    "placeholders": {
+      "name": "New Company",
+      "token": "token"
+    },
+    "save": "Save Changes"
+  },
+  "CreateNewAction": {
+    "type": "Type",
+    "name": "Name",
+    "description": "Description",
+    "parameters": "Parameters"
+  },
+  "CreateNewUser": {
+    "name": "Name",
+    "nickname": "Nickname"
+  },
+  "EditCompanyPage": {
+    "title": "Edit Company",
+    "description": "Update company details here"
+  },
+  "EditAssistantPage": {
+    "title": "Edit AI Assistant",
+    "description": "update your ai agents here"
+  },
+  "ChatContainer": {
+    "input": "Type you message"
   }
 }

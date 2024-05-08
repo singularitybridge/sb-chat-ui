@@ -3,7 +3,7 @@ import { Header } from './components/Header';
 import { SideMenu } from './components/SideMenu';
 import { Outlet } from 'react-router-dom';
 import { RootStore } from './store/models/RootStore';
-import { RootStoreProvider } from './store/common/RootStoreContext';
+import { RootStoreProvider, useRootStore } from './store/common/RootStoreContext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { emitter, useEventEmitter } from './services/mittEmitter';
@@ -28,14 +28,17 @@ import {
 const initialLanguage = localStorage.getItem('appLanguage') || 'en';
 
 const rootStore = RootStore.create({
-  assistants: [],  
+  assistants: [],
   users: [],
-  language: initialLanguage,  
+  language: initialLanguage,
 });
 
 const App = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [screenHeight, setScreenHeight] = useState(0);
+
+  const direction = initialLanguage === 'he' ? 'rtl' : 'ltr';
+
 
   const toastHandler = useCallback((message: string) => {
     toast(message);
@@ -108,36 +111,36 @@ const App = () => {
         getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) as string,
         getLocalStorageItem(LOCALSTORAGE_USER_ID) as string
       );
-      
+
       await rootStore.loadAssistants();
       rootStore.sessionStore.setActiveSession(session);
       await rootStore.loadInboxMessages();
-  
+
     } catch (error) {
       console.log('session not found');
     }
 
-    
-    
   };
 
   useEffect(() => {
 
-    rootStore.sessionStore.loadSessions();    
+    rootStore.sessionStore.loadSessions();
     rootStore.loadCompanies();
-    rootStore.loadUsers();    
+    rootStore.loadUsers();
     rootStore.loadActions();
 
     loadUserSession();
-    
+
 
   }, [rootStore]);
+
 
   return (
     <RootStoreProvider value={rootStore}>
       <div
         style={style}
-        className="flex flex-col h-screen inset-0"
+        dir={direction}
+        className={`flex flex-col h-screen inset-0 {language === 'en' ? 'font-roboto' : 'font-assistant'}`}
         onClick={handleClick}
       >
         <Header onMenuClick={() => setIsMenuOpen(true)} />

@@ -1,5 +1,6 @@
 import { BoltIcon } from '@heroicons/react/24/solid';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 type DropdownOption = {
   value: string | number;
@@ -26,6 +27,7 @@ export const CustomDropdown: React.FC<CustomDropdownProps> = ({
     }
   };
 
+  const { t } = useTranslation();
 
   const handleSelect = (option: DropdownOption) => {
     setSelectedOption(null); // Reset selectedOption after selection
@@ -35,7 +37,7 @@ export const CustomDropdown: React.FC<CustomDropdownProps> = ({
   const displayText = selectedOption
     ? selectedOption.label
     : options.length > 0
-    ? 'select action'
+    ? t('CompaniesPage.selectAction')
     : 'no available actions';
 
   const arrowStyle = {

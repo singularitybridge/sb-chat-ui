@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TagInput } from './TagInput';
 import { CustomDropdown } from './CustomDropdown';
+import { useTranslation } from 'react-i18next';
 
 export interface TagType {
   id: string | number;
@@ -21,7 +22,9 @@ const TagsInput: React.FC<TagsInputProps> = ({
   description,
 }) => {
   const [tags, setTags] = useState<TagType[]>(selectedTags);
-  const noTagsText = tags.length === 0 ? 'no action selected' : null;
+  const { t } = useTranslation();
+
+  const noTagsText = tags.length === 0 ? t('CompaniesPage.noActionSelected') : null;
 
   const removeTag = (tagToRemove: string) => {
     setTags(tags.filter((tag) => tag.name !== tagToRemove));

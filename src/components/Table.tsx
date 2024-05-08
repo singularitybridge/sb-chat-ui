@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRootStore } from '../store/common/RootStoreContext';
 
 
 interface TableProps {
@@ -24,24 +25,28 @@ const Table: React.FC<TableProps> = ({
     return value;
   };
 
+  const rootStore = useRootStore();
   const { t } = useTranslation();
+
+  const direction = rootStore.language === 'he' ? 'text-right' : 'text-left';
+
 
   return (
     <div className="flex flex-col w-full">
       <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
         <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
           <div className="overflow-hidden">
-            <table className="min-w-full text-left text-sm font-light">
-              <thead className="border-b font-medium dark:border-neutral-500">
+            <table className="min-w-full text-sm font-light">
+              <thead className={`border-b font-medium ${direction} dark:border-neutral-500`}>
                 <tr>
                   {headers.map((row, index) => (
                     <th
                       key={index}
                       scope="col"
                       className="px-6 py-4 max-w-xs truncate"
+                      
                     >
                       {t(`${Page}.table.${row}`)}
-                      {/* {row} */}
                     </th>
                   ))}
                 </tr>
@@ -60,7 +65,7 @@ const Table: React.FC<TableProps> = ({
                           header === 'specificColumn' ? 'max-w-md' : 'max-w-xs'
                         }`}
                       >
-                        {renderCellContent(row[header])}
+                        {renderCellContent(t(row[header]))}
                       </td>
                     ))}
                     {Actions && <td className="px-6 py-4">{Actions(row)}</td>}

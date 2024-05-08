@@ -45,6 +45,7 @@
     "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.0",
     "sanitize-html": "^2.10.0",
+    "tailwindcss-rtl": "^0.9.0",
     "tw-elements": "^1.0.0-beta2",
     "tw-elements-react": "^1.0.0-alpha2",
     "uuid": "^9.0.0"

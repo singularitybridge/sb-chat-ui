@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import VerifiedInputWithLabel from './admin/VerifiedInputWithLabel';
 import { verifyApiKey } from '../services/apiKeyVerificationService';
+import { useTranslation } from 'react-i18next';
 
 export interface ApiKey {
   key: string;
@@ -37,11 +38,13 @@ const ApiKeyList: React.FC<ApiKeyListProps> = ({
     updatedData[index].value = newValue;
     onDataChange(updatedData);
   };
+  const { t } = useTranslation();
+
 
   return (
     <div>
-      <h2 className="text-xl">{title}</h2>
-      <p className="mb-2 text-sm">{description}</p>
+      <h2 className="text-xl">{t(title)}</h2>
+      <p className="mb-2 text-sm">{t(description)}</p>
       {initialData.map(({ key, label, value }, index) => (
         <VerifiedInputWithLabel
           apiKey={key}

@@ -57,6 +57,7 @@ const DialogManager = () => {
   useEventEmitter(EVENT_CLOSE_MODAL, () => setIsOpen(false));
 
   return (
+    
     <ModalDialog
       title={dialogContent.title}
       isOpen={isOpen}

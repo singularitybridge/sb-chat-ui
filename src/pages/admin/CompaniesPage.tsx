@@ -45,11 +45,11 @@ const CompaniesView: React.FC = observer(() => {
       getLocalStorageItem(LOCALSTORAGE_USER_ID) || '',
       row._id
     );
-      debugger
+    debugger
     const sessionData = await getSessionById(session._id);
     debugger
     rootStore.sessionStore.setActiveSession(sessionData);
-      debugger
+    debugger
     rootStore.loadAssistants();
     rootStore.loadInboxMessages();
 
@@ -78,17 +78,17 @@ const CompaniesView: React.FC = observer(() => {
   return (
     <>
       <TagsInput
-        title="Actions"
+        title={t("CompaniesPage.actionTitle")}
         description={t('CompaniesPage.action_msg')}
         selectedTags={[]}
         availableTags={[
           {
             id: 'add-user',
-            name: 'add-user',
+            name: t('CompaniesPage.actionTags.addUser'),
           },
           {
             id: 'remove-user',
-            name: 'remove-user',
+            name: t('CompaniesPage.actionTags.removeUser'),
           },
         ]}
       />
@@ -110,7 +110,7 @@ const CompaniesView: React.FC = observer(() => {
   );
 });
 
-const CompaniesPage = withPage('Companies', 'CompaniesPage.description', () => {
+const CompaniesPage = withPage('CompaniesPage.title', 'CompaniesPage.description', () => {
   emitter.emit(EVENT_SHOW_ADD_COMPANY_MODAL, 'Add Company');
 })(CompaniesView);
 export { CompaniesPage };

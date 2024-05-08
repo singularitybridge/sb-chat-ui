@@ -3,6 +3,9 @@ import logo from '../../assets/l3.png';
 import { useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { SessionView } from './SessionView';
+import { useTranslation } from 'react-i18next';
+import LanguageToggle from '../LanguageToggle';
+
 
 export const Menu = observer(() => {
   const menuItems = [
@@ -35,6 +38,7 @@ export const Menu = observer(() => {
       link: '/admin/actions',
     },
   ];
+  const { t } = useTranslation();
 
   const location = useLocation();
   const isMenuItemActive = (menuItemLink: string) => {
@@ -89,7 +93,7 @@ export const Menu = observer(() => {
           </a>
 
           <ul
-            className="list-style-none mr-auto flex flex-col pl-0 lg:flex-row"
+            className="list-style-none  flex flex-col pl-0 lg:flex-row"
             data-te-navbar-nav-ref
           >
             {menuItems.map((item) => {
@@ -110,14 +114,15 @@ export const Menu = observer(() => {
                     href={item.link}
                     data-te-nav-link-ref
                   >
-                    {item.name}
+
+                    {t(`Menu.${item.name}`)}
                   </a>
                 </li>
               );
             })}
           </ul>
         </div>
-
+        <LanguageToggle />
         <SessionView />
       </div>
     </nav>

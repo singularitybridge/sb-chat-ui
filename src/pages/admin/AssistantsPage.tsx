@@ -73,7 +73,7 @@ const AssistantsView: React.FC = observer(() => {
 });
 
 const AssistantsPage = withPage(
-  'AI Assistants',
+  'AssistantsPage.title',
   'AssistantsPage.description',
   () => {
     emitter.emit(EVENT_SHOW_ADD_ASSISTANT_MODAL, 'Add Assistant');

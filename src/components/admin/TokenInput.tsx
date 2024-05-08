@@ -4,6 +4,7 @@ import {
   AiOutlineEyeInvisible,
   AiOutlineReload,
 } from 'react-icons/ai';
+import { useRootStore } from '../../store/common/RootStoreContext';
 
 interface TokenInputProps {
   id: string;
@@ -25,7 +26,9 @@ const TokenInput: React.FC<TokenInputProps> = ({
   autoFocus,
 }) => {
   const [inputType, setInputType] = useState<'text' | 'password'>(type);
-
+  const rootStore = useRootStore();
+  const isHebrew = rootStore.language === 'he';
+  
   const toggleVisibility = () => {
     setInputType((prevType) => (prevType === 'password' ? 'text' : 'password'));
   };
@@ -65,7 +68,7 @@ const TokenInput: React.FC<TokenInputProps> = ({
       </div>
       <label
         htmlFor={id}
-        className="absolute left-3 top-3 text-sm text-neutral-500 transition-all duration-200 ease-linear peer-placeholder-shown:opacity-0 peer-focus:opacity-0"
+        className={`absolute ${isHebrew ? 'right-3' : 'left-3'} top-3 text-sm text-neutral-500 transition-all duration-200 ease-linear peer-placeholder-shown:opacity-0 peer-focus:opacity-0`}
       >
         {label}
       </label>

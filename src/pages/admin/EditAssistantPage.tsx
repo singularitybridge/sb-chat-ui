@@ -69,8 +69,8 @@ const EditAssistantView: React.FC = observer(() => {
 });
 
 const EditAssistantPage = withPage(
-  'Edit AI Assistant',
-  'update your ai agents here', 
+  'EditAssistantPage.title',
+  'EditAssistantPage.description', 
   () => { console.log('edit assistant');}
 )(EditAssistantView);
 export { EditAssistantPage, EditAssistantView };

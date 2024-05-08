@@ -10,7 +10,9 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        Roboto: ['Roboto', 'cursive'],
+        sans: ['Roboto', 'sans-serif'], 
+        roboto: ['Roboto', 'sans-serif'],
+        assistant: ['Assistant', 'sans-serif'],
       },
     },
   },
@@ -20,6 +22,7 @@ module.exports = {
     require('tw-elements-react/dist/plugin.cjs'),
     require('tailwind-scrollbar'),
     require('@tailwindcss/typography'),
+    require('tailwindcss-rtl'),
 
   ],
   darkMode: 'class',

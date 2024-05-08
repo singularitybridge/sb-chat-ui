@@ -26,6 +26,7 @@ import {
 } from '../../services/api/sessionService';
 import { HumanAgentResponseMessage } from './HumanAgentResponseMessage';
 import { nullType } from 'mobx-state-tree/dist/internal';
+import { useTranslation } from 'react-i18next';
 
 interface Metadata {
   message_type: string;
@@ -49,7 +50,7 @@ const ChatContainer = observer(() => {
   const userId = rootStore.sessionStore.activeSession?.userId;
   const assistantId = rootStore.sessionStore.activeSession?.assistantId;
   const companyId = rootStore.sessionStore.activeSession?.companyId;
-
+  const isHebrew = rootStore.language === 'he';
   useEffect(() => {
     if (assistantId && rootStore.assistantsLoaded) {
       setAssistant(rootStore.getAssistantById(assistantId));
@@ -131,10 +132,12 @@ const ChatContainer = observer(() => {
     setIsMinimized(!isMinimized);
   };
 
+  const { t } = useTranslation();
+
   if (isMinimized) {
     return (
       <button
-        className="fixed mr-3 mb-3 bottom-4 right-4 w-12 h-12 bg-slate-500 rounded-full flex items-center justify-center"
+        className={`fixed mb-3 bottom-4 ${isHebrew ? 'left-4 ml-3' : 'right-4 mr-3'} w-12 h-12 bg-slate-500 rounded-full flex items-center justify-center`}
         onClick={handleMinimize}
       >
         <PlusIcon className="h-6 w-6 text-white" />
@@ -149,7 +152,7 @@ const ChatContainer = observer(() => {
           boxShadow: '0 0 #0000, 0 0 #0000, 0 1px 2px 0 rgb(0 0 0 / 0.05)',
           zIndex: 5000,
         }}
-        className="fixed bottom-[calc(2rem)] right-0 mr-7 bg-white p-5 rounded-lg border border-[#e5e7eb] w-[340px] h-[575px] flex flex-col"
+        className={`fixed bottom-[calc(2rem)] ${isHebrew ? 'left-0 ml-7' : 'right-0 mr-7'} bg-white p-5 rounded-lg border border-[#e5e7eb] w-[340px] h-[575px] flex flex-col`}
       >
         <Header
           title={assistant?.name || ''}
@@ -176,11 +179,11 @@ const ChatContainer = observer(() => {
 
           <div ref={messagesEndRef} />
         </div>
-        <div className="flex items-center pt-0 mt-1">
-          <div className="flex items-center justify-center w-full space-x-2">
+        <div className="flex items-center flex-row-reverse pt-0 mt-1">
+          <div className={`flex items-center justify-center ${isHebrew ? 'space-x-reverse' : ''} w-full space-x-2`}>
             <input
               className="flex h-10 w-full rounded-md border border-[#e5e7eb] px-3 py-2 text-sm placeholder-[#6b7280] focus:outline-none focus:ring-2 focus:ring-[#9ca3af] disabled:cursor-not-allowed disabled:opacity-50 text-[#030712] focus-visible:ring-offset-2"
-              placeholder="Type your message"
+              placeholder={t('ChatContainer.input')}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={(e) => {
@@ -194,8 +197,7 @@ const ChatContainer = observer(() => {
               onClick={() => handleSubmitMessage(message)}
               className="inline-flex items-center justify-center rounded-lg  disabled:pointer-events-none disabled:opacity-50 bg-gray-800 hover:bg-[#111827E6] h-10 px-2 py-2"
             >
-              <PaperAirplaneIcon className="h-5 w-5 text-zinc-50 " />
-            </button>
+              <PaperAirplaneIcon className={`h-5 w-5 text-zinc-50 ${isHebrew ? '-scale-x-100' : ''}`} />            </button>
             <button
               onClick={handleReload}
               className="inline-flex items-center justify-center rounded-lg  disabled:pointer-events-none disabled:opacity-50 bg-gray-800 hover:bg-[#111827E6] h-10 px-2 py-2"
@@ -208,5 +210,6 @@ const ChatContainer = observer(() => {
     </>
   );
 });
+
 
 export { ChatContainer };

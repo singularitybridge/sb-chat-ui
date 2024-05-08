@@ -15,7 +15,7 @@ const withPage =
           <>
             <div className="flex justify-between items-center">
               <div>
-                <h3 className="text-3xl font-bold mb-1">{title}</h3>
+                <h3 className="text-3xl font-bold mb-1">{t(title)}</h3>
                 <span className="inline-block whitespace-nowrap rounded-[0.27rem] bg-primary-100 px-[0.65em] pb-[0.25em] pt-[0.35em] text-center align-baseline text-[0.75em] font-bold leading-none text-primary-700">
                   {t(description)}
                 </span>

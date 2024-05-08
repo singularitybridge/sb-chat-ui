@@ -7,6 +7,11 @@ import HttpBackend from 'i18next-http-backend';
 import enTranslations from './locale/en/translation.json';
 import heTranslations from './locale/he/translation.json';
 
+const getInitialLanguage = () => {
+  const storedLang = localStorage.getItem('appLanguage');
+  return storedLang || 'en';
+};
+
 i18n
   .use(initReactI18next)
   .init({
@@ -18,7 +23,8 @@ i18n
         translation: heTranslations,
       },
     },
-    fallbackLng: 'he',
+    lng: getInitialLanguage(), 
+    fallbackLng: 'en',
     debug: true,
     interpolation: {
       escapeValue: false,

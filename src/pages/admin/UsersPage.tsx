@@ -85,7 +85,7 @@ const UsersView: React.FC = observer(() => {
   );
 });
 
-const UsersPage = withPage('Users', 'UsersPage.description', () => {
+const UsersPage = withPage('UsersPage.title', 'UsersPage.description', () => {
   emitter.emit(EVENT_SHOW_ADD_USER_MODAL, 'Add User');
 })(UsersView);
 export { UsersPage };

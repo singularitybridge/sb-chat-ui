@@ -1,53 +1,136 @@
 {
-    "CompaniesPage": {
-      "description": "רשימת חברות",
-      "action_msg": "בחר פעולות לביצוע על שורות שנבחרו",
-      "table": {
-        "name": "שם",
-        "token": "טוקן"
-      }
+  "Menu": {
+    "Companies": "חברות",
+    "Assistants": "עוזרים",
+    "Users": "משתמשים",
+    "Sessions": "הפעלות",
+    "Inbox": "תיבת דואר",
+    "Actions": "פעולות",
+    "Home": "בית"
+  },
+  "Navigation": {
+    "home": "בית",
+    "companies": "חברות",
+    "assistants": "עוזרים",
+    "users": "משתמשים",
+    "sessions": "הפעלות",
+    "inbox": "תיבת דואר",
+    "actions": "פעולות",
+    "undefined": ""
+  },
+  "CompaniesPage": {
+    "title": "חברות",
+    "description": "רשימת חברות",
+    "actionTitle":"פעולות",
+    "action_msg": "בחר פעולות לביצוע על שורות שנבחרו",
+    "noActionSelected": "לא נבחרו פעולות",
+    "selectAction": "בחר פעולה",
+    "actionTags": {
+      "addUser": "הוסף משתמש",
+      "removeUser": "הסר משתמש"
     },
-    "AssistantsPage": {
-      "description": "ניהול סוכני הבינה המלאכותית שלך כאן",
-      "table": {
-        "name": "שם",
-        "description": "תיאור",
-        "voice": "קול"
-      }
-    },
-    "UsersPage": {
-      "description": "ניהול המשתמשים שלך כאן",
-      "table": {
-        "nickname": "כינוי",
-        "name": "שם"
-      }
-    },
-    "SessionsPage": {
-      "description": "רשימת הפעלות",
-      "table": {
-        "companyName": "שם החברה",
-        "userName": "שם משתמש",
-        "assistantName": "שם העוזר",
-        "threadId": "מזהה נושא",
-        "active": "פעיל"
-      }
-    },
-    "InboxPage": {
-      "description": "ניהול תקשורת עם המשתמשים שלך כאן",
-      "table": {
-        "_id": "מזהה",
-        "type": "סוג",
-        "name": "שם",
-        "description": "תיאור"
-      }
-    },
-    "ActionsPage": {
-      "description": "נהל את הפעולות שלך כאן",
-      "table": {
-        "_id": "מזהה",
-        "type": "סוג",
-        "name": "שם",
-        "description": "תיאור"
-      }
+    "table": {
+      "name": "שם",
+      "token": "טוקן"
     }
+  },
+  "AssistantsPage": {
+    "title": "עוזרי בינה מלאכותית",
+    "description": "נהל כאן את סוכני ה-BI שלך",
+    "table": {
+      "name": "שם",
+      "description": "תיאור",
+      "voice": "קול"
+    }
+  },
+  "UsersPage": {
+    "title": "משתמשים",
+    "description": "נהל כאן את המשתמשים שלך",
+    "table": {
+      "nickname": "כינוי",
+      "name": "שם"
+    }
+  },
+  "SessionsPage": {
+    "title": "הפעלות",
+    "description": "רשימת ההפעלות",
+    "table": {
+      "companyName": "שם החברה",
+      "userName": "שם המשתמש",
+      "assistantName": "שם העוזר",
+      "threadId": "מזהה השרשור",
+      "active": "פעיל"
+    }
+  },
+  "InboxPage": {
+    "title": "דואר נכנס",
+    "description": "נהל כאן את התקשורת עם המשתמשים שלך",
+    "placeholder":"חיפוש...",
+    "replyPlaceholder":"הקלד תשובה כאן...",
+    "button":"שלח תשובה",
+    "table": {
+      "_id": "מזהה",
+      "type": "סוג",
+      "name": "שם",
+      "description": "תיאור"
+    }
+  },
+  "ActionsPage": {
+    "title": "פעולות",
+    "description": "נהל כאן את הפעולות שלך",
+    "table": {
+      "_id": "מזהה",
+      "type": "סוג",
+      "name": "שם",
+      "description": "תיאור"
+    }
+  },
+  "CreateNewCompanyPage": {
+    "title": "יצירת חברה חדשה",
+    "APIKeys": {
+      "title": "מפתחות API",
+      "description": "מפתחות API משמשים לאימות ולחיבור למקורות חיצוניים",
+      "placeholders": {
+        "openai_api_key": "הזן כאן את מפתח ה-API של OpenAI",
+        "gcp_key": "הזן כאן את מפתח ה-GCP שלך",
+        "notion_api_key": "הזן כאן את מפתח ה-API של Notion",
+        "labs11_api_key": "הזן כאן את מפתח ה-API של 11Labs",
+        "twilio_account_sid": "הזן כאן את SID של חשבון Twilio שלך",
+        "twilio_auth_token": "הזן כאן את אסימון האימות של Twilio שלך"
+      }
+    },
+    "Identifiers": {
+      "title": "זיהויים",
+      "description": "זיהויים משמשים לחיבור עוזרים למקורות חיצוניים",
+      "placeholders": {
+        "phone": "טלפון"
+      }
+    },
+    "placeholders": {
+      "name": "חברה חדשה",
+      "token": "טוקן"
+    },
+    "save": " שמור שינויים"
+  },
+  "CreateNewAction": {
+    "type": "סוג",
+    "name": "שם",
+    "description": "תיאור",
+    "parameters": "פרמטרים"
+  },
+  "CreateNewUser": {
+    "name": "שם",
+    "nickname": "כינוי"
+  },
+  "EditCompanyPage": {
+    "title": "עריכת חברה",
+    "description": "עדכן כאן את הפרטים של החברה שלך"
+  },
+  "EditAssistantPage": {
+    "title": "עריכת עוזר",
+    "description": "עדכן כאן את הפרטים של העוזר שלך"
+  },
+  "ChatContainer": {
+    "input": "הקלד את הודעתך כאן"
   }
+}

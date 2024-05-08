@@ -74,7 +74,7 @@ const SessionsView: React.FC = observer(() => {
 });
 
 const SessionsPage = withPage(
-  'Sessions',
+  'SessionsPage.title',
   'SessionsPage.description',
   () => {
     // emitter.emit(EVENT_SHOW_ADD_SESSION_MODAL, 'Add Session');
