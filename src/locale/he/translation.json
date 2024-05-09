@@ -32,7 +32,8 @@
     "table": {
       "name": "שם",
       "token": "טוקן"
-    }
+    },
+    "successfullySet":"חברה נבחרה בהצלחה"
   },
   "AssistantsPage": {
     "title": "עוזרי בינה מלאכותית",

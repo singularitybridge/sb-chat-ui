@@ -38,7 +38,9 @@
     "table": {
       "name": "name",
       "token": "token"
-    }
+    },
+    "successfullySet":"Company set successfully",
+    "companyUpdated":"Company has been updated successfully"
   },
   "AssistantsPage": {
     "title": "AI Assistants",
@@ -130,7 +132,10 @@
   },
   "EditCompanyPage": {
     "title": "Edit Company",
-    "description": "Update company details here"
+    "description": "Update company details here",
+    "emitterMessage":"Company has been updated successfully",
+    "emitterTokenMessage":"New token generated successfully"
+
   },
   "EditAssistantPage": {
     "title": "Edit AI Assistant",

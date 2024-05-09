@@ -58,9 +58,10 @@ const RootStore = types
     actions: types.array(Action),
     actionsLoaded: types.optional(types.boolean, false),
 
-    language: types.optional(types.string, 'en'), // Default language is English
+    language: types.optional(types.string, 'en'),
   })
   .actions((self) => ({
+    translate: (key: string) => i18n.t(key),
     changeLanguage: flow(function* (newLanguage: string) {
       self.language = newLanguage;
       yield i18n.changeLanguage(newLanguage);
@@ -330,5 +331,5 @@ const RootStore = types
     },
   }));
 
-export interface IRootStore extends Instance<typeof RootStore> {}
+export interface IRootStore extends Instance<typeof RootStore> { }
 export { RootStore };

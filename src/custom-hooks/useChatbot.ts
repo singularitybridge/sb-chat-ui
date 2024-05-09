@@ -1,7 +1,7 @@
 // custom-hooks/useChatbot.tsx
 
 import { useEffect, useState } from 'react';
-import { Chatbot } from '../services/ChatbotService';
+import { Chatbot } from '../services/ChatService';
 
 export const useChatbot = (key: string, sessionId: string) => {
   const [chatbot, setChatbot] = useState<Chatbot | null>(null);
