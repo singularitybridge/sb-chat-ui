@@ -67,12 +67,12 @@ export type FieldConfig =
   | TokenInputFieldConfig;
 
 export interface FormValues
-  extends Record<string, string | KeyValue[] | ApiKey[]> {}
+  extends Record<string, string | KeyValue[] | ApiKey[]> { }
 
 export interface DynamicFormProps {
   fields: FieldConfig[];
   onSubmit: (values: FormValues) => void;
-  refreshToken: (values: FormValues) => void;
+  refreshToken?: (values: FormValues) => void;
   onVerify: (value: string) => Promise<boolean>;
   isLoading?: boolean;
   formType: FormType;
@@ -106,7 +106,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
 
   const handleRefreshToken = () => {
     debugger;
-    refreshToken(values);
+    refreshToken ? refreshToken(values) : null;
   };
 
   const handleChange = (id: string, newValue: string | KeyValue[]) => {

@@ -25,7 +25,7 @@ import {
   getSessionByCompanyAndUserId,
 } from './services/api/sessionService';
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
-import Login from './pages/admin/Login';
+import Login from './components/LoginWithGoogle';
 
 const initialLanguage = localStorage.getItem('appLanguage') || 'en';
 
@@ -136,7 +136,7 @@ const App = () => {
 
   }, [rootStore]);
 
-
+  const isAuthenticated = true;
   return (
     <GoogleOAuthProvider clientId="836003625529-l01g4b1iuhc0s1i7o33ms9qelgmghcmh.apps.googleusercontent.com">
 
@@ -147,12 +147,11 @@ const App = () => {
           className={`flex flex-col h-screen inset-0 {language === 'en' ? 'font-roboto' : 'font-assistant'}`}
           onClick={handleClick}
         >
-          <Header onMenuClick={() => setIsMenuOpen(true)} />
-          <SideMenu isOpen={isMenuOpen} closeMenu={() => setIsMenuOpen(false)} />
+
+          {/* <SideMenu isOpen={isMenuOpen} closeMenu={() => setIsMenuOpen(false)} /> */}
           <ToastContainer />
-          <Login />
-          <DialogManager />
-          <ChatContainer />
+          {isAuthenticated && <DialogManager />}
+          {isAuthenticated && <ChatContainer />}
           <Outlet />
         </div>
       </RootStoreProvider>

@@ -23,7 +23,10 @@ import {
 } from '../../services/api/companyService';
 import {
   LOCALSTORAGE_COMPANY_ID,
+  LOCALSTORAGE_SYSTEM_USER_ID,
   getLocalStorageItem,
+  setLocalStorageItem,
+  setSystemUserId,
 } from '../../services/api/sessionService';
 import { IUser, User } from './User';
 import {
@@ -42,24 +45,34 @@ import {
   updateAction,
 } from '../../services/api/actionService';
 import i18n from '../../i18n';
+import { ISystemUser, SystemUser } from './SystemUser';
+import { getSystemUsers, login } from '../../services/api/loginService';
 
 const RootStore = types
   .model('RootStore', {
+    systemUsers: types.array(SystemUser),
     assistants: types.array(Assistant),
     companies: types.array(Company),
     companiesLoaded: types.optional(types.boolean, false),
     users: types.array(User),
     assistantsLoaded: types.optional(types.boolean, false),
     sessionStore: types.optional(SessionStore, {}),
-
     inboxSessions: types.array(InboxSession),
     inboxSessionsLoaded: types.optional(types.boolean, false),
 
     actions: types.array(Action),
     actionsLoaded: types.optional(types.boolean, false),
-
     language: types.optional(types.string, 'en'),
   })
+  .views((self) => ({
+    get isAuthenticated() {
+      debugger;
+      const userId = getLocalStorageItem(LOCALSTORAGE_SYSTEM_USER_ID);
+      if (!userId) return false;
+      const user = self.systemUsers.find((u: ISystemUser) => u._id === userId);
+      return user ? user.isAuthenticated : false;
+    },
+  }))
   .actions((self) => ({
     translate: (key: string) => i18n.t(key),
     changeLanguage: flow(function* (newLanguage: string) {
@@ -67,6 +80,39 @@ const RootStore = types
       yield i18n.changeLanguage(newLanguage);
       localStorage.setItem('appLanguage', newLanguage);
     }),
+    loginSystemUser: flow(function* (credential: string) {
+      try {
+        debugger;
+        const response = yield login(credential);
+        const userData = response.user;
+
+        const existingUser = self.systemUsers.find(user => user._id === userData._id);
+        if (existingUser) {
+          applySnapshot(existingUser, userData);
+        } else {
+          userData.isAuthenticated = true;
+          self.systemUsers.push(userData);
+        }
+
+        setLocalStorageItem(LOCALSTORAGE_SYSTEM_USER_ID, userData._id);
+      } catch (error) {
+        console.error('Failed to login user', error);
+      }
+    }),
+    logoutSystemUser: (userId: string) => {
+      const user = self.systemUsers.find(user => user._id === userId);
+      if (user) {
+        user.isAuthenticated = false;
+        self.systemUsers.replace(self.systemUsers.filter(user => user._id !== userId));
+        localStorage.removeItem(LOCALSTORAGE_SYSTEM_USER_ID);
+      }
+    },
+    isUserAuthenticated: (): boolean => {
+      const userId = getLocalStorageItem(LOCALSTORAGE_SYSTEM_USER_ID);
+      if (!userId) return false;
+      const user = self.systemUsers.find((u: ISystemUser) => u._id === userId);
+      return user ? user.isAuthenticated : false;
+    },
     loadActions: flow(function* () {
       try {
         const actions = yield getActions();

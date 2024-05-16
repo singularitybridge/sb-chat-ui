@@ -11,8 +11,6 @@ const NewCompanyView: React.FC = observer(() => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (values: FormValues) => {
-    debugger;
-
     setIsLoading(true);
     await rootStore.addCompany(values as unknown as ICompany);
     setIsLoading(false);

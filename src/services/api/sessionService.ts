@@ -3,10 +3,12 @@ import { ISession } from '../../store/models/Session';
 
 export const LOCALSTORAGE_USER_ID = 'userId';
 export const LOCALSTORAGE_COMPANY_ID = 'companyId';
+export const LOCALSTORAGE_SYSTEM_USER_ID = 'systemUserId';
 
 export type LocalStorageKeys =
   | typeof LOCALSTORAGE_USER_ID
   | typeof LOCALSTORAGE_COMPANY_ID
+  | typeof LOCALSTORAGE_SYSTEM_USER_ID;
 
 export const getLocalStorageItem = (key: LocalStorageKeys): string | null => {
   return localStorage.getItem(key);
@@ -24,11 +26,19 @@ export const getUserId = (): string | null => {
   return getLocalStorageItem(LOCALSTORAGE_USER_ID);
 };
 
+export const getSystemUserId = (): string | null => {
+  return getLocalStorageItem(LOCALSTORAGE_USER_ID);
+};
+
 export const setCompanyId = (companyId: string): void => {
   setLocalStorageItem(LOCALSTORAGE_COMPANY_ID, companyId);
 };
 
 export const setUserId = (userId: string): void => {
+  setLocalStorageItem(LOCALSTORAGE_USER_ID, userId);
+};
+
+export const setSystemUserId = (userId: string): void => {
   setLocalStorageItem(LOCALSTORAGE_USER_ID, userId);
 };
 

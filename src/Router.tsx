@@ -2,7 +2,7 @@ import { Chat } from './pages/Chat';
 import { NotFound } from './pages/NotFound';
 import { Admin } from './pages/Admin';
 import React from 'react';
-import { createBrowserRouter } from 'react-router-dom'; // Import the Outlet component
+import { Navigate, createBrowserRouter } from 'react-router-dom'; // Import the Outlet component
 import App from './App';
 import { ChatbotView } from './pages/admin/ChatbotView';
 import { ChatRouteLoader } from './components/ChatRouteLoader';
@@ -15,13 +15,24 @@ import { InboxPage } from './pages/admin/inbox/InboxPage';
 import { EditCompanyPage } from './pages/admin/EditCompanyPage';
 import { ActionsPage } from './pages/admin/ActionsPage';
 import { EditActionPage } from './pages/admin/EditActionPage';
+import LoginPage from './pages/admin/LoginPage';
+import RequireAuth from './components/admin/RequireAuth';
 
 export const browserRouter = createBrowserRouter([
   {
     element: <App />,
     children: [
+
       {
-        path: '/',
+        path: 'login',
+        element: <LoginPage />,
+      },
+      {
+        index: true,
+        element: <Navigate to="/login" replace />, // Redirect to login by default
+      },
+      {
+        path: '/chat',
         element: <Chat />,
       },
       {
@@ -38,7 +49,10 @@ export const browserRouter = createBrowserRouter([
       },
       {
         path: '/admin',
-        element: <Admin />,
+        element:
+          <RequireAuth>
+            <Admin />
+          </RequireAuth>,
         children: [
           {
             index: true,
@@ -95,3 +109,4 @@ export const browserRouter = createBrowserRouter([
     ],
   },
 ]);
+

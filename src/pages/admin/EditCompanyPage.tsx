@@ -47,7 +47,7 @@ const EditCompanyView: React.FC = observer(() => {
   const formFields: FieldConfig[] = companyFieldConfigs.map(
     ({ id, label, key, type, visibility }) => {
       const fieldKeyString = String(key);
-      debugger
+      
       return {
         key: key,
         label: label,
