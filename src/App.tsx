@@ -24,6 +24,8 @@ import {
   getLocalStorageItem,
   getSessionByCompanyAndUserId,
 } from './services/api/sessionService';
+import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
+import Login from './pages/admin/Login';
 
 const initialLanguage = localStorage.getItem('appLanguage') || 'en';
 
@@ -136,21 +138,26 @@ const App = () => {
 
 
   return (
-    <RootStoreProvider value={rootStore}>
-      <div
-        style={style}
-        dir={direction}
-        className={`flex flex-col h-screen inset-0 {language === 'en' ? 'font-roboto' : 'font-assistant'}`}
-        onClick={handleClick}
-      >
-        <Header onMenuClick={() => setIsMenuOpen(true)} />
-        <SideMenu isOpen={isMenuOpen} closeMenu={() => setIsMenuOpen(false)} />
-        <ToastContainer />
-        <DialogManager />
-        <ChatContainer />
-        <Outlet />
-      </div>
-    </RootStoreProvider>
+    <GoogleOAuthProvider clientId="836003625529-l01g4b1iuhc0s1i7o33ms9qelgmghcmh.apps.googleusercontent.com">
+
+      <RootStoreProvider value={rootStore}>
+        <div
+          style={style}
+          dir={direction}
+          className={`flex flex-col h-screen inset-0 {language === 'en' ? 'font-roboto' : 'font-assistant'}`}
+          onClick={handleClick}
+        >
+          <Header onMenuClick={() => setIsMenuOpen(true)} />
+          <SideMenu isOpen={isMenuOpen} closeMenu={() => setIsMenuOpen(false)} />
+          <ToastContainer />
+          <Login />
+          <DialogManager />
+          <ChatContainer />
+          <Outlet />
+        </div>
+      </RootStoreProvider>
+    </GoogleOAuthProvider>
+
   );
 };
 
