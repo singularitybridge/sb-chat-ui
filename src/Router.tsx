@@ -2,7 +2,7 @@ import { Chat } from './pages/Chat';
 import { NotFound } from './pages/NotFound';
 import { Admin } from './pages/Admin';
 import React from 'react';
-import { Navigate, createBrowserRouter } from 'react-router-dom'; // Import the Outlet component
+import { Navigate, createBrowserRouter } from 'react-router-dom'; 
 import App from './App';
 import { ChatbotView } from './pages/admin/ChatbotView';
 import { ChatRouteLoader } from './components/ChatRouteLoader';
@@ -34,7 +34,7 @@ export const browserRouter = createBrowserRouter([
       },
       {
         index: true,
-        element: <Navigate to="/signup" replace />, // Redirect to login by default
+        element: <Navigate to="/signup" replace />, // Redirect to signup by default
       },
       {
         path: '/chat',
