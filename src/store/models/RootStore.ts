@@ -50,7 +50,7 @@ import { getSystemUsers, login } from '../../services/api/loginService';
 
 const RootStore = types
   .model('RootStore', {
-    systemUsers: types.array(SystemUser),
+
     assistants: types.array(Assistant),
     companies: types.array(Company),
     companiesLoaded: types.optional(types.boolean, false),
@@ -60,17 +60,19 @@ const RootStore = types
     inboxSessions: types.array(InboxSession),
     inboxSessionsLoaded: types.optional(types.boolean, false),
 
+    currentUser: types.maybe(types.reference(User)),
     actions: types.array(Action),
     actionsLoaded: types.optional(types.boolean, false),
     language: types.optional(types.string, 'en'),
+    isAuthenticated: types.optional(types.boolean, false),
   })
   .views((self) => ({
-    get isAuthenticated() {
+    get isAdmin() {
       debugger;
-      const userId = getLocalStorageItem(LOCALSTORAGE_SYSTEM_USER_ID);
-      if (!userId) return false;
-      const user = self.systemUsers.find((u: ISystemUser) => u._id === userId);
-      return user ? user.isAuthenticated : false;
+      return self.currentUser?.role === 'Admin';
+    },
+    get isCompanUser() {
+      return self.currentUser?.role === 'CompanyUser';
     },
   }))
   .actions((self) => ({
@@ -80,38 +82,59 @@ const RootStore = types
       yield i18n.changeLanguage(newLanguage);
       localStorage.setItem('appLanguage', newLanguage);
     }),
+
+    checkAuthState
+    : flow(function* () {
+      try {
+        const userId = getLocalStorageItem(LOCALSTORAGE_SYSTEM_USER_ID);
+        const userToken = localStorage.getItem('userToken');
+
+        if (userId && userToken) {
+          const user = self.users.find((user) => user._id === userId);
+          if (user) {
+            self.currentUser = user;
+            self.isAuthenticated = true;
+          } else {
+            self.isAuthenticated = false;
+          }
+        } else {
+          self.isAuthenticated = false;
+        }
+      } catch (error) {
+        self.isAuthenticated = false;
+        console.error('Error checking auth state:', error);
+      }
+    }),
     loginSystemUser: flow(function* (credential: string) {
       try {
         debugger;
         const response = yield login(credential);
         const userData = response.user;
 
-        const existingUser = self.systemUsers.find(user => user._id === userData._id);
+        const existingUser = self.users.find(user => user._id === userData._id);
         if (existingUser) {
           applySnapshot(existingUser, userData);
+          self.currentUser = existingUser;
         } else {
-          userData.isAuthenticated = true;
-          self.systemUsers.push(userData);
+          self.users.push(userData);
+          self.currentUser = userData;
         }
 
+        self.isAuthenticated = true;
         setLocalStorageItem(LOCALSTORAGE_SYSTEM_USER_ID, userData._id);
+        setLocalStorageItem(LOCALSTORAGE_COMPANY_ID, userData.companyId);
+        localStorage.setItem('userToken', response.sessionToken);
       } catch (error) {
         console.error('Failed to login user', error);
       }
     }),
     logoutSystemUser: (userId: string) => {
-      const user = self.systemUsers.find(user => user._id === userId);
+      const user = self.users.find(user => user._id === userId);
+      localStorage.removeItem(LOCALSTORAGE_SYSTEM_USER_ID);
       if (user) {
-        user.isAuthenticated = false;
-        self.systemUsers.replace(self.systemUsers.filter(user => user._id !== userId));
-        localStorage.removeItem(LOCALSTORAGE_SYSTEM_USER_ID);
+        self.users.replace(self.users.filter(user => user._id !== userId));
+        self.isAuthenticated = false;
       }
-    },
-    isUserAuthenticated: (): boolean => {
-      const userId = getLocalStorageItem(LOCALSTORAGE_SYSTEM_USER_ID);
-      if (!userId) return false;
-      const user = self.systemUsers.find((u: ISystemUser) => u._id === userId);
-      return user ? user.isAuthenticated : false;
     },
     loadActions: flow(function* () {
       try {
@@ -248,6 +271,7 @@ const RootStore = types
 
     loadUsers: flow(function* () {
       try {
+        debugger;
         const users = yield getAllUsers();
         applySnapshot(self.users, users);
       } catch (error) {
@@ -375,6 +399,7 @@ const RootStore = types
     getAssistantById: (_id: string) => {
       return self.assistants.find((assistant) => assistant._id === _id);
     },
+
   }));
 
 export interface IRootStore extends Instance<typeof RootStore> { }

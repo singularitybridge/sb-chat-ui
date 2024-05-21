@@ -1,31 +1,25 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Header } from './components/Header';
-import { SideMenu } from './components/SideMenu';
 import { Outlet } from 'react-router-dom';
 import { RootStore } from './store/models/RootStore';
-import { RootStoreProvider, useRootStore } from './store/common/RootStoreContext';
+import { RootStoreProvider } from './store/common/RootStoreContext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { emitter, useEventEmitter } from './services/mittEmitter';
-import {
-  EVENT_CHAT_SESSION_DELETED,
-  EVENT_ERROR,
-  EVENT_SET_ACTIVE_ASSISTANT,
-  EVENT_SET_ASSISTANT_VALUES,
-  EVENT_SHOW_ADD_ASSISTANT_MODAL,
-  EVENT_SHOW_NOTIFICATION,
-} from './utils/eventNames';
 import { DialogManager } from './components/admin/DialogManager';
 import { ChatContainer } from './components/chat-container/ChatContainer';
 import { pusher } from './services/PusherService';
+import { LOCALSTORAGE_COMPANY_ID, LOCALSTORAGE_USER_ID, getLocalStorageItem, getSessionByCompanyAndUserId } from './services/api/sessionService';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import { observer } from 'mobx-react-lite';
+import { ClipLoader } from 'react-spinners';
 import {
-  LOCALSTORAGE_COMPANY_ID,
-  LOCALSTORAGE_USER_ID,
-  getLocalStorageItem,
-  getSessionByCompanyAndUserId,
-} from './services/api/sessionService';
-import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
-import Login from './components/LoginWithGoogle';
+  EVENT_CHAT_SESSION_DELETED,
+  EVENT_ERROR,
+  EVENT_SHOW_NOTIFICATION,
+  EVENT_SHOW_ADD_ASSISTANT_MODAL,
+  EVENT_SET_ASSISTANT_VALUES,
+  EVENT_SET_ACTIVE_ASSISTANT
+} from './utils/eventNames';
 
 const initialLanguage = localStorage.getItem('appLanguage') || 'en';
 
@@ -35,12 +29,10 @@ const rootStore = RootStore.create({
   language: initialLanguage,
 });
 
-const App = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+const App: React.FC = observer(() => {
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [screenHeight, setScreenHeight] = useState(0);
-
   const direction = initialLanguage === 'he' ? 'rtl' : 'ltr';
-
 
   const toastHandler = useCallback((message: string) => {
     toast(message);
@@ -73,17 +65,54 @@ const App = () => {
     };
   }, []);
 
-  const getHeight = useCallback(
-    () =>
-      window.visualViewport ? window.visualViewport.height : window.innerHeight,
-    []
-  );
-
-  const handleClick = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
-    if (event.target !== event.currentTarget && isMenuOpen) {
-      setIsMenuOpen(false);
+  const loadUserSession = async () => {
+    try {
+      const session = await getSessionByCompanyAndUserId(
+        getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) as string,
+        getLocalStorageItem(LOCALSTORAGE_USER_ID) as string
+      );
+      await rootStore.loadAssistants();
+      rootStore.sessionStore.setActiveSession(session);
+      await rootStore.loadInboxMessages();
+    } catch (error) {
+      console.log('session not found');
     }
   };
+
+  useEffect(() => {
+    const loadData = async () => {
+      await rootStore.loadUsers();
+      rootStore.sessionStore.loadSessions();
+      await rootStore.loadCompanies();
+      await rootStore.loadActions();
+      await loadUserSession();
+      rootStore.checkAuthState();
+      setIsDataLoaded(true);
+    };
+    loadData();
+  }, []);
+
+  useEffect(() => {
+    const channel = pusher.subscribe('sb');
+    channel.bind('createNewAssistant', async (data: any) => {
+      const newAssistantData = data.message;
+      emitter.emit(EVENT_SHOW_ADD_ASSISTANT_MODAL, 'Add Assistant');
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      emitter.emit(EVENT_SET_ASSISTANT_VALUES, newAssistantData);
+    });
+    channel.bind('setAssistant', async (data: any) => {
+      const assistantData = data.message;
+      emitter.emit(EVENT_SET_ACTIVE_ASSISTANT, assistantData._id);
+    });
+    return () => {
+      channel.unbind_all();
+      pusher.unsubscribe('sb');
+    };
+  }, []);
+
+  const getHeight = useCallback(() => {
+    return window.visualViewport ? window.visualViewport.height : window.innerHeight;
+  }, []);
 
   const handleResize = () => {
     setScreenHeight(getHeight());
@@ -91,11 +120,9 @@ const App = () => {
 
   useEffect(() => {
     setScreenHeight(getHeight());
-
     window.addEventListener('resize', handleResize);
     window.addEventListener('orientationchange', handleResize);
     window.visualViewport?.addEventListener('resize', handleResize);
-
     return () => {
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('orientationchange', handleResize);
@@ -105,59 +132,39 @@ const App = () => {
 
   const style = { height: `${screenHeight}px` };
 
-  const loadUserSession = async () => {
+  if (!isDataLoaded) {
+    return (
+      <div style={styles.spinnerContainer}>
+        <ClipLoader color="#123abc" loading={true} size={50} />
+      </div>
+    );
+  }
 
-    try {
-
-      const session = await getSessionByCompanyAndUserId(
-        getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) as string,
-        getLocalStorageItem(LOCALSTORAGE_USER_ID) as string
-      );
-
-      await rootStore.loadAssistants();
-      rootStore.sessionStore.setActiveSession(session);
-      await rootStore.loadInboxMessages();
-
-    } catch (error) {
-      console.log('session not found');
-    }
-
-  };
-
-  useEffect(() => {
-
-    rootStore.sessionStore.loadSessions();
-    rootStore.loadCompanies();
-    rootStore.loadUsers();
-    rootStore.loadActions();
-
-    loadUserSession();
-
-
-  }, [rootStore]);
-
-  const isAuthenticated = true;
   return (
     <GoogleOAuthProvider clientId="836003625529-l01g4b1iuhc0s1i7o33ms9qelgmghcmh.apps.googleusercontent.com">
-
       <RootStoreProvider value={rootStore}>
         <div
           style={style}
           dir={direction}
           className={`flex flex-col h-screen inset-0 {language === 'en' ? 'font-roboto' : 'font-assistant'}`}
-          onClick={handleClick}
         >
-
-          {/* <SideMenu isOpen={isMenuOpen} closeMenu={() => setIsMenuOpen(false)} /> */}
           <ToastContainer />
-          {isAuthenticated && <DialogManager />}
-          {isAuthenticated && <ChatContainer />}
+          <DialogManager />
+          {rootStore.isAuthenticated && <ChatContainer />}
           <Outlet />
         </div>
       </RootStoreProvider>
     </GoogleOAuthProvider>
-
   );
+});
+
+const styles = {
+  spinnerContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100vh',
+  },
 };
 
 export default App;

@@ -5,9 +5,12 @@ import { observer } from 'mobx-react';
 import { SessionView } from './SessionView';
 import { useTranslation } from 'react-i18next';
 import LanguageToggle from '../LanguageToggle';
-
+import { useRootStore } from '../../store/common/RootStoreContext';
 
 export const Menu = observer(() => {
+  const rootStore = useRootStore(); 
+  const userRole = rootStore.currentUser?.role; 
+
   const menuItems = [
     {
       name: 'Home',
@@ -38,6 +41,7 @@ export const Menu = observer(() => {
       link: '/admin/actions',
     },
   ];
+
   const { t } = useTranslation();
 
   const location = useLocation();
@@ -47,6 +51,13 @@ export const Menu = observer(() => {
     }
     return location.pathname.startsWith(menuItemLink);
   };
+
+  const filteredMenuItems = menuItems.filter((item) => {
+    if (userRole === 'CompanyUser') {
+      return item.name === 'Users' || item.name === 'Assistants';
+    }
+    return true;
+  });
 
   return (
     <nav
@@ -89,14 +100,14 @@ export const Menu = observer(() => {
             href="#"
           >
             <img className="h-6 mr-2" src={logo} loading="lazy" />
-            <h5 className=" text-blue-900 text-xl">Singularity Bridge</h5>
+            <h5 className="text-blue-900 text-xl">Singularity Bridge</h5>
           </a>
 
           <ul
-            className="list-style-none  flex flex-col pl-0 lg:flex-row"
+            className="list-style-none flex flex-col pl-0 lg:flex-row"
             data-te-navbar-nav-ref
           >
-            {menuItems.map((item) => {
+            {filteredMenuItems.map((item) => {
               const isActive = isMenuItemActive(item.link);
 
               const menuStyle = isActive
@@ -114,7 +125,6 @@ export const Menu = observer(() => {
                     href={item.link}
                     data-te-nav-link-ref
                   >
-
                     {t(`Menu.${item.name}`)}
                   </a>
                 </li>

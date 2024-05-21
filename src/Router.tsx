@@ -50,9 +50,7 @@ export const browserRouter = createBrowserRouter([
       {
         path: '/admin',
         element:
-          <RequireAuth>
-            <Admin />
-          </RequireAuth>,
+          <RequireAuth><Admin /></RequireAuth>,
         children: [
           {
             index: true,
