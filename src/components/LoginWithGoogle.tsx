@@ -10,17 +10,17 @@ const LoginWithGoogle: React.FC = () => {
 
     const onSuccess = async (res: any) => {
         try {
+            await rootStore.loadUsers();
             await rootStore.loginSystemUser(res.credential);
 
             if (rootStore.currentUser?.role === 'CompanyUser') {
-                navigate('/admin/users');
+                navigate('/onboarding');
             } else if (rootStore.currentUser?.role === 'Admin') {
                 navigate('/admin');
             }
         } catch (error) {
             console.error('Login failed:', error);
         }
-
     };
 
     const onError = (error: any) => {

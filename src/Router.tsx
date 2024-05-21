@@ -15,8 +15,9 @@ import { InboxPage } from './pages/admin/inbox/InboxPage';
 import { EditCompanyPage } from './pages/admin/EditCompanyPage';
 import { ActionsPage } from './pages/admin/ActionsPage';
 import { EditActionPage } from './pages/admin/EditActionPage';
-import LoginPage from './pages/admin/LoginPage';
 import RequireAuth from './components/admin/RequireAuth';
+import SignupPage from './pages/admin/SignupPage';
+import OnboardingPage from './pages/admin/Onboarding';
 
 export const browserRouter = createBrowserRouter([
   {
@@ -24,12 +25,16 @@ export const browserRouter = createBrowserRouter([
     children: [
 
       {
-        path: 'login',
-        element: <LoginPage />,
+        path: 'signup',
+        element: <SignupPage />,
+      },
+      {
+        path: 'onboarding', 
+        element: <OnboardingPage />,
       },
       {
         index: true,
-        element: <Navigate to="/login" replace />, // Redirect to login by default
+        element: <Navigate to="/signup" replace />, // Redirect to login by default
       },
       {
         path: '/chat',

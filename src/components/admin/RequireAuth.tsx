@@ -7,7 +7,7 @@ const RequireAuth: React.FC<{ children: React.ReactNode }> = observer(({ childre
   const rootStore = useRootStore();
 
   if (!rootStore.isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/signup" replace />;
   }
 
   return <>{children}</>;
