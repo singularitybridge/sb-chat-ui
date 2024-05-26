@@ -130,13 +130,8 @@ const RootStore = types
           } else {
             console.error('User not found in the store');
           }
-
         }
-        // // create a new user:
-        // const newUser = User.create(userData); 
-        // self.users.push(newUser);
-        // self.currentUser = newUser;
-
+        
         self.needsOnboarding = isNewUser;
 
       } catch (error) {
@@ -342,7 +337,7 @@ const RootStore = types
           'New company has been created successfully'
         );
         emitter.emit(EVENT_CLOSE_MODAL);
-        return newCompany._id;
+        return newCompany;
       } catch (error: any) {
         console.error('Failed to create company', error);
         emitter.emit(EVENT_ERROR, 'Failed to add company: ' + error.message);
