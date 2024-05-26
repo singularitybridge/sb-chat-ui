@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
-import logo from '../../assets/l3.png';
+import logo from '../../../assets/l3.png';
 
 interface HeaderProps {
   title: string;
   description: string;
-  onMinimize: () => void;
+  onMinimize?: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({ title, description, onMinimize }) => {

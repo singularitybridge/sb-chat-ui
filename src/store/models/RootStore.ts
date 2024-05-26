@@ -277,7 +277,7 @@ const RootStore = types
         const users = yield getAllUsers();
         applySnapshot(self.users, users);
       } catch (error) {
-        console.error('Failed to load assistants', error);
+        console.error('Failed to load users', error);
       }
     }),
 

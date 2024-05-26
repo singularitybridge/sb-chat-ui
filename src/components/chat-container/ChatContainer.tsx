@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Header } from './Header';
-import { AssistantMessage } from './AssistantMessage';
-import { UserMessage } from './UserMessage';
+import { Header } from '../sb-chat-kit-ui/chat-elements/Header';
+import { AssistantMessage } from '../sb-chat-kit-ui/chat-elements/AssistantMessage';
+import { UserMessage } from '../sb-chat-kit-ui/chat-elements/UserMessage';
 import {
   PaperAirplaneIcon,
   PlusIcon,
@@ -24,8 +24,7 @@ import {
   getSessionById,
   updateSessionAssistant,
 } from '../../services/api/sessionService';
-import { HumanAgentResponseMessage } from './HumanAgentResponseMessage';
-import { nullType } from 'mobx-state-tree/dist/internal';
+import { HumanAgentResponseMessage } from '../sb-chat-kit-ui/chat-elements/HumanAgentResponseMessage';
 import { useTranslation } from 'react-i18next';
 
 interface Metadata {
@@ -137,7 +136,9 @@ const ChatContainer = observer(() => {
   if (isMinimized) {
     return (
       <button
-        className={`fixed mb-3 bottom-4 ${isHebrew ? 'left-4 ml-3' : 'right-4 mr-3'} w-12 h-12 bg-slate-500 rounded-full flex items-center justify-center`}
+        className={`fixed mb-3 bottom-4 ${
+          isHebrew ? 'left-4 ml-3' : 'right-4 mr-3'
+        } w-12 h-12 bg-slate-500 rounded-full flex items-center justify-center`}
         onClick={handleMinimize}
       >
         <PlusIcon className="h-6 w-6 text-white" />
@@ -152,7 +153,9 @@ const ChatContainer = observer(() => {
           boxShadow: '0 0 #0000, 0 0 #0000, 0 1px 2px 0 rgb(0 0 0 / 0.05)',
           zIndex: 5000,
         }}
-        className={`fixed bottom-[calc(2rem)] ${isHebrew ? 'left-0 ml-7' : 'right-0 mr-7'} bg-white p-5 rounded-lg border border-[#e5e7eb] w-[340px] h-[575px] flex flex-col`}
+        className={`fixed bottom-[calc(2rem)] ${
+          isHebrew ? 'left-0 ml-7' : 'right-0 mr-7'
+        } bg-white p-5 rounded-lg border border-[#e5e7eb] w-[340px] h-[575px] flex flex-col`}
       >
         <Header
           title={assistant?.name || ''}
@@ -171,7 +174,13 @@ const ChatContainer = observer(() => {
                 <HumanAgentResponseMessage key={index} text={message.content} />
               );
             } else if (message.role === 'assistant') {
-              return <AssistantMessage key={index} text={message.content} assistantName={message.assistantName} />;
+              return (
+                <AssistantMessage
+                  key={index}
+                  text={message.content}
+                  assistantName={message.assistantName}
+                />
+              );
             } else {
               return <UserMessage key={index} text={message.content} />;
             }
@@ -180,7 +189,11 @@ const ChatContainer = observer(() => {
           <div ref={messagesEndRef} />
         </div>
         <div className="flex items-center flex-row-reverse pt-0 mt-1">
-          <div className={`flex items-center justify-center ${isHebrew ? 'space-x-reverse' : ''} w-full space-x-2`}>
+          <div
+            className={`flex items-center justify-center ${
+              isHebrew ? 'space-x-reverse' : ''
+            } w-full space-x-2`}
+          >
             <input
               className="flex h-10 w-full rounded-md border border-[#e5e7eb] px-3 py-2 text-sm placeholder-[#6b7280] focus:outline-none focus:ring-2 focus:ring-[#9ca3af] disabled:cursor-not-allowed disabled:opacity-50 text-[#030712] focus-visible:ring-offset-2"
               placeholder={t('ChatContainer.input')}
@@ -197,7 +210,12 @@ const ChatContainer = observer(() => {
               onClick={() => handleSubmitMessage(message)}
               className="inline-flex items-center justify-center rounded-lg  disabled:pointer-events-none disabled:opacity-50 bg-gray-800 hover:bg-[#111827E6] h-10 px-2 py-2"
             >
-              <PaperAirplaneIcon className={`h-5 w-5 text-zinc-50 ${isHebrew ? '-scale-x-100' : ''}`} />            </button>
+              <PaperAirplaneIcon
+                className={`h-5 w-5 text-zinc-50 ${
+                  isHebrew ? '-scale-x-100' : ''
+                }`}
+              />{' '}
+            </button>
             <button
               onClick={handleReload}
               className="inline-flex items-center justify-center rounded-lg  disabled:pointer-events-none disabled:opacity-50 bg-gray-800 hover:bg-[#111827E6] h-10 px-2 py-2"
@@ -210,6 +228,5 @@ const ChatContainer = observer(() => {
     </>
   );
 });
-
 
 export { ChatContainer };

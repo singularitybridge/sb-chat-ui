@@ -18,6 +18,7 @@ import { EditActionPage } from './pages/admin/EditActionPage';
 import RequireAuth from './components/admin/RequireAuth';
 import SignupPage from './pages/admin/SignupPage';
 import OnboardingPage from './pages/admin/Onboarding';
+import { TestPage } from './pages/TestPage';
 
 export const browserRouter = createBrowserRouter([
   {
@@ -51,6 +52,10 @@ export const browserRouter = createBrowserRouter([
       {
         path: '/other',
         element: <Chat />,
+      },
+      {
+        path: 'test',
+        element: <TestPage />,
       },
       {
         path: '/admin',
@@ -106,6 +111,9 @@ export const browserRouter = createBrowserRouter([
             path: 'inbox',
             element: <InboxPage />,
           },
+          
+
+
         ],
       },
       { path: '*', element: <NotFound /> },
