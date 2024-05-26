@@ -1,14 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Header } from './chat-elements/Header';
 import { AssistantMessage } from './chat-elements/AssistantMessage';
 import { UserMessage } from './chat-elements/UserMessage';
-import {
-  PaperAirplaneIcon,
-  PlusIcon,
-  TrashIcon,
-} from '@heroicons/react/24/outline';
-import { useTranslation } from 'react-i18next';
 import { HumanAgentResponseMessage } from './chat-elements/HumanAgentResponseMessage';
+import { PlusIcon } from '@heroicons/react/24/outline';
+import { ChatInput } from './chat-elements/ChatInput';
 
 interface Metadata {
   message_type: string;
@@ -25,8 +21,9 @@ interface SBChatKitUIProps {
   assistant?: {
     name: string;
     description: string;
+    avatar: string; // Add avatar to assistant object
   };
-  assistantName: string; // Add assistantName as a prop
+  assistantName: string;
   onSendMessage: (message: string) => void;
   onReload: () => void;
   isMinimized?: boolean;
@@ -49,19 +46,12 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
   isHebrew = false,
 }) => {
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
-  const [message, setMessage] = useState('');
-  const { t } = useTranslation();
 
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages]);
-
-  const handleSubmitMessage = (message: string) => {
-    setMessage('');
-    onSendMessage(message);
-  };
 
   if (isMinimized) {
     return (
@@ -80,19 +70,17 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
     <div
       style={{
         boxShadow: '0 0 #0000, 0 0 #0000, 0 1px 2px 0 rgb(0 0 0 / 0.05)',
-        zIndex: 5000,
         ...style,
       }}
-      className={`bg-white p-5 rounded-lg border border-[#e5e7eb] flex flex-col ${className}`}
+      className={`bg-white p-5 rounded-lg border border-[#e5e7eb] flex flex-col ${className} h-full w-full`}
     >
       <Header
         title={assistant?.name || ''}
         description={assistant?.description || ''}
+        avatar={assistant?.avatar || ''} // Pass avatar prop
         onMinimize={onToggleMinimize}
       />
-      <div
-        className="flex-grow overflow-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-300"
-      >
+      <div className="flex-grow overflow-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-300">
         {messages.map((message, index) => {
           if (message.metadata?.message_type === 'human-agent-response') {
             return (
@@ -103,7 +91,7 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
               <AssistantMessage
                 key={index}
                 text={message.content}
-                assistantName={assistantName} // Pass assistantName prop
+                assistantName={assistantName}
               />
             );
           } else {
@@ -113,42 +101,11 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
 
         <div ref={messagesEndRef} />
       </div>
-      <div className="flex items-center flex-row-reverse pt-0 mt-1">
-        <div
-          className={`flex items-center justify-center ${
-            isHebrew ? 'space-x-reverse' : ''
-          } w-full space-x-2`}
-        >
-          <input
-            className="flex h-10 w-full rounded-md border border-[#e5e7eb] px-3 py-2 text-sm placeholder-[#6b7280] focus:outline-none focus:ring-2 focus:ring-[#9ca3af] disabled:cursor-not-allowed disabled:opacity-50 text-[#030712] focus-visible:ring-offset-2"
-            placeholder={t('ChatContainer.input')}
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                handleSubmitMessage(message);
-                e.preventDefault(); // Prevents the addition of a new line in the input after pressing 'Enter'
-              }
-            }}
-          />
-          <button
-            onClick={() => handleSubmitMessage(message)}
-            className="inline-flex items-center justify-center rounded-lg  disabled:pointer-events-none disabled:opacity-50 bg-gray-800 hover:bg-[#111827E6] h-10 px-2 py-2"
-          >
-            <PaperAirplaneIcon
-              className={`h-5 w-5 text-zinc-50 ${
-                isHebrew ? '-scale-x-100' : ''
-              }`}
-            />{' '}
-          </button>
-          <button
-            onClick={onReload}
-            className="inline-flex items-center justify-center rounded-lg  disabled:pointer-events-none disabled:opacity-50 bg-gray-800 hover:bg-[#111827E6] h-10 px-2 py-2"
-          >
-            <TrashIcon className="h-5 w-5 text-warning-200" />
-          </button>
-        </div>
-      </div>
+      <ChatInput
+        onSendMessage={onSendMessage}
+        onReload={onReload}
+        isHebrew={isHebrew}
+      />
     </div>
   );
 };

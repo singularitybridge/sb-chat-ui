@@ -10,13 +10,14 @@ const mockMessages = [
 const mockAssistant = {
   name: 'AI Assistant',
   description: 'I am here to help you with your project.',
+  avatar: 'images/avatars/av4.png',
 };
 
 const TestPage = () => {
   const [messages, setMessages] = useState(mockMessages);
   const [isMinimized, setIsMinimized] = useState(false);
 
-  const handleSendMessage = (message: any) => {
+  const handleSendMessage = (message: string) => {
     setMessages((prevMessages) => [
       ...prevMessages,
       { content: message, role: 'user' },
@@ -36,16 +37,18 @@ const TestPage = () => {
     <div className="container mx-auto p-4">
       <div className="grid grid-cols-3 gap-4">
         <div className="border border-gray-300 p-4 flex items-center justify-center h-96">
-          <SBChatKitUI
-            messages={messages}
-            assistant={mockAssistant}
-            assistantName="AI Assistant" // Pass the assistant name here
-            onSendMessage={handleSendMessage}
-            onReload={handleReload}
-            isMinimized={isMinimized}
-            onToggleMinimize={handleToggleMinimize}
-            isHebrew={false} // or true based on your preference
-          />
+          <div className="h-full w-full">
+            <SBChatKitUI
+              messages={messages}
+              assistant={mockAssistant}
+              assistantName="AI Assistant"
+              onSendMessage={handleSendMessage}
+              onReload={handleReload}
+              isMinimized={isMinimized}
+              onToggleMinimize={handleToggleMinimize}
+              isHebrew={false} // or true based on your preference
+            />
+          </div>
         </div>
         <div className="border border-gray-300 p-4 flex items-center justify-center h-96">
           Column 2

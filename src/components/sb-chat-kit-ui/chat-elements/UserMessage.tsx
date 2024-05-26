@@ -8,7 +8,7 @@ interface UserMessageProps {
 
 const UserMessage: React.FC<UserMessageProps> = ({ text }) => {
   return (
-    <MessageWrapper icon={<UserIcon className="w-5 h-5 text-gray-800" />} bgColor="bg-gray-100" borderColor="bg-gray-100" role="Human">
+    <MessageWrapper icon={<UserIcon className="w-5 h-5 text-gray-800" />} bgColor="" borderColor="bg-gray-100" role="Human">
       {text}
     </MessageWrapper>
   );
