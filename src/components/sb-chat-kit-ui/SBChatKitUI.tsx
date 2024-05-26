@@ -70,6 +70,7 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
     <div
       style={{
         boxShadow: '0 0 #0000, 0 0 #0000, 0 1px 2px 0 rgb(0 0 0 / 0.05)',
+        direction: isHebrew ? 'rtl' : 'ltr', // Apply RTL direction for the entire component
         ...style,
       }}
       className={`bg-white p-5 rounded-lg border border-[#e5e7eb] flex flex-col ${className} h-full w-full`}
@@ -80,7 +81,7 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
         avatar={assistant?.avatar || ''} // Pass avatar prop
         onMinimize={onToggleMinimize}
       />
-      <div className="flex-grow overflow-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-300">
+      <div className={`flex-grow overflow-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-300 ${isHebrew ? 'text-right' : ''}`}>
         {messages.map((message, index) => {
           if (message.metadata?.message_type === 'human-agent-response') {
             return (

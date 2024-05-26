@@ -7,15 +7,29 @@ const mockMessages = [
   { content: 'Sure, what do you need help with?', role: 'assistant' },
 ];
 
+const mockMessagesHebrew = [
+  { content: 'שלום, איך אני יכול לעזור לך?', role: 'assistant' },
+  { content: 'אני צריך עזרה עם הפרויקט שלי.', role: 'user' },
+  { content: 'בטח, במה אתה צריך עזרה?', role: 'assistant' },
+];
+
 const mockAssistant = {
   name: 'AI Assistant',
   description: 'I am here to help you with your project.',
   avatar: 'images/avatars/av4.png',
 };
 
+const mockAssistantHebrew = {
+  name: 'עוזר AI',
+  description: 'אני כאן כדי לעזור לך עם הפרויקט שלך.',
+  avatar: 'images/avatars/av4.png',
+};
+
 const TestPage = () => {
   const [messages, setMessages] = useState(mockMessages);
+  const [messagesHebrew, setMessagesHebrew] = useState(mockMessagesHebrew);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [isMinimizedHebrew, setIsMinimizedHebrew] = useState(false);
 
   const handleSendMessage = (message: string) => {
     setMessages((prevMessages) => [
@@ -25,12 +39,28 @@ const TestPage = () => {
     ]);
   };
 
+  const handleSendMessageHebrew = (message: string) => {
+    setMessagesHebrew((prevMessages) => [
+      ...prevMessages,
+      { content: message, role: 'user' },
+      { content: 'זו תגובה מדומה.', role: 'assistant' },
+    ]);
+  };
+
   const handleReload = () => {
     setMessages([]);
   };
 
+  const handleReloadHebrew = () => {
+    setMessagesHebrew([]);
+  };
+
   const handleToggleMinimize = () => {
     setIsMinimized(!isMinimized);
+  };
+
+  const handleToggleMinimizeHebrew = () => {
+    setIsMinimizedHebrew(!isMinimizedHebrew);
   };
 
   return (
@@ -46,12 +76,23 @@ const TestPage = () => {
               onReload={handleReload}
               isMinimized={isMinimized}
               onToggleMinimize={handleToggleMinimize}
-              isHebrew={false} // or true based on your preference
+              isHebrew={false}
             />
           </div>
         </div>
         <div className="border border-gray-300 p-4 flex items-center justify-center h-96">
-          Column 2
+          <div className="h-full w-full">
+            <SBChatKitUI
+              messages={messagesHebrew}
+              assistant={mockAssistantHebrew}
+              assistantName="עוזר AI"
+              onSendMessage={handleSendMessageHebrew}
+              onReload={handleReloadHebrew}
+              isMinimized={isMinimizedHebrew}
+              onToggleMinimize={handleToggleMinimizeHebrew}
+              isHebrew={true}
+            />
+          </div>
         </div>
         <div className="border border-gray-300 p-4 flex items-center justify-center h-96">
           Column 3
