@@ -2,13 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Avatar, AvatarStyles } from '../components/Avatar';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
-  Message,
-  messagesState,
-  userProfileState,
-  chatBotsState,
-  SenderType,
-} from '../atoms/dataStore-old';
-import {
   getSessionMessages,
   getGPTCompletion,
   deleteMessageFromSession,

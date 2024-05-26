@@ -45,8 +45,7 @@ export const setSystemUserId = (userId: string): void => {
 export const updateSessionAssistant = async (
   sessionId: string,
   assistantId: string
-): Promise<void> => {
-  debugger
+): Promise<void> => {  
   try {
     await axios.put(`http://localhost:3000/session/${sessionId}`, {
       assistantId,
@@ -63,8 +62,7 @@ export const createSession = async (
   companyId: string,
   assistantId?: string
 ): Promise<ISession> => {
-  try {
-    debugger
+  try {    
     const response = await axios.post('http://localhost:3000/session', {
       userId,
       companyId,
@@ -108,8 +106,7 @@ export const getSessionByCompanyAndUserId = async (
   }
 }
 
-export const getSessionById = async (sessionId: string): Promise<ISession> => {
-  debugger
+export const getSessionById = async (sessionId: string): Promise<ISession> => {  
   try {
     const response = await axios.get(
       `http://localhost:3000/session/${sessionId}`

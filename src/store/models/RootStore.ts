@@ -70,7 +70,6 @@ const RootStore = types
   })
   .views((self) => ({
     get isAdmin() {
-      debugger;
       return self.currentUser?.role === 'Admin';
     },
     get isCompanUser() {
@@ -112,8 +111,7 @@ const RootStore = types
         }
       }),
     loginSystemUser: flow(function* (credential: string) {
-      try {
-        debugger;
+      try {        
         const response = yield login(credential);
         const userData = response.user;
         const isNewUser = response.isNewUser;
@@ -292,11 +290,10 @@ const RootStore = types
 
     loadUsers: flow(function* () {
       try {
-        debugger;
         const users = yield getAllUsers();
         applySnapshot(self.users, users);
       } catch (error) {
-        console.error('Failed to load assistants', error);
+        console.error('Failed to load users', error);
       }
     }),
 

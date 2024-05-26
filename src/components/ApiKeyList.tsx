@@ -27,8 +27,7 @@ const ApiKeyList: React.FC<ApiKeyListProps> = ({
     Record<string, boolean>
   >({});
 
-  const handleVerify = async (value: string, key: string) => {
-    debugger;
+  const handleVerify = async (value: string, key: string) => {    
     const isValid = await verifyApiKey(value, key);
     setVerificationStatus({ ...verificationStatus, [key]: isValid });
     return isValid;

@@ -104,8 +104,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     setValues(initialValues);
   }, [fields, formType]);
 
-  const handleRefreshToken = () => {
-    debugger;
+  const handleRefreshToken = () => {    
     refreshToken ? refreshToken(values) : null;
   };
 
