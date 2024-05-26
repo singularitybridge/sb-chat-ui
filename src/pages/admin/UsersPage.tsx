@@ -28,7 +28,7 @@ const UsersView: React.FC = observer(() => {
   const navigate = useNavigate();
 
   const headers: UserKeys[] = ['name', 'nickname'];
-
+  const companyId = getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) || '';
   const handleDelete = (row: IUser) => {
     rootStore.deleteUser(row._id);
   };
@@ -38,7 +38,7 @@ const UsersView: React.FC = observer(() => {
 
     const session = await createSession(
       row._id,
-      getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) || ''
+      companyId
     );
 
     const sessionData = await getSessionById(session._id);
@@ -71,7 +71,7 @@ const UsersView: React.FC = observer(() => {
         <div className="flex-auto">
           <Table
             headers={convertToStringArray(headers)}
-            data={toJS(rootStore.users)}
+            data = {toJS(rootStore.users).filter((user: IUser) => user.companyId === companyId)}
             Page='UsersPage'
             onRowClick={(row: IUser) => navigate(`/admin/users/${row._id}`)}
             Actions={Actions}

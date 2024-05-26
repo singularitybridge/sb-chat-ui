@@ -1,7 +1,7 @@
 import { types, Instance, SnapshotIn, SnapshotOut } from 'mobx-state-tree';
 import { Identifier } from './Assistant';
 
-const ApiKey = types.model('ApiKey', {
+export const ApiKey = types.model('ApiKey', {
   key: types.string,
   value: types.string,
 });

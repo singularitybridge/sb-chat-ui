@@ -1,3 +1,4 @@
+//Filename: src/store/models/RootStore.ts
 import { types, flow, applySnapshot, Instance } from 'mobx-state-tree';
 import { Assistant, IAssistant } from './Assistant';
 import {
@@ -24,6 +25,7 @@ import {
 import {
   LOCALSTORAGE_COMPANY_ID,
   LOCALSTORAGE_SYSTEM_USER_ID,
+  LOCALSTORAGE_USER_ID,
   getLocalStorageItem,
   setLocalStorageItem,
   setSystemUserId,
@@ -77,6 +79,9 @@ const RootStore = types
   }))
   .actions((self) => ({
     translate: (key: string) => i18n.t(key),
+    setCurrentUser(user: any) {
+      self.currentUser = user;
+    },
     changeLanguage: flow(function* (newLanguage: string) {
       self.language = newLanguage;
       yield i18n.changeLanguage(newLanguage);
@@ -86,7 +91,8 @@ const RootStore = types
     checkAuthState
       : flow(function* () {
         try {
-          const userId = getLocalStorageItem(LOCALSTORAGE_SYSTEM_USER_ID);
+
+          const userId = getLocalStorageItem(LOCALSTORAGE_USER_ID);
           const userToken = localStorage.getItem('userToken');
 
           if (userId && userToken) {
@@ -110,36 +116,42 @@ const RootStore = types
         debugger;
         const response = yield login(credential);
         const userData = response.user;
+        const isNewUser = response.isNewUser;
 
-        const existingUser = self.users.find(user => user._id === userData._id);
-        if (existingUser) {
-          debugger;
-          applySnapshot(existingUser, userData);
-          self.currentUser = existingUser;
-        } else {
-          self.users.push(userData);
-          self.currentUser = userData;
+        if (!isNewUser) {
+          const existingUser = self.users.find(user => user._id === userData._id);
+          if (existingUser) {
+            applySnapshot(existingUser, userData);
+            self.currentUser = existingUser;
+            self.isAuthenticated = true;
+
+            setLocalStorageItem(LOCALSTORAGE_USER_ID, userData._id);
+            setLocalStorageItem(LOCALSTORAGE_COMPANY_ID, userData.companyId);
+            localStorage.setItem('userToken', response.sessionToken);
+
+          } else {
+            console.error('User not found in the store');
+          }
+
         }
-        if (self.currentUser?.role === 'Admin') {
-          self.isAuthenticated = true;
-        } else {
-          self.needsOnboarding = true;
-        }
-        setLocalStorageItem(LOCALSTORAGE_SYSTEM_USER_ID, userData._id);
-        setLocalStorageItem(LOCALSTORAGE_COMPANY_ID, userData.companyId);
-        localStorage.setItem('userToken', response.sessionToken);
+        // // create a new user:
+        // const newUser = User.create(userData); 
+        // self.users.push(newUser);
+        // self.currentUser = newUser;
+
+        self.needsOnboarding = isNewUser;
+
       } catch (error) {
         console.error('Failed to login user', error);
       }
     }),
     completeOnboarding: () => {
-      debugger
       self.isAuthenticated = true;
       self.needsOnboarding = false;
     },
     logoutSystemUser: (userId: string) => {
       const user = self.users.find(user => user._id === userId);
-      localStorage.removeItem(LOCALSTORAGE_SYSTEM_USER_ID);
+      localStorage.removeItem(LOCALSTORAGE_USER_ID);
       if (user) {
         self.users.replace(self.users.filter(user => user._id !== userId));
         self.isAuthenticated = false;
@@ -261,7 +273,7 @@ const RootStore = types
     refreshToken: flow(function* (_id: string, company: ICompany) {
       try {
         debugger;
-        const updatedCompany = yield refreshCompanyToken(_id, company);
+        const updatedCompany: any = yield refreshCompanyToken(_id, company);
         debugger;
         updatedCompany.token = updatedCompany.token.value;
         const index = self.companies.findIndex((comp) => comp._id === _id);
@@ -297,10 +309,12 @@ const RootStore = types
           'New user has been created successfully'
         );
 
-        emitter.emit(EVENT_CLOSE_MODAL); // Emit the close modal event
+        emitter.emit(EVENT_CLOSE_MODAL);
+        return newUser;
       } catch (error: any) {
         console.error('Failed to create user', error);
         emitter.emit(EVENT_ERROR, 'Failed to add user: ' + error.message);
+        return null;
       }
     }),
 
@@ -322,6 +336,7 @@ const RootStore = types
 
     addCompany: flow(function* (company: ICompany) {
       try {
+        debugger;
         const newCompany = yield addCompany(company);
         newCompany.token = newCompany.token.value;
         self.companies.push(newCompany);
@@ -329,10 +344,12 @@ const RootStore = types
           EVENT_SHOW_NOTIFICATION,
           'New company has been created successfully'
         );
-        emitter.emit(EVENT_CLOSE_MODAL); // Emit the close modal event
+        emitter.emit(EVENT_CLOSE_MODAL);
+        return newCompany._id;
       } catch (error: any) {
         console.error('Failed to create company', error);
         emitter.emit(EVENT_ERROR, 'Failed to add company: ' + error.message);
+        return null;
       }
     }),
 
