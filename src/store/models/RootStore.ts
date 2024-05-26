@@ -68,7 +68,6 @@ const RootStore = types
   })
   .views((self) => ({
     get isAdmin() {
-      debugger;
       return self.currentUser?.role === 'Admin';
     },
     get isCompanUser() {
@@ -106,14 +105,12 @@ const RootStore = types
         }
       }),
     loginSystemUser: flow(function* (credential: string) {
-      try {
-        debugger;
+      try {        
         const response = yield login(credential);
         const userData = response.user;
 
         const existingUser = self.users.find(user => user._id === userData._id);
         if (existingUser) {
-          debugger;
           applySnapshot(existingUser, userData);
           self.currentUser = existingUser;
         } else {
@@ -133,7 +130,6 @@ const RootStore = types
       }
     }),
     completeOnboarding: () => {
-      debugger
       self.isAuthenticated = true;
       self.needsOnboarding = false;
     },
@@ -260,9 +256,7 @@ const RootStore = types
 
     refreshToken: flow(function* (_id: string, company: ICompany) {
       try {
-        debugger;
         const updatedCompany = yield refreshCompanyToken(_id, company);
-        debugger;
         updatedCompany.token = updatedCompany.token.value;
         const index = self.companies.findIndex((comp) => comp._id === _id);
         if (index !== -1) {
@@ -280,7 +274,6 @@ const RootStore = types
 
     loadUsers: flow(function* () {
       try {
-        debugger;
         const users = yield getAllUsers();
         applySnapshot(self.users, users);
       } catch (error) {
