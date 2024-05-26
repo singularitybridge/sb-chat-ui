@@ -142,6 +142,6 @@
     "description": "update your ai agents here"
   },
   "ChatContainer": {
-    "input": "Type you message"
+    "input": "Type your message"
   }
 }
