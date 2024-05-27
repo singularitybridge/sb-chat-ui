@@ -57,7 +57,7 @@ const Header: React.FC<HeaderProps> = ({
         </div>
         <div className="flex space-x-2">
           <button
-            className="bg-gray-200 rounded-full p-2 hover:bg-gray-300"
+            className=" rounded-full p-2 hover:bg-gray-100"
             onClick={onMinimize}
           >
             <ChevronDownIcon className="h-3 w-3 text-gray-700" />
