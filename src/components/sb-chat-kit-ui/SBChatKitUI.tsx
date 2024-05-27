@@ -3,6 +3,7 @@ import { Header } from './chat-elements/Header';
 import { AssistantMessage } from './chat-elements/AssistantMessage';
 import { UserMessage } from './chat-elements/UserMessage';
 import { HumanAgentResponseMessage } from './chat-elements/HumanAgentResponseMessage';
+import { NotificationMessage } from './chat-elements/NotificationMessage'; // Import the new component
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { ChatInput } from './chat-elements/ChatInput';
 
@@ -21,7 +22,7 @@ interface SBChatKitUIProps {
   assistant?: {
     name: string;
     description: string;
-    avatar: string; // Add avatar to assistant object
+    avatar: string;
   };
   assistantName: string;
   onSendMessage: (message: string) => void;
@@ -70,7 +71,7 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
     <div
       style={{
         boxShadow: '0 0 #0000, 0 0 #0000, 0 1px 2px 0 rgb(0 0 0 / 0.05)',
-        direction: isHebrew ? 'rtl' : 'ltr', // Apply RTL direction for the entire component
+        direction: isHebrew ? 'rtl' : 'ltr',
         ...style,
       }}
       className={`bg-white p-5 rounded-lg border border-[#e5e7eb] flex flex-col ${className} h-full w-full`}
@@ -78,35 +79,26 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
       <Header
         title={assistant?.name || ''}
         description={assistant?.description || ''}
-        avatar={assistant?.avatar || ''} // Pass avatar prop
+        avatar={assistant?.avatar || ''}
         onMinimize={onToggleMinimize}
       />
       <div className={`flex-grow overflow-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-300 ${isHebrew ? 'text-right' : ''}`}>
         {messages.map((message, index) => {
           if (message.metadata?.message_type === 'human-agent-response') {
-            return (
-              <HumanAgentResponseMessage key={index} text={message.content} />
-            );
+            return <HumanAgentResponseMessage key={index} text={message.content} />;
+          } else if (message.metadata?.message_type === 'notification') {
+            return <NotificationMessage key={index} text={message.content} />; // Handle the new message type
           } else if (message.role === 'assistant') {
             return (
-              <AssistantMessage
-                key={index}
-                text={message.content}
-                assistantName={assistantName}
-              />
+              <AssistantMessage key={index} text={message.content} assistantName={assistantName} />
             );
           } else {
             return <UserMessage key={index} text={message.content} />;
           }
         })}
-
         <div ref={messagesEndRef} />
       </div>
-      <ChatInput
-        onSendMessage={onSendMessage}
-        onReload={onReload}
-        isHebrew={isHebrew}
-      />
+      <ChatInput onSendMessage={onSendMessage} onReload={onReload} isHebrew={isHebrew} />
     </div>
   );
 };
