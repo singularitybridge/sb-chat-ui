@@ -75,14 +75,22 @@ const TestPage = () => {
   };
 
   const handleAddActionMessage = () => {
+    const addUserMessage = (message: string) => {
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { content: message, role: 'user' },
+        { content: `You selected ${message}. Here are some options.`, role: 'assistant' },
+      ]);
+    };
+
     setMessages((prevMessages) => [
       ...prevMessages,
       {
         content: 'Very happy to hear that, what kind of car?',
         role: 'assistant',
         actions: [
-          { label: 'Electric', onClick: () => alert('You chose Electric!') },
-          { label: 'Gas', onClick: () => alert('You chose Gas!') },
+          { label: 'Electric', onClick: () => addUserMessage('Electric') },
+          { label: 'Gas', onClick: () => addUserMessage('Gas') },
         ],
       },
     ]);
