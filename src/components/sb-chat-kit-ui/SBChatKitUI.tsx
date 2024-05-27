@@ -5,7 +5,6 @@ import { UserMessage } from './chat-elements/UserMessage';
 import { HumanAgentResponseMessage } from './chat-elements/HumanAgentResponseMessage';
 import { NotificationMessage } from './chat-elements/NotificationMessage';
 import { ActionMessage } from './chat-elements/ActionMessage'; // Import the new component
-import { PlusIcon } from '@heroicons/react/24/outline';
 import { ChatInput } from './chat-elements/ChatInput';
 
 interface Metadata {
@@ -47,32 +46,20 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
   assistantName,
   onSendMessage,
   onReload,
-  isMinimized = false,
   onToggleMinimize,
   className = '',
   style = {},
   isHebrew = false,
 }) => {
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
+  const [disabledMessages, setDisabledMessages] = React.useState<number[]>([]);
 
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
+    setDisabledMessages((prev) => [...prev, messages.length - 1]);
   }, [messages]);
-
-  if (isMinimized) {
-    return (
-      <button
-        className={`fixed mb-3 bottom-4 ${
-          isHebrew ? 'left-4 ml-3' : 'right-4 mr-3'
-        } w-12 h-12 bg-slate-500 rounded-full flex items-center justify-center`}
-        onClick={onToggleMinimize}
-      >
-        <PlusIcon className="h-6 w-6 text-white" />
-      </button>
-    );
-  }
 
   return (
     <div
@@ -97,7 +84,12 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
             return <NotificationMessage key={index} text={message.content} />;
           } else if (message.actions && message.actions.length > 0) {
             return (
-              <ActionMessage key={index} text={message.content} actions={message.actions} role={assistantName} />
+              <ActionMessage
+                key={index}
+                text={message.content}
+                actions={message.actions}
+                role={assistantName}
+              />
             );
           } else if (message.role === 'assistant') {
             return <AssistantMessage key={index} text={message.content} assistantName={assistantName} />;
@@ -113,3 +105,4 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
 };
 
 export { SBChatKitUI };
+
