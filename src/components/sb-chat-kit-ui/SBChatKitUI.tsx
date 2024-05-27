@@ -3,7 +3,8 @@ import { Header } from './chat-elements/Header';
 import { AssistantMessage } from './chat-elements/AssistantMessage';
 import { UserMessage } from './chat-elements/UserMessage';
 import { HumanAgentResponseMessage } from './chat-elements/HumanAgentResponseMessage';
-import { NotificationMessage } from './chat-elements/NotificationMessage'; // Import the new component
+import { NotificationMessage } from './chat-elements/NotificationMessage';
+import { ActionMessage } from './chat-elements/ActionMessage'; // Import the new component
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { ChatInput } from './chat-elements/ChatInput';
 
@@ -11,10 +12,16 @@ interface Metadata {
   message_type: string;
 }
 
+interface Action {
+  label: string;
+  onClick: () => void;
+}
+
 interface ChatMessage {
   content: string;
   role: string;
   metadata?: Metadata;
+  actions?: Action[];
 }
 
 interface SBChatKitUIProps {
@@ -87,11 +94,13 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
           if (message.metadata?.message_type === 'human-agent-response') {
             return <HumanAgentResponseMessage key={index} text={message.content} />;
           } else if (message.metadata?.message_type === 'notification') {
-            return <NotificationMessage key={index} text={message.content} />; // Handle the new message type
-          } else if (message.role === 'assistant') {
+            return <NotificationMessage key={index} text={message.content} />;
+          } else if (message.actions && message.actions.length > 0) {
             return (
-              <AssistantMessage key={index} text={message.content} assistantName={assistantName} />
+              <ActionMessage key={index} text={message.content} actions={message.actions} role={assistantName} />
             );
+          } else if (message.role === 'assistant') {
+            return <AssistantMessage key={index} text={message.content} assistantName={assistantName} />;
           } else {
             return <UserMessage key={index} text={message.content} />;
           }
