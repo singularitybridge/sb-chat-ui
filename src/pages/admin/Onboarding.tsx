@@ -1,6 +1,12 @@
+//File: src/pages/admin/Onboarding.tsx
 import React, { useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useRootStore } from '../../store/common/RootStoreContext';
+import { ApiKey, ICompany } from '../../store/models/Company';
+import { types } from 'mobx-state-tree';
+import { Identifier } from '../../store/models/Assistant';
+import { LOCALSTORAGE_COMPANY_ID, LOCALSTORAGE_USER_ID, createSession, getSessionById, setLocalStorageItem } from '../../services/api/sessionService';
+import { IUser, User } from '../../store/models/User';
 
 const OnboardingPage: React.FC = () => {
     const [name, setName] = useState('');
@@ -8,11 +14,66 @@ const OnboardingPage: React.FC = () => {
 
     const rootStore = useRootStore();
     const navigate = useNavigate();
+    const location = useLocation();
+    const { user } = location.state as { user: any };
 
-    const handleSignup = () => {
-        // Handle the signup logic here
-        rootStore.completeOnboarding();
-        navigate('/admin/users');
+
+    const handleSignup = async () => {
+        try {
+            // Create new company for user with default values
+            const defaultCompany = {
+                name: `${user.given_name} Default Company`,
+                api_keys: [
+                    { key: 'openai_api_key', value: 'defaultValue' },
+                    { key: 'gcp_key', value: 'defaultValue' },
+                    { key: 'labs11_api_key', value: 'defaultValue' },
+                    { key: 'twilio_account_sid', value: 'defaultValue' },
+                    { key: 'twilio_auth_token', value: 'defaultValue' }
+                ],
+                identifiers: [
+                    { key: 'email', value: user.email }
+                ],
+                __v: 0
+            };
+            debugger;
+            const newCompany = await rootStore.addCompany(defaultCompany as ICompany);
+            setLocalStorageItem(LOCALSTORAGE_COMPANY_ID, newCompany._id);
+
+            // Create new user
+            const newUser = {
+                name: user.name,
+                email: user.email,
+                googleId: user.sub,
+                role: 'CompanyUser',
+                companyId: newCompany._id,
+                identifiers: [
+                    { key: 'email', value: user.email }
+                ]
+            } as IUser;
+
+            // Add new user to the rootStore
+            const res = await rootStore.addUser(newUser);
+            const mobxUser = User.create(res);
+            rootStore.setCurrentUser(mobxUser);
+            setLocalStorageItem(LOCALSTORAGE_USER_ID, res._id);
+
+
+            //create new session and set the new company as the active company
+            const session = await createSession(
+                res._id,
+                newCompany._id
+            );
+            const sessionData = await getSessionById(session._id);
+            rootStore.sessionStore.setActiveSession(sessionData);
+            rootStore.loadAssistants();
+            rootStore.loadInboxMessages();
+
+            // finish onboarding
+            await rootStore.completeOnboarding();
+            navigate('/admin/users');
+        } catch (error) {
+            console.error('Error during signup and company creation:', error);
+        }
     };
 
     return (
