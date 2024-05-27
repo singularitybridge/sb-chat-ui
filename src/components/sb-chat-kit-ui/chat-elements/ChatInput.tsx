@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   PaperAirplaneIcon,
-  TrashIcon,
+  // TrashIcon,
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 
@@ -54,12 +54,12 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onReload, isHebrew
               className={`h-5 w-5  text-gray-600 ${isHebrew ? '-scale-x-100' : ''}`}
             />{' '}
           </button>
-          <button
+          {/* <button
             onClick={onReload}
             className="inline-flex items-center justify-center disabled:pointer-events-none disabled:opacity-50 h-7  w-7"
           >
             <TrashIcon className="h-5 w-5 text-gray-600" />
-          </button>
+          </button> */}
         </div>
       </div>
     </div>
