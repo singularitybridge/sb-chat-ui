@@ -11,13 +11,14 @@ interface ActionMessageProps {
   text: string;
   actions: Action[];
   role: string;
+  isDisabled: boolean; // New prop to handle disabled state
 }
 
-const ActionMessage: React.FC<ActionMessageProps> = ({ text, actions, role }) => {
+const ActionMessage: React.FC<ActionMessageProps> = ({ text, actions, role, isDisabled }) => {
   const [selected, setSelected] = React.useState<number | null>(null);
 
   const handleClick = (index: number, action: Action) => {
-    if (selected === null) {
+    if (selected === null && !isDisabled) {
       action.onClick();
       setSelected(index);
     }
@@ -35,8 +36,8 @@ const ActionMessage: React.FC<ActionMessageProps> = ({ text, actions, role }) =>
               selected === index
                 ? 'bg-green-500 text-white'
                 : 'bg-gray-500 text-white'
-            } ${selected !== null && selected !== index ? 'pointer-events-none opacity-50' : ''}`}
-            disabled={selected !== null}
+            } ${isDisabled || (selected !== null && selected !== index) ? 'pointer-events-none opacity-50' : ''}`}
+            disabled={isDisabled || selected !== null}
           >
             {action.label}
           </button>

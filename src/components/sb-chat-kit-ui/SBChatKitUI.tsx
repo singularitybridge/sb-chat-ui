@@ -1,10 +1,11 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Header } from './chat-elements/Header';
 import { AssistantMessage } from './chat-elements/AssistantMessage';
 import { UserMessage } from './chat-elements/UserMessage';
 import { HumanAgentResponseMessage } from './chat-elements/HumanAgentResponseMessage';
 import { NotificationMessage } from './chat-elements/NotificationMessage';
-import { ActionMessage } from './chat-elements/ActionMessage'; // Import the new component
+import { ActionMessage } from './chat-elements/ActionMessage';
+import { PlusIcon } from '@heroicons/react/24/outline';
 import { ChatInput } from './chat-elements/ChatInput';
 
 interface Metadata {
@@ -46,20 +47,44 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
   assistantName,
   onSendMessage,
   onReload,
+  isMinimized = false,
   onToggleMinimize,
   className = '',
   style = {},
   isHebrew = false,
 }) => {
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
-  const [disabledMessages, setDisabledMessages] = React.useState<number[]>([]);
+  const [disabledMessages, setDisabledMessages] = useState<number[]>([]);
 
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-    setDisabledMessages((prev) => [...prev, messages.length - 1]);
+
+    // Disable all previous action messages when a new message is added
+    if (messages.length > 1) {
+      const newMessageIndex = messages.length - 1;
+      const previousMessageIndices = messages
+        .slice(0, newMessageIndex)
+        .map((message, index) => (message.actions ? index : -1))
+        .filter((index) => index !== -1);
+
+      setDisabledMessages(previousMessageIndices);
+    }
   }, [messages]);
+
+  if (isMinimized) {
+    return (
+      <button
+        className={`fixed mb-3 bottom-4 ${
+          isHebrew ? 'left-4 ml-3' : 'right-4 mr-3'
+        } w-12 h-12 bg-slate-500 rounded-full flex items-center justify-center`}
+        onClick={onToggleMinimize}
+      >
+        <PlusIcon className="h-6 w-6 text-white" />
+      </button>
+    );
+  }
 
   return (
     <div
@@ -89,6 +114,7 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
                 text={message.content}
                 actions={message.actions}
                 role={assistantName}
+                isDisabled={disabledMessages.includes(index)}
               />
             );
           } else if (message.role === 'assistant') {
@@ -105,4 +131,3 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
 };
 
 export { SBChatKitUI };
-
