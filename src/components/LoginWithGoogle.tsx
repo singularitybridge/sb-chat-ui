@@ -13,11 +13,10 @@ const LoginWithGoogle: React.FC = () => {
     const navigate = useNavigate();
 
     const onSuccess = async (res: any) => {
-        debugger
+        
         try {
             await rootStore.loadUsers();
             await rootStore.loginSystemUser(res.credential);
-            debugger;
             const user = jwtDecode(res.credential);
 
             if (rootStore.needsOnboarding) {

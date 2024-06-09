@@ -12,6 +12,7 @@ import {
 import { toJS } from 'mobx';
 import { companyFieldConfigs } from '../../store/fieldConfigs/companyFieldConfigs';
 import { useTranslation } from 'react-i18next';
+import { setLocalStorageItem } from '../../services/api/sessionService';
 
 const EditCompanyView: React.FC = observer(() => {
   const { id } = useParams<{ id: string }>();
@@ -79,6 +80,7 @@ const EditCompanyView: React.FC = observer(() => {
       values as unknown as ICompany
     );
     setCompany(updatedCompany);
+    localStorage.setItem('userToken', updatedCompany.token);
     setIsLoading(false);
   };
 
@@ -96,6 +98,7 @@ const EditCompanyView: React.FC = observer(() => {
         </div>
         <div className="w-1/2"></div>
       </div>
+      
     </>
   );
 });

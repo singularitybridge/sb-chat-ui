@@ -35,7 +35,6 @@ const OnboardingPage: React.FC = () => {
                 ],
                 __v: 0
             };
-            debugger;
             const newCompany = await rootStore.addCompany(defaultCompany as ICompany);
             setLocalStorageItem(LOCALSTORAGE_COMPANY_ID, newCompany._id);
 

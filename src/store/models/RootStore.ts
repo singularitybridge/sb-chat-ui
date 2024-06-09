@@ -265,9 +265,7 @@ const RootStore = types
 
     refreshToken: flow(function* (_id: string, company: ICompany) {
       try {
-        debugger;
         const updatedCompany: any = yield refreshCompanyToken(_id, company);
-        debugger;
         updatedCompany.token = updatedCompany.token.value;
         const index = self.companies.findIndex((comp) => comp._id === _id);
         if (index !== -1) {
@@ -328,7 +326,7 @@ const RootStore = types
 
     addCompany: flow(function* (company: ICompany) {
       try {
-        debugger;
+        ;
         const newCompany = yield addCompany(company);
         newCompany.token = newCompany.token.value;
         self.companies.push(newCompany);
