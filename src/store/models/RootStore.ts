@@ -90,7 +90,6 @@ const RootStore = types
     checkAuthState
       : flow(function* () {
         try {
-
           const userId = getLocalStorageItem(LOCALSTORAGE_USER_ID);
           const userToken = localStorage.getItem('userToken');
 
@@ -111,7 +110,7 @@ const RootStore = types
         }
       }),
     loginSystemUser: flow(function* (credential: string) {
-      try {        
+      try {
         const response = yield login(credential);
         const userData = response.user;
         const isNewUser = response.isNewUser;
@@ -131,7 +130,7 @@ const RootStore = types
             console.error('User not found in the store');
           }
         }
-        
+
         self.needsOnboarding = isNewUser;
 
       } catch (error) {

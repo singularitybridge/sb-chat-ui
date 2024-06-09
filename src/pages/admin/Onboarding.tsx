@@ -64,6 +64,13 @@ const OnboardingPage: React.FC = () => {
             );
             const sessionData = await getSessionById(session._id);
             rootStore.sessionStore.setActiveSession(sessionData);
+            localStorage.setItem('userToken', 'new session');
+
+
+            await rootStore.loadUsers();
+            rootStore.sessionStore.loadSessions();
+            await rootStore.loadCompanies();
+            await rootStore.loadActions();
             rootStore.loadAssistants();
             rootStore.loadInboxMessages();
 
