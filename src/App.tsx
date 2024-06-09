@@ -65,19 +65,19 @@ const App: React.FC = observer(() => {
     };
   }, []);
 
-  const loadUserSession = async () => {
-    try {
-      const session = await getSessionByCompanyAndUserId(
-        getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) as string,
-        getLocalStorageItem(LOCALSTORAGE_USER_ID) as string
-      );
-      await rootStore.loadAssistants();
-      rootStore.sessionStore.setActiveSession(session);
-      await rootStore.loadInboxMessages();
-    } catch (error) {
-      console.log('session not found');
-    }
-  };
+  // const loadUserSession = async () => {
+  //   try {
+  //     const session = await getSessionByCompanyAndUserId(
+  //       getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) as string,
+  //       getLocalStorageItem(LOCALSTORAGE_USER_ID) as string
+  //     );
+  //     await rootStore.loadAssistants();
+  //     rootStore.sessionStore.setActiveSession(session);
+  //     await rootStore.loadInboxMessages();
+  //   } catch (error) {
+  //     console.log('session not found');
+  //   }
+  // };
 
   useEffect(() => {
     const loadData = async () => {
@@ -85,7 +85,7 @@ const App: React.FC = observer(() => {
       rootStore.sessionStore.loadSessions();
       await rootStore.loadCompanies();
       await rootStore.loadActions();
-      await loadUserSession();
+      // await loadUserSession();
       rootStore.checkAuthState();
       setIsDataLoaded(true);
     };
