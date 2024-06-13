@@ -70,9 +70,6 @@ const OnboardingPage: React.FC = () => {
             await rootStore.loadUsers();
             rootStore.sessionStore.loadSessions();
             await rootStore.loadCompanies();
-            await rootStore.loadActions();
-            rootStore.loadAssistants();
-            rootStore.loadInboxMessages();
 
             // finish onboarding
             await rootStore.completeOnboarding();

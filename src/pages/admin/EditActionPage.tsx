@@ -54,6 +54,7 @@ const EditActionView: React.FC = observer(() => {
             onSubmit={handleSubmit}
             isLoading={isLoading}
             formType="update"
+            
           />
         </div>
         <div className="w-1/2">

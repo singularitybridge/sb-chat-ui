@@ -133,6 +133,7 @@ export const Menu = observer(() => {
           </ul>
         </div>
         <LanguageToggle />
+        {/* <ClearSession /> */}
         <SessionView />
       </div>
     </nav>

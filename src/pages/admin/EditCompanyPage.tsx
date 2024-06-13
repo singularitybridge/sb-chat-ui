@@ -94,6 +94,7 @@ const EditCompanyView: React.FC = observer(() => {
             refreshToken={handleRefreshToken}
             isLoading={isLoading}
             formType="update"
+          
           />
         </div>
         <div className="w-1/2"></div>
