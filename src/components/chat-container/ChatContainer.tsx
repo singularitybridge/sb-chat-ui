@@ -146,7 +146,7 @@ const ChatContainer = observer(() => {
         assistant={assistant ? {
           name: assistant.name,
           description: assistant.description,
-          avatar: 'images/avatars/av4.png',
+          avatar: '/images/avatars/av4.png',
         } : undefined}
         assistantName="AI Assistant"
         onSendMessage={handleSubmitMessage}
