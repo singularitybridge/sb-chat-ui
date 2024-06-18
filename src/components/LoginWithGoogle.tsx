@@ -22,6 +22,7 @@ const LoginWithGoogle: React.FC = () => {
             if (rootStore.needsOnboarding) {
                 navigate('/onboarding', { state: { user } });
             } else {
+                debugger;
                 const companyId = getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) || '';
                 const userId = getLocalStorageItem(LOCALSTORAGE_USER_ID) || '';
                 const sessionData = await getSessionByCompanyAndUserId(companyId, userId);

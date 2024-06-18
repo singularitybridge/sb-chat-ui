@@ -1,9 +1,10 @@
 import axios from 'axios';
 import { ICompany } from '../../store/models/Company';
+import apiClient from '../AxiosService';
 
 export const getCompanies = async (): Promise<ICompany[]> => {
   try {
-    const response = await axios.get('http://localhost:3000/company');
+    const response = await apiClient.get('company');
     return response.data;
   } catch (error) {
     console.error('Failed to fetch companies', error);
@@ -15,8 +16,8 @@ export const getDecryptedCompanyById = async (
   _id: string
 ): Promise<ICompany> => {
   try {
-    const response = await axios.get(
-      `http://localhost:3000/company/decrypted/${_id}`
+    const response = await apiClient.get(
+      `company/decrypted/${_id}`
     );
     return response.data;
   } catch (error) {
@@ -27,7 +28,8 @@ export const getDecryptedCompanyById = async (
 
 export const addCompany = async (company: ICompany): Promise<ICompany> => {
   try {
-    const response = await axios.post('http://localhost:3000/company', company);
+    debugger;
+    const response = await apiClient.post('company', company);
     return response.data;
   } catch (error) {
     console.error('Failed to add company', error);
@@ -37,7 +39,7 @@ export const addCompany = async (company: ICompany): Promise<ICompany> => {
 
 export const deleteCompany = async (companyId: string): Promise<void> => {
   try {
-    await axios.delete(`http://localhost:3000/company/${companyId}`);
+    await apiClient.delete(`company/${companyId}`);
   } catch (error) {
     console.error('Failed to delete company', error);
     throw error;
@@ -49,8 +51,8 @@ export const updateCompany = async (
   company: ICompany
 ): Promise<ICompany> => {
   try {
-    const response = await axios.put(
-      `http://localhost:3000/company/${_id}`,
+    const response = await apiClient.put(
+      `company/${_id}`,
       company
     );
     return response.data;
@@ -65,8 +67,8 @@ export const refreshCompanyToken = async (
   company: ICompany
 ): Promise<ICompany> => {
   try {
-    const response = await axios.put(
-      `http://localhost:3000/company/refresh-token/${_id}`,
+    const response = await apiClient.put(
+      `company/refresh-token/${_id}`,
       company
     );
     return response.data;

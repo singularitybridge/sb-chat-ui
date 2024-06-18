@@ -1,14 +1,15 @@
 // services/apiKeyVerificationService.ts
 import axios from 'axios';
+import apiClient from './AxiosService';
 
-const baseUrl = 'http://localhost:3000/api';
+const baseUrl = 'https://api.singularitybridge.net/api';
 
 export const verifyApiKey = async (
   apiKey: string,
   apiKeyId: string
 ): Promise<boolean> => {  
   try {
-    const response = await axios.post(`${baseUrl}/verify-api-key`, {
+    const response = await apiClient.post(`api/verify-api-key`, {
       apiKey,
       apiKeyId,
     });    
