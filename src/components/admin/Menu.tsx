@@ -6,10 +6,28 @@ import { SessionView } from './SessionView';
 import { useTranslation } from 'react-i18next';
 import LanguageToggle from '../LanguageToggle';
 import { useRootStore } from '../../store/common/RootStoreContext';
+import Button from '../core/Button';
+import { createSession } from '../../services/api/sessionService';
 
 export const Menu = observer(() => {
+
   const rootStore = useRootStore(); 
   const userRole = rootStore.currentUser?.role; 
+
+
+  const clearSession = async () => {
+    // rootStore.clearSession();
+
+    if (!rootStore.sessionStore.activeSession) {
+      return;
+    }
+
+    console.log(`Clearing session ${rootStore.sessionStore.activeSession._id}`);
+    await rootStore.sessionStore.deleteSession(rootStore.sessionStore.activeSession._id);
+    console.log(`Creating new session for user ${rootStore.currentUser!._id} and company ${rootStore.currentUser!.companyId}`);
+    await createSession(rootStore.currentUser!._id, rootStore.currentUser!.companyId);
+
+  }
 
   const menuItems = [
     {
@@ -132,6 +150,12 @@ export const Menu = observer(() => {
             })}
           </ul>
         </div>
+
+
+        <Button onClick={clearSession}>
+          clear
+        </Button>
+
         <LanguageToggle />
         {/* <ClearSession /> */}
         <SessionView />

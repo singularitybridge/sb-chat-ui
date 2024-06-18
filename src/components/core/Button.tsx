@@ -20,7 +20,7 @@ const Button: React.FC<ButtonProps> = ({
     'px-2.5',
     'py-1.5',
     'mr-2 mb-2',
-    'rounded-md',
+    'rounded-xl',
     'text-base',
     additionalClassName
   );
