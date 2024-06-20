@@ -28,7 +28,6 @@ export const getDecryptedCompanyById = async (
 
 export const addCompany = async (company: ICompany): Promise<ICompany> => {
   try {
-    debugger;
     const response = await apiClient.post('company', company);
     return response.data;
   } catch (error) {

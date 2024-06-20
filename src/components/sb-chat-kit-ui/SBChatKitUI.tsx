@@ -86,7 +86,7 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
       </button>
     );
   }
-debugger
+
   return (
     <div
       style={{
