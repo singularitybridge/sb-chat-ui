@@ -3,10 +3,9 @@ import apiClient from '../AxiosService';
 import { IAction } from '../../store/models/Action';
 
 
-const BASE_URL = 'https://api.singularitybridge.net/actions';
 
 export const getActions = async (): Promise<IAction[]> => {
-  const response = await apiClient.get(`BASE_URL`);
+  const response = await apiClient.get(`actions`);
   return response.data;
 };
 
