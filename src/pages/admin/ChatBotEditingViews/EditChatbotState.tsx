@@ -41,7 +41,6 @@ const EditChatbotState: React.FC<EditChatbotStateProps> = ({
   useEffect(() => {
     setName(state.name);
     setTitle(state.title || ''); // Update the title state when the state prop changes
-    console.log('set title', state.title);
   }, [state]);
 
   return (

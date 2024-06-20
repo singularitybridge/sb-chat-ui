@@ -44,7 +44,6 @@ const InboxView: React.FC = observer(() => {
 
     try {
       const response = await addInboxResponse(sessionId, message);
-      console.log('Message sent successfully', response);
       setMessage('');
       setIsLoading(false); 
     } catch (error) {

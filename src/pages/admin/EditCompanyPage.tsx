@@ -61,7 +61,6 @@ const EditCompanyView: React.FC = observer(() => {
   );
 
   const handleSubmit = async (values: FormValues) => {
-    console.log('Form Values:', values);
     if (!id) {
       return;
     }

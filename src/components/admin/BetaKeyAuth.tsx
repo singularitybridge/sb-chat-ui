@@ -11,8 +11,6 @@ const BetaKeyAuth: React.FC<BetaKeyAuthProps> = ({ onSuccess }) => {
 
     const handleBetaKeySubmit = async () => {
         try {       
-            console.log('betaKey', betaKey);
-                 
             const response = await verifyBetaKey(betaKey);
             if (response.isValid) {
                 onSuccess();

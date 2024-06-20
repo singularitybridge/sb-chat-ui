@@ -22,7 +22,6 @@ const NewAssistantView: React.FC = observer(() => {
     description: string;
     prompt: string;
   }) => {
-    console.log('set assistant data', data);
     setFormFields((prev) => {
       const newFormFields = prev.map((field) => {
         if (field.key === 'name') {
@@ -62,7 +61,6 @@ const NewAssistantView: React.FC = observer(() => {
 
   const handleSubmit = async (values: FormValues) => {
     setIsLoading(true);
-    console.log(values);    
     await rootStore.createAssistant(values as unknown as IAssistant);
     setIsLoading(false);
   };

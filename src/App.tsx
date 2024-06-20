@@ -47,7 +47,6 @@ const App: React.FC = observer(() => {
 
     channel.bind('createNewAssistant', async function (data: any) {
       const newAssistantData = data.message; // contains name, description, prompt
-      console.log(newAssistantData);
       emitter.emit(EVENT_SHOW_ADD_ASSISTANT_MODAL, 'Add Assistant');
       await new Promise((resolve) => setTimeout(resolve, 100));
       emitter.emit(EVENT_SET_ASSISTANT_VALUES, newAssistantData);
@@ -55,7 +54,6 @@ const App: React.FC = observer(() => {
 
     channel.bind('setAssistant', async function (data: any) {
       const assistantData = data.message; // contains name, description, prompt
-      console.log(assistantData);
       emitter.emit(EVENT_SET_ACTIVE_ASSISTANT, assistantData._id);
     });
 
@@ -67,13 +65,15 @@ const App: React.FC = observer(() => {
 
   const loadUserSession = async () => {
     try {
-      const session = await getSessionByCompanyAndUserId(
-        getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) as string,
-        getLocalStorageItem(LOCALSTORAGE_USER_ID) as string
-      );
-      await rootStore.loadAssistants();
-      rootStore.sessionStore.setActiveSession(session);
-      await rootStore.loadInboxMessages();
+      if (getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) && getLocalStorageItem(LOCALSTORAGE_USER_ID)) {
+        const session = await getSessionByCompanyAndUserId(
+          getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) as string,
+          getLocalStorageItem(LOCALSTORAGE_USER_ID) as string
+        );
+        await rootStore.loadAssistants();
+        rootStore.sessionStore.setActiveSession(session);
+        await rootStore.loadInboxMessages();
+      }
     } catch (error) {
       console.log('session not found');
     }

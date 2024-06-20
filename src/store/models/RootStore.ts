@@ -111,8 +111,6 @@ const RootStore = types
       }),
     loginSystemUser: flow(function* (credential: string) {
       try {
-        console.log('in loginSystemUser');
-        
         const response = yield login(credential);
         const userData = response.user;
         const isNewUser = response.isNewUser;
