@@ -66,13 +66,19 @@ const App: React.FC = observer(() => {
   const loadUserSession = async () => {
     try {
       if (getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) && getLocalStorageItem(LOCALSTORAGE_USER_ID)) {
+        rootStore.sessionStore.loadSessions();
+        console.log('loading session');
+        
         const session = await getSessionByCompanyAndUserId(
           getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) as string,
           getLocalStorageItem(LOCALSTORAGE_USER_ID) as string
         );
         await rootStore.loadAssistants();
         rootStore.sessionStore.setActiveSession(session);
+        //--
         await rootStore.loadInboxMessages();
+        await rootStore.loadActions();
+
       }
     } catch (error) {
       console.log('session not found');
@@ -82,9 +88,7 @@ const App: React.FC = observer(() => {
   useEffect(() => {
     const loadData = async () => {
       await rootStore.loadUsers();
-      rootStore.sessionStore.loadSessions();
       await rootStore.loadCompanies();
-      await rootStore.loadActions();
       await loadUserSession();
       rootStore.checkAuthState();
       setIsDataLoaded(true);
