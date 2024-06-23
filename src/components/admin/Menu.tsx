@@ -22,9 +22,7 @@ export const Menu = observer(() => {
       return;
     }
 
-    console.log(`Clearing session ${rootStore.sessionStore.activeSession._id}`);
     await rootStore.sessionStore.deleteSession(rootStore.sessionStore.activeSession._id);
-    console.log(`Creating new session for user ${rootStore.currentUser!._id} and company ${rootStore.currentUser!.companyId}`);
     await createSession(rootStore.currentUser!._id, rootStore.currentUser!.companyId);
 
   }
@@ -157,6 +155,7 @@ export const Menu = observer(() => {
         </Button>
 
         <LanguageToggle />
+        {/* <ClearSession /> */}
         <SessionView />
       </div>
     </nav>

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { ISession } from '../../store/models/Session';
+import apiClient from '../AxiosService';
 
 export const LOCALSTORAGE_USER_ID = 'userId';
 export const LOCALSTORAGE_COMPANY_ID = 'companyId';
@@ -47,7 +48,7 @@ export const updateSessionAssistant = async (
   assistantId: string
 ): Promise<void> => {  
   try {
-    await axios.put(`http://localhost:3000/session/${sessionId}`, {
+    await apiClient.put(`session/${sessionId}`, {
       assistantId,
     });
   } catch (error) {
@@ -63,7 +64,7 @@ export const createSession = async (
   assistantId?: string
 ): Promise<ISession> => {
   try {    
-    const response = await axios.post('http://localhost:3000/session', {
+    const response = await apiClient.post('session', {
       userId,
       companyId,
       assistantId,
@@ -80,7 +81,7 @@ export const createSession = async (
 
 export const getAllSessions = async (companyId: string): Promise<ISession[]> => {
   try {
-    const response = await axios.get(`http://localhost:3000/session/friendly/${companyId}`);
+    const response = await apiClient.get(`session/friendly/${companyId}`);
     return response.data;
   } catch (error) {
     console.error('Failed to fetch sessions', error);
@@ -93,8 +94,8 @@ export const getSessionByCompanyAndUserId = async (
   userId: string
 ): Promise<ISession> => {
   try {
-    const response = await axios.get(
-      `http://localhost:3000/session/${companyId}/${userId}`
+    const response = await apiClient.get(
+      `session/${companyId}/${userId}`
     );
     return response.data;
   } catch (error) {
@@ -108,8 +109,8 @@ export const getSessionByCompanyAndUserId = async (
 
 export const getSessionById = async (sessionId: string): Promise<ISession> => {  
   try {
-    const response = await axios.get(
-      `http://localhost:3000/session/${sessionId}`
+    const response = await apiClient.get(
+      `session/${sessionId}`
     );
     return response.data;
   } catch (error) {
@@ -120,7 +121,7 @@ export const getSessionById = async (sessionId: string): Promise<ISession> => {
 
 export const deleteSession = async (sessionId: string): Promise<void> => {
   try {
-    await axios.delete(`http://localhost:3000/session/${sessionId}`);
+    await apiClient.delete(`session/${sessionId}`);
   } catch (error) {
     console.error(`Failed to delete session with id ${sessionId}`, error);
     throw error;

@@ -1,12 +1,10 @@
 // src/api/loginService.ts
 import axios from 'axios';
-
-const API_URL = 'http://localhost:3000/auth/';
+import apiClient from '../AxiosService';
 
 export const login = async (token: string) => {
     try {
-      
-        const response = await axios.post(`${API_URL}/google/login`, {
+        const response = await apiClient.post(`auth/google/login`, {
             token: token
         });
         return response.data;
@@ -19,9 +17,9 @@ export const login = async (token: string) => {
 export const verifyBetaKey = async (betaKey: string) => {
 
   try {
-      const response = await axios.post(`${API_URL}/beta-key`, {
+      const response = await apiClient.post(`auth/beta-key`, {
           betaKey: betaKey
-      });
+      });    
       return response.data;
   } catch (error) {
       console.error('Failed to verify beta key', error);

@@ -8,7 +8,6 @@ const withPage =
     (WrappedComponent: React.ComponentType<any>) => {
       const WithPageComponent = (props: any) => {
 
-        console.log('action log :  ' + description);
         const { t } = useTranslation();
 
         return (

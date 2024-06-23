@@ -1,11 +1,9 @@
-import { Chat } from './pages/Chat';
 import { NotFound } from './pages/NotFound';
 import { Admin } from './pages/Admin';
 import React from 'react';
 import { Navigate, createBrowserRouter } from 'react-router-dom'; 
 import App from './App';
-import { ChatbotView } from './pages/admin/ChatbotView';
-import { ChatRouteLoader } from './components/ChatRouteLoader';
+// import { ChatbotView } from './pages/admin/ChatbotView';
 import { AssistantsPage } from './pages/admin/AssistantsPage';
 import { EditAssistantPage } from './pages/admin/EditAssistantPage';
 import { CompaniesPage } from './pages/admin/CompaniesPage';
@@ -38,22 +36,6 @@ export const browserRouter = createBrowserRouter([
         element: <Navigate to="/signup" replace />, // Redirect to signup by default
       },
       {
-        path: '/chat',
-        element: <Chat />,
-      },
-      {
-        path: '/chat/:sessionId',
-        element: (
-          <ChatRouteLoader>
-            <Chat />
-          </ChatRouteLoader>
-        ),
-      },
-      {
-        path: '/other',
-        element: <Chat />,
-      },
-      {
         path: 'test',
         element: <TestPage />,
       },
@@ -70,10 +52,6 @@ export const browserRouter = createBrowserRouter([
           //   path: "/chat-sessions/:id",
           //   element: <ChatSessionView />,
           // },
-          {
-            path: 'chatbots/:key',
-            element: <ChatbotView />,
-          },
           {
             path: 'assistants',
             element: <AssistantsPage />,

@@ -34,7 +34,6 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
 
   const [userInput, setUserInput] = React.useState('');
   const { timerRunning, startTimer, resetTimer } = useTimer(() => {
-    console.log('send message timer');
     SpeechRecognition.stopListening();
     handleSendMessage();
   });

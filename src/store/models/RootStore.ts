@@ -114,7 +114,6 @@ const RootStore = types
         const response = yield login(credential);
         const userData = response.user;
         const isNewUser = response.isNewUser;
-
         if (!isNewUser) {
           const existingUser = self.users.find(user => user._id === userData._id);
           if (existingUser) {
@@ -325,7 +324,6 @@ const RootStore = types
 
     addCompany: flow(function* (company: ICompany) {
       try {
-        ;
         const newCompany = yield addCompany(company);
         newCompany.token = newCompany.token.value;
         self.companies.push(newCompany);

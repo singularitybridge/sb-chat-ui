@@ -36,7 +36,6 @@ const EditActionView: React.FC = observer(() => {
   });
 
   const handleSubmit = async (values: FormValues) => {
-    console.log('Form Values:', values);
     if (!id) {
       return;
     }
@@ -54,6 +53,7 @@ const EditActionView: React.FC = observer(() => {
             onSubmit={handleSubmit}
             isLoading={isLoading}
             formType="update"
+            
           />
         </div>
         <div className="w-1/2">

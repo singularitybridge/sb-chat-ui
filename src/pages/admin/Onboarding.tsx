@@ -37,7 +37,7 @@ const OnboardingPage: React.FC = () => {
             };
             const newCompany = await rootStore.addCompany(defaultCompany as ICompany);
             setLocalStorageItem(LOCALSTORAGE_COMPANY_ID, newCompany._id);
-
+            localStorage.setItem('userToken', newCompany.token);
             // Create new user
             const newUser = {
                 name: user.name,
@@ -64,15 +64,11 @@ const OnboardingPage: React.FC = () => {
             );
             const sessionData = await getSessionById(session._id);
             rootStore.sessionStore.setActiveSession(sessionData);
-            localStorage.setItem('userToken', 'new session');
 
 
             await rootStore.loadUsers();
             rootStore.sessionStore.loadSessions();
             await rootStore.loadCompanies();
-            await rootStore.loadActions();
-            rootStore.loadAssistants();
-            rootStore.loadInboxMessages();
 
             // finish onboarding
             await rootStore.completeOnboarding();

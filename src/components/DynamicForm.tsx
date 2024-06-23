@@ -73,7 +73,7 @@ export interface DynamicFormProps {
   fields: FieldConfig[];
   onSubmit: (values: FormValues) => void;
   refreshToken?: (values: FormValues) => void;
-  onVerify: (value: string) => Promise<boolean>;
+  onVerify?: (value: string) => Promise<boolean>;
   isLoading?: boolean;
   formType: FormType;
 }
@@ -145,7 +145,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                 title={t('CreateNewCompanyPage.APIKeys.title')}
                 description={t('CreateNewCompanyPage.APIKeys.description')}
                 initialData={values[field.id] as ApiKey[]}
-                onVerify={onVerify}
+                onVerify={onVerify || (() => Promise.resolve(true))}
                 onDataChange={(newValue) => handleChange(field.id, newValue)}
               />
             );

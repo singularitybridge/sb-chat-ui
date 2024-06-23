@@ -24,10 +24,10 @@ const LoginWithGoogle: React.FC = () => {
             } else {
                 const companyId = getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) || '';
                 const userId = getLocalStorageItem(LOCALSTORAGE_USER_ID) || '';
+                // set the users session:
                 const sessionData = await getSessionByCompanyAndUserId(companyId, userId);
                 rootStore.sessionStore.setActiveSession(sessionData);
                 await rootStore.loadAssistants();
-                await rootStore.loadInboxMessages();
 
                 rootStore.currentUser?.role === 'Admin' ? navigate('/admin') : navigate('/admin/users');
             }

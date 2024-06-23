@@ -34,7 +34,7 @@ const SideMenuItem: React.FC<SideMenuItemProps> = ({
 );
 
 const SideMenu: React.FC<SideMenuProps> = observer(({ isOpen, closeMenu }) => {
-  const { activeChatbot } = useRootStore();
+  // const { activeChatbot } = useRootStore();
 
   return (
     <aside
@@ -44,7 +44,7 @@ const SideMenu: React.FC<SideMenuProps> = observer(({ isOpen, closeMenu }) => {
     >
       <header className="flex items-center justify-between p-4 mt-4">
         <img
-          src={activeChatbot?.avatarImage}
+          // src={activeChatbot?.avatarImage}
           className="w-[8rem] object-contain"
         />
         <button className="p-1 rounded-full hover:text-gray-400 w-10 h-10">
