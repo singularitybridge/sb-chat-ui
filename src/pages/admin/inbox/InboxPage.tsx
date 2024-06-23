@@ -9,6 +9,7 @@ import { autorun } from 'mobx';
 import { InboxMessage } from './InboxMessage';
 import { SessionInfo } from './SessionInfo';
 import { addInboxResponse } from '../../../services/api/inboxService';
+import { useTranslation } from 'react-i18next';
 
 const DisplayMessages: React.FC<{ session: IInboxSession }> = ({ session }) => {
   return (
@@ -61,6 +62,8 @@ const InboxView: React.FC = observer(() => {
     return () => dispose();
   }, [rootStore.inboxSessions]);
 
+  const { t } = useTranslation();
+
   return (
     <>
       <div className="flex w-full justify-center">
@@ -69,7 +72,7 @@ const InboxView: React.FC = observer(() => {
             <label className="px-2">
               <input
                 className="rounded-lg p-4 bg-gray-200 transition duration-200 focus:outline-none focus:ring-2 w-full"
-                placeholder="Search..."
+                placeholder={t('InboxPage.placeholder')}
               />
             </label>
 
@@ -106,7 +109,7 @@ const InboxView: React.FC = observer(() => {
             <section className="mt-6 border rounded-xl bg-gray-50 mb-3">
               <textarea
                 className="w-full bg-gray-50 p-2 rounded-xl disabled:text-slate-400"
-                placeholder="Type your reply here..."
+                placeholder={t('InboxPage.replyPlaceholder')}
                 rows={3}
                 disabled={isLoading}
                 value={message}
@@ -133,7 +136,7 @@ const InboxView: React.FC = observer(() => {
                   disabled={isLoading}
                   className="bg-purple-600 text-white px-6 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Reply
+                  {t('InboxPage.button')}
                 </button>
               </div>
             </section>
@@ -145,7 +148,7 @@ const InboxView: React.FC = observer(() => {
 });
 
 const InboxPage = withPage(
-  'Inbox',
+  'InboxPage.title',
   'InboxPage.description',
   () => {
     emitter.emit(EVENT_SHOW_ADD_USER_MODAL, 'Add User');

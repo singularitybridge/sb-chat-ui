@@ -4,7 +4,7 @@ export const userFieldConfigs: FieldConfig[] = [
   {
     id: 'name',
     key: 'name',
-    label: 'Name',
+    label: 'CreateNewUser.name',
     type: 'input',
     value: 'Bob Smith', // Default value for name
     visibility: { create: true, view: true, update: true },
@@ -12,7 +12,7 @@ export const userFieldConfigs: FieldConfig[] = [
   {
     id: 'nickname',
     key: 'nickname',
-    label: 'Nickname',
+    label: 'CreateNewUser.nickname',
     type: 'input',
     value: 'Bob', // Default value for nickname
     visibility: { create: true, view: true, update: true },

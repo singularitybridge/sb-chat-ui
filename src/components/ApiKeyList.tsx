@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import VerifiedInputWithLabel from './admin/VerifiedInputWithLabel';
 import { verifyApiKey } from '../services/apiKeyVerificationService';
+import { useTranslation } from 'react-i18next';
 
 export interface ApiKey {
   key: string;
@@ -13,7 +14,7 @@ interface ApiKeyListProps {
   description: string;
   initialData: ApiKey[];
   onDataChange: (data: ApiKey[]) => void;
-  onVerify: (value: string, key: string) => Promise<boolean>; 
+  onVerify: (value: string, key: string) => Promise<boolean>; // Add this line
 }
 
 const ApiKeyList: React.FC<ApiKeyListProps> = ({
@@ -26,8 +27,7 @@ const ApiKeyList: React.FC<ApiKeyListProps> = ({
     Record<string, boolean>
   >({});
 
-  const handleVerify = async (value: string, key: string) => {
-    debugger;
+  const handleVerify = async (value: string, key: string) => {    
     const isValid = await verifyApiKey(value, key);
     setVerificationStatus({ ...verificationStatus, [key]: isValid });
     return isValid;
@@ -38,11 +38,13 @@ const ApiKeyList: React.FC<ApiKeyListProps> = ({
     updatedData[index].value = newValue;
     onDataChange(updatedData);
   };
+  const { t } = useTranslation();
+
 
   return (
     <div>
-      <h2 className="text-xl">{title}</h2>
-      <p className="mb-2 text-sm">{description}</p>
+      <h2 className="text-xl">{t(title)}</h2>
+      <p className="mb-2 text-sm">{t(description)}</p>
       {initialData.map(({ key, label, value }, index) => (
         <VerifiedInputWithLabel
           apiKey={key}

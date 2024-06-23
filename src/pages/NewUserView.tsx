@@ -51,6 +51,7 @@ const NewUserView: React.FC = observer(() => {
       fields={formFields}
       onSubmit={handleSubmit}
       isLoading={isLoading}
+      onVerify={async (value: string) => true}
       formType="create"
     />
   );

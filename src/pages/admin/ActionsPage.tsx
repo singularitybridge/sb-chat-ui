@@ -51,7 +51,7 @@ const ActionsView: React.FC = observer(() => {
 });
 
 const ActionsPage = withPage(
-  'Actions',
+  'ActionsPage.title',
   'ActionsPage.description',
   () => {
     emitter.emit(EVENT_SHOW_ADD_ACTION_MODAL, 'Add Action');

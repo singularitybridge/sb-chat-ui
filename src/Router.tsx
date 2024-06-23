@@ -2,7 +2,7 @@ import { Chat } from './pages/Chat';
 import { NotFound } from './pages/NotFound';
 import { Admin } from './pages/Admin';
 import React from 'react';
-import { createBrowserRouter } from 'react-router-dom'; // Import the Outlet component
+import { Navigate, createBrowserRouter } from 'react-router-dom'; 
 import App from './App';
 import { ChatbotView } from './pages/admin/ChatbotView';
 import { ChatRouteLoader } from './components/ChatRouteLoader';
@@ -15,13 +15,30 @@ import { InboxPage } from './pages/admin/inbox/InboxPage';
 import { EditCompanyPage } from './pages/admin/EditCompanyPage';
 import { ActionsPage } from './pages/admin/ActionsPage';
 import { EditActionPage } from './pages/admin/EditActionPage';
+import RequireAuth from './components/admin/RequireAuth';
+import SignupPage from './pages/admin/SignupPage';
+import OnboardingPage from './pages/admin/Onboarding';
+import { TestPage } from './pages/TestPage';
 
 export const browserRouter = createBrowserRouter([
   {
     element: <App />,
     children: [
+
       {
-        path: '/',
+        path: 'signup',
+        element: <SignupPage />,
+      },
+      {
+        path: 'onboarding', 
+        element: <OnboardingPage />,
+      },
+      {
+        index: true,
+        element: <Navigate to="/signup" replace />, // Redirect to signup by default
+      },
+      {
+        path: '/chat',
         element: <Chat />,
       },
       {
@@ -37,8 +54,13 @@ export const browserRouter = createBrowserRouter([
         element: <Chat />,
       },
       {
+        path: 'test',
+        element: <TestPage />,
+      },
+      {
         path: '/admin',
-        element: <Admin />,
+        element:
+          <RequireAuth><Admin /></RequireAuth>,
         children: [
           {
             index: true,
@@ -89,9 +111,13 @@ export const browserRouter = createBrowserRouter([
             path: 'inbox',
             element: <InboxPage />,
           },
+          
+
+
         ],
       },
       { path: '*', element: <NotFound /> },
     ],
   },
 ]);
+

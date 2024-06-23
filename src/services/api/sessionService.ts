@@ -3,10 +3,12 @@ import { ISession } from '../../store/models/Session';
 
 export const LOCALSTORAGE_USER_ID = 'userId';
 export const LOCALSTORAGE_COMPANY_ID = 'companyId';
+export const LOCALSTORAGE_SYSTEM_USER_ID = 'systemUserId';
 
 export type LocalStorageKeys =
   | typeof LOCALSTORAGE_USER_ID
   | typeof LOCALSTORAGE_COMPANY_ID
+  | typeof LOCALSTORAGE_SYSTEM_USER_ID;
 
 export const getLocalStorageItem = (key: LocalStorageKeys): string | null => {
   return localStorage.getItem(key);
@@ -24,6 +26,10 @@ export const getUserId = (): string | null => {
   return getLocalStorageItem(LOCALSTORAGE_USER_ID);
 };
 
+export const getSystemUserId = (): string | null => {
+  return getLocalStorageItem(LOCALSTORAGE_USER_ID);
+};
+
 export const setCompanyId = (companyId: string): void => {
   setLocalStorageItem(LOCALSTORAGE_COMPANY_ID, companyId);
 };
@@ -32,11 +38,14 @@ export const setUserId = (userId: string): void => {
   setLocalStorageItem(LOCALSTORAGE_USER_ID, userId);
 };
 
+export const setSystemUserId = (userId: string): void => {
+  setLocalStorageItem(LOCALSTORAGE_USER_ID, userId);
+};
+
 export const updateSessionAssistant = async (
   sessionId: string,
   assistantId: string
-): Promise<void> => {
-  debugger
+): Promise<void> => {  
   try {
     await axios.put(`http://localhost:3000/session/${sessionId}`, {
       assistantId,
@@ -53,8 +62,7 @@ export const createSession = async (
   companyId: string,
   assistantId?: string
 ): Promise<ISession> => {
-  try {
-    debugger
+  try {    
     const response = await axios.post('http://localhost:3000/session', {
       userId,
       companyId,
@@ -98,8 +106,7 @@ export const getSessionByCompanyAndUserId = async (
   }
 }
 
-export const getSessionById = async (sessionId: string): Promise<ISession> => {
-  debugger
+export const getSessionById = async (sessionId: string): Promise<ISession> => {  
   try {
     const response = await axios.get(
       `http://localhost:3000/session/${sessionId}`

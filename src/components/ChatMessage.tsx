@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { observer } from 'mobx-react-lite';
-import { Message, SenderType } from '../atoms/dataStore-old';
 import { playAudio } from '../services/AudioService';
 import { Avatar, AvatarStyles } from './Avatar';
 import { useRootStore } from '../store/common/RootStoreContext';

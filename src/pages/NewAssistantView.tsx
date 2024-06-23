@@ -62,8 +62,7 @@ const NewAssistantView: React.FC = observer(() => {
 
   const handleSubmit = async (values: FormValues) => {
     setIsLoading(true);
-    console.log(values);
-    debugger
+    console.log(values);    
     await rootStore.createAssistant(values as unknown as IAssistant);
     setIsLoading(false);
   };

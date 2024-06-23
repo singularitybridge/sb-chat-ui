@@ -6,7 +6,7 @@ export const companyFieldConfigs: FieldConfig[] = [
     key: 'name',
     label: 'Name',
     type: 'input',
-    value: 'New Company',
+    value: 'CreateNewCompanyPage.placeholders.name',
     visibility: { create: true, view: true, update: true },
   },
   {
@@ -26,32 +26,32 @@ export const companyFieldConfigs: FieldConfig[] = [
       {
         key: 'openai_api_key',
         label: 'OpenAI API Key',
-        value: 'your OpenAI API key here',
+        value: 'CreateNewCompanyPage.APIKeys.placeholders.openai_api_key',
       },
       {
         key: 'gcp_key',
         label: 'GCP Key',
-        value: 'your GCP key here',
+        value: 'CreateNewCompanyPage.APIKeys.placeholders.gcp_key',
       },
       {
         key: 'notion_api_key',
         label: 'Notion API Key',
-        value: 'your Notion API key here',
+        value: 'CreateNewCompanyPage.APIKeys.placeholders.notion_api_key',
       },
       {
         key: 'labs11_api_key',
         label: '11Labs API Key',
-        value: 'your 11Labs API key here',
+        value: 'CreateNewCompanyPage.APIKeys.placeholders.labs11_api_key',
       },
       {
         key: 'twilio_account_sid',
         label: 'Twilio Account SID',
-        value: 'your Twilio account SID here',
+        value: 'CreateNewCompanyPage.APIKeys.placeholders.twilio_account_sid',
       },
       {
         key: 'twilio_auth_token',
         label: 'Twilio Auth Token',
-        value: 'your Twilio auth token here',
+        value: 'CreateNewCompanyPage.APIKeys.placeholders.twilio_auth_token',
       },
     ],
     visibility: { create: true, view: true, update: true },

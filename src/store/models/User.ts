@@ -4,8 +4,13 @@ import { Identifier } from './Assistant';
 const User = types.model('User', {
   _id: types.identifier,
   name: types.string,
-  nickname: types.string,
+  nickname: types.maybe(types.string),
+  email: types.string,
+  googleId: types.string,
+  role: types.string,
+  companyId: types.string,
   identifiers: types.optional(types.array(Identifier), []),
+
 });
 
 type IUser = Instance<typeof User>;

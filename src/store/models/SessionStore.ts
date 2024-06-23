@@ -21,6 +21,7 @@ const SessionStore = types
         );
         applySnapshot(self.sessions, sessions);
       } catch (error) {
+        
         console.error('Failed to load sessions', error);
       }
     }),

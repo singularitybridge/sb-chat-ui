@@ -9,6 +9,7 @@ import { CompanyKeys } from '../store/models/Company';
 import { UserKeys } from '../store/models/User';
 import { ActionKeys } from '../store/models/Action';
 import TokenInput from './admin/TokenInput';
+import { useTranslation } from 'react-i18next';
 
 export type FieldType =
   | 'input'
@@ -66,12 +67,12 @@ export type FieldConfig =
   | TokenInputFieldConfig;
 
 export interface FormValues
-  extends Record<string, string | KeyValue[] | ApiKey[]> {}
+  extends Record<string, string | KeyValue[] | ApiKey[]> { }
 
 export interface DynamicFormProps {
   fields: FieldConfig[];
   onSubmit: (values: FormValues) => void;
-  refreshToken: (values: FormValues) => void;
+  refreshToken?: (values: FormValues) => void;
   onVerify: (value: string) => Promise<boolean>;
   isLoading?: boolean;
   formType: FormType;
@@ -103,9 +104,8 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     setValues(initialValues);
   }, [fields, formType]);
 
-  const handleRefreshToken = () => {
-    debugger;
-    refreshToken(values);
+  const handleRefreshToken = () => {    
+    refreshToken ? refreshToken(values) : null;
   };
 
   const handleChange = (id: string, newValue: string | KeyValue[]) => {
@@ -115,6 +115,9 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   const handleSubmit = () => {
     onSubmit(values);
   };
+
+  const { t } = useTranslation();
+
 
   return (
     <form
@@ -139,8 +142,8 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
             return (
               <ApiKeyList
                 key={field.id}
-                title="API Keys"
-                description="Api keys are used to validate and connect to external sources"
+                title={t('CreateNewCompanyPage.APIKeys.title')}
+                description={t('CreateNewCompanyPage.APIKeys.description')}
                 initialData={values[field.id] as ApiKey[]}
                 onVerify={onVerify}
                 onDataChange={(newValue) => handleChange(field.id, newValue)}
@@ -150,8 +153,8 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
             return (
               <KeyValueList
                 key={field.id}
-                title="Identifiers"
-                description="Identifiers are used to connect assistants to external sources"
+                title="CreateNewCompanyPage.Identifiers.title"
+                description="CreateNewCompanyPage.Identifiers.description"
                 initialData={(values[field.id] as KeyValue[]) || []}
                 onDataChange={(newValue) => handleChange(field.id, newValue)}
               />
@@ -177,7 +180,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
               <InputWithLabel
                 key={field.id}
                 type="text"
-                label={field.label}
+                label={t(field.label)}
                 id={field.id}
                 value={values[field.id] as string}
                 onChange={(newValue) => handleChange(field.id, newValue)}
@@ -191,7 +194,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
         type="submit"
         isLoading={isLoading || false}
       >
-        Save Changes
+        {t('CreateNewCompanyPage.save')}
       </LoadingButton>
     </form>
   );

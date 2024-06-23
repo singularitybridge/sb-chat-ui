@@ -3,7 +3,7 @@ import { FieldConfig } from '../../components/DynamicForm';
 export const actionFieldConfigs: FieldConfig[] = [
   {
     id: 'type',
-    label: 'Type',
+    label: 'CreateNewAction.type',
     key: 'type',
     type: 'input',
     value: 'message',
@@ -12,7 +12,7 @@ export const actionFieldConfigs: FieldConfig[] = [
   {
     id: 'name',
     key: 'name',
-    label: 'Name',
+    label: 'CreateNewAction.name',
     type: 'input',
     value: 'New Action',
     visibility: { create: true, view: true, update: true },
@@ -20,7 +20,7 @@ export const actionFieldConfigs: FieldConfig[] = [
   {
     id: 'description',
     key: 'description',
-    label: 'Description',
+    label: 'CreateNewAction.description',
     type: 'input',
     value: 'New Action Description',
     visibility: { create: true, view: true, update: true },
@@ -28,7 +28,7 @@ export const actionFieldConfigs: FieldConfig[] = [
   {
     id: 'parameters',
     key: 'parameters',
-    label: 'Parameters',
+    label: 'CreateNewAction.parameters',
     type: 'textarea',
     value: '',
     visibility: { create: true, view: true, update: true },

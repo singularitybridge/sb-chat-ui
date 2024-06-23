@@ -86,8 +86,7 @@ export async function deleteAssistant(id: string): Promise<void> {
 }
 
 export async function addAssistant(assistant: IAssistant): Promise<IAssistant> {
-  try {
-    debugger
+  try {    
     const response = await axios.post('http://localhost:3000/assistant', assistant);
     return response.data;
   } catch (error) {

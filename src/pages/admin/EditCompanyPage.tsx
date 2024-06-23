@@ -11,12 +11,15 @@ import {
 } from '../../components/DynamicForm';
 import { toJS } from 'mobx';
 import { companyFieldConfigs } from '../../store/fieldConfigs/companyFieldConfigs';
+import { useTranslation } from 'react-i18next';
+import { setLocalStorageItem } from '../../services/api/sessionService';
 
 const EditCompanyView: React.FC = observer(() => {
   const { id } = useParams<{ id: string }>();
   const rootStore = useRootStore();
   const [company, setCompany] = useState<ICompany | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchCompany = async () => {
@@ -45,6 +48,7 @@ const EditCompanyView: React.FC = observer(() => {
   const formFields: FieldConfig[] = companyFieldConfigs.map(
     ({ id, label, key, type, visibility }) => {
       const fieldKeyString = String(key);
+      
       return {
         key: key,
         label: label,
@@ -76,6 +80,7 @@ const EditCompanyView: React.FC = observer(() => {
       values as unknown as ICompany
     );
     setCompany(updatedCompany);
+    localStorage.setItem('userToken', updatedCompany.token);
     setIsLoading(false);
   };
 
@@ -93,13 +98,14 @@ const EditCompanyView: React.FC = observer(() => {
         </div>
         <div className="w-1/2"></div>
       </div>
+      
     </>
   );
 });
 
 const EditCompanyPage = withPage(
-  'Edit Company',
-  'Update company details here',
+  'EditCompanyPage.title',
+  'EditCompanyPage.description',
   () => {
     console.log('edit company');
   }

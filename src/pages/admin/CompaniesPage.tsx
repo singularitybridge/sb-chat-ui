@@ -27,7 +27,6 @@ import { useTranslation } from 'react-i18next';
 
 
 const CompaniesView: React.FC = observer(() => {
-  debugger;
   const rootStore = useRootStore();
   const navigate = useNavigate();
 
@@ -40,20 +39,16 @@ const CompaniesView: React.FC = observer(() => {
 
   const handleSetCompany = async (row: ICompany) => {
     setLocalStorageItem(LOCALSTORAGE_COMPANY_ID, row._id);
-    debugger
     const session = await createSession(
       getLocalStorageItem(LOCALSTORAGE_USER_ID) || '',
       row._id
     );
-      debugger
     const sessionData = await getSessionById(session._id);
-    debugger
     rootStore.sessionStore.setActiveSession(sessionData);
-      debugger
     rootStore.loadAssistants();
     rootStore.loadInboxMessages();
 
-    emitter.emit(EVENT_SHOW_NOTIFICATION, 'Company set successfully');
+    emitter.emit(EVENT_SHOW_NOTIFICATION, t('CompaniesPage.successfullySet'));
   };
 
   const Actions = (row: ICompany) => (
@@ -78,17 +73,17 @@ const CompaniesView: React.FC = observer(() => {
   return (
     <>
       <TagsInput
-        title="Actions"
+        title={t("CompaniesPage.actionTitle")}
         description={t('CompaniesPage.action_msg')}
         selectedTags={[]}
         availableTags={[
           {
             id: 'add-user',
-            name: 'add-user',
+            name: t('CompaniesPage.actionTags.addUser'),
           },
           {
             id: 'remove-user',
-            name: 'remove-user',
+            name: t('CompaniesPage.actionTags.removeUser'),
           },
         ]}
       />
@@ -110,7 +105,7 @@ const CompaniesView: React.FC = observer(() => {
   );
 });
 
-const CompaniesPage = withPage('Companies', 'CompaniesPage.description', () => {
+const CompaniesPage = withPage('CompaniesPage.title', 'CompaniesPage.description', () => {
   emitter.emit(EVENT_SHOW_ADD_COMPANY_MODAL, 'Add Company');
 })(CompaniesView);
 export { CompaniesPage };
