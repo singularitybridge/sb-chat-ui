@@ -31,9 +31,10 @@ const BetaKeyAuth: React.FC<BetaKeyAuthProps> = ({ onSuccess }) => {
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
             <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
-                <h1 className="text-2xl font-bold text-center mb-10">Join Our Closed Beta</h1>
+                <h1 className="text-2xl font-bold text-center mb-10">התצטרפו לגרסת הבטא שלנו</h1>
                 <p className="text-center mb-8">
-                    We're currently open to closed beta users only. Please enter your beta invite key to sign up.
+                אנחנו כרגע נותנים גישה לגרסת הבטא שלנו למשתמשים שנבחרו.
+                בבקשה הכניסו את קוד ההזמנה שקיבלתם.
                 </p>
                 <input
                     type="text"
@@ -49,7 +50,7 @@ const BetaKeyAuth: React.FC<BetaKeyAuthProps> = ({ onSuccess }) => {
                         onClick={handleBetaKeySubmit}
                         className="bg-blue-500 text-white py-2 px-4 rounded"
                     >
-                        Continue
+                        להמשיך
                     </button>
                 </div>
             </div>

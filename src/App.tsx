@@ -8,7 +8,12 @@ import { emitter, useEventEmitter } from './services/mittEmitter';
 import { DialogManager } from './components/admin/DialogManager';
 import { ChatContainer } from './components/chat-container/ChatContainer';
 import { pusher } from './services/PusherService';
-import { LOCALSTORAGE_COMPANY_ID, LOCALSTORAGE_USER_ID, getLocalStorageItem, getSessionByCompanyAndUserId } from './services/api/sessionService';
+import {
+  LOCALSTORAGE_COMPANY_ID,
+  LOCALSTORAGE_USER_ID,
+  getLocalStorageItem,
+  getSessionByCompanyAndUserId,
+} from './services/api/sessionService';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { observer } from 'mobx-react-lite';
 import { ClipLoader } from 'react-spinners';
@@ -18,7 +23,7 @@ import {
   EVENT_SHOW_NOTIFICATION,
   EVENT_SHOW_ADD_ASSISTANT_MODAL,
   EVENT_SET_ASSISTANT_VALUES,
-  EVENT_SET_ACTIVE_ASSISTANT
+  EVENT_SET_ACTIVE_ASSISTANT,
 } from './utils/eventNames';
 
 const initialLanguage = localStorage.getItem('appLanguage') || 'en';
@@ -65,10 +70,13 @@ const App: React.FC = observer(() => {
 
   const loadUserSession = async () => {
     try {
-      if (getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) && getLocalStorageItem(LOCALSTORAGE_USER_ID)) {
+      if (
+        getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) &&
+        getLocalStorageItem(LOCALSTORAGE_USER_ID)
+      ) {
         rootStore.sessionStore.loadSessions();
         console.log('loading session');
-        
+
         const session = await getSessionByCompanyAndUserId(
           getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) as string,
           getLocalStorageItem(LOCALSTORAGE_USER_ID) as string
@@ -78,7 +86,6 @@ const App: React.FC = observer(() => {
         //--
         await rootStore.loadInboxMessages();
         await rootStore.loadActions();
-
       }
     } catch (error) {
       console.log('session not found');
@@ -115,7 +122,9 @@ const App: React.FC = observer(() => {
   }, []);
 
   const getHeight = useCallback(() => {
-    return window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    return window.visualViewport
+      ? window.visualViewport.height
+      : window.innerHeight;
   }, []);
 
   const handleResize = () => {
@@ -150,7 +159,7 @@ const App: React.FC = observer(() => {
         <div
           style={style}
           dir={direction}
-          className={`flex flex-col h-screen inset-0 {language === 'en' ? 'font-roboto' : 'font-assistant'}`}
+          className={`flex flex-col h-screen inset-0 font-noto-sans-hebrew`}
         >
           <ToastContainer />
           <DialogManager />
