@@ -4,19 +4,41 @@ import classNames from 'classnames';
 interface TextComponentProps {
   text: string;
   size: 'normal' | 'title';
-  color?: 'normal' | 'alert';
+  color?: 'normal' | 'alert' | 'info';
+  align?: 'left' | 'center' | 'right';
   className?: string;
 }
 
-const TextComponent: React.FC<TextComponentProps> = ({ text, size, color = 'normal', className }) => {
+const TextComponent: React.FC<TextComponentProps> = ({ 
+  text, 
+  size, 
+  color = 'normal', 
+  align = 'center',
+  className 
+}) => {
+  const baseClasses = {
+    normal: 'text-base font-normal tracking-[0.56px]',
+    title: 'text-2xl font-black tracking-[1.08px]'
+  };
+
+  const colorClasses = {
+    normal: 'text-[#111828]',
+    alert: 'text-red-500',
+    info: 'text-[#111828] opacity-50'
+  };
+
+  const alignClasses = {
+    left: 'text-left',
+    center: 'text-center',
+    right: 'text-right'
+  };
+
   const textClass = classNames(
-    {
-      'text-base text-center font-normal leading-[1.4] tracking-[0.56px] text-[#111828]': size === 'normal' && color === 'normal',
-      'text-2xl text-center font-black leading-[1.4] tracking-[1.08px] text-[#111828]': size === 'title' && color === 'normal',
-      'text-base text-center font-normal leading-[1.4] tracking-[0.56px] text-red-500': size === 'normal' && color === 'alert',
-      'text-2xl text-center font-black leading-[1.4] tracking-[1.08px] text-red-500': size === 'title' && color === 'alert',
-    },
-    className // Add the custom className prop here
+    'leading-[1.4]',
+    baseClasses[size],
+    colorClasses[color],
+    alignClasses[align],
+    className
   );
 
   return <div className={textClass}>{text}</div>;
