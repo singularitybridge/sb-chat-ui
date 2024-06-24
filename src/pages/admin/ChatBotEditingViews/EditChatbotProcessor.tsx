@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import InputWithLabel from '../../../components/admin/InputWithLabel';
-import Button from '../../../components/core/Button';
+import Button from '../../../components/sb-core-ui-kit/Button';
 import { Select, initTE } from 'tw-elements';
 import { SelectInput } from '../../../components/admin/SelectInput';
 import {

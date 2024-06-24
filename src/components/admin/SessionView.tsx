@@ -6,7 +6,7 @@ import {
   ChatBubbleLeftEllipsisIcon,
   UserIcon,
 } from '@heroicons/react/24/outline';
-import Button from '../core/Button';
+import Button from '../sb-core-ui-kit/Button';
 import {
   getSessionById,
   createSession,

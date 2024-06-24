@@ -1,7 +1,7 @@
 import React from 'react';
 import { observer } from 'mobx-react';
 import { useRootStore } from '../store/common/RootStoreContext';
-import Button from './core/Button';
+import Button from './sb-core-ui-kit/Button';
 
 const LanguageToggle: React.FC = observer(() => {
   const rootStore = useRootStore();

@@ -1,6 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
-import { ButtonProps } from './Button';
+import { ButtonProps } from '../sb-core-ui-kit/Button';
 
 interface LoadingButtonProps extends ButtonProps {
     isLoading: boolean;

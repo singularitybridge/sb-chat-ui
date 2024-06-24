@@ -6,7 +6,7 @@ import { SessionView } from './SessionView';
 import { useTranslation } from 'react-i18next';
 import LanguageToggle from '../LanguageToggle';
 import { useRootStore } from '../../store/common/RootStoreContext';
-import Button from '../core/Button';
+import Button from '../sb-core-ui-kit/Button';
 import { createSession } from '../../services/api/sessionService';
 
 export const Menu = observer(() => {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Input } from './Input';
+import { Input } from './sb-core-ui-kit/Input';
 import { IconButton } from './admin/IconButton';
 import {
   ArrowUturnLeftIcon,
