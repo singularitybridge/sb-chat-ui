@@ -22,9 +22,7 @@ import {
   setLocalStorageItem,
   createSession,
 } from '../../services/api/sessionService';
-import { TagsInput } from '../../components/InputTags';
 import { useTranslation } from 'react-i18next';
-
 
 const CompaniesView: React.FC = observer(() => {
   const rootStore = useRootStore();
@@ -72,40 +70,29 @@ const CompaniesView: React.FC = observer(() => {
 
   return (
     <>
-      <TagsInput
-        title={t("CompaniesPage.actionTitle")}
-        description={t('CompaniesPage.action_msg')}
-        selectedTags={[]}
-        availableTags={[
-          {
-            id: 'add-user',
-            name: t('CompaniesPage.actionTags.addUser'),
-          },
-          {
-            id: 'remove-user',
-            name: t('CompaniesPage.actionTags.removeUser'),
-          },
-        ]}
-      />
       <div className="flex w-full justify-center">
         <div className=" flex-auto">
           <Table
             headers={convertToStringArray(headers)}
             data={toJS(rootStore.companies)}
-            Page='CompaniesPage'
+            Page="CompaniesPage"
             onRowClick={(row: ICompany) =>
               navigate(`/admin/companies/${row._id}`)
             }
             Actions={Actions}
           />
         </div>
-        <div className=" flex-0 w-96"></div>
+        <div className="flex-0 w-96"></div>
       </div>
     </>
   );
 });
 
-const CompaniesPage = withPage('CompaniesPage.title', 'CompaniesPage.description', () => {
-  emitter.emit(EVENT_SHOW_ADD_COMPANY_MODAL, 'Add Company');
-})(CompaniesView);
+const CompaniesPage = withPage(
+  'CompaniesPage.title',
+  'CompaniesPage.description',
+  () => {
+    emitter.emit(EVENT_SHOW_ADD_COMPANY_MODAL, 'Add Company');
+  }
+)(CompaniesView);
 export { CompaniesPage };

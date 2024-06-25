@@ -14,7 +14,7 @@ const LanguageToggle: React.FC = observer(() => {
   };
 
   return (
-    <Button onClick={toggleLanguage}>
+    <Button size='small' onClick={toggleLanguage}>
       {rootStore.language === 'en' ? 'he' : 'en'}
     </Button>
   );

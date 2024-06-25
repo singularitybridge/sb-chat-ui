@@ -20,7 +20,7 @@ const mockAssistant = {
 };
 
 const mockAssistantHebrew = {
-  name: 'עוזר AI',
+  name: 'סוכן AI',
   description: 'אני כאן כדי לעזור לך עם הפרויקט שלך.',
   avatar: 'images/avatars/av4.png',
 };
@@ -118,7 +118,7 @@ const TestPage = () => {
             <SBChatKitUI
               messages={messagesHebrew}
               assistant={mockAssistantHebrew}
-              assistantName="עוזר AI"
+              assistantName="סוכן AI"
               onSendMessage={handleSendMessageHebrew}
               onReload={handleReloadHebrew}
               isMinimized={isMinimizedHebrew}

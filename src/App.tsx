@@ -35,8 +35,8 @@ const rootStore = RootStore.create({
 });
 
 const App: React.FC = observer(() => {
+  
   const [isDataLoaded, setIsDataLoaded] = useState(false);
-  const [screenHeight, setScreenHeight] = useState(0);
   const direction = initialLanguage === 'he' ? 'rtl' : 'ltr';
 
   const toastHandler = useCallback((message: string) => {
@@ -82,8 +82,7 @@ const App: React.FC = observer(() => {
           getLocalStorageItem(LOCALSTORAGE_USER_ID) as string
         );
         await rootStore.loadAssistants();
-        rootStore.sessionStore.setActiveSession(session);
-        //--
+        rootStore.sessionStore.setActiveSession(session);        
         await rootStore.loadInboxMessages();
         await rootStore.loadActions();
       }
@@ -121,30 +120,6 @@ const App: React.FC = observer(() => {
     };
   }, []);
 
-  const getHeight = useCallback(() => {
-    return window.visualViewport
-      ? window.visualViewport.height
-      : window.innerHeight;
-  }, []);
-
-  const handleResize = () => {
-    setScreenHeight(getHeight());
-  };
-
-  useEffect(() => {
-    setScreenHeight(getHeight());
-    window.addEventListener('resize', handleResize);
-    window.addEventListener('orientationchange', handleResize);
-    window.visualViewport?.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('orientationchange', handleResize);
-      window.visualViewport?.removeEventListener('resize', handleResize);
-    };
-  }, [getHeight]);
-
-  const style = { height: `${screenHeight}px` };
-
   if (!isDataLoaded) {
     return (
       <div style={styles.spinnerContainer}>
@@ -157,9 +132,9 @@ const App: React.FC = observer(() => {
     <GoogleOAuthProvider clientId="836003625529-l01g4b1iuhc0s1i7o33ms9qelgmghcmh.apps.googleusercontent.com">
       <RootStoreProvider value={rootStore}>
         <div
-          style={style}
+          // style={style}
           dir={direction}
-          className={`flex flex-col h-screen inset-0 font-noto-sans-hebrew`}
+          className="flex flex-col h-screen inset-0 font-noto-sans-hebrew"
         >
           <ToastContainer />
           <DialogManager />

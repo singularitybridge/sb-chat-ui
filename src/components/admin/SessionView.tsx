@@ -45,7 +45,7 @@ export const SessionView = observer(() => {
   }
 
   return (
-    <div className="relative flex px-4 space-x-3 mr-4 bg-cyan-500 py-3 rounded-3xl bg-opacity-30">
+    <div className="relative flex px-3 space-x-3 mr-4 bg-zinc-300 py-2 rounded-2xl bg-opacity-30">
       <div className="flex items-center space-x-1">
         <BuildingOffice2Icon className="w-3.5 h-3.5 text-cyan-700" />
         <div className="   text-cyan-950  text-sm font-light">
