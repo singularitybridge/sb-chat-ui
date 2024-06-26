@@ -1,10 +1,8 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { useRootStore } from '../../store/common/RootStoreContext';
-import { AssistantKeys, IAssistant } from '../../store/models/Assistant';
-import { withPage } from '../../components/admin/HOC/withPage';
-import { PlayIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { IAssistant } from '../../store/models/Assistant';
+import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { IconButton } from '../../components/admin/IconButton';
 import { emitter } from '../../services/mittEmitter';
 import {
@@ -29,31 +27,12 @@ const AssistantsPage: React.FC = observer(() => {
     emitter.emit(EVENT_SHOW_ADD_ASSISTANT_MODAL, 'Add Assistant');
   };
 
-  const Actions = (row: IAssistant) => (
-    <div className="flex space-x-2 items-center mx-1">
-      <IconButton
-        icon={<TrashIcon className="w-5 h-5 text-warning-900" />}
-        onClick={(event) => {
-          event.stopPropagation();
-          handleDelete(row);
-        }}
-      />
-      <IconButton
-        icon={<PlayIcon className="w-5 h-5 text-warning-900" />}
-        onClick={(event) => {
-          event.stopPropagation();
-          handleSetAssistant(row);
-        }}
-      />
-    </div>
-  );
-
   return (
     <div className="flex min-h-[calc(100vh-64px)] space-x-4">
-      <div className="flex-grow  overflow-y-auto">
+      <div className="flex-grow overflow-y-auto">
         <ChatContainer />
       </div>
-      {/* Sidebar */}
+
       <div className="w-96 bg-white p-6 overflow-y-auto flex flex-col">
         <div className="flex flex-row justify-between items-center w-full mb-6">
           <TextComponent text="AI Agents" size="subtitle" />
@@ -67,11 +46,24 @@ const AssistantsPage: React.FC = observer(() => {
           {rootStore.assistants.map((assistant) => (
             <li
               key={assistant._id}
-              className="bg-gray-100 rounded-lg  p-4 cursor-pointer hover:bg-gray-50"
+              className={`bg-gray-100 rounded-lg p-4 cursor-pointer hover:bg-gray-50 ${
+                rootStore.sessionStore.activeSession?.assistantId ===
+                assistant._id
+                  ? 'ring-2 ring-blue-500'
+                  : ''
+              }`}
               onClick={() => handleSetAssistant(assistant)}
             >
               <h4 className="font-medium">{assistant.name}</h4>
               <p className="text-sm text-gray-600">{assistant.description}</p>
+
+              <IconButton
+                icon={<TrashIcon className="w-5 h-5 text-warning-900" />}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  handleDelete(assistant);
+                }}
+              />
             </li>
           ))}
         </ul>

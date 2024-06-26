@@ -3,7 +3,6 @@ import { observer } from 'mobx-react';
 import { useRootStore } from '../../store/common/RootStoreContext';
 import {
   BuildingOffice2Icon,
-  ChatBubbleLeftEllipsisIcon,
   UserIcon,
 } from '@heroicons/react/24/outline';
 import Button from '../sb-core-ui-kit/Button';
@@ -51,13 +50,7 @@ export const SessionView = observer(() => {
         <div className="   text-cyan-950  text-sm font-light">
           {rootStore.sessionStore.activeSession.companyName}
         </div>
-      </div>
-      <div className="flex items-center space-x-1">
-        <ChatBubbleLeftEllipsisIcon className="w-3.5 h-3.5 text-cyan-700" />
-        <div className=" text-sm  text-cyan-950">
-          {rootStore.sessionStore.activeSession.assistantName}
-        </div>
-      </div>
+      </div>     
       <div className="flex items-center space-x-1">
         <UserIcon className="w-3.5 h-3.5  cyan-violet-700" />
         <div className=" text-cyan-950 text-sm">

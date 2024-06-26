@@ -6,7 +6,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { emitter, useEventEmitter } from './services/mittEmitter';
 import { DialogManager } from './components/admin/DialogManager';
-import { ChatContainer } from './components/chat-container/ChatContainer';
 import { pusher } from './services/PusherService';
 import {
   LOCALSTORAGE_COMPANY_ID,
@@ -137,7 +136,6 @@ const App: React.FC = observer(() => {
         >
           <ToastContainer />
           <DialogManager />
-          {/* {rootStore.isAuthenticated && <ChatContainer />} */}
           <Outlet />
         </div>
       </RootStoreProvider>
