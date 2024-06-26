@@ -57,8 +57,8 @@ const Button: React.FC<ButtonProps> = ({
 
   return (
     <button type={type} onClick={onClick} className={className}>
-      {children}
       {isArrowButton && <ArrowIcon size={size} />}
+      {children}
     </button>
   );
 };

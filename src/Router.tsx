@@ -1,7 +1,7 @@
 import { NotFound } from './pages/NotFound';
 import { Admin } from './pages/Admin';
 import React from 'react';
-import { Navigate, createBrowserRouter } from 'react-router-dom'; 
+import { Navigate, createBrowserRouter } from 'react-router-dom';
 import App from './App';
 // import { ChatbotView } from './pages/admin/ChatbotView';
 import { AssistantsPage } from './pages/admin/AssistantsPage';
@@ -22,13 +22,12 @@ export const browserRouter = createBrowserRouter([
   {
     element: <App />,
     children: [
-
       {
         path: 'signup',
         element: <SignupPage />,
       },
       {
-        path: 'onboarding', 
+        path: 'onboarding',
         element: <OnboardingPage />,
       },
       {
@@ -41,8 +40,11 @@ export const browserRouter = createBrowserRouter([
       },
       {
         path: '/admin',
-        element:
-          <RequireAuth><Admin /></RequireAuth>,
+        element: (
+          <RequireAuth>
+            <Admin />
+          </RequireAuth>
+        ),
         children: [
           {
             index: true,
@@ -71,7 +73,6 @@ export const browserRouter = createBrowserRouter([
           {
             path: 'actions/:id',
             element: <EditActionPage />,
-
           },
           {
             path: 'companies/:id',
@@ -89,13 +90,9 @@ export const browserRouter = createBrowserRouter([
             path: 'inbox',
             element: <InboxPage />,
           },
-          
-
-
         ],
       },
       { path: '*', element: <NotFound /> },
     ],
   },
 ]);
-

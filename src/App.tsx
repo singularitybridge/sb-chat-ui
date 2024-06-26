@@ -122,23 +122,22 @@ const App: React.FC = observer(() => {
 
   if (!isDataLoaded) {
     return (
-      <div style={styles.spinnerContainer}>
+      <div className="flex justify-center items-center min-h-screen bg-gray-100">
         <ClipLoader color="#123abc" loading={true} size={50} />
       </div>
     );
   }
-
+  
   return (
     <GoogleOAuthProvider clientId="836003625529-l01g4b1iuhc0s1i7o33ms9qelgmghcmh.apps.googleusercontent.com">
       <RootStoreProvider value={rootStore}>
         <div
-          // style={style}
           dir={direction}
-          className="flex flex-col h-screen inset-0 font-noto-sans-hebrew"
+          className="flex flex-col inset-0 font-noto-sans-hebrew"
         >
           <ToastContainer />
           <DialogManager />
-          {rootStore.isAuthenticated && <ChatContainer />}
+          {/* {rootStore.isAuthenticated && <ChatContainer />} */}
           <Outlet />
         </div>
       </RootStoreProvider>
@@ -146,13 +145,6 @@ const App: React.FC = observer(() => {
   );
 });
 
-const styles = {
-  spinnerContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100vh',
-  },
-};
+
 
 export default App;
