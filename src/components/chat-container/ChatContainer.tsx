@@ -17,7 +17,6 @@ import {
   updateSessionAssistant,
 } from '../../services/api/sessionService';
 import { SBChatKitUI } from '../sb-chat-kit-ui/SBChatKitUI';
-import { PlusIcon } from '@heroicons/react/24/outline';
 
 interface Metadata {
   message_type: string;
@@ -32,9 +31,7 @@ interface ChatMessage {
 
 const ChatContainer = observer(() => {
   const rootStore = useRootStore();
-  const messagesEndRef = useRef<null | HTMLDivElement>(null);
-  // const [message, setMessage] = useState('');
-  const [isMinimized, setIsMinimized] = useState(false);
+  const messagesEndRef = useRef<null | HTMLDivElement>(null); 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [assistant, setAssistant] = useState<IAssistant>();
 
@@ -119,25 +116,9 @@ const ChatContainer = observer(() => {
     }
   };
 
-  const handleMinimize = () => {
-    setIsMinimized(!isMinimized);
-  };
-
-  if (isMinimized) {
-    return (
-      <button
-        className={`fixed mb-3 bottom-4 ${
-          isHebrew ? 'left-4 ml-3' : 'right-4 mr-3'
-        } w-12 h-12 bg-slate-500 rounded-full flex items-center justify-center`}
-        onClick={handleMinimize}
-      >
-        <PlusIcon className="h-6 w-6 text-white" />
-      </button>
-    );
-  }
 
   return (
-    <div>
+    <div className='h-full w-full'>
       <SBChatKitUI
         messages={messages}
         assistant={
@@ -152,8 +133,6 @@ const ChatContainer = observer(() => {
         assistantName="AI Assistant"
         onSendMessage={handleSubmitMessage}
         onReload={handleReload}
-        isMinimized={isMinimized}
-        onToggleMinimize={handleMinimize}
         isHebrew={isHebrew}
       />
     </div>

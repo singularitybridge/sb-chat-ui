@@ -28,8 +28,6 @@ const mockAssistantHebrew = {
 const TestPage = () => {
   const [messages, setMessages] = useState(mockMessages);
   const [messagesHebrew, setMessagesHebrew] = useState(mockMessagesHebrew);
-  const [isMinimized, setIsMinimized] = useState(false);
-  const [isMinimizedHebrew, setIsMinimizedHebrew] = useState(false);
 
   const handleSendMessage = (message: string) => {
     setMessages((prevMessages) => [
@@ -53,14 +51,6 @@ const TestPage = () => {
 
   const handleReloadHebrew = () => {
     setMessagesHebrew([]);
-  };
-
-  const handleToggleMinimize = () => {
-    setIsMinimized(!isMinimized);
-  };
-
-  const handleToggleMinimizeHebrew = () => {
-    setIsMinimizedHebrew(!isMinimizedHebrew);
   };
 
   const handleAddNotification = () => {
@@ -99,7 +89,7 @@ const TestPage = () => {
   return (
     <div className="container mx-auto p-4">
       <div className="grid grid-cols-3 gap-4">
-        <div className="border border-gray-300 p-4 flex items-center justify-center h-[600px]">
+        <div className="border bg-gray-100 border-gray-300 p-4 flex items-center justify-center h-[600px]">
           <div className="h-full w-full">
             <SBChatKitUI
               messages={messages}
@@ -107,8 +97,6 @@ const TestPage = () => {
               assistantName="AI Assistant"
               onSendMessage={handleSendMessage}
               onReload={handleReload}
-              isMinimized={isMinimized}
-              onToggleMinimize={handleToggleMinimize}
               isHebrew={false}
             />
           </div>
@@ -121,8 +109,6 @@ const TestPage = () => {
               assistantName="סוכן AI"
               onSendMessage={handleSendMessageHebrew}
               onReload={handleReloadHebrew}
-              isMinimized={isMinimizedHebrew}
-              onToggleMinimize={handleToggleMinimizeHebrew}
               isHebrew={true}
             />
           </div>

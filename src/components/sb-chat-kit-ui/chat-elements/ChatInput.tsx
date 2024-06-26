@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   PaperAirplaneIcon,
-  // TrashIcon,
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 
@@ -11,7 +10,10 @@ interface ChatInputProps {
   isHebrew?: boolean;
 }
 
-const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onReload, isHebrew }) => {
+const ChatInput: React.FC<ChatInputProps> = ({
+  onSendMessage,
+  isHebrew,
+}) => {
   const [message, setMessage] = useState('');
   const { t } = useTranslation();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -29,11 +31,15 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onReload, isHebrew
   }, [message]);
 
   return (
-    <div className="flex items-end pt-0 mt-1 w-full">
-      <div className={`flex items-end ${isHebrew ? 'space-x-reverse' : ''} w-full space-x-2 border border-[#e5e7eb] rounded-3xl p-3`}>
+    <div className="flex items-end pt-0 mt-1 w-full ">
+      <div
+        className={`flex flex-row   bg-neutral-200 items-end ${
+          isHebrew ? 'space-x-reverse' : ''
+        } w-full space-x-2 rounded-3xl px-3 py-2`}
+      >
         <textarea
           ref={textareaRef}
-          className="flex-grow resize-none overflow-hidden border-none focus:ring-0 text-sm placeholder-[#6b7280] focus:outline-none"
+          className="flex-grow min-h-6 bg-neutral-200 resize-none overflow-hidden border-none focus:ring-0 text-sm   text-gray-800 placeholder-gray-500 focus:outline-none"
           placeholder={t('ChatContainer.input')}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
@@ -45,21 +51,17 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onReload, isHebrew
           }}
           rows={1} // Start with one row
         />
-        <div className="flex flex-col justify-end space-y-1">
+        <div className="flex flex-col justify-end">
           <button
             onClick={() => handleSubmitMessage(message)}
             className="inline-flex items-center justify-center disabled:pointer-events-none disabled:opacity-50 h-7 w-7 pt-1.5"
           >
             <PaperAirplaneIcon
-              className={`h-5 w-5  text-gray-600 ${isHebrew ? '-scale-x-100' : ''}`}
+              className={`h-5 w-5  text-gray-600 ${
+                isHebrew ? '-scale-x-100' : ''
+              }`}
             />{' '}
           </button>
-          {/* <button
-            onClick={onReload}
-            className="inline-flex items-center justify-center disabled:pointer-events-none disabled:opacity-50 h-7  w-7"
-          >
-            <TrashIcon className="h-5 w-5 text-gray-600" />
-          </button> */}
         </div>
       </div>
     </div>

@@ -28,12 +28,12 @@ const AssistantsPage: React.FC = observer(() => {
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-64px)] space-x-4">
+    <div className="flex h-[calc(100vh-96px)] space-x-4">
       <div className="flex-grow overflow-y-auto">
         <ChatContainer />
       </div>
 
-      <div className="w-96 bg-white p-6 overflow-y-auto flex flex-col">
+      <div className="w-96 bg-white p-6 overflow-y-auto flex flex-col rounded-lg">
         <div className="flex flex-row justify-between items-center w-full mb-6">
           <TextComponent text="AI Agents" size="subtitle" />
           <IconButton

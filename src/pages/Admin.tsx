@@ -8,7 +8,7 @@ const Admin: React.FC = observer(() => {
   return (
     <>
       <Menu />
-      <ContentContainer className="px-8 py-4 bg-neutral-50">
+      <ContentContainer className="px-8 py-4 bg-gray-100">
         <Outlet />
       </ContentContainer>
     </>

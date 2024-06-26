@@ -6,7 +6,6 @@ import { UserMessage } from './chat-elements/UserMessage';
 import { HumanAgentResponseMessage } from './chat-elements/HumanAgentResponseMessage';
 import { NotificationMessage } from './chat-elements/NotificationMessage';
 import { ActionMessage } from './chat-elements/ActionMessage';
-import { PlusIcon } from '@heroicons/react/24/outline';
 import { ChatInput } from './chat-elements/ChatInput';
 
 interface Metadata {
@@ -34,9 +33,7 @@ interface SBChatKitUIProps {
   };
   assistantName: string;
   onSendMessage: (message: string) => void;
-  onReload: () => void;
-  isMinimized?: boolean;
-  onToggleMinimize?: () => void;
+  onReload: () => void;  
   className?: string;
   style?: React.CSSProperties;
   isHebrew?: boolean;
@@ -48,8 +45,6 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
   assistantName,
   onSendMessage,
   onReload,
-  isMinimized = false,
-  onToggleMinimize,
   className = '',
   style = {},
   isHebrew = false,
@@ -74,33 +69,20 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
     }
   }, [messages]);
 
-  if (isMinimized) {
-    return (
-      <button
-        className={`fixed mb-3 bottom-4 ${
-          isHebrew ? 'left-4 ml-3' : 'right-4 mr-3'
-        } w-12 h-12 bg-slate-500 rounded-full flex items-center justify-center`}
-        onClick={onToggleMinimize}
-      >
-        <PlusIcon className="h-6 w-6 text-white" />
-      </button>
-    );
-  }
+
 
   return (
     <div
-      style={{
-        boxShadow: '0 0 #0000, 0 0 #0000, 0 1px 2px 0 rgb(0 0 0 / 0.05)',
+      style={{        
         direction: isHebrew ? 'rtl' : 'ltr',
         ...style,
       }}
-      className={`bg-white p-5 rounded-lg border border-[#e5e7eb] flex flex-col ${className} h-full w-full`}
+      className={` p-5 flex flex-col ${className} h-full w-full`}
     >
       <Header
         title={assistant?.name || ''}
         description={assistant?.description || ''}
-        avatar={assistant?.avatar || ''}
-        onMinimize={onToggleMinimize}
+        avatar={assistant?.avatar || ''}        
       />
       <div className={`flex-grow overflow-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-300 ${isHebrew ? 'text-right' : ''}`}>
         {messages.map((message, index) => {
