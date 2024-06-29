@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SBChatKitUI } from '../components/sb-chat-kit-ui/SBChatKitUI';
 
 const mockMessages = [
@@ -26,8 +26,22 @@ const mockAssistantHebrew = {
 };
 
 const TestPage = () => {
+
   const [messages, setMessages] = useState(mockMessages);
   const [messagesHebrew, setMessagesHebrew] = useState(mockMessagesHebrew);
+  const [direction, setDirection] = useState<'ltr' | 'rtl'>('ltr');
+
+  useEffect(() => {
+    // Update the dir attribute on the html element
+    document.documentElement.dir = direction;
+    // You might also want to update the lang attribute
+    document.documentElement.lang = direction === 'rtl' ? 'he' : 'en';
+  }, [direction]);
+
+  const toggleDirection = (newDirection: 'ltr' | 'rtl') => {
+    setDirection(newDirection);
+  };
+
 
   const handleSendMessage = (message: string) => {
     setMessages((prevMessages) => [
@@ -117,8 +131,7 @@ const TestPage = () => {
               assistant={mockAssistant}
               assistantName="AI Assistant"
               onSendMessage={handleSendMessage}
-              onClear={handleClear}
-              isHebrew={false}
+              onClear={handleClear}              
             />
           </div>
         </div>
@@ -130,7 +143,6 @@ const TestPage = () => {
               assistantName="סוכן AI"
               onSendMessage={handleSendMessageHebrew}
               onClear={handleClearHebrew}
-              isHebrew={true}
             />
           </div>
         </div>
@@ -147,6 +159,23 @@ const TestPage = () => {
           >
             Send Action Message
           </button>
+          <button
+          onClick={() => toggleDirection('ltr')}
+          className={`px-4 py-2 rounded ${
+            direction === 'ltr' ? 'bg-blue-500 text-white' : 'bg-gray-200'
+          }`}
+        >
+          LTR
+        </button>
+        <button
+          onClick={() => toggleDirection('rtl')}
+          className={`px-4 py-2 rounded ${
+            direction === 'rtl' ? 'bg-blue-500 text-white' : 'bg-gray-200'
+          }`}
+        >
+          RTL
+        </button>
+
         </div>
       </div>
 
@@ -162,7 +191,6 @@ const TestPage = () => {
             assistantName="Wide Mode AI"
             onSendMessage={handleSendWideMessage}
             onClear={handleClearWide}
-            isHebrew={false}
           />
         </div>
       </div>

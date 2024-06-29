@@ -5,13 +5,11 @@ import {
 import { useTranslation } from 'react-i18next';
 
 interface ChatInputProps {
-  onSendMessage: (message: string) => void;
-  isHebrew?: boolean;
+  onSendMessage: (message: string) => void;  
 }
 
 const ChatInput: React.FC<ChatInputProps> = ({
-  onSendMessage,
-  isHebrew,
+  onSendMessage,  
 }) => {
   const [message, setMessage] = useState('');
   const { t } = useTranslation();
@@ -30,15 +28,13 @@ const ChatInput: React.FC<ChatInputProps> = ({
   }, [message]);
 
   return (
-    <div className="flex items-end pt-0 mt-1 w-full ">
+    <div className="flex items-end w-full ">
       <div
-        className={`flex flex-row   bg-neutral-200 items-end ${
-          isHebrew ? 'space-x-reverse' : ''
-        } w-full space-x-2 rounded-3xl px-3 py-2`}
+        className="flex flex-row bg-neutral-100 items-end rtl:space-x-reverse w-full space-x-2 rounded-2xl px-3 py-2"
       >
         <textarea
           ref={textareaRef}
-          className="flex-grow min-h-6 bg-neutral-200 resize-none overflow-hidden border-none focus:ring-0 text-sm   text-gray-800 placeholder-gray-500 focus:outline-none"
+          className="flex-grow px-2 min-h-6 bg-neutral-100 resize-none overflow-hidden border-none focus:ring-0 text-sm   text-gray-800 placeholder-gray-500 focus:outline-none"
           placeholder={t('ChatContainer.input')}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
@@ -53,12 +49,10 @@ const ChatInput: React.FC<ChatInputProps> = ({
         <div className="flex flex-col justify-end">
           <button
             onClick={() => handleSubmitMessage(message)}
-            className="inline-flex items-center justify-center disabled:pointer-events-none disabled:opacity-50 h-7 w-7 pt-1.5"
+            className="inline-flex items-center justify-center disabled:pointer-events-none disabled:opacity-50 h-7 w-7 "
           >
             <PaperAirplaneIcon
-              className={`h-5 w-5  text-gray-600 ${
-                isHebrew ? '-scale-x-100' : ''
-              }`}
+              className="h-5 w-5  text-gray-600 rtl:-scale-x-100"
             />{' '}
           </button>
         </div>

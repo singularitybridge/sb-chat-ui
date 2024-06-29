@@ -37,8 +37,7 @@ const ChatContainer = observer(() => {
 
   const userId = rootStore.sessionStore.activeSession?.userId;
   const assistantId = rootStore.sessionStore.activeSession?.assistantId;
-  const companyId = rootStore.sessionStore.activeSession?.companyId;
-  const isHebrew = rootStore.language === 'he';
+  const companyId = rootStore.sessionStore.activeSession?.companyId; 
 
   useEffect(() => {
     if (assistantId && rootStore.assistantsLoaded) {
@@ -132,8 +131,7 @@ const ChatContainer = observer(() => {
         }
         assistantName="AI Assistant"
         onSendMessage={handleSubmitMessage}
-        onClear={handleClear}
-        isHebrew={isHebrew}
+        onClear={handleClear}        
       />
     </div>
   );

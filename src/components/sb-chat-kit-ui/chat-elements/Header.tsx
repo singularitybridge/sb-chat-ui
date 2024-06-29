@@ -6,7 +6,6 @@ interface HeaderProps {
   description: string;
   avatar: string;
   onClear: () => void;
-  isHebrew: boolean;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -14,7 +13,6 @@ const Header: React.FC<HeaderProps> = ({
   description,
   avatar,
   onClear,
-  isHebrew,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -44,9 +42,9 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <div className="flex justify-between items-start space-x-3.5">
+    <div className="flex justify-between items-start space-x-3.5 rtl:space-x-reverse mb-3 bg-slate-50 p-3 rounded-2xl ">
       <img
-        className="w-20 rounded-full bg-slate-200 "
+        className="w-20 rounded-full  bg-indigo-100 "
         src={avatar}
         alt="Avatar"
         loading="lazy"
@@ -58,9 +56,7 @@ const Header: React.FC<HeaderProps> = ({
       </div>
       <button
         onClick={onClear}
-        className={`p-1 rounded-full transition-colors hover:bg-gray-100 ${
-          isHebrew ? 'mr-auto' : 'ml-auto'
-        }`}
+        className="p-1 rounded-full transition-colors hover:bg-gray-100"
         aria-label="Clear chat"
       >
         <CircleFadingPlus className="w-6 h-6 text-gray-500 hover:text-primary-600" />

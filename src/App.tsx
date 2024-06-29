@@ -38,6 +38,12 @@ const App: React.FC = observer(() => {
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const direction = initialLanguage === 'he' ? 'rtl' : 'ltr';
 
+  useEffect(() => {    
+    document.documentElement.lang = rootStore.language;
+    document.documentElement.dir = direction;
+  }, [rootStore.language, direction]);
+
+
   const toastHandler = useCallback((message: string) => {
     toast(message);
   }, []);
@@ -121,7 +127,7 @@ const App: React.FC = observer(() => {
 
   if (!isDataLoaded) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <div className="flex justify-center items-center min-h-screen bg-gray-200">
         <ClipLoader color="#123abc" loading={true} size={50} />
       </div>
     );
@@ -130,10 +136,7 @@ const App: React.FC = observer(() => {
   return (
     <GoogleOAuthProvider clientId="836003625529-l01g4b1iuhc0s1i7o33ms9qelgmghcmh.apps.googleusercontent.com">
       <RootStoreProvider value={rootStore}>
-        <div
-          dir={direction}
-          className="flex flex-col inset-0 font-noto-sans-hebrew"
-        >
+        <div className="flex flex-col inset-0 font-noto-sans-hebrew">
           <ToastContainer />
           <DialogManager />
           <Outlet />

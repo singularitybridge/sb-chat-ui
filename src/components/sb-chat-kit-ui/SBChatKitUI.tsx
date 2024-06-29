@@ -32,11 +32,10 @@ interface SBChatKitUIProps {
     avatar: string;
   };
   assistantName: string;
-  onSendMessage: (message: string) => void;  
+  onSendMessage: (message: string) => void;
   onClear: () => void;
   className?: string;
   style?: React.CSSProperties;
-  isHebrew?: boolean;
 }
 
 const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
@@ -47,7 +46,6 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
   onClear,
   className = '',
   style = {},
-  isHebrew = false,
 }) => {
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const [disabledMessages, setDisabledMessages] = useState<number[]>([]);
@@ -69,27 +67,25 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
     }
   }, [messages]);
 
-
-
   return (
     <div
-      style={{        
-        direction: isHebrew ? 'rtl' : 'ltr',
+      style={{
         ...style,
       }}
-      className={` p-5 flex flex-col ${className} h-full w-full`}
+      className={`p-4 flex flex-col ${className} h-full w-full`}
     >
       <Header
         title={assistant?.name || ''}
         description={assistant?.description || ''}
         avatar={assistant?.avatar || ''}
-        onClear={onClear}  // Pass the onClear prop to Header
-        isHebrew={isHebrew}  // Pass the isHebrew prop to Header
+        onClear={onClear}
       />
-      <div className={`flex-grow overflow-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-300 ${isHebrew ? 'text-right' : ''}`}>
+      <div className="flex-grow overflow-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-300">
         {messages.map((message, index) => {
           if (message.metadata?.message_type === 'human-agent-response') {
-            return <HumanAgentResponseMessage key={index} text={message.content} />;
+            return (
+              <HumanAgentResponseMessage key={index} text={message.content} />
+            );
           } else if (message.metadata?.message_type === 'notification') {
             return <NotificationMessage key={index} text={message.content} />;
           } else if (message.actions && message.actions.length > 0) {
@@ -103,14 +99,20 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
               />
             );
           } else if (message.role === 'assistant') {
-            return <AssistantMessage key={index} text={message.content} assistantName={assistantName} />;
+            return (
+              <AssistantMessage
+                key={index}
+                text={message.content}
+                assistantName={assistantName}
+              />
+            );
           } else {
             return <UserMessage key={index} text={message.content} />;
           }
         })}
         <div ref={messagesEndRef} />
       </div>
-      <ChatInput onSendMessage={onSendMessage} isHebrew={isHebrew} />
+      <ChatInput onSendMessage={onSendMessage} />
     </div>
   );
 };
