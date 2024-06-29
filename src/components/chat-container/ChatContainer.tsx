@@ -108,7 +108,7 @@ const ChatContainer = observer(() => {
     }
   };
 
-  const handleReload = async () => {
+  const handleClear = async () => {
     if (assistant && userId && companyId) {
       await endSession(companyId, userId);
       rootStore.sessionStore.clearActiveSession();
@@ -118,7 +118,7 @@ const ChatContainer = observer(() => {
 
 
   return (
-    <div className='h-full w-full'>
+    <div className='h-full w-full bg-white rounded-lg'>
       <SBChatKitUI
         messages={messages}
         assistant={
@@ -132,7 +132,7 @@ const ChatContainer = observer(() => {
         }
         assistantName="AI Assistant"
         onSendMessage={handleSubmitMessage}
-        onReload={handleReload}
+        onClear={handleClear}
         isHebrew={isHebrew}
       />
     </div>

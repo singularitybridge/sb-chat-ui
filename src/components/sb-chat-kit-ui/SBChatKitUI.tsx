@@ -32,8 +32,8 @@ interface SBChatKitUIProps {
     avatar: string;
   };
   assistantName: string;
-  onSendMessage: (message: string) => void;
-  onReload: () => void;  
+  onSendMessage: (message: string) => void;  
+  onClear: () => void;
   className?: string;
   style?: React.CSSProperties;
   isHebrew?: boolean;
@@ -44,7 +44,7 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
   assistant,
   assistantName,
   onSendMessage,
-  onReload,
+  onClear,
   className = '',
   style = {},
   isHebrew = false,
@@ -82,7 +82,9 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
       <Header
         title={assistant?.name || ''}
         description={assistant?.description || ''}
-        avatar={assistant?.avatar || ''}        
+        avatar={assistant?.avatar || ''}
+        onClear={onClear}  // Pass the onClear prop to Header
+        isHebrew={isHebrew}  // Pass the isHebrew prop to Header
       />
       <div className={`flex-grow overflow-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-300 ${isHebrew ? 'text-right' : ''}`}>
         {messages.map((message, index) => {
@@ -108,7 +110,7 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
         })}
         <div ref={messagesEndRef} />
       </div>
-      <ChatInput onSendMessage={onSendMessage} onReload={onReload} isHebrew={isHebrew} />
+      <ChatInput onSendMessage={onSendMessage} isHebrew={isHebrew} />
     </div>
   );
 };

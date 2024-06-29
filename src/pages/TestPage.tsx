@@ -16,13 +16,13 @@ const mockMessagesHebrew = [
 const mockAssistant = {
   name: 'AI Assistant',
   description: 'I am here to help you with your project.',
-  avatar: 'images/avatars/av4.png',
+  avatar: 'assets/avatars/avatar-_0013_16.png',
 };
 
 const mockAssistantHebrew = {
   name: 'סוכן AI',
   description: 'אני כאן כדי לעזור לך עם הפרויקט שלך.',
-  avatar: 'images/avatars/av4.png',
+  avatar: 'assets/avatars/avatar-_0027_2.png',
 };
 
 const TestPage = () => {
@@ -45,11 +45,11 @@ const TestPage = () => {
     ]);
   };
 
-  const handleReload = () => {
+  const handleClear = () => {
     setMessages([]);
   };
 
-  const handleReloadHebrew = () => {
+  const handleClearHebrew = () => {
     setMessagesHebrew([]);
   };
 
@@ -69,7 +69,10 @@ const TestPage = () => {
       setMessages((prevMessages) => [
         ...prevMessages,
         { content: message, role: 'user' },
-        { content: `You selected ${message}. Here are some options.`, role: 'assistant' },
+        {
+          content: `You selected ${message}. Here are some options.`,
+          role: 'assistant',
+        },
       ]);
     };
 
@@ -86,34 +89,52 @@ const TestPage = () => {
     ]);
   };
 
+  const [wideMessages, setWideMessages] = useState([
+    { content: 'Welcome to the wide mode chat!', role: 'assistant' },
+    { content: 'This is a test of the wide mode layout.', role: 'user' },
+    { content: 'How does it look?', role: 'assistant' },
+  ]);
+
+  const handleSendWideMessage = (message: string) => {
+    setWideMessages((prevMessages) => [
+      ...prevMessages,
+      { content: message, role: 'user' },
+      { content: 'This is a mock response in wide mode.', role: 'assistant' },
+    ]);
+  };
+
+  const handleClearWide = () => {
+    setWideMessages([]);
+  };
+
   return (
     <div className="container mx-auto p-4">
       <div className="grid grid-cols-3 gap-4">
-        <div className="border bg-gray-100 border-gray-300 p-4 flex items-center justify-center h-[600px]">
+        <div className="border bg-indigo-50  border-gray-300 flex items-center justify-center h-[600px]">
           <div className="h-full w-full">
             <SBChatKitUI
               messages={messages}
               assistant={mockAssistant}
               assistantName="AI Assistant"
               onSendMessage={handleSendMessage}
-              onReload={handleReload}
+              onClear={handleClear}
               isHebrew={false}
             />
           </div>
         </div>
-        <div className="border border-gray-300 p-4 flex items-center justify-center h-[600px]">
+        <div className="border border-gray-300 flex items-center justify-center h-[600px]">
           <div className="h-full w-full">
             <SBChatKitUI
               messages={messagesHebrew}
               assistant={mockAssistantHebrew}
               assistantName="סוכן AI"
               onSendMessage={handleSendMessageHebrew}
-              onReload={handleReloadHebrew}
+              onClear={handleClearHebrew}
               isHebrew={true}
             />
           </div>
         </div>
-        <div className="border border-gray-300 p-4 flex flex-col items-center justify-center h-[600px]">
+        <div className="border border-gray-300 flex flex-col items-center justify-center h-[600px]">
           <button
             onClick={handleAddNotification}
             className="px-4 py-2 bg-blue-500 text-white rounded mb-4"
@@ -126,6 +147,23 @@ const TestPage = () => {
           >
             Send Action Message
           </button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 mt-4">
+        <div className="border bg-white border-gray-300  h-[600px]">
+          <SBChatKitUI
+            messages={wideMessages}
+            assistant={{
+              name: 'Wide Mode AI',
+              description: 'This is a demo of the wide mode layout.',
+              avatar: 'assets/avatars/avatar-_0006_23.png',
+            }}
+            assistantName="Wide Mode AI"
+            onSendMessage={handleSendWideMessage}
+            onClear={handleClearWide}
+            isHebrew={false}
+          />
         </div>
       </div>
     </div>

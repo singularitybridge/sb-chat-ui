@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
+import { CircleFadingPlus } from 'lucide-react';
 
 interface HeaderProps {
   title: string;
   description: string;
-  avatar: string; // Add avatar as a prop
-  onMinimize?: () => void;
+  avatar: string;
+  onClear: () => void;
+  isHebrew: boolean;
 }
 
 const Header: React.FC<HeaderProps> = ({
   title,
   description,
   avatar,
+  onClear,
+  isHebrew,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -20,10 +24,9 @@ const Header: React.FC<HeaderProps> = ({
 
   const renderDescription = () => {
     if (description.length > 100 && !isExpanded) {
-      // Assuming 100 characters as roughly 2 lines
       return (
         <p
-          className="text-sm text-[#6b7280] leading-4 cursor-pointer"
+          className="text-sm text-[#6b7280] leading-4 "
           onClick={toggleDescription}
         >
           {`${description.substring(0, 97)}...`}
@@ -32,7 +35,7 @@ const Header: React.FC<HeaderProps> = ({
     }
     return (
       <p
-        className="text-sm text-[#6b7280] leading-4 cursor-pointer"
+        className="text-sm text-[#6b7280] leading-4"
         onClick={toggleDescription}
       >
         {description}
@@ -41,22 +44,28 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <>
-      <div className="flex justify-between items-start space-y-2 space-x-3 ">
-        <img
-          className="w-14 rounded-full mt-2 p-0.5"
-          src={avatar}
-          alt="Avatar"
-          loading="lazy"
-        />
-        <div className="flex-1">
-          <h2 className="font-semibold text-lg tracking-tight">{title}</h2>
-          <div className="flex items-start pb-5">{renderDescription()}</div>
-        </div>
-        <div className="flex space-x-2">
-        </div>
+    <div className="flex justify-between items-start space-x-3.5">
+      <img
+        className="w-20 rounded-full bg-slate-200 "
+        src={avatar}
+        alt="Avatar"
+        loading="lazy"
+      />
+
+      <div className="flex-1">
+        <h2 className="font-semibold text-lg tracking-tight">{title}</h2>
+        <div className="flex items-start pb-5">{renderDescription()}</div>
       </div>
-    </>
+      <button
+        onClick={onClear}
+        className={`p-1 rounded-full transition-colors hover:bg-gray-100 ${
+          isHebrew ? 'mr-auto' : 'ml-auto'
+        }`}
+        aria-label="Clear chat"
+      >
+        <CircleFadingPlus className="w-6 h-6 text-gray-500 hover:text-primary-600" />
+      </button>
+    </div>
   );
 };
 

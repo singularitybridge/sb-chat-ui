@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useRootStore } from '../../store/common/RootStoreContext';
 import { IAssistant } from '../../store/models/Assistant';
-import { Plus, X } from 'lucide-react';
+import { Plus, Settings2, X } from 'lucide-react';
 import { IconButton } from '../../components/admin/IconButton';
 import { emitter } from '../../services/mittEmitter';
 import {
@@ -11,9 +11,11 @@ import {
 } from '../../utils/eventNames';
 import { ChatContainer } from '../../components/chat-container/ChatContainer';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
+import { useNavigate } from 'react-router-dom';
 
 const AssistantsPage: React.FC = observer(() => {
   const rootStore = useRootStore();
+  const navigate = useNavigate();
   const [hoveredAssistantId, setHoveredAssistantId] = useState<string | null>(
     null
   );
@@ -28,6 +30,10 @@ const AssistantsPage: React.FC = observer(() => {
 
   const handleAddAssistant = () => {
     emitter.emit(EVENT_SHOW_ADD_ASSISTANT_MODAL, 'Add Assistant');
+  };
+
+  const handleEditAssistant = (assistantId: string) => {
+    navigate(`/admin/assistants/${assistantId}`);
   };
 
   return (
@@ -59,7 +65,7 @@ const AssistantsPage: React.FC = observer(() => {
                 <img
                   src={'/assets/avatars/avatar-_0020_9.png'}
                   alt={`${assistant.name} avatar`}
-                  className=" w-14 h-14 rounded-full object-cover ml-2"
+                  className="w-14 h-14 rounded-full object-cover ml-2"
                 />
                 <div className="flex-grow">
                   <h4 className="font-medium text-base">{assistant.name}</h4>
@@ -69,14 +75,24 @@ const AssistantsPage: React.FC = observer(() => {
                 </div>
               </div>
               {hoveredAssistantId === assistant._id && (
-                <IconButton
-                  icon={<X className="w-4 h-4 text-gray-500" />}
-                  className="absolute top-2 right-2 p-1 rounded-full hover:bg-gray-200"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    handleDelete(assistant);
-                  }}
-                />
+                <div>
+                  <IconButton
+                    icon={<X className="w-4 h-4 text-gray-500" />}
+                    className="absolute top-2 right-2 p-1 rounded-full hover:bg-gray-200"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleDelete(assistant);
+                    }}
+                  />
+                  <IconButton
+                    icon={<Settings2 className="w-4 h-4 text-gray-500" />}
+                    className="absolute top-2 right-8 p-1 rounded-full hover:bg-gray-200"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleEditAssistant(assistant._id);
+                    }}
+                  />
+                </div>
               )}
             </li>
           ))}

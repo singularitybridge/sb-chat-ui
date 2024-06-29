@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
-  onReload: () => void;
   isHebrew?: boolean;
 }
 

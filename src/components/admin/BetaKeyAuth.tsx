@@ -51,6 +51,7 @@ const BetaKeyAuth: React.FC<BetaKeyAuthProps> = ({ onSuccess }) => {
         />
         <Input
           id="beta-key"
+          type="password"
           value={betaKey}
           onChange={setBetaKey}
           onKeyDown={handleKeyDown}
