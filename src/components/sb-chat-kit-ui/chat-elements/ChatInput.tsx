@@ -28,7 +28,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
   }, [message]);
 
   return (
-    <div className="flex items-end w-full ">
+    <div className="flex items-end w-full">
       <div
         className="flex flex-row bg-neutral-100 items-end rtl:space-x-reverse w-full space-x-2 rounded-2xl px-3 py-2"
       >

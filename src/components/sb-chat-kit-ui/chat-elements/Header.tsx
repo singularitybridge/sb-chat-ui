@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { CircleFadingPlus } from 'lucide-react';
+import {
+  CircleFadingPlus,
+} from 'lucide-react';
 
 interface HeaderProps {
   title: string;
@@ -42,7 +44,7 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <div className="flex justify-between items-start space-x-3.5 rtl:space-x-reverse mb-3 bg-slate-50 p-3 rounded-2xl ">
+    <div className="flex justify-between items-start space-x-3.5 rtl:space-x-reverse mb-3 bg-slate-100 p-3 rounded-2xl ">
       <img
         className="w-20 rounded-full  bg-indigo-100 "
         src={avatar}

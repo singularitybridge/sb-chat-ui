@@ -5,29 +5,12 @@ import { SessionView } from './SessionView';
 import { useTranslation } from 'react-i18next';
 import LanguageToggle from '../LanguageToggle';
 import { useRootStore } from '../../store/common/RootStoreContext';
-import Button from '../sb-core-ui-kit/Button';
-import { createSession } from '../../services/api/sessionService';
 import { TextComponent } from '../sb-core-ui-kit/TextComponent';
 
 export const Menu = observer(() => {
   const rootStore = useRootStore();
   const userRole = rootStore.currentUser?.role;
 
-  const clearSession = async () => {
-    // rootStore.clearSession();
-
-    if (!rootStore.sessionStore.activeSession) {
-      return;
-    }
-
-    await rootStore.sessionStore.deleteSession(
-      rootStore.sessionStore.activeSession._id
-    );
-    await createSession(
-      rootStore.currentUser!._id,
-      rootStore.currentUser!.companyId
-    );
-  };
 
   const menuItems = [
     {
@@ -124,7 +107,6 @@ export const Menu = observer(() => {
 
         
         <div className=' space-x-1.5 flex'>
-        <Button size='small' onClick={clearSession}>clear</Button>
         <LanguageToggle />
         <SessionView />
         </div>

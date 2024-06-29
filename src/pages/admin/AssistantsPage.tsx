@@ -42,33 +42,33 @@ const AssistantsPage: React.FC = observer(() => {
         <div className="flex flex-row justify-between items-center w-full mb-6">
           <TextComponent text="AI Agents" size="subtitle" />
           <IconButton
-            icon={<Plus className="w-6 h-6 text-gray-800" />}
+            icon={<Plus className="w-6 h-6 text-gray-600" />}
             onClick={handleAddAssistant}
           />
         </div>
 
-        <ul className="space-y-3 flex-grow">
+        <ul className="space-y-2 flex-grow">
           {rootStore.assistants.map((assistant) => (
             <li
               key={assistant._id}
-              className={`bg-gray-100 rounded-lg p-4 cursor-pointer hover:bg-gray-50 relative ${
+              className={` rounded-lg p-2 cursor-pointer hover:bg-slate-200 relative ${
                 rootStore.sessionStore.activeSession?.assistantId ===
                 assistant._id
-                  ? 'ring-2 ring-blue-500'
-                  : ''
+                  ? ' bg-indigo-100'
+                  : 'bg-gray-50'
               }`}
               onClick={() => handleSetAssistant(assistant)}
               onMouseEnter={() => setHoveredAssistantId(assistant._id)}
               onMouseLeave={() => setHoveredAssistantId(null)}
             >
-              <div className="flex items-start">
+              <div className="flex items-start space-x-1">
                 <img
                   src={'/assets/avatars/avatar-_0020_9.png'}
                   alt={`${assistant.name} avatar`}
-                  className="w-14 h-14 rounded-full object-cover ml-2"
+                  className="w-10 h-10 rounded-full object-cover "
                 />
                 <div className="flex-grow">
-                  <h4 className="font-medium text-base">{assistant.name}</h4>
+                  <h4 className="font-medium text-sm">{assistant.name}</h4>
                   <p className="text-sm text-gray-600 mt-1">
                     {assistant.description}
                   </p>
@@ -78,7 +78,7 @@ const AssistantsPage: React.FC = observer(() => {
                 <div>
                   <IconButton
                     icon={<X className="w-4 h-4 text-gray-500" />}
-                    className="absolute top-2 right-2 p-1 rounded-full hover:bg-gray-200"
+                    className="absolute top-2 right-2 p-1 rounded-full hover:bg-gray-300"
                     onClick={(event) => {
                       event.stopPropagation();
                       handleDelete(assistant);
@@ -86,7 +86,7 @@ const AssistantsPage: React.FC = observer(() => {
                   />
                   <IconButton
                     icon={<Settings2 className="w-4 h-4 text-gray-500" />}
-                    className="absolute top-2 right-8 p-1 rounded-full hover:bg-gray-200"
+                    className="absolute top-2 right-8 p-1 rounded-full hover:bg-gray-300"
                     onClick={(event) => {
                       event.stopPropagation();
                       handleEditAssistant(assistant._id);

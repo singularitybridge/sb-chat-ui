@@ -13,6 +13,7 @@ import {
 import { emitter, useEventEmitter } from '../../services/mittEmitter';
 import { IAssistant } from '../../store/models/Assistant';
 import {
+  createSession,
   getSessionById,
   updateSessionAssistant,
 } from '../../services/api/sessionService';
@@ -109,9 +110,28 @@ const ChatContainer = observer(() => {
 
   const handleClear = async () => {
     if (assistant && userId && companyId) {
+
       await endSession(companyId, userId);
       rootStore.sessionStore.clearActiveSession();
       emitter.emit(EVENT_CHAT_SESSION_DELETED, 'Chat session deleted');
+
+
+
+      // mixed code 
+      if (!rootStore.sessionStore.activeSession) {
+        return;
+      }
+  
+      await rootStore.sessionStore.deleteSession(
+        rootStore.sessionStore.activeSession._id
+      );
+      await createSession(
+        rootStore.currentUser!._id,
+        rootStore.currentUser!.companyId
+      );
+  
+
+
     }
   };
 
