@@ -126,7 +126,7 @@ const ChatContainer = observer(() => {
             ? {
                 name: assistant.name,
                 description: assistant.description,
-                avatar: '/images/avatars/av4.png',
+                avatar: '/assets/avatars/avatar-_0020_9.png',
               }
             : undefined
         }

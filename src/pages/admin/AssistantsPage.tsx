@@ -14,7 +14,9 @@ import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
 
 const AssistantsPage: React.FC = observer(() => {
   const rootStore = useRootStore();
-  const [hoveredAssistantId, setHoveredAssistantId] = useState<string | null>(null);
+  const [hoveredAssistantId, setHoveredAssistantId] = useState<string | null>(
+    null
+  );
 
   const handleDelete = (assistant: IAssistant) => {
     rootStore.deleteAssistant(assistant._id);
@@ -44,7 +46,8 @@ const AssistantsPage: React.FC = observer(() => {
             <li
               key={assistant._id}
               className={`bg-gray-100 rounded-lg p-4 cursor-pointer hover:bg-gray-50 relative ${
-                rootStore.sessionStore.activeSession?.assistantId === assistant._id
+                rootStore.sessionStore.activeSession?.assistantId ===
+                assistant._id
                   ? 'ring-2 ring-blue-500'
                   : ''
               }`}
@@ -53,14 +56,16 @@ const AssistantsPage: React.FC = observer(() => {
               onMouseLeave={() => setHoveredAssistantId(null)}
             >
               <div className="flex items-start">
-                <img 
-                  src={ '/api/placeholder/40/40'} 
-                  alt={`${assistant.name} avatar`} 
-                  className="w-10 h-10 rounded-full object-cover mr-4"
+                <img
+                  src={'/assets/avatars/avatar-_0020_9.png'}
+                  alt={`${assistant.name} avatar`}
+                  className=" w-14 h-14 rounded-full object-cover ml-2"
                 />
                 <div className="flex-grow">
                   <h4 className="font-medium text-base">{assistant.name}</h4>
-                  <p className="text-sm text-gray-600 mt-1">{assistant.description}</p>
+                  <p className="text-sm text-gray-600 mt-1">
+                    {assistant.description}
+                  </p>
                 </div>
               </div>
               {hoveredAssistantId === assistant._id && (
