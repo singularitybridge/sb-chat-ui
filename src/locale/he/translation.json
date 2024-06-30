@@ -21,7 +21,7 @@
   "CompaniesPage": {
     "title": "חברות",
     "description": "רשימת חברות",
-    "actionTitle":"פעולות",
+    "actionTitle": "פעולות",
     "action_msg": "בחר פעולות לביצוע על שורות שנבחרו",
     "noActionSelected": "לא נבחרו פעולות",
     "selectAction": "בחר פעולה",
@@ -33,7 +33,7 @@
       "name": "שם",
       "token": "טוקן"
     },
-    "successfullySet":"חברה נבחרה בהצלחה"
+    "successfullySet": "חברה נבחרה בהצלחה"
   },
   "AssistantsPage": {
     "title": "סוכנים וירטואליים",
@@ -66,9 +66,9 @@
   "InboxPage": {
     "title": "דואר נכנס",
     "description": "נהל כאן את התקשורת עם המשתמשים שלך",
-    "placeholder":"חיפוש...",
-    "replyPlaceholder":"הקלד תשובה כאן...",
-    "button":"שלח תשובה",
+    "placeholder": "חיפוש...",
+    "replyPlaceholder": "הקלד תשובה כאן...",
+    "button": "שלח תשובה",
     "table": {
       "_id": "מזהה",
       "type": "סוג",
@@ -133,5 +133,25 @@
   },
   "ChatContainer": {
     "input": "הקלד את הודעתך כאן"
+  },
+
+  "Notifications": {
+    "agentCreated": "הסוכן נוצר בהצלחה",
+    "agentUpdated": "הסוכן עודכן בהצלחה",
+    "agentDeleted": "הסוכן נמחק בהצלחה",
+
+    "companyCreated": "החברה נוצרה בהצלחה",
+    "companyUpdated": "החברה עודכנה בהצלחה",
+    "companyDeleted": "החברה נמחקה בהצלחה",
+
+    "userCreated": "המשתמש נוצר בהצלחה",
+    "userUpdated": "המשתמש עודכן בהצלחה",
+    "userDeleted": "המשתמש נמחק בהצלחה",
+
+    "actionCreated": "הפעולה נוצרה בהצלחה",
+    "actionUpdated": "הפעולה עודכנה בהצלחה",
+    "actionDeleted": "הפעולה נמחקה בהצלחה",
+
+    "tokenRefreshed": "האסימון רוענן בהצלחה"
   }
 }

@@ -25,7 +25,7 @@ import {
   EVENT_SET_ACTIVE_ASSISTANT,
 } from './utils/eventNames';
 
-const initialLanguage = localStorage.getItem('appLanguage') || 'en';
+const initialLanguage = localStorage.getItem('appLanguage') || 'he';
 
 const rootStore = RootStore.create({
   assistants: [],

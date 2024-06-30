@@ -50,16 +50,18 @@ const CompaniesView: React.FC = observer(() => {
   };
 
   const Actions = (row: ICompany) => (
-    <div className="flex space-x-3 items-center mx-1">
+    <div className="flex space-x-3 items-center mx-1 rtl:space-x-reverse">
       <IconButton
-        icon={<TrashIcon className="w-5 h-5  text-warning-900" />}
+        icon={<TrashIcon className="w-5 h-5 text-warning-900" />}
         onClick={(event) => {
           event.stopPropagation();
           handleDelete(row);
         }}
       />
       <IconButton
-        icon={<PlayIcon className="w-5 h-5  text-warning-900" />}
+        icon={
+          <PlayIcon className="w-5 h-5 text-warning-900 rtl:transform rtl:scale-x-[-1]" />
+        }
         onClick={(event) => {
           event.stopPropagation();
           handleSetCompany(row);
@@ -70,20 +72,13 @@ const CompaniesView: React.FC = observer(() => {
 
   return (
     <>
-      <div className="flex w-full justify-center">
-        <div className=" flex-auto">
-          <Table
-            headers={convertToStringArray(headers)}
-            data={toJS(rootStore.companies)}
-            Page="CompaniesPage"
-            onRowClick={(row: ICompany) =>
-              navigate(`/admin/companies/${row._id}`)
-            }
-            Actions={Actions}
-          />
-        </div>
-        <div className="flex-0 w-96"></div>
-      </div>
+      <Table
+        headers={convertToStringArray(headers)}
+        data={toJS(rootStore.companies)}
+        Page="CompaniesPage"
+        onRowClick={(row: ICompany) => navigate(`/admin/companies/${row._id}`)}
+        Actions={Actions}
+      />
     </>
   );
 });

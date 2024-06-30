@@ -43,11 +43,13 @@ const BetaKeyAuth: React.FC<BetaKeyAuthProps> = ({ onSuccess }) => {
           text="הצטרפו לגרסת הבטא שלנו"
           size="title"
           className="mb-2"
+          align="center"
         />
         <TextComponent
           text="אנחנו כרגע נותנים גישה לגרסת הבטא שלנו למשתמשים שנבחרו. בבקשה הכניסו את קוד ההזמנה שקיבלתם."
           size="normal"
           className="mb-10"
+          align="center"
         />
         <Input
           id="beta-key"

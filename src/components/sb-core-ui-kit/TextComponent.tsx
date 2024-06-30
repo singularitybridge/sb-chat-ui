@@ -3,7 +3,7 @@ import classNames from 'classnames';
 
 interface TextComponentProps {
   text: string;
-  size: 'normal' | 'title' | 'subtitle';
+  size: 'normal' | 'title' | 'subtitle' | 'small';
   color?: 'normal' | 'alert' | 'info' | 'bright';
   align?: 'left' | 'center' | 'right';
   className?: string;
@@ -13,13 +13,14 @@ const TextComponent: React.FC<TextComponentProps> = ({
   text, 
   size, 
   color = 'normal', 
-  align = 'center',
+  align,
   className 
 }) => {
   const baseClasses = {
     normal: 'text-base font-normal tracking-[0.56px]',
     title: 'text-2xl font-black tracking-[1.08px]',
-    subtitle: 'text-xl font-normal tracking-[0.56px]'
+    subtitle: 'text-xl font-normal tracking-[0.56px]',
+    small: 'text-sm font-normal tracking-[0.56px]'
   };
 
   const colorClasses = {
@@ -39,7 +40,7 @@ const TextComponent: React.FC<TextComponentProps> = ({
     'leading-[1.4]',
     baseClasses[size],
     colorClasses[color],
-    alignClasses[align],
+    align && alignClasses[align],
     className
   );
 
