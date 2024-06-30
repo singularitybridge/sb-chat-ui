@@ -14,7 +14,7 @@ import { ICompany } from '../../store/models/Company';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
 import Button from '../../components/sb-core-ui-kit/Button';
 import { Input } from '../../components/sb-core-ui-kit/Input';
-import { Textarea } from '../../components/sb-core-ui-kit/TextArea';
+import { Textarea } from '../../components/sb-core-ui-kit/Textarea';
 
 const OnboardingPage: React.FC = () => {
   const [name, setName] = useState('');
