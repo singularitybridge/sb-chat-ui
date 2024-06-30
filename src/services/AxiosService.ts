@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: 'https://api.singularitybridge.net/',
+  baseURL:  import.meta.env.VITE_API_URL,
 });
 
 // Request interceptor to include the Bearer token
