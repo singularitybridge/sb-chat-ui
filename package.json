@@ -16,6 +16,7 @@
     "axios": "^1.6.2",
     "classnames": "^2.3.2",
     "clsx": "^1.2.1",
+    "dotenv": "^16.4.5",
     "framer-motion": "^10.2.3",
     "google-auth-library": "^9.9.0",
     "i18next": "^23.11.3",
@@ -56,6 +57,7 @@
   "devDependencies": {
     "@types/lodash": "^4.14.202",
     "@types/mustache": "^4.2.2",
+    "@types/node": "^20.14.9",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.10",
     "@types/react-speech-recognition": "^3.9.1",
