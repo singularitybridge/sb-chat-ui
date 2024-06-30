@@ -43,7 +43,7 @@
     "companyUpdated":"Company has been updated successfully"
   },
   "AssistantsPage": {
-    "title": "AI Assistants",
+    "title": "Virtual Agents",
     "description": "manage your ai agents here",
     "table": {
       "name": "name",

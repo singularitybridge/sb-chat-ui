@@ -43,14 +43,14 @@ export const SessionView = observer(() => {
   }
 
   return (
-    <div className="relative flex px-3 space-x-3 mr-4 bg-zinc-300 py-2 rounded-2xl bg-opacity-30">
-      <div className="flex items-center space-x-1">
+    <div className="relative flex px-3 space-x-3 mr-4 bg-zinc-300 py-2 rounded-2xl bg-opacity-30 rtl:space-x-reverse">
+      <div className="flex items-center space-x-1 rtl:space-x-reverse">
         <Building2 className="w-3.5 h-3.5 text-zinc-500" />
         <div className="   text-zinc-500 text-sm font-light">
           {rootStore.sessionStore.activeSession.companyName}
         </div>
       </div>     
-      <div className="flex items-center space-x-1">
+      <div className="flex items-center space-x-1 rtl:space-x-reverse">
         <UserRound className="w-3.5 h-3.5  cyan-zinc-500" />
         <div className=" text-zinc-500 text-sm font-light">
           {rootStore.sessionStore.activeSession.userName}

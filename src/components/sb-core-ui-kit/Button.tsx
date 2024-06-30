@@ -11,6 +11,7 @@ export interface ButtonProps {
 }
 
 const ArrowIcon: React.FC<{ size: 'small' | 'normal' | 'large' }> = ({ size }) => {
+  
   const iconSize = size === 'small' ? 16 : size === 'normal' ? 18 : 20;
   
   return (
@@ -19,7 +20,7 @@ const ArrowIcon: React.FC<{ size: 'small' | 'normal' | 'large' }> = ({ size }) =
       width={iconSize}
       height={iconSize}
       viewBox="0 0 20 20"
-      fill="none"
+      fill="none"     
     >
       <path
         d="M8.75 16.25L2.5 10M2.5 10L8.75 3.75M2.5 10L17.5 10"
@@ -51,14 +52,16 @@ const Button: React.FC<ButtonProps> = ({
     'bg-primary',
     sizeClasses[size],
     'rounded-xl',
-    'flex items-center justify-center gap-2',
+    'flex items-center justify-center',
     additionalClassName
   );
 
   return (
     <button type={type} onClick={onClick} className={className}>
-      {isArrowButton && <ArrowIcon size={size} />}
-      {children}
+      <span className="flex items-center rtl:flex-row-reverse gap-2">
+        {isArrowButton && <ArrowIcon size={size} />}
+        {children}
+      </span>
     </button>
   );
 };
