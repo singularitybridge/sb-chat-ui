@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
-import { ChevronDownIcon } from '@heroicons/react/24/outline';
+import {
+  CircleFadingPlus,
+} from 'lucide-react';
 
 interface HeaderProps {
   title: string;
   description: string;
-  avatar: string; // Add avatar as a prop
-  onMinimize?: () => void;
+  avatar: string;
+  onClear: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({
   title,
   description,
   avatar,
-  onMinimize,
+  onClear,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -22,10 +24,9 @@ const Header: React.FC<HeaderProps> = ({
 
   const renderDescription = () => {
     if (description.length > 100 && !isExpanded) {
-      // Assuming 100 characters as roughly 2 lines
       return (
         <p
-          className="text-sm text-[#6b7280] leading-4 cursor-pointer"
+          className="text-sm text-[#6b7280] leading-4 "
           onClick={toggleDescription}
         >
           {`${description.substring(0, 97)}...`}
@@ -34,7 +35,7 @@ const Header: React.FC<HeaderProps> = ({
     }
     return (
       <p
-        className="text-sm text-[#6b7280] leading-4 cursor-pointer"
+        className="text-sm text-[#6b7280] leading-4"
         onClick={toggleDescription}
       >
         {description}
@@ -43,28 +44,26 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <>
-      <div className="flex justify-between items-start space-y-2 space-x-3">
-        <img
-          className="w-14 rounded-full mt-2 p-0.5"
-          src={avatar}
-          alt="Avatar"
-          loading="lazy"
-        />
-        <div className="flex-1">
-          <h2 className="font-semibold text-lg tracking-tight">{title}</h2>
-          <div className="flex items-start pb-5">{renderDescription()}</div>
-        </div>
-        <div className="flex space-x-2">
-          <button
-            className=" rounded-full p-2 hover:bg-gray-100"
-            onClick={onMinimize}
-          >
-            <ChevronDownIcon className="h-3 w-3 text-gray-700" />
-          </button>
-        </div>
+    <div className="flex justify-between items-start space-x-3.5 rtl:space-x-reverse mb-3 bg-slate-100 p-3 rounded-2xl ">
+      <img
+        className="w-20 rounded-full  bg-indigo-100 "
+        src={avatar}
+        alt="Avatar"
+        loading="lazy"
+      />
+
+      <div className="flex-1">
+        <h2 className="font-semibold text-lg tracking-tight">{title}</h2>
+        <div className="flex items-start pb-5">{renderDescription()}</div>
       </div>
-    </>
+      <button
+        onClick={onClear}
+        className="p-1 rounded-full transition-colors hover:bg-gray-100"
+        aria-label="Clear chat"
+      >
+        <CircleFadingPlus className="w-6 h-6 text-gray-500 hover:text-primary-600" />
+      </button>
+    </div>
   );
 };
 

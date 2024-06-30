@@ -6,7 +6,6 @@ import { UserMessage } from './chat-elements/UserMessage';
 import { HumanAgentResponseMessage } from './chat-elements/HumanAgentResponseMessage';
 import { NotificationMessage } from './chat-elements/NotificationMessage';
 import { ActionMessage } from './chat-elements/ActionMessage';
-import { PlusIcon } from '@heroicons/react/24/outline';
 import { ChatInput } from './chat-elements/ChatInput';
 
 interface Metadata {
@@ -34,12 +33,9 @@ interface SBChatKitUIProps {
   };
   assistantName: string;
   onSendMessage: (message: string) => void;
-  onReload: () => void;
-  isMinimized?: boolean;
-  onToggleMinimize?: () => void;
+  onClear: () => void;
   className?: string;
   style?: React.CSSProperties;
-  isHebrew?: boolean;
 }
 
 const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
@@ -47,12 +43,9 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
   assistant,
   assistantName,
   onSendMessage,
-  onReload,
-  isMinimized = false,
-  onToggleMinimize,
+  onClear,
   className = '',
   style = {},
-  isHebrew = false,
 }) => {
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const [disabledMessages, setDisabledMessages] = useState<number[]>([]);
@@ -74,38 +67,25 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
     }
   }, [messages]);
 
-  if (isMinimized) {
-    return (
-      <button
-        className={`fixed mb-3 bottom-4 ${
-          isHebrew ? 'left-4 ml-3' : 'right-4 mr-3'
-        } w-12 h-12 bg-slate-500 rounded-full flex items-center justify-center`}
-        onClick={onToggleMinimize}
-      >
-        <PlusIcon className="h-6 w-6 text-white" />
-      </button>
-    );
-  }
-
   return (
     <div
       style={{
-        boxShadow: '0 0 #0000, 0 0 #0000, 0 1px 2px 0 rgb(0 0 0 / 0.05)',
-        direction: isHebrew ? 'rtl' : 'ltr',
         ...style,
       }}
-      className={`bg-white p-5 rounded-lg border border-[#e5e7eb] flex flex-col ${className} h-full w-full`}
+      className={`p-4 flex flex-col ${className} h-full w-full`}
     >
       <Header
         title={assistant?.name || ''}
         description={assistant?.description || ''}
         avatar={assistant?.avatar || ''}
-        onMinimize={onToggleMinimize}
+        onClear={onClear}
       />
-      <div className={`flex-grow overflow-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-300 ${isHebrew ? 'text-right' : ''}`}>
+      <div className="flex-grow overflow-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-300">
         {messages.map((message, index) => {
           if (message.metadata?.message_type === 'human-agent-response') {
-            return <HumanAgentResponseMessage key={index} text={message.content} />;
+            return (
+              <HumanAgentResponseMessage key={index} text={message.content} />
+            );
           } else if (message.metadata?.message_type === 'notification') {
             return <NotificationMessage key={index} text={message.content} />;
           } else if (message.actions && message.actions.length > 0) {
@@ -119,14 +99,20 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
               />
             );
           } else if (message.role === 'assistant') {
-            return <AssistantMessage key={index} text={message.content} assistantName={assistantName} />;
+            return (
+              <AssistantMessage
+                key={index}
+                text={message.content}
+                assistantName={assistantName}
+              />
+            );
           } else {
             return <UserMessage key={index} text={message.content} />;
           }
         })}
         <div ref={messagesEndRef} />
       </div>
-      <ChatInput onSendMessage={onSendMessage} onReload={onReload} isHebrew={isHebrew} />
+      <ChatInput onSendMessage={onSendMessage} />
     </div>
   );
 };

@@ -1,82 +1,112 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useRootStore } from '../../store/common/RootStoreContext';
-import { Table } from '../../components/Table';
-import { toJS } from 'mobx';
-import { AssistantKeys, IAssistant } from '../../store/models/Assistant';
-import { withPage } from '../../components/admin/HOC/withPage';
-import { convertToStringArray } from '../../utils/utils';
-import {
-  PlayIcon,
-  TrashIcon,
-} from '@heroicons/react/24/outline';
+import { IAssistant } from '../../store/models/Assistant';
+import { Plus, Settings2, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { IconButton } from '../../components/admin/IconButton';
 import { emitter } from '../../services/mittEmitter';
-import { EVENT_SET_ACTIVE_ASSISTANT, EVENT_SHOW_ADD_ASSISTANT_MODAL } from '../../utils/eventNames';
+import {
+  EVENT_SET_ACTIVE_ASSISTANT,
+  EVENT_SHOW_ADD_ASSISTANT_MODAL,
+} from '../../utils/eventNames';
+import { ChatContainer } from '../../components/chat-container/ChatContainer';
+import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
+import { useNavigate } from 'react-router-dom';
 
-const AssistantsView: React.FC = observer(() => {
+const AssistantsPage: React.FC = observer(() => {
+
   const rootStore = useRootStore();
   const navigate = useNavigate();
-
-  const headers: AssistantKeys[] = ['name', 'description', 'voice'];
-
-  const handleDelete = (row: IAssistant) => {
-    rootStore.deleteAssistant(row._id);
-  };
-
-  const handleSetAssistant = async (row: IAssistant) => {    
-    emitter.emit(EVENT_SET_ACTIVE_ASSISTANT, row._id);
-  };
-
-  const Actions = (row: IAssistant) => (
-    <div className="flex space-x-2 items-center mx-1">
-      <IconButton
-        icon={<TrashIcon className="w-5 h-5  text-warning-900" />}
-        onClick={(event) => {
-          event.stopPropagation();
-          handleDelete(row);
-        }}
-      />
-      <IconButton
-        icon={
-          <PlayIcon className="w-5 h-5  text-warning-900" />
-        }
-        onClick={(event) => {
-          event.stopPropagation();
-          handleSetAssistant(row);
-        }}
-      />
-    </div>
+  const [hoveredAssistantId, setHoveredAssistantId] = useState<string | null>(
+    null
   );
 
+  const { t } = useTranslation();
+
+  const handleDelete = (assistant: IAssistant) => {
+    rootStore.deleteAssistant(assistant._id);
+  };
+
+  const handleSetAssistant = async (assistant: IAssistant) => {
+    emitter.emit(EVENT_SET_ACTIVE_ASSISTANT, assistant._id);
+  };
+
+  const handleAddAssistant = () => {
+    emitter.emit(EVENT_SHOW_ADD_ASSISTANT_MODAL, 'Add Assistant');
+  };
+
+  const handleEditAssistant = (assistantId: string) => {
+    navigate(`/admin/assistants/${assistantId}`);
+  };
+
   return (
-    <>
-      <div className="flex w-full justify-center">
-        <div className=" flex-auto">
-          <Table
-            headers={convertToStringArray(headers)}
-            data={toJS(rootStore.assistants)}
-            Page='AssistantsPage'
-            onRowClick={(row: IAssistant) =>
-              navigate(`/admin/assistants/${row._id}`)
-            }
-            Actions={Actions}
+    <div className="flex h-[calc(100vh-96px)] space-x-4 rtl:space-x-reverse">
+      <div className="bg-white p-6 overflow-y-auto flex flex-col rounded-lg w-80">
+        <div className="flex flex-row justify-between items-center w-full mb-6">
+          <TextComponent text={t('AssistantsPage.title')} size="subtitle" />
+          <IconButton
+            icon={<Plus className="w-6 h-6 text-gray-600" />}
+            onClick={handleAddAssistant}
           />
         </div>
-        <div className=" flex-0 w-96">
-          
-        </div>
+
+        <ul className="space-y-2 flex-grow">
+          {rootStore.assistants.map((assistant) => (
+            <li
+              key={assistant._id}
+              className={` rounded-lg p-2 cursor-pointer hover:bg-slate-200 relative ${
+                rootStore.sessionStore.activeSession?.assistantId ===
+                assistant._id
+                  ? ' bg-indigo-100'
+                  : 'bg-gray-50'
+              }`}
+              onClick={() => handleSetAssistant(assistant)}
+              onMouseEnter={() => setHoveredAssistantId(assistant._id)}
+              onMouseLeave={() => setHoveredAssistantId(null)}
+            >
+              <div className="flex items-start space-x-1">
+                <img
+                  src={'/assets/avatars/avatar-_0020_9.png'}
+                  alt={`${assistant.name} avatar`}
+                  className="w-10 h-10 rounded-full object-cover "
+                />
+                <div className="flex-grow">
+                  <h4 className="font-medium text-sm">{assistant.name}</h4>
+                  <p className="text-sm text-gray-600 mt-1">
+                    {assistant.description}
+                  </p>
+                </div>
+              </div>
+              {hoveredAssistantId === assistant._id && (
+                <div>
+                  <IconButton
+                    icon={<X className="w-4 h-4 text-gray-500" />}
+                    className="absolute top-2 ltr:right-2 p-1 rounded-full rtl:left-2 hover:bg-gray-300"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleDelete(assistant);
+                    }}
+                  />
+                  <IconButton
+                    icon={<Settings2 className="w-4 h-4 text-gray-500" />}
+                    className="absolute top-2 ltr:right-8 rtl:left-8 p-1 rounded-full hover:bg-gray-300"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleEditAssistant(assistant._id);
+                    }}
+                  />
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
       </div>
-    </>
+      <div className="flex-grow overflow-y-auto">
+        <ChatContainer />
+      </div>
+    </div>
   );
 });
 
-const AssistantsPage = withPage(
-  'AssistantsPage.title',
-  'AssistantsPage.description',
-  () => {
-    emitter.emit(EVENT_SHOW_ADD_ASSISTANT_MODAL, 'Add Assistant');
-  }
-)(AssistantsView);
 export { AssistantsPage };

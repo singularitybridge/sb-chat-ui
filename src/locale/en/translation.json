@@ -43,7 +43,7 @@
     "companyUpdated":"Company has been updated successfully"
   },
   "AssistantsPage": {
-    "title": "AI Assistants",
+    "title": "Virtual Agents",
     "description": "manage your ai agents here",
     "table": {
       "name": "name",
@@ -143,5 +143,38 @@
   },
   "ChatContainer": {
     "input": "Type your message"
+  },
+
+  "Notifications": {    
+    "agentCreated": "Agent has been created successfully",
+    "agentUpdated": "Agent has been updated successfully",
+    "agentDeleted": "Agent has been deleted successfully",
+    "companyCreated": "Company has been created successfully",
+    "companyUpdated": "Company has been updated successfully",
+    "companyDeleted": "Company has been deleted successfully",
+
+    "userCreated": "User has been created successfully",
+    "userUpdated": "User has been updated successfully",
+    "userDeleted": "User has been deleted successfully",
+
+    "actionCreated": "Action has been created successfully",
+    "actionUpdated": "Action has been updated successfully",
+    "actionDeleted": "Action has been deleted successfully",
+
+    "tokenRefreshed": "Token has been refreshed successfully"
+  },
+
+  "assistantFieldConfigs": {
+    "assistantId": "Assistant ID",
+    "name": "Name",
+    "description": "Description",
+    "introMessage": "Intro Message",
+    "voice": "Voice",
+    "language": "Language",
+    "llmModel": "LLM Model",
+    "llmPrompt": "LLM Prompt"
   }
+ 
+    
+
 }

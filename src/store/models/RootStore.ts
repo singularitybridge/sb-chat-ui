@@ -161,7 +161,7 @@ const RootStore = types
       try {
         const newAction = yield addAction(action);
         self.actions.push(newAction);
-        emitter.emit(EVENT_SHOW_NOTIFICATION, 'Action added successfully');
+        emitter.emit(EVENT_SHOW_NOTIFICATION, i18n.t('Notifications.actionCreated'));
         emitter.emit(EVENT_CLOSE_MODAL); // Emit the close modal event
       } catch (error: any) {
         console.error('Failed to add action', error);
@@ -174,7 +174,7 @@ const RootStore = types
         const index = self.actions.findIndex((act) => act._id === actionId);
         if (index !== -1) {
           self.actions[index] = updatedAction;
-          emitter.emit(EVENT_SHOW_NOTIFICATION, 'Action updated successfully');
+          emitter.emit(EVENT_SHOW_NOTIFICATION, i18n.t('Notifications.actionUpdated'));
         }
       } catch (error) {
         console.error('Failed to update action', error);
@@ -186,7 +186,7 @@ const RootStore = types
         self.actions.replace(
           self.actions.filter((act) => act._id !== actionId)
         );
-        emitter.emit(EVENT_SHOW_NOTIFICATION, 'Action deleted successfully');
+        emitter.emit(EVENT_SHOW_NOTIFICATION, i18n.t('Notifications.actionDeleted'));
       } catch (error) {
         console.error('Failed to delete action', error);
       }
@@ -253,7 +253,7 @@ const RootStore = types
           self.companies[index] = updatedCompany;
           emitter.emit(
             EVENT_SHOW_NOTIFICATION,
-            'Company has been updated successfully'
+            i18n.t('Notifications.companyUpdated')
           );
         }
       } catch (error) {
@@ -270,7 +270,7 @@ const RootStore = types
           self.companies[index] = updatedCompany;
           emitter.emit(
             EVENT_SHOW_NOTIFICATION,
-            'New token generated successfully'
+            i18n.t('Notifications.tokenRefreshed')
           );
         }
         return updatedCompany;
@@ -294,7 +294,7 @@ const RootStore = types
         self.users.push(newUser);
         emitter.emit(
           EVENT_SHOW_NOTIFICATION,
-          'New user has been created successfully'
+          i18n.t('Notifications.userCreated')
         );
 
         emitter.emit(EVENT_CLOSE_MODAL);
@@ -315,7 +315,7 @@ const RootStore = types
         }
         emitter.emit(
           EVENT_SHOW_NOTIFICATION,
-          'User has been deleted successfully'
+          i18n.t('Notifications.userDeleted')
         );
       } catch (error) {
         console.error('Failed to delete user', error);
@@ -329,7 +329,7 @@ const RootStore = types
         self.companies.push(newCompany);
         emitter.emit(
           EVENT_SHOW_NOTIFICATION,
-          'New company has been created successfully'
+          i18n.t('Notifications.companyCreated')
         );
         emitter.emit(EVENT_CLOSE_MODAL);
         return newCompany;
@@ -351,7 +351,7 @@ const RootStore = types
         }
         emitter.emit(
           EVENT_SHOW_NOTIFICATION,
-          'Company has been deleted successfully'
+          i18n.t('Notifications.companyDeleted')
         );
       } catch (error) {
         console.error('Failed to delete assistant', error);
@@ -367,7 +367,7 @@ const RootStore = types
         self.assistants.push(newAssistant);
         emitter.emit(
           EVENT_SHOW_NOTIFICATION,
-          'New assistant has been created successfully'
+          i18n.t('Notifications.agentCreated')
         );
         emitter.emit(EVENT_CLOSE_MODAL); // Emit the close modal event
       } catch (error: any) {
@@ -384,7 +384,7 @@ const RootStore = types
         self.assistants[index] = updatedAssistant;
         emitter.emit(
           EVENT_SHOW_NOTIFICATION,
-          'assistant has been deleted successfully'
+          i18n.t('Notifications.agentUpdated')
         );
       } catch (error) {
         console.error('Failed to update assistant', error);
@@ -402,7 +402,7 @@ const RootStore = types
         }
         emitter.emit(
           EVENT_SHOW_NOTIFICATION,
-          'Assistant has been deleted successfully'
+          i18n.t('Notifications.agentDeleted')
         );
       } catch (error) {
         console.error('Failed to delete assistant', error);

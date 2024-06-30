@@ -12,10 +12,12 @@ import {
 } from '../../utils/eventNames';
 import { emitter, useEventEmitter } from '../../services/mittEmitter';
 import { IAssistant } from '../../store/models/Assistant';
-import { getSessionById, updateSessionAssistant } from '../../services/api/sessionService';
-// import { useTranslation } from 'react-i18next';
+import {
+  createSession,
+  getSessionById,
+  updateSessionAssistant,
+} from '../../services/api/sessionService';
 import { SBChatKitUI } from '../sb-chat-kit-ui/SBChatKitUI';
-import { PlusIcon } from '@heroicons/react/24/outline';
 
 interface Metadata {
   message_type: string;
@@ -30,17 +32,14 @@ interface ChatMessage {
 
 const ChatContainer = observer(() => {
   const rootStore = useRootStore();
-  const messagesEndRef = useRef<null | HTMLDivElement>(null);
-  // const [message, setMessage] = useState('');
-  const [isMinimized, setIsMinimized] = useState(false);
+  const messagesEndRef = useRef<null | HTMLDivElement>(null); 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [assistant, setAssistant] = useState<IAssistant>();
 
   const userId = rootStore.sessionStore.activeSession?.userId;
   const assistantId = rootStore.sessionStore.activeSession?.assistantId;
-  const companyId = rootStore.sessionStore.activeSession?.companyId;
-  const isHebrew = rootStore.language === 'he';
-  
+  const companyId = rootStore.sessionStore.activeSession?.companyId; 
+
   useEffect(() => {
     if (assistantId && rootStore.assistantsLoaded) {
       setAssistant(rootStore.getAssistantById(assistantId));
@@ -60,8 +59,13 @@ const ChatContainer = observer(() => {
   }, [userId, assistant?._id]);
 
   const handleAssistantUpdated = async (assistantId: string) => {
-    await updateSessionAssistant(rootStore.sessionStore.activeSession?._id || '', assistantId);
-    const session = await getSessionById(rootStore.sessionStore.activeSession?._id || '');
+    await updateSessionAssistant(
+      rootStore.sessionStore.activeSession?._id || '',
+      assistantId
+    );
+    const session = await getSessionById(
+      rootStore.sessionStore.activeSession?._id || ''
+    );
     rootStore.sessionStore.setActiveSession(session);
     setAssistant(rootStore.getAssistantById(assistantId));
   };
@@ -104,56 +108,50 @@ const ChatContainer = observer(() => {
     }
   };
 
-  const handleReload = async () => {
+  const handleClear = async () => {
     if (assistant && userId && companyId) {
+
       await endSession(companyId, userId);
       rootStore.sessionStore.clearActiveSession();
       emitter.emit(EVENT_CHAT_SESSION_DELETED, 'Chat session deleted');
+
+
+
+      // mixed code 
+      if (!rootStore.sessionStore.activeSession) {
+        return;
+      }
+  
+      await rootStore.sessionStore.deleteSession(
+        rootStore.sessionStore.activeSession._id
+      );
+      await createSession(
+        rootStore.currentUser!._id,
+        rootStore.currentUser!.companyId
+      );
+  
+
+
     }
   };
 
-  const handleMinimize = () => {
-    setIsMinimized(!isMinimized);
-  };
-
-  // const { t } = useTranslation();
-
-  if (isMinimized) {
-    return (
-      <button
-        className={`fixed mb-3 bottom-4 ${
-          isHebrew ? 'left-4 ml-3' : 'right-4 mr-3'
-        } w-12 h-12 bg-slate-500 rounded-full flex items-center justify-center`}
-        onClick={handleMinimize}
-      >
-        <PlusIcon className="h-6 w-6 text-white" />
-      </button>
-    );
-  }
 
   return (
-    <div
-      style={{
-        boxShadow: '0 0 #0000, 0 0 #0000, 0 1px 2px 0 rgb(0 0 0 / 0.05)',
-        zIndex: 5000,
-      }}
-      className={`fixed bottom-[calc(2rem)] ${
-        isHebrew ? 'left-0 ml-7' : 'right-0 mr-7'
-      } bg-white p-5 rounded-lg border border-[#e5e7eb] w-[340px] h-[575px] flex flex-col`}
-    >
+    <div className='h-full w-full bg-white rounded-lg'>
       <SBChatKitUI
         messages={messages}
-        assistant={assistant ? {
-          name: assistant.name,
-          description: assistant.description,
-          avatar: '/images/avatars/av4.png',
-        } : undefined}
+        assistant={
+          assistant
+            ? {
+                name: assistant.name,
+                description: assistant.description,
+                avatar: '/assets/avatars/avatar-_0020_9.png',
+              }
+            : undefined
+        }
         assistantName="AI Assistant"
         onSendMessage={handleSubmitMessage}
-        onReload={handleReload}
-        isMinimized={isMinimized}
-        onToggleMinimize={handleMinimize}
-        isHebrew={isHebrew}
+        onClear={handleClear}        
       />
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { SVGProps, useEffect, useState } from 'react';
+import React, { SVGProps } from 'react';
 import {
   ChatBubbleBottomCenterTextIcon,
   AcademicCapIcon,
@@ -7,7 +7,6 @@ import {
 } from '@heroicons/react/24/solid';
 import { observer } from 'mobx-react-lite';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import { useRootStore } from '../store/common/RootStoreContext';
 
 interface SideMenuProps {
   isOpen: boolean;
@@ -33,7 +32,7 @@ const SideMenuItem: React.FC<SideMenuItemProps> = ({
   </div>
 );
 
-const SideMenu: React.FC<SideMenuProps> = observer(({ isOpen, closeMenu }) => {
+const SideMenu: React.FC<SideMenuProps> = observer(({ isOpen }) => {
   // const { activeChatbot } = useRootStore();
 
   return (

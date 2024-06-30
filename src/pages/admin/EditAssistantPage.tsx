@@ -53,7 +53,7 @@ const EditAssistantView: React.FC = observer(() => {
 
   return (
     <>
-      <div className="flex w-full">
+      <div className="flex w-full space-x-2 rtl:space-x-reverse">
         <div className="w-1/2">
           <DynamicForm
             fields={formFields}

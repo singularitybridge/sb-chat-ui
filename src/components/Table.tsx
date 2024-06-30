@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRootStore } from '../store/common/RootStoreContext';
-
+import { TextComponent } from './sb-core-ui-kit/TextComponent';
 
 interface TableProps {
   headers: string[];
@@ -30,23 +30,25 @@ const Table: React.FC<TableProps> = ({
 
   const direction = rootStore.language === 'he' ? 'text-right' : 'text-left';
 
-
   return (
     <div className="flex flex-col w-full">
       <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
         <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
           <div className="overflow-hidden">
-            <table className="min-w-full text-sm font-light">
-              <thead className={`border-b font-medium ${direction} dark:border-neutral-500`}>
+            <table className="min-w-full">
+              <thead className={`${direction}`}>
                 <tr>
                   {headers.map((row, index) => (
                     <th
                       key={index}
                       scope="col"
                       className="px-6 py-4 max-w-xs truncate"
-                      
                     >
-                      {t(`${Page}.table.${row}`)}
+                      <TextComponent
+                        text={t(`${Page}.table.${row}`)}
+                        size="normal"
+                        color="info"
+                      />
                     </th>
                   ))}
                 </tr>
@@ -55,7 +57,7 @@ const Table: React.FC<TableProps> = ({
                 {data.map((row, rowIndex) => (
                   <tr
                     key={rowIndex}
-                    className="border-b dark:border-neutral-500 transition duration-300 ease-in-out hover:bg-neutral-100 dark:hover:bg-neutral-600"
+                    className="border-b border-zinc-100 hover:bg-neutral-50 "
                     onClick={() => onRowClick?.(row)}
                   >
                     {headers.map((header, headerIndex) => (
@@ -65,7 +67,8 @@ const Table: React.FC<TableProps> = ({
                           header === 'specificColumn' ? 'max-w-md' : 'max-w-xs'
                         }`}
                       >
-                        {renderCellContent(t(row[header]))}
+                        <TextComponent size='small' color='normal' text={renderCellContent(t(row[header]))} />
+                        
                       </td>
                     ))}
                     {Actions && <td className="px-6 py-4">{Actions(row)}</td>}
