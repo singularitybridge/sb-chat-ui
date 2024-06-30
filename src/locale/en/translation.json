@@ -146,11 +146,9 @@
   },
 
   "Notifications": {    
-
     "agentCreated": "Agent has been created successfully",
     "agentUpdated": "Agent has been updated successfully",
     "agentDeleted": "Agent has been deleted successfully",
-
     "companyCreated": "Company has been created successfully",
     "companyUpdated": "Company has been updated successfully",
     "companyDeleted": "Company has been deleted successfully",
@@ -164,7 +162,19 @@
     "actionDeleted": "Action has been deleted successfully",
 
     "tokenRefreshed": "Token has been refreshed successfully"
+  },
+
+  "assistantFieldConfigs": {
+    "assistantId": "Assistant ID",
+    "name": "Name",
+    "description": "Description",
+    "introMessage": "Intro Message",
+    "voice": "Voice",
+    "language": "Language",
+    "llmModel": "LLM Model",
+    "llmPrompt": "LLM Prompt"
   }
+ 
     
 
 }

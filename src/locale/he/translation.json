@@ -153,5 +153,20 @@
     "actionDeleted": "הפעולה נמחקה בהצלחה",
 
     "tokenRefreshed": "האסימון רוענן בהצלחה"
-  }
+  }, 
+
+  "assistantFieldConfigs": {
+    "assistantId": "מזהה עוזר",
+    "name": "שם",
+    "description": "תיאור",
+    "introMessage": "הודעת פתיחה",
+    "voice": "קול",
+    "language": "שפה",
+    "llmModel": "מודל LLM",
+    "llmPrompt": "פרומפט LLM",
+    "newAssistant": "עוזר חדש",
+    "newAssistantDescription": "תיאור עוזר חדש",
+    "newAssistantIntroMessage": "הודעת פתיחה של עוזר חדש",
+    "defaultLlmPrompt": "אתה משוחח עם עוזר בינה מלאכותית. העוזר מועיל, יצירתי, חכם וידידותי מאוד."
+  }  
 }
