@@ -4,7 +4,7 @@ import { ActionKeys, IAction } from '../../store/models/Action';
 import { useRootStore } from '../../store/common/RootStoreContext';
 import { IconButton } from '../../components/admin/IconButton';
 import { TrashIcon } from '@heroicons/react/24/outline';
-import { Table } from '../../components/Table';
+import { Table } from '../../components/sb-core-ui-kit/Table';
 import { withPage } from '../../components/admin/HOC/withPage';
 import { convertToStringArray } from '../../utils/utils';
 import { toJS } from 'mobx';

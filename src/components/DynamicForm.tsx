@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import InputWithLabel from './admin/InputWithLabel';
 import { TextareaWithLabel } from './admin/TextareaWithLabel';
-import { KeyValue, KeyValueList } from './KeyValueList';
+import { KeyValue, KeyValueList } from './sb-core-ui-kit/KeyValueList';
 import { ApiKey, ApiKeyList } from './ApiKeyList';
 import LoadingButton from './core/LoadingButton';
 import { AssistantKeys } from '../store/models/Assistant';

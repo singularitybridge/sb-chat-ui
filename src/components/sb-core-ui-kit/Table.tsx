@@ -1,7 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRootStore } from '../store/common/RootStoreContext';
-import { TextComponent } from './sb-core-ui-kit/TextComponent';
+import { TextComponent } from './TextComponent';
 
 interface TableProps {
   headers: string[];
@@ -25,10 +24,8 @@ const Table: React.FC<TableProps> = ({
     return value;
   };
 
-  const rootStore = useRootStore();
   const { t } = useTranslation();
 
-  const direction = rootStore.language === 'he' ? 'text-right' : 'text-left';
 
   return (
     <div className="flex flex-col w-full">
@@ -36,7 +33,7 @@ const Table: React.FC<TableProps> = ({
         <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
           <div className="overflow-hidden">
             <table className="min-w-full">
-              <thead className={`${direction}`}>
+              <thead>
                 <tr>
                   {headers.map((row, index) => (
                     <th
