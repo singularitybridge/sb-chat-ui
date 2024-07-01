@@ -168,5 +168,10 @@
     "newAssistantDescription": "תיאור עוזר חדש",
     "newAssistantIntroMessage": "הודעת פתיחה של עוזר חדש",
     "defaultLlmPrompt": "אתה משוחח עם עוזר בינה מלאכותית. העוזר מועיל, יצירתי, חכם וידידותי מאוד."
-  }  
+  }, 
+
+  "common" : {
+    "actions": "פעולות"
+  }
+
 }

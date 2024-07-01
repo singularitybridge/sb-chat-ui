@@ -14,7 +14,8 @@ import { ICompany } from '../../store/models/Company';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
 import Button from '../../components/sb-core-ui-kit/Button';
 import { Input } from '../../components/sb-core-ui-kit/Input';
-import { Textarea } from '../../components/sb-core-ui-kit/TextArea';
+import { Textarea } from '../../components/sb-core-ui-kit/Textarea';
+
 
 const OnboardingPage: React.FC = () => {
   const [name, setName] = useState('');
@@ -22,7 +23,8 @@ const OnboardingPage: React.FC = () => {
   const rootStore = useRootStore();
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = location.state as { user: any };
+
+  const { user } = location.state as { user: any }; 
 
   const handleSignup = async () => {
     try {
@@ -130,7 +132,7 @@ const OnboardingPage: React.FC = () => {
             />
           </div>
           <div className="flex justify-end">
-            <Button onClick={handleSignup} isArrowButton={true}>
+            <Button onClick={handleSignup} isArrowButton={true} disabled={ description === '' || name === ''}>
               כניסה למערכת
             </Button>
           </div>

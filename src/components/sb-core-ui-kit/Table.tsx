@@ -7,7 +7,7 @@ interface TableProps {
   Page: string;
   data: { [key: string]: any }[];
   onRowClick?: (row: any) => void;
-  Actions?: (row: any) => JSX.Element; // Add this line
+  Actions?: (row: any) => JSX.Element;
 }
 
 const Table: React.FC<TableProps> = ({
@@ -26,7 +26,6 @@ const Table: React.FC<TableProps> = ({
 
   const { t } = useTranslation();
 
-
   return (
     <div className="flex flex-col w-full">
       <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -39,7 +38,7 @@ const Table: React.FC<TableProps> = ({
                     <th
                       key={index}
                       scope="col"
-                      className="px-6 py-4 max-w-xs truncate"
+                      className="px-6 py-4 max-w-xs truncate rtl:text-right ltr:text-left"
                     >
                       <TextComponent
                         text={t(`${Page}.table.${row}`)}
@@ -48,13 +47,25 @@ const Table: React.FC<TableProps> = ({
                       />
                     </th>
                   ))}
+                  {Actions && (
+                    <th
+                      scope="col"
+                      className="px-6 py-4 max-w-xs truncate rtl:text-right ltr:text-left"
+                    >
+                      <TextComponent
+                        text={t('common.actions')}
+                        size="normal"
+                        color="info"
+                      />
+                    </th>
+                  )}
                 </tr>
               </thead>
               <tbody>
                 {data.map((row, rowIndex) => (
                   <tr
                     key={rowIndex}
-                    className="border-b border-zinc-100 hover:bg-neutral-50 "
+                    className="border-b border-zinc-100 hover:bg-neutral-50"
                     onClick={() => onRowClick?.(row)}
                   >
                     {headers.map((header, headerIndex) => (
@@ -65,7 +76,6 @@ const Table: React.FC<TableProps> = ({
                         }`}
                       >
                         <TextComponent size='small' color='normal' text={renderCellContent(t(row[header]))} />
-                        
                       </td>
                     ))}
                     {Actions && <td className="px-6 py-4">{Actions(row)}</td>}

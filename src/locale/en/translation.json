@@ -173,6 +173,11 @@
     "language": "Language",
     "llmModel": "LLM Model",
     "llmPrompt": "LLM Prompt"
+  },
+
+
+  "common" : {
+    "actions": "actions"
   }
  
     
