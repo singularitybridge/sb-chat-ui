@@ -170,6 +170,14 @@
     "defaultLlmPrompt": "אתה משוחח עם עוזר בינה מלאכותית. העוזר מועיל, יצירתי, חכם וידידותי מאוד."
   }, 
 
+  "dialogTitles" : {
+    "newAssistant": "צור עוזר חדש",
+    "newCompany": "צור חברה חדשה",
+    "newAction": "צור פעולה חדשה",
+    "newUser": "צור משתמש חדש"
+  },
+
+
   "common" : {
     "actions": "פעולות"
   }

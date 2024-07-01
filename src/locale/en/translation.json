@@ -175,6 +175,13 @@
     "llmPrompt": "LLM Prompt"
   },
 
+  "dialogTitles" : {
+    "newAssistant": "Create New Assistant",
+    "newCompany": "Create New Company",
+    "newAction": "Create New Action",
+    "newUser": "Create New User"
+  },
+
 
   "common" : {
     "actions": "actions"

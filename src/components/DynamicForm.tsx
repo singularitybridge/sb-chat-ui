@@ -133,6 +133,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
               <TextareaWithLabel
                 key={field.id}
                 label={field.label}
+                autogrow={true}
                 id={field.id}
                 value={values[field.id] as string}
                 onChange={(newValue) => handleChange(field.id, newValue)}
