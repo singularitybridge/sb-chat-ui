@@ -31,8 +31,8 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
   const { t } = useTranslation();
 
   return (
-    <div className="mb-4">
-      <div className="mb-2">
+    <div >
+      <div className="mb-1">
         <TextComponent
           text={label}
           size="normal"

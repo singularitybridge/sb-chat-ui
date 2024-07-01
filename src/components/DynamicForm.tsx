@@ -121,6 +121,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
 
   return (
     <form
+      className='flex flex-col space-y-4'
       onSubmit={(e) => {
         e.preventDefault();
         handleSubmit();

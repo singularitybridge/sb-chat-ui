@@ -27,7 +27,7 @@ const ApiKeyList: React.FC<ApiKeyListProps> = ({
     Record<string, boolean>
   >({});
 
-  const handleVerify = async (value: string, key: string) => {    
+  const handleVerify = async (value: string, key: string) => {
     const isValid = await verifyApiKey(value, key);
     setVerificationStatus({ ...verificationStatus, [key]: isValid });
     return isValid;
@@ -40,23 +40,25 @@ const ApiKeyList: React.FC<ApiKeyListProps> = ({
   };
   const { t } = useTranslation();
 
-
   return (
     <div>
       <h2 className="text-xl">{t(title)}</h2>
-      <p className="mb-2 text-sm">{t(description)}</p>
-      {initialData.map(({ key, label, value }, index) => (
-        <VerifiedInputWithLabel
-          apiKey={key}
-          id={`api-key-${key}`}
-          label={label}
-          type="text"
-          value={value}
-          onChange={(newValue) => handleValueChange(newValue, index)}
-          onVerify={handleVerify}
-          autoFocus={index === 0}
-        />
-      ))}
+      <p className="mb-4 text-sm">{t(description)}</p>
+      <div className="flex flex-col space-y-3">
+        {initialData.map(({ key, label, value }, index) => (
+          <VerifiedInputWithLabel
+            apiKey={key}
+            id={`api-key-${key}`}
+            key={key}
+            label={label}
+            type="text"
+            value={value}
+            onChange={(newValue) => handleValueChange(newValue, index)}
+            onVerify={handleVerify}
+            autoFocus={index === 0}
+          />
+        ))}
+      </div>
     </div>
   );
 };
