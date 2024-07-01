@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import InputWithLabel from '../../../components/admin/InputWithLabel';
+import InputWithLabel from '../../../components/sb-core-ui-kit/InputWithLabel';
 import Button from '../../../components/sb-core-ui-kit/Button';
 import { Select, initTE } from 'tw-elements';
 import { SelectInput } from '../../../components/admin/SelectInput';
@@ -11,7 +11,7 @@ import {
   TrashIcon,
 } from '@heroicons/react/24/outline';
 import { processorOptions } from './processorOptions';
-import { TextareaWithLabel } from '../../../components/admin/TextareaWithLabel';
+import { TextareaWithLabel } from '../../../components/sb-core-ui-kit/TextareaWithLabel';
 import { IconButton } from '../../../components/admin/IconButton';
 
 interface EditChatbotProcessorProps {

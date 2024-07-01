@@ -24,7 +24,7 @@ const OnboardingPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { user } = location.state as { user: any }; 
+  const { user } = location.state as { user: any };
 
   const handleSignup = async () => {
     try {

@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { Input } from '../../components/sb-core-ui-kit/Input';
-import InputWithLabel from '../../components/admin/InputWithLabel';
+import InputWithLabel from '../../components/sb-core-ui-kit/InputWithLabel';
 import Button from '../../components/sb-core-ui-kit/Button';
 import { IconButton } from '../../components/admin/IconButton';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
+import { Textarea } from '../../components/sb-core-ui-kit/Textarea';
+import { TextareaWithLabel } from '../../components/sb-core-ui-kit/TextareaWithLabel';
+import { TvIcon } from '@heroicons/react/24/outline';
 
 const UIKitTestPage = () => {
-
   const [direction, setDirection] = useState<'ltr' | 'rtl'>('rtl');
 
   const [someText, setSomeText] = useState('');
   const [someOtherText, setSomeOtherText] = useState('');
+  const [labelInput, setLabelInput] = useState('');
 
   useEffect(() => {
     document.documentElement.dir = direction;
@@ -59,52 +62,75 @@ const UIKitTestPage = () => {
               size="small"
               align="center"
             />
+            <Button>test</Button>
+            <Button isArrowButton={true}>test</Button>
+            <IconButton
+              icon={
+                <TvIcon className="w-11 h-11 text-slate-800 bg-slate-200 p-2 rounded-full" />
+              }
+            />
           </div>
         </div>
-        <div className="border border-gray-300 flex items-center justify-center h-[600px]">
+        <div className="border border-gray-300 flex items-center justify-center ">
           <div className="h-full w-full p-4 space-y-3">
-
             <Input
-              id="beta-key"              
+              id="beta-key"
               value={someText}
-              onChange={setSomeText}              
+              onChange={setSomeText}
               placeholder="כתבו כאן משהו"
             />
             <Input
-              id="beta-key"              
+              id="beta-key"
               value={someOtherText}
-              onChange={setSomeOtherText}              
+              onChange={setSomeOtherText}
               placeholder="כתבו כאן משהו"
             />
             <Input
-              id="beta-key-disabled"              
+              id="beta-key-disabled"
               value={someText}
-              onChange={setSomeText}              
+              onChange={setSomeText}
               placeholder="כתבו כאן משהו"
               disabled={true}
             />
             <Input
-              id="beta-key-disabled"              
+              id="beta-key-disabled"
               value={someText}
-              onChange={setSomeText}              
+              onChange={setSomeText}
               placeholder="כתבו כאן משהו"
-              error='שגיאה כלשהי'
+              error="שגיאה כלשהי"
             />
 
-            {/* 
+            <Textarea
+              id="test"
+              value={someText}
+              onChange={setSomeText}
+              placeholder="כתבו כאן משהו"
+            />
+            <TextareaWithLabel
+              id="test"
+              value={someText}
+              onChange={setSomeText}
+              label="כתובת מייל"
+            />
 
-
-            <Input placeholder="test" />
-            <InputWithLabel label="test" />
-            <Button>test</Button>
-            <IconButton icon="plus" />
-            <Button onClick={handleBetaKeySubmit} isArrowButton={true}>
-            להמשיך
-          </Button> */}
+            <InputWithLabel
+              id="test"
+              type="text"
+              value={labelInput}
+              onChange={setLabelInput}
+              label="כתובת מייל"
+            />
+            <InputWithLabel
+              id="test"
+              type="text"
+              value={labelInput}
+              onChange={setLabelInput}
+              label="כתובת מייל"
+            />
           </div>
         </div>
         <div className="border border-gray-300 flex flex-col items-center justify-center h-[600px]">
-          <div className="flex ">
+          <div className="flex">
             <button
               onClick={() => toggleDirection('ltr')}
               className={`px-4 py-2 ${

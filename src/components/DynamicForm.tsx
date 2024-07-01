@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import InputWithLabel from './admin/InputWithLabel';
-import { TextareaWithLabel } from './admin/TextareaWithLabel';
+import InputWithLabel from './sb-core-ui-kit/InputWithLabel';
+import { TextareaWithLabel } from './sb-core-ui-kit/TextareaWithLabel';
 import { KeyValue, KeyValueList } from './sb-core-ui-kit/KeyValueList';
 import { ApiKey, ApiKeyList } from './ApiKeyList';
 import LoadingButton from './core/LoadingButton';

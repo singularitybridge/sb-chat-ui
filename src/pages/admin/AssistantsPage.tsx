@@ -79,7 +79,7 @@ const AssistantsPage: React.FC = observer(() => {
                 </div>
               </div>
               {hoveredAssistantId === assistant._id && (
-                <div>
+                <div >
                   <IconButton
                     icon={<X className="w-4 h-4 text-gray-500" />}
                     className="absolute top-2 ltr:right-2 p-1 rounded-full rtl:left-2 hover:bg-gray-300"
