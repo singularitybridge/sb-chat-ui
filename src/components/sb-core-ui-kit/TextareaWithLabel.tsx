@@ -15,6 +15,7 @@ interface TextareaWithLabelProps {
   disabled?: boolean;
   rows?: number;
   placeholder?: string;
+  autogrow?: boolean;
 }
 
 const TextareaWithLabel: React.FC<TextareaWithLabelProps> = ({
@@ -29,6 +30,7 @@ const TextareaWithLabel: React.FC<TextareaWithLabelProps> = ({
   disabled,
   rows = 3,
   placeholder,
+  autogrow=false
 }) => {
   const { t } = useTranslation();
 
@@ -52,6 +54,7 @@ const TextareaWithLabel: React.FC<TextareaWithLabelProps> = ({
         disabled={disabled}
         rows={rows}
         placeholder={placeholder}
+        autogrow={autogrow}
       />
     </div>
   );

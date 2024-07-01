@@ -14,6 +14,7 @@ const UIKitTestPage = () => {
   const [someText, setSomeText] = useState('');
   const [someOtherText, setSomeOtherText] = useState('');
   const [labelInput, setLabelInput] = useState('');
+  const [autoGrowText, setAutoGrowText] = useState('');
 
   useEffect(() => {
     document.documentElement.dir = direction;
@@ -105,12 +106,16 @@ const UIKitTestPage = () => {
               value={someText}
               onChange={setSomeText}
               placeholder="כתבו כאן משהו"
+              rows={4}
+              autogrow={true}
             />
             <TextareaWithLabel
               id="test"
-              value={someText}
-              onChange={setSomeText}
-              label="כתובת מייל"
+              value={autoGrowText}
+              onChange={setAutoGrowText}
+              label="text area with autogrow"
+              rows={6}
+              autogrow={true}
             />
 
             <InputWithLabel

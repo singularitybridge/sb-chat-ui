@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import clsx from 'clsx';
 
 interface TextareaProps {
@@ -13,6 +13,7 @@ interface TextareaProps {
   disabled?: boolean;
   className?: string;
   error?: string;
+  autogrow?: boolean;
 }
 
 const Textarea: React.FC<TextareaProps> = ({
@@ -27,8 +28,10 @@ const Textarea: React.FC<TextareaProps> = ({
   disabled,
   className,
   error,
+  autogrow = false,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -39,6 +42,13 @@ const Textarea: React.FC<TextareaProps> = ({
     setIsFocused(false);
     if (onBlur) onBlur();
   };
+
+  useEffect(() => {
+    if (autogrow && textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [value, autogrow]);
 
   return (
     <div className="flex flex-col w-full">
@@ -55,6 +65,7 @@ const Textarea: React.FC<TextareaProps> = ({
         )}
       >
         <textarea
+          ref={textareaRef}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onFocus={handleFocus}
@@ -62,10 +73,12 @@ const Textarea: React.FC<TextareaProps> = ({
           autoFocus={autoFocus}
           placeholder={placeholder}
           disabled={disabled}
-          rows={rows}
+          rows={autogrow ? 1 : rows}
           className={clsx(
-            'w-full rtl:text-right ltr:text-left text-base font-normal leading-[140%] tracking-[0.56px] focus:outline-none bg-transparent resize-none',
+            'w-full rtl:text-right ltr:text-left text-base font-normal leading-[140%] tracking-[0.56px] focus:outline-none bg-transparent',
             {
+              'resize-none': autogrow,
+              'resize-vertical': !autogrow,
               'text-gray-800': value && !disabled,
               'text-gray-400 placeholder-gray-400': !value || disabled,
             }
