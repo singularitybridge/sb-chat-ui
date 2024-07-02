@@ -33,7 +33,7 @@ steps:
     entrypoint: gcloud
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: bash
-args:
+    args:
       - '-c'
       - |
         status=$?
