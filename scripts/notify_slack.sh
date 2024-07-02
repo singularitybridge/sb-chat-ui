@@ -9,7 +9,7 @@ BUILD_STATUS="$1"
 SLACK_WEBHOOK_URL="$2"  
 
 # Define the build details
-BUILD_ID="$BUILD_ID"
+BUILD_ID="${BUILD_ID}"
 BUILD_URL="https://console.cloud.google.com/cloud-build/builds/$BUILD_ID?project=${PROJECT_ID}"
 
 # Define the message payload (using a here-doc for better readability)
