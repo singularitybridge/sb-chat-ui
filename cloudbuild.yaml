@@ -36,9 +36,10 @@ steps:
     args:
       - '-c'
       - |
-        export SLACK_WEBHOOK=$(gcloud secrets versions access latest --secret='SLACK_WEBHOOK')
+        status=$?
+        webhook_url=$(gcloud secrets versions access latest --secret=SLACK_WEBHOOK)
         chmod +x ./scripts/notify_slack.sh
-        ./scripts/notify_slack.sh $? "$SLACK_WEBHOOK"
+        ./scripts/notify_slack.sh "$status" "$webhook_url"
     id: Notify Slack
     waitFor: ['-']
 images:
