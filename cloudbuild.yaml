@@ -36,8 +36,7 @@ steps:
     args:
       - '-c'
       - |
-        gcloud secrets versions access latest --secret="SLACK_WEBHOOK" > /workspace/slack_webhook_url.txt
-        SLACK_WEBHOOK=$(cat /workspace/slack_webhook_url.txt)
+        export SLACK_WEBHOOK=$(gcloud secrets versions access latest --secret=SLACK_WEBHOOK)
         chmod +x ./scripts/notify_slack.sh
         ./scripts/notify_slack.sh $? $SLACK_WEBHOOK
     id: Notify Slack
