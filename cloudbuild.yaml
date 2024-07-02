@@ -36,9 +36,11 @@ steps:
     args:
       - '-c'
       - |
+        SLACK_WEBHOOK=$(gcloud secrets versions access latest --secret=SLACK_WEBHOOK)
         chmod +x notify_slack.sh
-        ./scripts/notify_slack.sh $? https://hooks.slack.com/services/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
+        ./scripts/notify_slack.sh $? $SLACK_WEBHOOK
     id: Notify Slack
+    waitFor: ['-']
 images:
   - >-
     $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
