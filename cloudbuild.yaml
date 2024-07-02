@@ -36,7 +36,12 @@ steps:
     args:
       - '-c'
       - |
-        status=$?
+        status=0 # Initialize status to success 
+        for i in {0..2}; do  # Check the status of the first 3 steps (Build, Push, Deploy)
+          if [ "${{ steps[${i}].status }}" != "SUCCESS" ]; then
+            status=1 # Mark as failure if any step failed
+          fi
+        done
         webhook_url=$(gcloud secrets versions access latest --secret=SLACK_WEBHOOK)
         chmod +x ./scripts/notify_slack.sh
         ./scripts/notify_slack.sh "$status" "$webhook_url" "${BUILD_ID}" "${PROJECT_ID}"
@@ -44,7 +49,10 @@ steps:
     env:
       - 'BUILD_ID=$BUILD_ID'
       - 'PROJECT_ID=$PROJECT_ID'
-    waitFor: ['-']
+    waitFor:  # This ensures the Slack step runs after the previous 3 steps complete
+      - Build 
+      - Push
+      - Deploy
 images:
   - >-
     $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
