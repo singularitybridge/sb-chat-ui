@@ -19,10 +19,10 @@ BUILD_URL="https://console.cloud.google.com/cloud-build/builds/$BUILD_ID?project
 
 # Define the message payload (using a here-doc for better readability)
 if [[ "$BUILD_STATUS" -eq 0 ]]; then
-    MESSAGE=":white_check_mark: Build succeeded! 
+    MESSAGE=":white_check_mark: SB-UI Build succeeded! 
     Build details : ($BUILD_URL)"
 else
-    MESSAGE=":x: Build failed! 
+    MESSAGE=":x: SB-UI Build failed! 
     Build details : ($BUILD_URL)"
 
     # Read error log with a maximum size to avoid flooding Slack
