@@ -33,16 +33,17 @@ steps:
     entrypoint: gcloud
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: bash
-    args:
+args:
       - '-c'
       - |
-        export SLACK_WEBHOOK=$(gcloud secrets versions access latest --secret=SLACK_WEBHOOK)
+        status=$?
+        webhook_url=$(gcloud secrets versions access latest --secret=SLACK_WEBHOOK)
         chmod +x ./scripts/notify_slack.sh
-        ./scripts/notify_slack.sh $? "$SLACK_WEBHOOK"
-    env:   
-      - 'SLACK_WEBHOOK' # Declare the env var here
-    secretEnv: ['SLACK_WEBHOOK'] 
+        ./scripts/notify_slack.sh "$status" "$webhook_url" "${BUILD_ID}" "${PROJECT_ID}"
     id: Notify Slack
+    env:
+      - 'BUILD_ID=$BUILD_ID'
+      - 'PROJECT_ID=$PROJECT_ID'
     waitFor: ['-']
 images:
   - >-
