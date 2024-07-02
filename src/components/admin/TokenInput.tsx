@@ -50,9 +50,9 @@ const TokenInput: React.FC<TokenInputProps> = ({
           className="p-2 text-neutral-500 hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary rounded"
         >
           {inputType === 'password' ? (
-            <AiOutlineEyeInvisible className="w-5 h-5" />
+            <AiOutlineEyeInvisible className="w-4 h-4" />
           ) : (
-            <AiOutlineEye className="w-5 h-5" />
+            <AiOutlineEye className="w-4 h-4" />
           )}
         </button>
         {onRefresh && (
@@ -61,7 +61,7 @@ const TokenInput: React.FC<TokenInputProps> = ({
             onClick={onRefresh}
             className="p-2 text-neutral-500 hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary rounded"
           >
-            <AiOutlineReload className="w-5 h-5" />
+            <AiOutlineReload className="w-4 h-4" />
           </button>
         )}
       </div>
