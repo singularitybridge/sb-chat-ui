@@ -38,7 +38,7 @@ steps:
       - |
         export SLACK_WEBHOOK=$(gcloud secrets versions access latest --secret=SLACK_WEBHOOK)
         chmod +x ./scripts/notify_slack.sh
-        ./scripts/notify_slack.sh $? $SLACK_WEBHOOK
+        ./scripts/notify_slack.sh $? "$SLACK_WEBHOOK"
     env:   
       - 'SLACK_WEBHOOK' # Declare the env var here
     secretEnv: ['SLACK_WEBHOOK'] 
