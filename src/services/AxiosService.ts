@@ -1,18 +1,19 @@
 import axios from 'axios';
-import 'dotenv'
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: apiUrl || 'https://api.singularitybridge.net/',
 });
 
 // Request interceptor to include the Bearer token
 apiClient.interceptors.request.use(
   async config => {
-    const token = localStorage.getItem('userToken'); 
-    
+    const token = localStorage.getItem('userToken');
+
     if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Authorization = `Bearer ${token}`;
     }
+    console.log('request URL:  ' + config.baseURL + config.url);
     return config;
   },
   error => {

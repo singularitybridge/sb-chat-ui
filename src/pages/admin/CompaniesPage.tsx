@@ -22,9 +22,7 @@ import {
   setLocalStorageItem,
   createSession,
 } from '../../services/api/sessionService';
-import { TagsInput } from '../../components/InputTags';
 import { useTranslation } from 'react-i18next';
-
 
 const CompaniesView: React.FC = observer(() => {
   const rootStore = useRootStore();
@@ -52,16 +50,18 @@ const CompaniesView: React.FC = observer(() => {
   };
 
   const Actions = (row: ICompany) => (
-    <div className="flex space-x-3 items-center mx-1">
+    <div className="flex space-x-3 items-center mx-1 rtl:space-x-reverse">
       <IconButton
-        icon={<TrashIcon className="w-5 h-5  text-warning-900" />}
+        icon={<TrashIcon className="w-5 h-5 text-warning-900" />}
         onClick={(event) => {
           event.stopPropagation();
           handleDelete(row);
         }}
       />
       <IconButton
-        icon={<PlayIcon className="w-5 h-5  text-warning-900" />}
+        icon={
+          <PlayIcon className="w-5 h-5 text-warning-900 rtl:transform rtl:scale-x-[-1]" />
+        }
         onClick={(event) => {
           event.stopPropagation();
           handleSetCompany(row);
@@ -72,40 +72,22 @@ const CompaniesView: React.FC = observer(() => {
 
   return (
     <>
-      <TagsInput
-        title={t("CompaniesPage.actionTitle")}
-        description={t('CompaniesPage.action_msg')}
-        selectedTags={[]}
-        availableTags={[
-          {
-            id: 'add-user',
-            name: t('CompaniesPage.actionTags.addUser'),
-          },
-          {
-            id: 'remove-user',
-            name: t('CompaniesPage.actionTags.removeUser'),
-          },
-        ]}
+      <Table
+        headers={convertToStringArray(headers)}
+        data={toJS(rootStore.companies)}
+        Page="CompaniesPage"
+        onRowClick={(row: ICompany) => navigate(`/admin/companies/${row._id}`)}
+        Actions={Actions}
       />
-      <div className="flex w-full justify-center">
-        <div className=" flex-auto">
-          <Table
-            headers={convertToStringArray(headers)}
-            data={toJS(rootStore.companies)}
-            Page='CompaniesPage'
-            onRowClick={(row: ICompany) =>
-              navigate(`/admin/companies/${row._id}`)
-            }
-            Actions={Actions}
-          />
-        </div>
-        <div className=" flex-0 w-96"></div>
-      </div>
     </>
   );
 });
 
-const CompaniesPage = withPage('CompaniesPage.title', 'CompaniesPage.description', () => {
-  emitter.emit(EVENT_SHOW_ADD_COMPANY_MODAL, 'Add Company');
-})(CompaniesView);
+const CompaniesPage = withPage(
+  'CompaniesPage.title',
+  'CompaniesPage.description',
+  () => {
+    emitter.emit(EVENT_SHOW_ADD_COMPANY_MODAL, 'Add Company');
+  }
+)(CompaniesView);
 export { CompaniesPage };

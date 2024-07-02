@@ -1,9 +1,9 @@
 {
   "Menu": {
     "Companies": "חברות",
-    "Assistants": "עוזרים",
+    "Assistants": "סוכנים",
     "Users": "משתמשים",
-    "Sessions": "הפעלות",
+    "Sessions": "שיחות פעילות",
     "Inbox": "תיבת דואר",
     "Actions": "פעולות",
     "Home": "בית"
@@ -11,9 +11,9 @@
   "Navigation": {
     "home": "בית",
     "companies": "חברות",
-    "assistants": "עוזרים",
+    "assistants": "סוכנים",
     "users": "משתמשים",
-    "sessions": "הפעלות",
+    "sessions": "שיחות פעילות",
     "inbox": "תיבת דואר",
     "actions": "פעולות",
     "undefined": ""
@@ -21,7 +21,7 @@
   "CompaniesPage": {
     "title": "חברות",
     "description": "רשימת חברות",
-    "actionTitle":"פעולות",
+    "actionTitle": "פעולות",
     "action_msg": "בחר פעולות לביצוע על שורות שנבחרו",
     "noActionSelected": "לא נבחרו פעולות",
     "selectAction": "בחר פעולה",
@@ -33,11 +33,11 @@
       "name": "שם",
       "token": "טוקן"
     },
-    "successfullySet":"חברה נבחרה בהצלחה"
+    "successfullySet": "חברה נבחרה בהצלחה"
   },
   "AssistantsPage": {
-    "title": "עוזרי בינה מלאכותית",
-    "description": "נהל כאן את סוכני ה-BI שלך",
+    "title": "סוכנים וירטואליים",
+    "description": "נהל כאן את סוכני ה-AI שלך",
     "table": {
       "name": "שם",
       "description": "תיאור",
@@ -53,12 +53,12 @@
     }
   },
   "SessionsPage": {
-    "title": "הפעלות",
-    "description": "רשימת ההפעלות",
+    "title": "שיחות פעילות",
+    "description": "רשימת שיחות פעילות",
     "table": {
       "companyName": "שם החברה",
       "userName": "שם המשתמש",
-      "assistantName": "שם העוזר",
+      "assistantName": "שם הסוכן",
       "threadId": "מזהה השרשור",
       "active": "פעיל"
     }
@@ -66,9 +66,9 @@
   "InboxPage": {
     "title": "דואר נכנס",
     "description": "נהל כאן את התקשורת עם המשתמשים שלך",
-    "placeholder":"חיפוש...",
-    "replyPlaceholder":"הקלד תשובה כאן...",
-    "button":"שלח תשובה",
+    "placeholder": "חיפוש...",
+    "replyPlaceholder": "הקלד תשובה כאן...",
+    "button": "שלח תשובה",
     "table": {
       "_id": "מזהה",
       "type": "סוג",
@@ -101,8 +101,8 @@
       }
     },
     "Identifiers": {
-      "title": "זיהויים",
-      "description": "זיהויים משמשים לחיבור עוזרים למקורות חיצוניים",
+      "title": "מזהים",
+      "description": "מזהים משמשים לחיבור סוכנים למקורות חיצוניים",
       "placeholders": {
         "phone": "טלפון"
       }
@@ -128,10 +128,45 @@
     "description": "עדכן כאן את הפרטים של החברה שלך"
   },
   "EditAssistantPage": {
-    "title": "עריכת עוזר",
-    "description": "עדכן כאן את הפרטים של העוזר שלך"
+    "title": "עריכת סוכן",
+    "description": "עדכן כאן את הפרטים של הסוכן שלך"
   },
   "ChatContainer": {
     "input": "הקלד את הודעתך כאן"
-  }
+  },
+
+  "Notifications": {
+    "agentCreated": "הסוכן נוצר בהצלחה",
+    "agentUpdated": "הסוכן עודכן בהצלחה",
+    "agentDeleted": "הסוכן נמחק בהצלחה",
+
+    "companyCreated": "החברה נוצרה בהצלחה",
+    "companyUpdated": "החברה עודכנה בהצלחה",
+    "companyDeleted": "החברה נמחקה בהצלחה",
+
+    "userCreated": "המשתמש נוצר בהצלחה",
+    "userUpdated": "המשתמש עודכן בהצלחה",
+    "userDeleted": "המשתמש נמחק בהצלחה",
+
+    "actionCreated": "הפעולה נוצרה בהצלחה",
+    "actionUpdated": "הפעולה עודכנה בהצלחה",
+    "actionDeleted": "הפעולה נמחקה בהצלחה",
+
+    "tokenRefreshed": "האסימון רוענן בהצלחה"
+  }, 
+
+  "assistantFieldConfigs": {
+    "assistantId": "מזהה עוזר",
+    "name": "שם",
+    "description": "תיאור",
+    "introMessage": "הודעת פתיחה",
+    "voice": "קול",
+    "language": "שפה",
+    "llmModel": "מודל LLM",
+    "llmPrompt": "פרומפט LLM",
+    "newAssistant": "עוזר חדש",
+    "newAssistantDescription": "תיאור עוזר חדש",
+    "newAssistantIntroMessage": "הודעת פתיחה של עוזר חדש",
+    "defaultLlmPrompt": "אתה משוחח עם עוזר בינה מלאכותית. העוזר מועיל, יצירתי, חכם וידידותי מאוד."
+  }  
 }

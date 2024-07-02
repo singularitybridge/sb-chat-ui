@@ -1,9 +1,10 @@
 import { FieldConfig } from '../../components/DynamicForm';
+import i18n from '../../i18n';
 
 export const assistantFieldConfigs: FieldConfig[] = [
   {
     id: 'assistantId',
-    label: 'Assistant ID',
+    label: i18n.t('assistantFieldConfigs.assistantId'),
     key: 'assistantId',
     type: 'input',
     value: '-',
@@ -11,32 +12,32 @@ export const assistantFieldConfigs: FieldConfig[] = [
   },
   {
     id: 'name',
-    label: 'Name',
+    label: i18n.t('assistantFieldConfigs.name'),
     key: 'name',
     type: 'input',
-    value: 'New Assistant',
+    value: i18n.t('assistantFieldConfigs.newAssistant'),
     visibility: { create: true, view: true, update: true },
   },
   {
     id: 'description',
     key: 'description',
-    label: 'Description',
+    label: i18n.t('assistantFieldConfigs.description'),
     type: 'textarea',
-    value: 'New Assistant Description',
+    value: i18n.t('assistantFieldConfigs.newAssistantDescription'),
     visibility: { create: true, view: true, update: true },
   },
   {
     id: 'introMessage',
     key: 'introMessage',
-    label: 'Intro Message',
+    label: i18n.t('assistantFieldConfigs.introMessage'),
     type: 'input',
-    value: 'New Assistant Intro Message',
+    value: i18n.t('assistantFieldConfigs.newAssistantIntroMessage'),
     visibility: { create: true, view: true, update: true },
   },
   {
     id: 'voice',
     key: 'voice',
-    label: 'Voice',
+    label: i18n.t('assistantFieldConfigs.voice'),
     type: 'input',
     value: 'Polly.Emma',
     visibility: { create: true, view: true, update: true },
@@ -44,7 +45,7 @@ export const assistantFieldConfigs: FieldConfig[] = [
   {
     id: 'language',
     key: 'language',
-    label: 'Language',
+    label: i18n.t('assistantFieldConfigs.language'),
     type: 'input',
     value: 'en-US',
     visibility: { create: true, view: true, update: true },
@@ -52,7 +53,7 @@ export const assistantFieldConfigs: FieldConfig[] = [
   {
     id: 'llmModel',
     key: 'llmModel',
-    label: 'LLM Model',
+    label: i18n.t('assistantFieldConfigs.llmModel'),
     type: 'input',
     value: 'gpt-3.5-turbo-1106',
     visibility: { create: true, view: true, update: true },
@@ -60,10 +61,9 @@ export const assistantFieldConfigs: FieldConfig[] = [
   {
     id: 'llmPrompt',
     key: 'llmPrompt',
-    label: 'LLM Prompt',
+    label: i18n.t('assistantFieldConfigs.llmPrompt'),
     type: 'textarea',
-    value:
-      'You are chatting with an AI assistant. The assistant is helpful, creative, clever, and very friendly.',
+    value: i18n.t('assistantFieldConfigs.defaultLlmPrompt'),
     visibility: { create: true, view: true, update: true },
   }
 ];

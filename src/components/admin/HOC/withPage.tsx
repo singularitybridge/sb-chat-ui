@@ -2,6 +2,7 @@ import React from 'react';
 import { IconButton } from '../IconButton';
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
+import { TextComponent } from '../../sb-core-ui-kit/TextComponent';
 
 const withPage =
   (title: string, description: string, onAction?: () => void) =>
@@ -11,13 +12,11 @@ const withPage =
         const { t } = useTranslation();
 
         return (
-          <>
-            <div className="flex justify-between items-center">
+          <div className='bg-white rounded-xl p-4'>
+            <div className="flex justify-between items-start space-x-3.5 rtl:space-x-reverse mb-3 bg-slate-100 p-3 rounded-2xl">
               <div>
-                <h3 className="text-3xl font-bold mb-1">{t(title)}</h3>
-                <span className="inline-block whitespace-nowrap rounded-[0.27rem] bg-primary-100 px-[0.65em] pb-[0.25em] pt-[0.35em] text-center align-baseline text-[0.75em] font-bold leading-none text-primary-700">
-                  {t(description)}
-                </span>
+                <TextComponent text={t(title)} size="subtitle" />
+                <TextComponent text={t(description)} size="small" color="info" />
               </div>
               <div>
                 {onAction && (
@@ -30,9 +29,8 @@ const withPage =
                 )}
               </div>
             </div>
-            <hr className="my-4 h-0.5 border-t-0 bg-neutral-100 opacity-100 dark:opacity-50" />
             <WrappedComponent {...props} />
-          </>
+          </div>
         );
       };
 

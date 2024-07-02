@@ -1,7 +1,6 @@
 import React from 'react';
 import { observer } from 'mobx-react';
 import { useRootStore } from '../store/common/RootStoreContext';
-import Button from './core/Button';
 
 const LanguageToggle: React.FC = observer(() => {
   const rootStore = useRootStore();
@@ -14,9 +13,12 @@ const LanguageToggle: React.FC = observer(() => {
   };
 
   return (
-    <Button onClick={toggleLanguage}>
-      {rootStore.language === 'en' ? 'he' : 'en'}
-    </Button>
+    <div 
+      onClick={toggleLanguage} 
+      className='bg-blue-100 rounded-full px-3 py-2 text-xs mx-2 cursor-pointer flex items-center justify-center min-w-[2rem] min-h-[2rem]'
+    >
+      {rootStore.language === 'en' ? 'en' : 'עברית'}
+    </div>
   );
 });
 

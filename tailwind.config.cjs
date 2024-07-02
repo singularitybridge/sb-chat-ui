@@ -3,9 +3,7 @@ module.exports = {
   content: [
     './index.html',
     './src/**/*.{js,ts,jsx,tsx,html}',
-    // './node_modules/tw-elements/dist/js/**/*.js',
     './node_modules/tw-elements-react/dist/js/**/*.js'
-
   ],
   theme: {
     extend: {
@@ -13,17 +11,15 @@ module.exports = {
         sans: ['Roboto', 'sans-serif'], 
         roboto: ['Roboto', 'sans-serif'],
         assistant: ['Assistant', 'sans-serif'],
+        'noto-sans-hebrew': ['"Noto Sans Hebrew"', 'sans-serif'],
       },
     },
   },
-
   plugins: [
-    // require('tw-elements/dist/plugin.cjs')
     require('tw-elements-react/dist/plugin.cjs'),
     require('tailwind-scrollbar'),
     require('@tailwindcss/typography'),
     require('tailwindcss-rtl'),
-
   ],
   darkMode: 'class',
 };
