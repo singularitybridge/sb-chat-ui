@@ -6,7 +6,7 @@ set -euo pipefail  # Exit on any error, unset variables, or errors in pipelines
 BUILD_STATUS="$1"
 
 # Get the Slack webhook URL from the environment variable (better security practice)
-SLACK_WEBHOOK_URL="$SLACK_WEBHOOK"  # Removed second argument
+SLACK_WEBHOOK_URL="$webhook_url"  # Removed second argument
 
 # Define the build details
 BUILD_ID="$(gcloud config get-value build/id)"  # More specific ID
