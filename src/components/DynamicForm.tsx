@@ -123,7 +123,7 @@ export interface FormValues
   
     return (
       <form
-        className="flex flex-col space-y-4"
+        className="flex flex-col space-y-4 p-4"
         onSubmit={(e) => {
           e.preventDefault();
           handleSubmit();
