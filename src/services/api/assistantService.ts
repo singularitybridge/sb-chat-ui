@@ -1,4 +1,3 @@
-import axios from 'axios';
 import apiClient from '../AxiosService';
 import { IAssistant } from '../../store/models/Assistant';
 

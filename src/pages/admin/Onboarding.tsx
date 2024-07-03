@@ -16,7 +16,6 @@ import Button from '../../components/sb-core-ui-kit/Button';
 import { Input } from '../../components/sb-core-ui-kit/Input';
 import { Textarea } from '../../components/sb-core-ui-kit/Textarea';
 
-
 const OnboardingPage: React.FC = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
