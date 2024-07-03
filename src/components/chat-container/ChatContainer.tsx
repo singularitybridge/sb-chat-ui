@@ -105,15 +105,22 @@ const ChatContainer = observer(() => {
   const handleClear = async () => {
     if (activeSession) {
       const { companyId, userId } = activeSession;
-      await endSession(companyId, userId);
-      rootStore.sessionStore.clearActiveSession();
-      emitter.emit(EVENT_CHAT_SESSION_DELETED, 'Chat session deleted');
+      try {
+        await endSession(companyId, userId);
+        rootStore.sessionStore.clearActiveSession();
+        emitter.emit(EVENT_CHAT_SESSION_DELETED, 'Chat session deleted');
 
-      const newSession = await createSession(userId, companyId, assistant?._id);
-      rootStore.sessionStore.setActiveSession(newSession);
-      setMessages([]);
+        const newSession = await createSession(userId, companyId, assistant?._id);
+        rootStore.sessionStore.setActiveSession(newSession);
+        setMessages([]);
+      } catch (error) {
+        console.error('Error in handleClear:', error);
+        // Optionally, show an error message to the user
+        // rootStore.uiStore.showErrorMessage('Failed to clear chat session. Please try again.');
+      }
     }
   };
+
 
   return (
     <div className="h-full w-full bg-white rounded-lg">
