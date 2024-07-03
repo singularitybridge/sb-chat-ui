@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import InputWithLabel from '../../../components/admin/InputWithLabel';
+import InputWithLabel from '../../../components/sb-core-ui-kit/InputWithLabel';
 import Button from '../../../components/sb-core-ui-kit/Button';
 
 interface EditChatbotProps {

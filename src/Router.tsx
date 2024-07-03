@@ -16,7 +16,8 @@ import { EditActionPage } from './pages/admin/EditActionPage';
 import RequireAuth from './components/admin/RequireAuth';
 import SignupPage from './pages/admin/SignupPage';
 import OnboardingPage from './pages/admin/Onboarding';
-import { TestPage } from './pages/TestPage';
+import { ChatKitTestPage } from './pages/test/ChatKitTestPage';
+import { UIKitTestPage } from './pages/test/UIKitTestPage';
 
 export const browserRouter = createBrowserRouter([
   {
@@ -35,8 +36,12 @@ export const browserRouter = createBrowserRouter([
         element: <Navigate to="/signup" replace />, // Redirect to signup by default
       },
       {
-        path: 'test',
-        element: <TestPage />,
+        path: 'test/chat',
+        element: <ChatKitTestPage />,
+      },
+      {
+        path: 'test/ui',
+        element: <UIKitTestPage />,
       },
       {
         path: '/admin',

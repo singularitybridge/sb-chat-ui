@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { SBChatKitUI } from '../components/sb-chat-kit-ui/SBChatKitUI';
+import { SBChatKitUI } from '../../components/sb-chat-kit-ui/SBChatKitUI';
 
 const mockMessages = [
   { content: 'Hello, how can I help you?', role: 'assistant' },
@@ -16,16 +16,16 @@ const mockMessagesHebrew = [
 const mockAssistant = {
   name: 'AI Assistant',
   description: 'I am here to help you with your project.',
-  avatar: 'assets/avatars/avatar-_0013_16.png',
+  avatar: '/assets/avatars/avatar-_0013_16.png',
 };
 
 const mockAssistantHebrew = {
   name: 'סוכן AI',
   description: 'אני כאן כדי לעזור לך עם הפרויקט שלך.',
-  avatar: 'assets/avatars/avatar-_0027_2.png',
+  avatar: '/assets/avatars/avatar-_0027_2.png',
 };
 
-const TestPage = () => {
+const ChatKitTestPage = () => {
 
   const [messages, setMessages] = useState(mockMessages);
   const [messagesHebrew, setMessagesHebrew] = useState(mockMessagesHebrew);
@@ -186,7 +186,7 @@ const TestPage = () => {
             assistant={{
               name: 'Wide Mode AI',
               description: 'This is a demo of the wide mode layout.',
-              avatar: 'assets/avatars/avatar-_0006_23.png',
+              avatar: '/assets/avatars/avatar-_0006_23.png',
             }}
             assistantName="Wide Mode AI"
             onSendMessage={handleSendWideMessage}
@@ -198,4 +198,4 @@ const TestPage = () => {
   );
 };
 
-export { TestPage };
+export { ChatKitTestPage };

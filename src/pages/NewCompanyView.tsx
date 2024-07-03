@@ -17,12 +17,14 @@ const NewCompanyView: React.FC = observer(() => {
   };
 
   const handleVerfication = async (value: string): Promise<boolean> => {
+    console.log('Verifying', value);
     return true;
   };
 
   return (
     <DynamicForm
       fields={companyFieldConfigs}
+      formContext='EditCompanyPage'
       onSubmit={handleSubmit}
       onVerify={handleVerfication}
       isLoading={isLoading}
