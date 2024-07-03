@@ -90,6 +90,10 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   const [values, setValues] = useState<FormValues>({});
 
   useEffect(() => {
+
+    console.log('load form', fields);
+
+
     const newFilteredFields =
       formType === 'create'
         ? fields.filter((field) => field.visibility?.create === true)

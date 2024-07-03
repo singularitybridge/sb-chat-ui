@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Input } from './Input';
 import { TextComponent } from './TextComponent';
 
@@ -28,21 +27,16 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
   error,
   disabled,
 }) => {
-  const { t } = useTranslation();
 
   return (
-    <div >
+    <div>
       <div className="mb-1">
-        <TextComponent
-          text={label}
-          size="normal"
-          color="normal"          
-        />
+        <TextComponent text={label} size="normal" color="normal" />
       </div>
       <Input
         id={id}
         type={type}
-        value={t(value) || ''}
+        value={value || ''}
         onChange={onChange}
         onFocus={onFocus}
         onBlur={onBlur}

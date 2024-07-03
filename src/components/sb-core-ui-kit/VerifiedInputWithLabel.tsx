@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { IconButton } from './IconButton';
+import { IconButton } from '../admin/IconButton';
 import {
   PlusCircleIcon,
   CheckCircleIcon,
   XCircleIcon,
   QuestionMarkCircleIcon,
 } from '@heroicons/react/24/solid';
-import InputWithLabel from '../sb-core-ui-kit/InputWithLabel';
+import InputWithLabel from './InputWithLabel';
 
 interface VerifiedInputWithLabelProps {
   apiKey: string;
@@ -54,23 +54,28 @@ const VerifiedInputWithLabel: React.FC<VerifiedInputWithLabelProps> = ({
   );
 
   return (
-    <div className="relative mb-2 flex items-center">
-      <InputWithLabel
-        id={id}
-        label={label}
-        type={type}
-        value={value}
-        onChange={onChange}
-        autoFocus={autoFocus}
-        error={error}
-        disabled={disabled}
-      />
-      <IconButton
-        id={`${id}-verify`}
-        icon={verificationIcon}
-        onClick={handleVerify}
-        disabled={isVerifying || disabled}
-      />
+    <div className="mb-2 flex w-full">
+      <div className="flex-grow">
+        <InputWithLabel
+          id={id}
+          label={label}
+          type={type}
+          value={value}
+          onChange={onChange}
+          autoFocus={autoFocus}
+          error={error}
+          disabled={disabled}
+        />
+      </div>
+      <div className="flex items-end">
+        <IconButton
+          id={`${id}-verify`}
+          icon={verificationIcon}
+          onClick={handleVerify}
+          disabled={isVerifying || disabled}
+          className="h-10"
+        />
+      </div>
     </div>
   );
 };

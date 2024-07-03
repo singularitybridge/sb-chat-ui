@@ -25,32 +25,26 @@ export const companyFieldConfigs: FieldConfig[] = [
     value: [
       {
         key: 'openai_api_key',
-        label: 'OpenAI API Key',
         value: 'CreateNewCompanyPage.APIKeys.placeholders.openai_api_key',
       },
       {
         key: 'gcp_key',
-        label: 'GCP Key',
         value: 'CreateNewCompanyPage.APIKeys.placeholders.gcp_key',
       },
       {
         key: 'notion_api_key',
-        label: 'Notion API Key',
         value: 'CreateNewCompanyPage.APIKeys.placeholders.notion_api_key',
       },
       {
         key: 'labs11_api_key',
-        label: '11Labs API Key',
         value: 'CreateNewCompanyPage.APIKeys.placeholders.labs11_api_key',
       },
       {
         key: 'twilio_account_sid',
-        label: 'Twilio Account SID',
         value: 'CreateNewCompanyPage.APIKeys.placeholders.twilio_account_sid',
       },
       {
         key: 'twilio_auth_token',
-        label: 'Twilio Auth Token',
         value: 'CreateNewCompanyPage.APIKeys.placeholders.twilio_auth_token',
       },
     ],
