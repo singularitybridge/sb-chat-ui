@@ -95,6 +95,55 @@
   },
   "CreateNewCompanyPage": {
     "title": "Create New Company",
+
+    "placeholders": {
+      "name": "New Company",
+      "token": "token"
+    },
+    "save": "Save Changes"
+  },
+  "CreateNewAction": {
+    "type": "Type",
+    "name": "Name",
+    "description": "Description",
+    "parameters": "Parameters",
+    "save": "Save Changes"
+  },
+  "CreateNewUser": {
+    "name": "Name",
+    "nickname": "Nickname",
+    "save": "Save Changes",
+
+    "identifiers": {
+      "title": "Identifiers",
+      "description": "Identifiers are used to identify users based on their contact information",
+      "placeholders": {
+        "phone": "phone"
+      }
+    }
+
+    
+  },
+  "EditCompanyPage": {
+
+    "title": "Edit Company",
+    "description": "Update company details here",
+    "emitterMessage":"Company has been updated successfully",
+    "emitterTokenMessage":"New token generated successfully",
+    "name" : "Company Name",
+    "token" : "API Token",
+
+    "identifiers": {
+      "title": "Identifiers",
+      "description": "Identifiers are used to connect assistants to external sources",
+      "placeholders": {
+        "phone": "phone"
+      }
+    },
+
+    "save" : "Save Changes",
+
+
     "APIKeys": {
       "title": "API Keys",
       "description": "Api keys are used to validate and connect to external sources",
@@ -106,35 +155,9 @@
         "twilio_account_sid": "your Twilio account SID here",
         "twilio_auth_token": "your Twilio auth token here"
       }
-    },
-    "Identifiers": {
-      "title": "Identifiers",
-      "description": "Identifiers are used to connect assistants to external sources",
-      "placeholders": {
-        "phone": "phone"
-      }
-    },
-    "placeholders": {
-      "name": "New Company",
-      "token": "token"
-    },
-    "save": "Save Changes"
-  },
-  "CreateNewAction": {
-    "type": "Type",
-    "name": "Name",
-    "description": "Description",
-    "parameters": "Parameters"
-  },
-  "CreateNewUser": {
-    "name": "Name",
-    "nickname": "Nickname"
-  },
-  "EditCompanyPage": {
-    "title": "Edit Company",
-    "description": "Update company details here",
-    "emitterMessage":"Company has been updated successfully",
-    "emitterTokenMessage":"New token generated successfully"
+    }    
+
+
 
   },
   "EditAssistantPage": {
@@ -172,7 +195,8 @@
     "voice": "Voice",
     "language": "Language",
     "llmModel": "LLM Model",
-    "llmPrompt": "LLM Prompt"
+    "llmPrompt": "LLM Prompt",
+    "save": "Save Changes"
   },
 
   "dialogTitles" : {

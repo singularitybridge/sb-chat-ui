@@ -75,7 +75,7 @@ const Table: React.FC<TableProps> = ({
                           header === 'specificColumn' ? 'max-w-md' : 'max-w-xs'
                         }`}
                       >
-                        <TextComponent size='small' color='normal' text={renderCellContent(t(row[header]))} />
+                        <TextComponent size='small' color='normal' text={renderCellContent(row[header])} />
                       </td>
                     ))}
                     {Actions && <td className="px-6 py-4">{Actions(row)}</td>}

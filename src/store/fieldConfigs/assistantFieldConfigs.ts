@@ -1,10 +1,9 @@
 import { FieldConfig } from '../../components/DynamicForm';
-import i18n from '../../i18n';
 
 export const assistantFieldConfigs: FieldConfig[] = [
   {
     id: 'assistantId',
-    label: i18n.t('assistantFieldConfigs.assistantId'),
+    label: 'Assistant ID', // 'Assistant ID
     key: 'assistantId',
     type: 'input',
     value: '-',
@@ -12,32 +11,32 @@ export const assistantFieldConfigs: FieldConfig[] = [
   },
   {
     id: 'name',
-    label: i18n.t('assistantFieldConfigs.name'),
+    label: 'Name', // 'Name'
     key: 'name',
     type: 'input',
-    value: i18n.t('assistantFieldConfigs.newAssistant'),
+    value: 'New Assistant',
     visibility: { create: true, view: true, update: true },
   },
   {
     id: 'description',
     key: 'description',
-    label: i18n.t('assistantFieldConfigs.description'),
+    label: 'Description', // 'Description'
     type: 'textarea',
-    value: i18n.t('assistantFieldConfigs.newAssistantDescription'),
+    value: 'This is a new assistant.',
     visibility: { create: true, view: true, update: true },
   },
   {
     id: 'introMessage',
     key: 'introMessage',
-    label: i18n.t('assistantFieldConfigs.introMessage'),
+    label: 'Intro Message', // 'Intro Message'
     type: 'input',
-    value: i18n.t('assistantFieldConfigs.newAssistantIntroMessage'),
+    value: 'Hello! How can I help you today?',
     visibility: { create: true, view: true, update: true },
   },
   {
     id: 'voice',
     key: 'voice',
-    label: i18n.t('assistantFieldConfigs.voice'),
+    label: 'Voice', // 'Voice'
     type: 'input',
     value: 'Polly.Emma',
     visibility: { create: true, view: true, update: true },
@@ -45,7 +44,7 @@ export const assistantFieldConfigs: FieldConfig[] = [
   {
     id: 'language',
     key: 'language',
-    label: i18n.t('assistantFieldConfigs.language'),
+    label: 'Language', // 'Language'
     type: 'input',
     value: 'en-US',
     visibility: { create: true, view: true, update: true },
@@ -53,7 +52,7 @@ export const assistantFieldConfigs: FieldConfig[] = [
   {
     id: 'llmModel',
     key: 'llmModel',
-    label: i18n.t('assistantFieldConfigs.llmModel'),
+    label: 'LLM Model', // 'LLM Model'
     type: 'input',
     value: 'gpt-3.5-turbo-1106',
     visibility: { create: true, view: true, update: true },
@@ -61,9 +60,9 @@ export const assistantFieldConfigs: FieldConfig[] = [
   {
     id: 'llmPrompt',
     key: 'llmPrompt',
-    label: i18n.t('assistantFieldConfigs.llmPrompt'),
+    label: 'LLM Prompt', // 'LLM Prompt'
     type: 'textarea',
-    value: i18n.t('assistantFieldConfigs.defaultLlmPrompt'),
+    value: 'This is a new assistant.',
     visibility: { create: true, view: true, update: true },
   }
 ];

@@ -48,10 +48,10 @@ const NewUserView: React.FC = observer(() => {
 
   return (
     <DynamicForm
+      formContext="CreateNewUser"
       fields={formFields}
       onSubmit={handleSubmit}
       isLoading={isLoading}
-      onVerify={async (value: string) => true}
       formType="create"
     />
   );

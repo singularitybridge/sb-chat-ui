@@ -86,6 +86,7 @@ const EditCompanyView: React.FC = observer(() => {
         <div className="w-1/2">
           <DynamicForm
             fields={formFields}
+            formContext='EditCompanyPage'
             onSubmit={handleSubmit}
             refreshToken={handleRefreshToken}
             isLoading={isLoading}

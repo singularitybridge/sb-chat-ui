@@ -121,11 +121,54 @@
   },
   "CreateNewUser": {
     "name": "שם",
-    "nickname": "כינוי"
+    "nickname": "כינוי",
+    "save": " שמור שינויים",  
+    "identifiers": {
+      "title": "מזהים",
+      "description": "מזהים משמשים לזיהוי משתמשים על פי פרטי הקשר שלהם",
+      "placeholders": {
+        "phone": "טלפון"
+      }
+    }
   },
+
+
   "EditCompanyPage": {
     "title": "עריכת חברה",
-    "description": "עדכן כאן את הפרטים של החברה שלך"
+    "description": "עדכן כאן את הפרטים של החברה שלך",
+
+
+    "name" : "שם החברה",
+    "token" : "טוקן API",
+
+    "APIKeys": {
+      "title": "מפתחות API",
+      "description": "מפתחות API משמשים לאימות ולחיבור למקורות חיצוניים",
+      "placeholders": {
+        "openai_api_key": "הזן כאן את מפתח ה-API של OpenAI",
+        "gcp_key": "הזן כאן את מפתח ה-GCP שלך",
+        "notion_api_key": "הזן כאן את מפתח ה-API של Notion",
+        "labs11_api_key": "הזן כאן את מפתח ה-API של 11Labs",
+        "twilio_account_sid": "הזן כאן את SID של חשבון Twilio שלך",
+        "twilio_auth_token": "הזן כאן את אסימון האימות של Twilio שלך"
+      }
+    },
+
+
+    "identifiers": {
+      "title": "מזהים",
+      "description": "מזהים משמשים לחיבור סוכנים למקורות חיצוניים",
+      "placeholders": {
+        "phone": "טלפון"
+      }
+    },
+    "placeholders": {
+      "name": "חברה חדשה",
+      "token": "טוקן"
+    },
+    "save": " שמור שינויים"
+
+
   },
   "EditAssistantPage": {
     "title": "עריכת סוכן",
@@ -167,7 +210,8 @@
     "newAssistant": "עוזר חדש",
     "newAssistantDescription": "תיאור עוזר חדש",
     "newAssistantIntroMessage": "הודעת פתיחה של עוזר חדש",
-    "defaultLlmPrompt": "אתה משוחח עם עוזר בינה מלאכותית. העוזר מועיל, יצירתי, חכם וידידותי מאוד."
+    "defaultLlmPrompt": "אתה משוחח עם עוזר בינה מלאכותית. העוזר מועיל, יצירתי, חכם וידידותי מאוד.",
+    "save" : "שמור שינויים"
   }, 
 
   "dialogTitles" : {
