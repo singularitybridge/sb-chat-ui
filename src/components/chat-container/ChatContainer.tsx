@@ -32,13 +32,14 @@ interface ChatMessage {
 
 const ChatContainer = observer(() => {
   const rootStore = useRootStore();
-  const messagesEndRef = useRef<null | HTMLDivElement>(null); 
+  const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [assistant, setAssistant] = useState<IAssistant>();
+  const [assistant, setAssistant] = useState<IAssistant | undefined>();
 
-  const userId = rootStore.sessionStore.activeSession?.userId;
-  const assistantId = rootStore.sessionStore.activeSession?.assistantId;
-  const companyId = rootStore.sessionStore.activeSession?.companyId; 
+  const { activeSession } = rootStore.sessionStore;
+  const userId = activeSession?.userId;
+  const assistantId = activeSession?.assistantId;
+  const companyId = activeSession?.companyId;
 
   useEffect(() => {
     if (assistantId && rootStore.assistantsLoaded) {
@@ -47,8 +48,8 @@ const ChatContainer = observer(() => {
   }, [assistantId, rootStore.assistantsLoaded]);
 
   const loadMessages = async () => {
-    if (assistant && userId) {
-      const sessionMessages = await getSessionMessages(companyId || '', userId);
+    if (assistant && userId && companyId) {
+      const sessionMessages = await getSessionMessages(companyId, userId);
       const chatMessages = sessionMessages.map(mapToChatMessage);
       setMessages(chatMessages.reverse());
     }
@@ -59,27 +60,22 @@ const ChatContainer = observer(() => {
   }, [userId, assistant?._id]);
 
   const handleAssistantUpdated = async (assistantId: string) => {
-    await updateSessionAssistant(
-      rootStore.sessionStore.activeSession?._id || '',
-      assistantId
-    );
-    const session = await getSessionById(
-      rootStore.sessionStore.activeSession?._id || ''
-    );
-    rootStore.sessionStore.setActiveSession(session);
-    setAssistant(rootStore.getAssistantById(assistantId));
+    if (activeSession) {
+      await updateSessionAssistant(activeSession._id, assistantId);
+      const updatedSession = await getSessionById(activeSession._id);
+      rootStore.sessionStore.setActiveSession(updatedSession);
+      setAssistant(rootStore.getAssistantById(assistantId));
+    }
   };
 
   useEventEmitter<string>(EVENT_SET_ACTIVE_ASSISTANT, handleAssistantUpdated);
 
-  const mapToChatMessage = (message: any): ChatMessage => {
-    return {
-      content: message.content[0].text.value,
-      role: message.role,
-      metadata: message.metadata,
-      assistantName: message.assistantName,
-    };
-  };
+  const mapToChatMessage = (message: any): ChatMessage => ({
+    content: message.content[0].text.value,
+    role: message.role,
+    metadata: message.metadata,
+    assistantName: message.assistantName,
+  });
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -87,57 +83,47 @@ const ChatContainer = observer(() => {
     }
   }, [messages]);
 
-  const handleSubmitMessage = (message: string) => {
-    // setMessage('');
+  const handleSubmitMessage = async (message: string) => {
     setMessages((prevMessages) => [
       ...prevMessages,
       { content: message, role: 'user' },
     ]);
 
     if (assistant && userId && companyId) {
-      handleUserInput({
+      const response = await handleUserInput({
         userInput: message,
-        companyId: companyId,
-        userId: userId,
-      }).then((response) => {
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { content: response, role: 'assistant' },
-        ]);
+        companyId,
+        userId,
       });
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { content: response, role: 'assistant' },
+      ]);
     }
   };
 
   const handleClear = async () => {
-    if (assistant && userId && companyId) {
+    if (activeSession) {
+      const { companyId, userId } = activeSession;
+      try {
+        await endSession(companyId, userId);
+        rootStore.sessionStore.clearActiveSession();
+        emitter.emit(EVENT_CHAT_SESSION_DELETED, 'Chat session deleted');
 
-      await endSession(companyId, userId);
-      rootStore.sessionStore.clearActiveSession();
-      emitter.emit(EVENT_CHAT_SESSION_DELETED, 'Chat session deleted');
-
-
-
-      // mixed code 
-      if (!rootStore.sessionStore.activeSession) {
-        return;
+        const newSession = await createSession(userId, companyId, assistant?._id);
+        rootStore.sessionStore.setActiveSession(newSession);
+        setMessages([]);
+      } catch (error) {
+        console.error('Error in handleClear:', error);
+        // Optionally, show an error message to the user
+        // rootStore.uiStore.showErrorMessage('Failed to clear chat session. Please try again.');
       }
-  
-      await rootStore.sessionStore.deleteSession(
-        rootStore.sessionStore.activeSession._id
-      );
-      await createSession(
-        rootStore.currentUser!._id,
-        rootStore.currentUser!.companyId
-      );
-  
-
-
     }
   };
 
 
   return (
-    <div className='h-full w-full bg-white rounded-lg'>
+    <div className="h-full w-full bg-white rounded-lg">
       <SBChatKitUI
         messages={messages}
         assistant={
@@ -151,7 +137,7 @@ const ChatContainer = observer(() => {
         }
         assistantName="AI Assistant"
         onSendMessage={handleSubmitMessage}
-        onClear={handleClear}        
+        onClear={handleClear}
       />
     </div>
   );

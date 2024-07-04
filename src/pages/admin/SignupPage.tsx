@@ -22,7 +22,7 @@ const SignupPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
-      <div className="w-full py-8 px-12">
+      <div className="w-full pt-8 pb-0 px-12">
         <TextComponent
           text="Singularity Bridge"
           size="normal"

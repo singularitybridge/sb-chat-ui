@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Input } from './sb-core-ui-kit/Input';
-import { IconButton } from './admin/IconButton';
+import { Input } from './Input';
+import { IconButton } from '../admin/IconButton';
 import {
   ArrowUturnLeftIcon,
   MinusCircleIcon,
   PlusCircleIcon,
 } from '@heroicons/react/24/outline';
 import _ from 'lodash';
-import { useTranslation } from 'react-i18next';
 
 export interface KeyValue {
   key: string;
@@ -27,9 +26,10 @@ const KeyValueList: React.FC<KeyValueListProps> = ({
   initialData,
   onDataChange,
 }) => {
-
   const [keyValueData, setKeyValueData] = useState<KeyValue[]>([]);
-  const [initialKeyValueData, setInitialKeyValueData] = useState<KeyValue[]>([]);
+  const [initialKeyValueData, setInitialKeyValueData] = useState<KeyValue[]>(
+    []
+  );
 
   useEffect(() => {
     setKeyValueData(_.cloneDeep(initialData));
@@ -42,7 +42,6 @@ const KeyValueList: React.FC<KeyValueListProps> = ({
     setKeyValueData(_.cloneDeep(initialKeyValueData));
     onDataChange(initialKeyValueData);
   };
-
 
   const handleKeyChange = (newValue: string, index: number) => {
     const updatedData = [...keyValueData];
@@ -69,13 +68,12 @@ const KeyValueList: React.FC<KeyValueListProps> = ({
     onDataChange(updatedData);
   };
 
-  const { t } = useTranslation();
 
   return (
     <div>
-      <div className="flex justify-between items-center mt-4">
-        <h2 className="text-xl">{t(title)}</h2>
-        <div className="space-x-2">
+      <div className="flex justify-between items-center mt-6">
+        <h2 className="text-xl">{title}</h2>
+        <div className="space-x-2 rtl:space-x-reverse">
           <IconButton
             icon={<ArrowUturnLeftIcon className="w-6 h-6  text-green-800" />}
             onClick={resetToInitialData}
@@ -86,9 +84,12 @@ const KeyValueList: React.FC<KeyValueListProps> = ({
           />
         </div>
       </div>
-      <p className="mb-2 text-sm">{t(description)}</p>
+      <p className="mb-2 text-sm">{description}</p>
       {keyValueData.map(({ key, value }, index) => (
-        <div key={index} className="flex items-center space-x-2 mb-2">
+        <div
+          key={index}
+          className="flex items-center space-x-2 mb-2 rtl:space-x-reverse"
+        >
           <Input
             id={`key_${index}`}
             value={key}

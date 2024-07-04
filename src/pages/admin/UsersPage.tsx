@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { useRootStore } from '../../store/common/RootStoreContext';
-import { Table } from '../../components/Table';
+import { Table } from '../../components/sb-core-ui-kit/Table';
 import { toJS } from 'mobx';
 import { UserKeys, IUser } from '../../store/models/User';
 import { withPage } from '../../components/admin/HOC/withPage';

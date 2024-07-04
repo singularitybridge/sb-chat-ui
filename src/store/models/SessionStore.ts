@@ -1,6 +1,6 @@
 // src/store/models/SessionStore.ts
 import { types, flow, Instance, applySnapshot, clone } from 'mobx-state-tree';
-import { ISession, Session } from './Session';
+import { Session } from './Session';
 import {
   deleteSession,
   getAllSessions,
@@ -11,7 +11,7 @@ import {
 const SessionStore = types
   .model({
     sessions: types.array(Session),
-    activeSession: types.maybe(Session),
+    activeSession: types.maybeNull(Session)
   })
   .actions((self) => ({
     loadSessions: flow(function* () {
@@ -26,12 +26,11 @@ const SessionStore = types
       }
     }),
 
-    setActiveSession: (session: ISession) => {
-      self.activeSession = session;
+    setActiveSession(session: any) {
+      self.activeSession = Session.create(session);
     },
-
-    clearActiveSession: () => {
-      self.activeSession = undefined;
+    clearActiveSession() {
+      self.activeSession = null;
     },
 
     setActiveSessionById: (_id: string) => {

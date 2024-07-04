@@ -1,14 +1,13 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRootStore } from '../store/common/RootStoreContext';
-import { TextComponent } from './sb-core-ui-kit/TextComponent';
+import { TextComponent } from './TextComponent';
 
 interface TableProps {
   headers: string[];
   Page: string;
   data: { [key: string]: any }[];
   onRowClick?: (row: any) => void;
-  Actions?: (row: any) => JSX.Element; // Add this line
+  Actions?: (row: any) => JSX.Element;
 }
 
 const Table: React.FC<TableProps> = ({
@@ -25,10 +24,7 @@ const Table: React.FC<TableProps> = ({
     return value;
   };
 
-  const rootStore = useRootStore();
   const { t } = useTranslation();
-
-  const direction = rootStore.language === 'he' ? 'text-right' : 'text-left';
 
   return (
     <div className="flex flex-col w-full">
@@ -36,13 +32,13 @@ const Table: React.FC<TableProps> = ({
         <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
           <div className="overflow-hidden">
             <table className="min-w-full">
-              <thead className={`${direction}`}>
+              <thead>
                 <tr>
                   {headers.map((row, index) => (
                     <th
                       key={index}
                       scope="col"
-                      className="px-6 py-4 max-w-xs truncate"
+                      className="px-6 py-4 max-w-xs truncate rtl:text-right ltr:text-left"
                     >
                       <TextComponent
                         text={t(`${Page}.table.${row}`)}
@@ -51,13 +47,25 @@ const Table: React.FC<TableProps> = ({
                       />
                     </th>
                   ))}
+                  {Actions && (
+                    <th
+                      scope="col"
+                      className="px-6 py-4 max-w-xs truncate rtl:text-right ltr:text-left"
+                    >
+                      <TextComponent
+                        text={t('common.actions')}
+                        size="normal"
+                        color="info"
+                      />
+                    </th>
+                  )}
                 </tr>
               </thead>
               <tbody>
                 {data.map((row, rowIndex) => (
                   <tr
                     key={rowIndex}
-                    className="border-b border-zinc-100 hover:bg-neutral-50 "
+                    className="border-b border-zinc-100 hover:bg-neutral-50"
                     onClick={() => onRowClick?.(row)}
                   >
                     {headers.map((header, headerIndex) => (
@@ -67,8 +75,7 @@ const Table: React.FC<TableProps> = ({
                           header === 'specificColumn' ? 'max-w-md' : 'max-w-xs'
                         }`}
                       >
-                        <TextComponent size='small' color='normal' text={renderCellContent(t(row[header]))} />
-                        
+                        <TextComponent size='small' color='normal' text={renderCellContent(row[header])} />
                       </td>
                     ))}
                     {Actions && <td className="px-6 py-4">{Actions(row)}</td>}
