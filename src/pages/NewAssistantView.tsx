@@ -66,6 +66,7 @@ const NewAssistantView: React.FC = observer(() => {
   };
   return (
     <DynamicForm
+      formContext="assistantFieldConfigs"
       fields={formFields}
       onSubmit={handleSubmit}
       isLoading={isLoading}

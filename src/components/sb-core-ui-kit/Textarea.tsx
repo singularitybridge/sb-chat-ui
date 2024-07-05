@@ -14,6 +14,7 @@ interface TextareaProps {
   className?: string;
   error?: string;
   autogrow?: boolean;
+  transparentBg?: boolean; // New prop for transparent background
 }
 
 const Textarea: React.FC<TextareaProps> = ({
@@ -29,6 +30,7 @@ const Textarea: React.FC<TextareaProps> = ({
   className,
   error,
   autogrow = false,
+  transparentBg = false, // Default is false (white background)
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -54,8 +56,10 @@ const Textarea: React.FC<TextareaProps> = ({
     <div className="flex flex-col w-full">
       <div
         className={clsx(
-          'flex py-3 px-5 justify-end items-center gap-2 self-stretch bg-white rounded-lg transition-all duration-200',
+          'flex py-3 px-5 justify-end items-center gap-2 self-stretch rounded-lg transition-all duration-200',
           {
+            'bg-white': !transparentBg,
+            'bg-transparent': transparentBg,
             'border border-gray-400': isFocused && !error,
             'border border-red-500': error,
             'border border-gray-300': !isFocused && !error,
