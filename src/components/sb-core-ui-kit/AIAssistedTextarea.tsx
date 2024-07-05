@@ -98,7 +98,7 @@ const AIAssistedTextarea: React.FC<AIAssistedTextareaProps> = ({
           <div className="flex items-end justify-end rtl:justify-start">
             <button
               onClick={toggleAIMode}
-              className="m-1 p-1.5 text-indigo-400 hover:text-indigo-500 rounded-md transition duration-150 ease-in-out"
+              className="m-2 p-1.5 text-indigo-400 hover:text-indigo-500 rounded-md transition duration-150 ease-in-out"
               aria-label="Toggle AI Assist"
             >
               <Sparkles size={18} />
