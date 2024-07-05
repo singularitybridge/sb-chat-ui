@@ -28,6 +28,7 @@ const AIAssistedTextareaContainer: React.FC<AIAssistedTextareaContainerProps> = 
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [aiPrompt, setAiPrompt] = useState('');
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -40,7 +41,8 @@ const AIAssistedTextareaContainer: React.FC<AIAssistedTextareaContainerProps> = 
         userInput: aiPrompt,
       };
       const completionContent = await getCompletion(completionRequest);
-      onChange(completionContent);
+      onChange(value + ' ' + completionContent); // Append completion to existing text
+      setAiPrompt(''); // Clear the AI prompt after processing
     } catch (error) {
       console.error('Error getting completion:', error);
       // You might want to show an error message to the user here
@@ -87,14 +89,14 @@ const AIAssistedTextareaContainer: React.FC<AIAssistedTextareaContainerProps> = 
     try {
       setIsLoading(true);      
       const transcription = await transcribeAudio(audioBlob, language);
-      onChange(value + ' ' + transcription); // Append transcription to existing text
+      setAiPrompt(transcription); // Set the transcribed text as the AI prompt
     } catch (error) {
       console.error('Error processing audio:', error);
       // Handle error (e.g., show error message to user)
     } finally {
       setIsLoading(false);
     }
-  }, [onChange, value]);
+  }, [language]);
 
   const handleRecording = useCallback(() => {
     if (isRecording) {
@@ -117,9 +119,10 @@ const AIAssistedTextareaContainer: React.FC<AIAssistedTextareaContainerProps> = 
       onRecording={handleRecording}
       isLoading={isLoading}
       isRecording={isRecording}
+      aiPrompt={aiPrompt}
+      onAIPromptChange={setAiPrompt}
     />
   );
 };
 
 export { AIAssistedTextareaContainer };
-

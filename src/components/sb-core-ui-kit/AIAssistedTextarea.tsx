@@ -18,6 +18,9 @@ interface AIAssistedTextareaProps {
 
   isLoading?: boolean;
   isRecording?: boolean;
+
+  aiPrompt: string;
+  onAIPromptChange: (value: string) => void;
 }
 
 const AIAssistedTextarea: React.FC<AIAssistedTextareaProps> = ({
@@ -34,16 +37,18 @@ const AIAssistedTextarea: React.FC<AIAssistedTextareaProps> = ({
 
   isLoading = false,
   isRecording = false,
+
+  aiPrompt,
+  onAIPromptChange,
 }) => {
   const [isAIMode, setIsAIMode] = useState(false);
-  const [aiPrompt, setAIPrompt] = useState('');
   const mainTextareaRef = useRef<HTMLTextAreaElement>(null);
   const aiTextareaRef = useRef<HTMLTextAreaElement>(null);
 
   const toggleAIMode = () => {
     setIsAIMode((prev) => !prev);
     if (isAIMode) {
-      setAIPrompt('');
+      onAIPromptChange('');
     }
   };
 
@@ -54,10 +59,6 @@ const AIAssistedTextarea: React.FC<AIAssistedTextareaProps> = ({
       mainTextareaRef.current?.focus();
     }
   }, [isAIMode]);
-
-  const handleAIPromptChange = (newPrompt: string) => {
-    setAIPrompt(newPrompt);
-  };
 
   const handleRecording = () => {
     if (onRecording) {
@@ -70,17 +71,16 @@ const AIAssistedTextarea: React.FC<AIAssistedTextareaProps> = ({
       await onAIAssist(aiPrompt);
     }
     setIsAIMode(false);
-    setAIPrompt('');
   };
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
       if (event.key === 'Escape' && isAIMode) {
         setIsAIMode(false);
-        setAIPrompt('');
+        onAIPromptChange('');
       }
     },
-    [isAIMode]
+    [isAIMode, onAIPromptChange]
   );
 
   useEffect(() => {
@@ -130,7 +130,7 @@ const AIAssistedTextarea: React.FC<AIAssistedTextareaProps> = ({
               ref={aiTextareaRef}
               id={`${id}-ai-prompt`}
               value={aiPrompt}
-              onChange={handleAIPromptChange}
+              onChange={(e) => onAIPromptChange(e)}
               placeholder="בקש מה-AI..."
               className="border-none"
               autogrow
