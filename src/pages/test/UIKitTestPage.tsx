@@ -178,6 +178,7 @@ const UIKitTestPage = () => {
 
             <AIAssistedTextareaContainer
               id="my-textarea"
+              language='he'
               value={textValue}
               onChange={setTextValue}
               placeholder="Enter your text here..."

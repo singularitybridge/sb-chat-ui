@@ -12,8 +12,12 @@ interface AIAssistedTextareaProps {
   className?: string;
   error?: string;
   label: string;
+
   onAIAssist?: (aiPrompt: string) => Promise<void>;
+  onRecording?: () => void;
+
   isLoading?: boolean;
+  isRecording?: boolean;
 }
 
 const AIAssistedTextarea: React.FC<AIAssistedTextareaProps> = ({
@@ -24,8 +28,12 @@ const AIAssistedTextarea: React.FC<AIAssistedTextareaProps> = ({
   className,
   error,
   label,
+
   onAIAssist,
+  onRecording,
+
   isLoading = false,
+  isRecording = false,
 }) => {
   const [isAIMode, setIsAIMode] = useState(false);
   const [aiPrompt, setAIPrompt] = useState('');
@@ -51,8 +59,13 @@ const AIAssistedTextarea: React.FC<AIAssistedTextareaProps> = ({
     setAIPrompt(newPrompt);
   };
 
+  const handleRecording = () => {
+    if (onRecording) {
+      onRecording();
+    }
+  };
+
   const handleAIAssist = async () => {
-    
     if (onAIAssist) {
       await onAIAssist(aiPrompt);
     }
@@ -125,11 +138,15 @@ const AIAssistedTextarea: React.FC<AIAssistedTextareaProps> = ({
             />
             <div className="flex items-end space-x-1 rtl:space-x-reverse m-2 justify-end rtl:justify-start">
               <button
-                onClick={handleAIAssist}
+                onClick={handleRecording}
                 className="p-1.5 rounded-xl text-gray-500 bg-pink-100 hover:bg-pink-200 transition duration-150 ease-in-out"
                 aria-label="Apply AI Assist"
               >
-                <Mic size={18} />
+                {isRecording ? (
+                  <Mic size={18} className="animate-pulse text-red-500" />
+                ) : (
+                  <Mic size={18} />
+                )}
               </button>
               <button
                 onClick={handleAIAssist}
