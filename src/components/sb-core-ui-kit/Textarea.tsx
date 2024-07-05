@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, forwardRef } from 'react';
 import clsx from 'clsx';
 
 interface TextareaProps {
@@ -14,10 +14,10 @@ interface TextareaProps {
   className?: string;
   error?: string;
   autogrow?: boolean;
-  transparentBg?: boolean; // New prop for transparent background
+  transparentBg?: boolean;
 }
 
-const Textarea: React.FC<TextareaProps> = ({
+const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
   id,
   value,
   onChange,
@@ -30,10 +30,12 @@ const Textarea: React.FC<TextareaProps> = ({
   className,
   error,
   autogrow = false,
-  transparentBg = false, // Default is false (white background)
-}) => {
+  transparentBg = false,
+}, ref) => {
   const [isFocused, setIsFocused] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const innerRef = useRef<HTMLTextAreaElement>(null);
+
+  const textareaRef = ref || innerRef;
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -46,11 +48,11 @@ const Textarea: React.FC<TextareaProps> = ({
   };
 
   useEffect(() => {
-    if (autogrow && textareaRef.current) {
+    if (autogrow && textareaRef && 'current' in textareaRef && textareaRef.current) {
       textareaRef.current.style.height = 'auto';
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
-  }, [value, autogrow]);
+  }, [value, autogrow, textareaRef]);
 
   return (
     <div className="flex flex-col w-full">
@@ -95,6 +97,8 @@ const Textarea: React.FC<TextareaProps> = ({
       )}
     </div>
   );
-};
+});
+
+Textarea.displayName = 'Textarea';
 
 export { Textarea };

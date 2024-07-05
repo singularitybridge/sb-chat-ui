@@ -19,6 +19,7 @@ const UIKitTestPage = () => {
 
 
   const [aiAssistedText, setAiAssistedText] = useState('');
+  const [aiAssistedText2, setAiAssistedText2] = useState('');
 
   useEffect(() => {
     document.documentElement.dir = direction;
@@ -160,8 +161,16 @@ const UIKitTestPage = () => {
           <div className="h-full w-full p-4 space-y-3">
             <AIAssistedTextarea
               id="test"
+              label='שם הפרויקט'
               value={aiAssistedText}
               onChange={setAiAssistedText}
+              placeholder="כתבו כאן משהו"
+            />
+            <AIAssistedTextarea
+              id="test"
+              label='שם הפרויקט'
+              value={aiAssistedText2}
+              onChange={setAiAssistedText2}
               placeholder="כתבו כאן משהו"
             />
           
