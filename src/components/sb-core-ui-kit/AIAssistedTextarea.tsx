@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Textarea } from './Textarea';
-import { Mic, Sparkles } from 'lucide-react';
+import { Loader, Mic, Sparkles } from 'lucide-react';
 import clsx from 'clsx';
 import { TextComponent } from './TextComponent';
 
@@ -12,6 +12,8 @@ interface AIAssistedTextareaProps {
   className?: string;
   error?: string;
   label: string;
+  onAIAssist?: (aiPrompt: string) => Promise<void>;
+  isLoading?: boolean;
 }
 
 const AIAssistedTextarea: React.FC<AIAssistedTextareaProps> = ({
@@ -22,6 +24,8 @@ const AIAssistedTextarea: React.FC<AIAssistedTextareaProps> = ({
   className,
   error,
   label,
+  onAIAssist,
+  isLoading = false,
 }) => {
   const [isAIMode, setIsAIMode] = useState(false);
   const [aiPrompt, setAIPrompt] = useState('');
@@ -47,9 +51,11 @@ const AIAssistedTextarea: React.FC<AIAssistedTextareaProps> = ({
     setAIPrompt(newPrompt);
   };
 
-  const handleAIAssist = () => {
-    console.log('AI Assist requested with prompt:', aiPrompt);
-    onChange(value);
+  const handleAIAssist = async () => {
+    
+    if (onAIAssist) {
+      await onAIAssist(aiPrompt);
+    }
     setIsAIMode(false);
     setAIPrompt('');
   };
@@ -72,7 +78,7 @@ const AIAssistedTextarea: React.FC<AIAssistedTextareaProps> = ({
   }, [handleKeyDown]);
 
   return (
-    <div className='div'>
+    <div className="div">
       <div className="mb-1">
         <TextComponent text={label} size="normal" color="normal" />
       </div>
@@ -127,10 +133,15 @@ const AIAssistedTextarea: React.FC<AIAssistedTextareaProps> = ({
               </button>
               <button
                 onClick={handleAIAssist}
-                className="p-1.5 rounded-xl text-gray-500 bg-indigo-100 hover:bg-indigo-200 transition duration-150 ease-in-out"
+                disabled={isLoading}
+                className="p-1.5 rounded-xl text-gray-500 bg-indigo-100 hover:bg-indigo-200 transition duration-150 ease-in-out disabled:opacity-50"
                 aria-label="Apply AI Assist"
               >
-                <Sparkles size={18} />
+                {isLoading ? (
+                  <Loader size={18} className="animate-spin" />
+                ) : (
+                  <Sparkles size={18} />
+                )}
               </button>
             </div>
           </div>
