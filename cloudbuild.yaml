@@ -4,22 +4,18 @@ steps:
       - build
       - '--no-cache'
       - '-t'
-      - $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
+      - >-
+        $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
       - .
       - '-f'
       - dockerfile
-      - |
-        || (echo 'FAILURE' > /workspace/build_status && exit 1)
     id: Build
-
   - name: gcr.io/cloud-builders/docker
     args:
       - push
-      - $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
-      - |
-        || (echo 'FAILURE' > /workspace/build_status && exit 1)
+      - >-
+        $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
     id: Push
-
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     args:
       - run
@@ -27,12 +23,12 @@ steps:
       - update
       - $_SERVICE_NAME
       - '--platform=managed'
-      - --image=$_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
-      - --labels=managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=$COMMIT_SHA,gcb-build-id=$BUILD_ID,gcb-trigger-id=$_TRIGGER_ID
+      - >-
+        --image=$_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
+      - >-
+        --labels=managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=$COMMIT_SHA,gcb-build-id=$BUILD_ID,gcb-trigger-id=$_TRIGGER_ID
       - '--region=$_DEPLOY_REGION'
       - '--quiet'
-      - |
-        || (echo 'FAILURE' > /workspace/build_status && exit 1)
     id: Deploy
     entrypoint: gcloud
 
@@ -41,10 +37,11 @@ steps:
     args:
       - '-c'
       - |
-        if [ -f /workspace/build_status ] && grep -q 'FAILURE' /workspace/build_status; then
-          status=1
-        else
-          status=0
+        status=0  # Initialize as success
+        if (( "${BUILD_STATUS}" == "FAILURE" )) || 
+           (( "${PUSH_STATUS}" == "FAILURE" )) ||
+           (( "${DEPLOY_STATUS}" == "FAILURE" )); then
+            status=1  # Set failure status if any previous step failed
         fi
         webhook_url=$(gcloud secrets versions access latest --secret=SLACK_WEBHOOK)
         chmod +x ./scripts/notify_slack.sh
@@ -55,8 +52,6 @@ steps:
       - 'PROJECT_ID=$PROJECT_ID'
       - 'ENVIRONMENT=$_ENVIRONMENT'
       - 'BRANCH_NAME=$_BRANCH_NAME'
-    waitFor: 
-      - '-'
 images:
   - $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
 
