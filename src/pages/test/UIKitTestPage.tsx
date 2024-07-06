@@ -183,7 +183,7 @@ const UIKitTestPage = () => {
               onChange={setTextValue}
               placeholder="Enter your text here..."
               label="My AI-Assisted Textarea"
-              systemPrompt="You are a helpful assistant. Please provide concise and relevant information."
+              systemPrompt="you are a form filling assistant, you can help me fill out forms and complete information. reply with the requested task without comments or feedback, just the task."
             />
           </div>
         </div>

@@ -10,6 +10,8 @@ import { UserKeys } from '../store/models/User';
 import { ActionKeys } from '../store/models/Action';
 import TokenInput from './admin/TokenInput';
 import { useTranslation } from 'react-i18next';
+import { useRootStore } from '../store/common/RootStoreContext';
+import { AIAssistedTextareaContainer } from './sb-core-ui-kit/AIAssistedTextareaContainer';
 
 export type FieldType =
   | 'input'
@@ -88,9 +90,12 @@ export interface FormValues
     formType,
     formContext = 'common',
   }) => {
+
     const [filteredFields, setFilteredFields] = useState<FieldConfig[]>([]);
     const [values, setValues] = useState<FormValues>({});
     const { t } = useTranslation();
+    const rootStore = useRootStore();
+
   
     useEffect(() => {
       
@@ -130,11 +135,23 @@ export interface FormValues
         }}
       >
         {filteredFields.map((field) => {
-          const labelKey = `${formContext}.${field.key as string}`;
+
+        const labelKey = `${formContext}.${field.key as string}`;
+        const aiConfig = rootStore.aiAssistedConfigStore.getFieldConfig(formContext, field.id);
           
           switch (field.type) {
             case 'textarea':
-              return (
+              return aiConfig ? (
+                <AIAssistedTextareaContainer
+                  key={field.id}
+                  label={t(labelKey)}
+                  id={field.id}
+                  value={values[field.id] as string}
+                  onChange={(newValue) => handleChange(field.id, newValue)}
+                  systemPrompt={aiConfig.systemPrompt}
+                  language={'he'} // Assuming you have a language property in your field config
+                />
+              ) : (
                 <TextareaWithLabel
                   key={field.id}
                   label={t(labelKey)}

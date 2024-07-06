@@ -24,11 +24,9 @@ import {
 } from '../../services/api/companyService';
 import {
   LOCALSTORAGE_COMPANY_ID,
-  LOCALSTORAGE_SYSTEM_USER_ID,
   LOCALSTORAGE_USER_ID,
   getLocalStorageItem,
   setLocalStorageItem,
-  setSystemUserId,
 } from '../../services/api/sessionService';
 import { IUser, User } from './User';
 import {
@@ -48,6 +46,7 @@ import {
 } from '../../services/api/actionService';
 import i18n from '../../i18n';
 import { login } from '../../services/api/authService';
+import { AIAssistedConfigStore } from './AIAssistedConfigStore';
 
 const RootStore = types
   .model('RootStore', {
@@ -57,7 +56,12 @@ const RootStore = types
     companiesLoaded: types.optional(types.boolean, false),
     users: types.array(User),
     assistantsLoaded: types.optional(types.boolean, false),
+
     sessionStore: types.optional(SessionStore, {}),
+    aiAssistedConfigStore: types.optional(AIAssistedConfigStore, {}),
+
+
+
     inboxSessions: types.array(InboxSession),
     inboxSessionsLoaded: types.optional(types.boolean, false),
 
@@ -77,6 +81,7 @@ const RootStore = types
     },
   }))
   .actions((self) => ({
+    
     translate: (key: string) => i18n.t(key),
     setCurrentUser(user: any) {
       self.currentUser = user;
@@ -87,28 +92,29 @@ const RootStore = types
       localStorage.setItem('appLanguage', newLanguage);
     }),
 
-    checkAuthState
-      : flow(function* () {
-        try {
-          const userId = getLocalStorageItem(LOCALSTORAGE_USER_ID);
-          const userToken = localStorage.getItem('userToken');
+    checkAuthState() {
+      try {
+        const userId = getLocalStorageItem(LOCALSTORAGE_USER_ID);
+        const userToken = localStorage.getItem('userToken');
 
-          if (userId && userToken) {
-            const user = self.users.find((user) => user._id === userId);
-            if (user) {
-              self.currentUser = user;
-              self.isAuthenticated = true;
-            } else {
-              self.isAuthenticated = false;
-            }
+        if (userId && userToken) {
+          const user = self.users.find((user) => user._id === userId);
+          if (user) {
+            self.currentUser = user;
+            self.isAuthenticated = true;
           } else {
             self.isAuthenticated = false;
           }
-        } catch (error) {
+        } else {
           self.isAuthenticated = false;
-          console.error('Error checking auth state:', error);
         }
-      }),
+      } catch (error) {
+        self.isAuthenticated = false;
+        console.error('Error checking auth state:', error);
+      }
+    },
+
+
     loginSystemUser: flow(function* (credential: string) {
       try {
         const response = yield login(credential);

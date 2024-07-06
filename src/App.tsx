@@ -98,6 +98,10 @@ const App: React.FC = observer(() => {
 
   useEffect(() => {
     const loadData = async () => {
+
+      await rootStore.aiAssistedConfigStore.initialize();
+
+
       await rootStore.loadUsers();
       await rootStore.loadCompanies();
       await loadUserSession();
