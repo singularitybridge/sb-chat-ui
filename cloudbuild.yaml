@@ -38,11 +38,17 @@ steps:
       - '-c'
       - |
         set -e 
-
         status=0
-        gcloud builds describe $BUILD_ID --format='value(status)' > /workspace/build_status
-        if grep -q "FAILURE" /workspace/build_status; then
+        build_status=$(gcloud builds describe $BUILD_ID --format='value(status)')
+
+        echo "Build status: $build_status"
+
+        if [[ "$build_status" == "FAILURE" ]]; then
+          status_message="Build $BUILD_ID failed"
           status=1
+        else
+          status_message="Build $BUILD_ID succeeded"
+          status=0 
         fi
 
         webhook_url=$(gcloud secrets versions access latest --secret=SLACK_WEBHOOK)
