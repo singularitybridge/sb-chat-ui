@@ -7,6 +7,8 @@ import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
 import { Textarea } from '../../components/sb-core-ui-kit/Textarea';
 import { TextareaWithLabel } from '../../components/sb-core-ui-kit/TextareaWithLabel';
 import { TvIcon } from '@heroicons/react/24/outline';
+import { AIAssistedTextarea } from '../../components/sb-core-ui-kit/AIAssistedTextarea';
+import { AIAssistedTextareaContainer } from '../../components/sb-core-ui-kit/AIAssistedTextareaContainer';
 
 const UIKitTestPage = () => {
   const [direction, setDirection] = useState<'ltr' | 'rtl'>('rtl');
@@ -15,6 +17,11 @@ const UIKitTestPage = () => {
   const [someOtherText, setSomeOtherText] = useState('');
   const [labelInput, setLabelInput] = useState('');
   const [autoGrowText, setAutoGrowText] = useState('');
+
+  const [aiAssistedText, setAiAssistedText] = useState('');
+  const [aiAssistedText2, setAiAssistedText2] = useState('');
+
+  const [textValue, setTextValue] = useState('');
 
   useEffect(() => {
     document.documentElement.dir = direction;
@@ -27,6 +34,24 @@ const UIKitTestPage = () => {
 
   return (
     <div className="container mx-auto p-4">
+      <div className="flex p-2">
+        <button
+          onClick={() => toggleDirection('ltr')}
+          className={`px-3 py-2 text-sm ${
+            direction === 'ltr' ? 'bg-blue-500 text-white' : 'bg-gray-200'
+          }`}
+        >
+          LTR
+        </button>
+        <button
+          onClick={() => toggleDirection('rtl')}
+          className={`px-3 py-2 text-sm ${
+            direction === 'rtl' ? 'bg-blue-500 text-white' : 'bg-gray-200'
+          }`}
+        >
+          RTL
+        </button>
+      </div>
       <div className="grid grid-cols-3 gap-4">
         <div className="border  border-gray-300 flex items-center justify-center h-[600px]">
           <div className="h-full w-full p-4 space-y-3">
@@ -135,29 +160,33 @@ const UIKitTestPage = () => {
           </div>
         </div>
         <div className="border border-gray-300 flex flex-col items-center justify-center h-[600px]">
-          <div className="flex">
-            <button
-              onClick={() => toggleDirection('ltr')}
-              className={`px-4 py-2 ${
-                direction === 'ltr' ? 'bg-blue-500 text-white' : 'bg-gray-200'
-              }`}
-            >
-              LTR
-            </button>
-            <button
-              onClick={() => toggleDirection('rtl')}
-              className={`px-4 py-2 ${
-                direction === 'rtl' ? 'bg-blue-500 text-white' : 'bg-gray-200'
-              }`}
-            >
-              RTL
-            </button>
+          <div className="h-full w-full p-4 space-y-3">
+            <AIAssistedTextarea
+              id="test"
+              label="שם הפרויקט"
+              value={aiAssistedText}              
+              onChange={setAiAssistedText}
+              placeholder="כתבו כאן משהו"
+            />
+            <AIAssistedTextarea
+              id="test"
+              label="שם הפרויקט"
+              value={aiAssistedText2}
+              onChange={setAiAssistedText2}
+              placeholder="כתבו כאן משהו"
+            />
+
+            <AIAssistedTextareaContainer
+              id="my-textarea"
+              language='he'
+              value={textValue}
+              onChange={setTextValue}
+              placeholder="Enter your text here..."
+              label="My AI-Assisted Textarea"
+              systemPrompt="You are a helpful assistant. Please provide concise and relevant information."
+            />
           </div>
         </div>
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 mt-4">
-        <div className="border bg-white border-gray-300  h-[600px]">test</div>
       </div>
     </div>
   );

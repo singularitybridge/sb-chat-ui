@@ -1,6 +1,29 @@
 import apiClient from '../AxiosService';
 import { IAssistant } from '../../store/models/Assistant';
 
+interface CompletionRequest {
+  systemPrompt: string;
+  userInput: string;
+  model?: string;
+  temperature?: number;
+  maxTokens?: number;
+}
+
+interface CompletionResponse {
+  content: string;
+}
+
+export async function getCompletion(request: CompletionRequest): Promise<string> {
+  try {
+    const response = await apiClient.post<CompletionResponse>('assistant/completion', request);
+    return response.data.content;
+  } catch (error) {
+    console.error('Failed to get completion:', error);
+    throw error;
+  }
+}
+
+
 export async function addThread(): Promise<string> {
   try {
     const newThread = await apiClient.post('assistant/thread');    

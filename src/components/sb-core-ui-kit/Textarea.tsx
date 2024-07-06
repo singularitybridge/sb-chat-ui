@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, forwardRef } from 'react';
 import clsx from 'clsx';
 
 interface TextareaProps {
@@ -14,9 +14,10 @@ interface TextareaProps {
   className?: string;
   error?: string;
   autogrow?: boolean;
+  transparentBg?: boolean;
 }
 
-const Textarea: React.FC<TextareaProps> = ({
+const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
   id,
   value,
   onChange,
@@ -29,9 +30,12 @@ const Textarea: React.FC<TextareaProps> = ({
   className,
   error,
   autogrow = false,
-}) => {
+  transparentBg = false,
+}, ref) => {
   const [isFocused, setIsFocused] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const innerRef = useRef<HTMLTextAreaElement>(null);
+
+  const textareaRef = ref || innerRef;
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -44,18 +48,20 @@ const Textarea: React.FC<TextareaProps> = ({
   };
 
   useEffect(() => {
-    if (autogrow && textareaRef.current) {
+    if (autogrow && textareaRef && 'current' in textareaRef && textareaRef.current) {
       textareaRef.current.style.height = 'auto';
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
-  }, [value, autogrow]);
+  }, [value, autogrow, textareaRef]);
 
   return (
     <div className="flex flex-col w-full">
       <div
         className={clsx(
-          'flex py-3 px-5 justify-end items-center gap-2 self-stretch bg-white rounded-lg transition-all duration-200',
+          'flex py-3 px-5 justify-end items-center gap-2 self-stretch rounded-lg transition-all duration-200',
           {
+            'bg-white': !transparentBg,
+            'bg-transparent': transparentBg,
             'border border-gray-400': isFocused && !error,
             'border border-red-500': error,
             'border border-gray-300': !isFocused && !error,
@@ -91,6 +97,8 @@ const Textarea: React.FC<TextareaProps> = ({
       )}
     </div>
   );
-};
+});
+
+Textarea.displayName = 'Textarea';
 
 export { Textarea };

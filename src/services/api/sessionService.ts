@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { ISession } from '../../store/models/Session';
 import apiClient from '../AxiosService';
 
