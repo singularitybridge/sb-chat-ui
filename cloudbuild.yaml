@@ -52,9 +52,7 @@ steps:
       - 'ENVIRONMENT=$_ENVIRONMENT'
       - 'BRANCH_NAME=$_BRANCH_NAME'
     waitFor: 
-      - Build 
-      - Push
-      - Deploy
+      - '-'
 images:
   - >-
     $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
