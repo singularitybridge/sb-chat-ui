@@ -50,6 +50,7 @@ const EditActionView: React.FC = observer(() => {
       <div className="flex w-full">
         <div className="w-1/2">
           <DynamicForm
+            formContext='CreateNewAction'
             fields={formFields}
             onSubmit={handleSubmit}
             isLoading={isLoading}
@@ -66,8 +67,8 @@ const EditActionView: React.FC = observer(() => {
 });
 
 const EditActionPage = withPage(
-  'Edit Action',
-  'Update action details here',
+  'EditAssistantPage.title',
+  'EditAssistantPage.description',
   () => { console.log('edit action'); }
 )(EditActionView);
 

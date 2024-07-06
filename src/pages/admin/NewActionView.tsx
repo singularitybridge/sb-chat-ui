@@ -24,6 +24,7 @@ const NewActionView: React.FC = observer(() => {
 
   return (
     <DynamicForm
+      formContext="CreateNewAction"
       fields={actionFieldConfigs}
       onSubmit={handleSubmit}
       isLoading={isLoading}

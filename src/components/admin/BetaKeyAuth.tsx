@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { verifyBetaKey } from '../../services/api/authService';
 import { TextComponent } from '../sb-core-ui-kit/TextComponent';
-import { Input } from '../sb-core-ui-kit/Input'; // Adjust the path based on your file structure
+import { Input } from '../sb-core-ui-kit/Input';
 import Button from '../sb-core-ui-kit/Button';
 
 interface BetaKeyAuthProps {
@@ -31,9 +31,14 @@ const BetaKeyAuth: React.FC<BetaKeyAuthProps> = ({ onSuccess }) => {
     }
   };
 
+  const handleInputChange = (value: string) => {
+    setBetaKey(value);
+    if (error) setError(''); // Clear error when user starts typing
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
-      <div className="p-8 w-full max-w-lg">
+      <div className="pb-8 w-full max-w-lg">
         <img
           src="assets/sb-welcome.png"
           className="mb-2 mx-auto"
@@ -48,19 +53,19 @@ const BetaKeyAuth: React.FC<BetaKeyAuthProps> = ({ onSuccess }) => {
         <TextComponent
           text="אנחנו כרגע נותנים גישה לגרסת הבטא שלנו למשתמשים שנבחרו. בבקשה הכניסו את קוד ההזמנה שקיבלתם."
           size="normal"
-          className="mb-10"
+          className="mb-6"
           align="center"
         />
         <Input
           id="beta-key"
           type="password"
           value={betaKey}
-          onChange={setBetaKey}
+          onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          placeholder="הכניסו קוד הזמנה"          
+          placeholder="הכניסו קוד הזמנה"
+          error={error}
         />
-        {error && <TextComponent text={error} size="normal" color="alert" />}
-        <div className="flex justify-center mt-10">
+        <div className="flex justify-center mt-4">
           <Button onClick={handleBetaKeySubmit} isArrowButton={true}>
             להמשיך
           </Button>

@@ -22,6 +22,7 @@ const OnboardingPage: React.FC = () => {
   const rootStore = useRootStore();
   const navigate = useNavigate();
   const location = useLocation();
+
   const { user } = location.state as { user: any };
 
   const handleSignup = async () => {
@@ -130,7 +131,7 @@ const OnboardingPage: React.FC = () => {
             />
           </div>
           <div className="flex justify-end">
-            <Button onClick={handleSignup} isArrowButton={true}>
+            <Button onClick={handleSignup} isArrowButton={true} disabled={ description === '' || name === ''}>
               כניסה למערכת
             </Button>
           </div>

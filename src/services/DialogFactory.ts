@@ -9,6 +9,8 @@ import {
   EVENT_SHOW_ADD_USER_MODAL,
   EventType,
 } from '../utils/eventNames';
+
+import i18n from '../i18n';
 import React from 'react';
 
 export interface DialogComponentEventData {
@@ -23,25 +25,25 @@ const dialogComponentFactory = (
   switch (eventType) {
     case EVENT_SHOW_ADD_ASSISTANT_MODAL:
       return {
-        title: eventData.title || 'Create New Assistant',
+        title: eventData.title || i18n.t('dialogTitles.newAssistant'),
         component: React.createElement(NewAssistantView),
       };
 
     case EVENT_SHOW_ADD_COMPANY_MODAL:
       return {
-        title: eventData.title || 'Create New Company',
+        title: eventData.title || i18n.t('dialogTitles.newCompany'),
         component: React.createElement(NewCompanyView),
       };
 
     case EVENT_SHOW_ADD_ACTION_MODAL:
       return {
-        title: eventData.title || 'Create New Action',
+        title: eventData.title || i18n.t('dialogTitles.newAction'),
         component: React.createElement(NewActionView),
       };
 
     case EVENT_SHOW_ADD_USER_MODAL:
       return {
-        title: eventData.title || 'Create New User',
+        title: eventData.title || i18n.t('dialogTitles.newUser'),
         component: React.createElement(NewUserView),
       };
 

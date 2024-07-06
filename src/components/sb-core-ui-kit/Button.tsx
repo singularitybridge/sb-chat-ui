@@ -8,10 +8,10 @@ export interface ButtonProps {
   children: React.ReactNode;
   isArrowButton?: boolean;
   size?: 'small' | 'normal' | 'large';
+  disabled?: boolean;
 }
 
 const ArrowIcon: React.FC<{ size: 'small' | 'normal' | 'large' }> = ({ size }) => {
-  
   const iconSize = size === 'small' ? 16 : size === 'normal' ? 18 : 20;
   
   return (
@@ -40,6 +40,7 @@ const Button: React.FC<ButtonProps> = ({
   children,
   isArrowButton = false,
   size = 'normal',
+  disabled = false,
 }) => {
   const sizeClasses = {
     small: 'text-sm px-4 py-2',
@@ -49,15 +50,24 @@ const Button: React.FC<ButtonProps> = ({
 
   const className = clsx(
     'text-white',
-    'bg-primary',
-    sizeClasses[size],
     'rounded-xl',
     'flex items-center justify-center',
+    'transition-colors duration-200',
+    sizeClasses[size],
+    {
+      'bg-primary hover:bg-primary-dark': !disabled,
+      'bg-gray-300 cursor-not-allowed': disabled,
+    },
     additionalClassName
   );
 
   return (
-    <button type={type} onClick={onClick} className={className}>
+    <button
+      type={type}
+      onClick={disabled ? undefined : onClick}
+      className={className}
+      disabled={disabled}
+    >
       <span className="flex items-center rtl:flex-row-reverse gap-2">
         {isArrowButton && <ArrowIcon size={size} />}
         {children}
