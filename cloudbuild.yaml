@@ -39,10 +39,10 @@ steps:
       - |
         set -e 
 
-        STATUS_CODE=0
+        status=0
         gcloud builds describe $BUILD_ID --format='value(status)' > /workspace/build_status
         if grep -q "FAILURE" /workspace/build_status; then
-          STATUS_CODE=1
+          status=1
         fi
 
         webhook_url=$(gcloud secrets versions access latest --secret=SLACK_WEBHOOK)
