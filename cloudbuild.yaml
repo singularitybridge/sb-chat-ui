@@ -1,33 +1,40 @@
 steps:
-  - name: 'gcr.io/cloud-builders/docker'
-    entrypoint: bash
+  - name: gcr.io/cloud-builders/docker
     args:
-      - '-c'
+      - build
+      - '--no-cache'
+      - '-t'
+      - $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
+      - .
+      - '-f'
+      - dockerfile
       - |
-        trap "echo 'FAILURE' > /workspace/build_status" EXIT
-        docker build --no-cache -t $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA . -f dockerfile
-        trap - EXIT
+        || (echo 'FAILURE' > /workspace/build_status && exit 1)
     id: Build
 
-  - name: 'gcr.io/cloud-builders/docker'
-    entrypoint: bash
+  - name: gcr.io/cloud-builders/docker
     args:
-      - '-c'
+      - push
+      - $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
       - |
-        trap "echo 'FAILURE' > /workspace/build_status" EXIT
-        docker push $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
-        trap - EXIT
+        || (echo 'FAILURE' > /workspace/build_status && exit 1)
     id: Push
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: bash
     args:
-      - '-c'
+      - run
+      - services
+      - update
+      - $_SERVICE_NAME
+      - '--platform=managed'
+      - --image=$_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
+      - --labels=managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=$COMMIT_SHA,gcb-build-id=$BUILD_ID,gcb-trigger-id=$_TRIGGER_ID
+      - '--region=$_DEPLOY_REGION'
+      - '--quiet'
       - |
-        trap "echo 'FAILURE' > /workspace/build_status" EXIT
-        gcloud run services update $_SERVICE_NAME --platform=managed --image=$_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA --labels=managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=$COMMIT_SHA,gcb-build-id=$BUILD_ID,gcb-trigger-id=$_TRIGGER_ID --region=$_DEPLOY_REGION --quiet
-        trap - EXIT
+        || (echo 'FAILURE' > /workspace/build_status && exit 1)
     id: Deploy
+    entrypoint: gcloud
 
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: bash
@@ -50,8 +57,7 @@ steps:
       - 'BRANCH_NAME=$_BRANCH_NAME'
 
 images:
-  - >-
-    $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
+  - $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
 
 options:
   substitutionOption: ALLOW_LOOSE
