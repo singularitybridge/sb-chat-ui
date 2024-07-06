@@ -40,18 +40,9 @@ steps:
         set -e 
 
         STATUS_CODE=0
-        MESSAGE="Cloud Build pipeline succeeded."
-
         gcloud builds describe $BUILD_ID --format='value(status)' > /workspace/build_status
         if grep -q "FAILURE" /workspace/build_status; then
           STATUS_CODE=1
-          MESSAGE="Cloud Build pipeline failed."
-
-          # Get step status if available
-          if grep -q "status: FAILURE" /workspace/build_status; then
-            STEP_NAME=$(grep -B1 "status: FAILURE" /workspace/build_status | head -n1 | awk '{print $1}')
-            MESSAGE+=" $STEP_NAME step failed."
-          fi
         fi
 
         webhook_url=$(gcloud secrets versions access latest --secret=SLACK_WEBHOOK)
