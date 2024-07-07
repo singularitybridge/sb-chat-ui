@@ -39,14 +39,11 @@ steps:
       - |
         set -e
         echo "Starting build status check..."
-        build_status=$(gcloud builds describe $BUILD_ID --format='value(status)')
+        build_status=$(gcloud builds describe $build_id --format="value(steps[0].status)")
         echo "Initial build status: $build_status"
 
         while [[ "$build_status" == "WORKING" ]]; do
-          echo "Build still in progress; rechecking in 3 seconds..."
-          sleep 3
-          build_status=$(gcloud builds describe $BUILD_ID --format='value(status)')
-          echo "Updated build status: $build_status"
+          build_status=$(gcloud builds describe $build_id --format="value(steps[0].status)")  
         done
 
         echo "Build status finally: $build_status" 
