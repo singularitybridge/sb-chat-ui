@@ -40,6 +40,12 @@ steps:
         set -e
         echo "Checking build status..."
         
+        build_status=($gcloud builds describe $BUILD_ID --format='json(steps)' | jq '.steps[] | {name: .name, status: .status}')
+        echo "Build status: $build_status"
+
+        bool_status=$(gcloud builds describe $BUILD_ID --format="value(steps.status)" | grep -c "FAILURE")
+        echo "bool_status: $bool_status"
+
         # Check if any of the previous steps failed
         if [[ $(gcloud builds describe $BUILD_ID --format="value(steps.status)" | grep -c "FAILURE") -gt 0 ]]; then
           status_message="Build $BUILD_ID failed"
@@ -61,8 +67,8 @@ steps:
       - 'PROJECT_ID=$PROJECT_ID'
       - 'ENVIRONMENT=$_ENVIRONMENT'
       - 'BRANCH_NAME=$_BRANCH_NAME'
-    waitFor: 
-      - '-'
+    # waitFor: 
+    #   - '-'
 images:
   - $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
 
