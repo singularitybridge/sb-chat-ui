@@ -1,3 +1,4 @@
+// file_path: src/components/sb-core-ui-kit/Textarea.tsx
 import React, { useState, useRef, useEffect, forwardRef } from 'react';
 import clsx from 'clsx';
 

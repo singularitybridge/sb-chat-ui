@@ -1,3 +1,4 @@
+// file_path: src/components/sb-core-ui-kit/AIAssistedTextarea.tsx
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Textarea } from './Textarea';
 import { Loader, Mic, Sparkles } from 'lucide-react';
@@ -12,13 +13,10 @@ interface AIAssistedTextareaProps {
   className?: string;
   error?: string;
   label: string;
-
   onAIAssist?: (aiPrompt: string) => Promise<void>;
   onRecording?: () => void;
-
   isLoading?: boolean;
   isRecording?: boolean;
-
   aiPrompt: string;
   onAIPromptChange: (value: string) => void;
 }
@@ -31,19 +29,17 @@ const AIAssistedTextarea: React.FC<AIAssistedTextareaProps> = ({
   className,
   error,
   label,
-
   onAIAssist,
   onRecording,
-
   isLoading = false,
   isRecording = false,
-
   aiPrompt,
   onAIPromptChange,
 }) => {
   const [isAIMode, setIsAIMode] = useState(false);
   const mainTextareaRef = useRef<HTMLTextAreaElement>(null);
   const aiTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const toggleAIMode = () => {
     setIsAIMode((prev) => !prev);
@@ -74,7 +70,7 @@ const AIAssistedTextarea: React.FC<AIAssistedTextareaProps> = ({
   };
 
   const handleKeyDown = useCallback(
-    (event: KeyboardEvent) => {
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
       if (event.key === 'Escape' && isAIMode) {
         setIsAIMode(false);
         onAIPromptChange('');
@@ -83,15 +79,8 @@ const AIAssistedTextarea: React.FC<AIAssistedTextareaProps> = ({
     [isAIMode, onAIPromptChange]
   );
 
-  useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [handleKeyDown]);
-
   return (
-    <div className="div">
+    <div ref={containerRef} onKeyDown={handleKeyDown}>
       <div className="mb-1">
         <TextComponent text={label} size="normal" color="normal" />
       </div>
