@@ -177,13 +177,13 @@ const UIKitTestPage = () => {
             />
 
             <AIAssistedTextareaContainer
-              id="my-textarea"
+              id="project-name"
               language='he'
               value={textValue}
               onChange={setTextValue}
               placeholder="Enter your text here..."
-              label="My AI-Assisted Textarea"
-              systemPrompt="you are a form filling assistant, you can help me fill out forms and complete information. reply with the requested task without comments or feedback, just the task."
+              label="project name"
+              systemPrompt="project name is used to identify the project in the system, a good project name is descriptive and unique"
             />
           </div>
         </div>

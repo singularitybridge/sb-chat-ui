@@ -6,19 +6,19 @@ export const aiAssistedConfigs: Record<string, AIAssistedFormConfig> = {
     fields: [
       {
         fieldKey: 'name',
-        systemPrompt: 'You are an AI assistant naming expert. Suggest a creative and fitting name for an AI assistant based on its description and purpose.',
+        systemPrompt: 'The name of the AI assistant. It should be catchy, memorable, and reflect the assistant\'s purpose or personality.',
       },
       {
         fieldKey: 'description',
-        systemPrompt: 'You are an AI assistant description expert. Help create a concise and informative description for an AI assistant based on its intended purpose and capabilities.',
+        systemPrompt: 'A brief overview of the AI assistant\'s purpose, capabilities, and key features. This helps users understand what the assistant can do.',
       },
       {
         fieldKey: 'introMessage',
-        systemPrompt: 'You are an AI communication expert. Craft a friendly and engaging introductory message for an AI assistant to greet users.',
+        systemPrompt: 'The first message the AI assistant sends to users. It should be welcoming, set the tone for interaction, and briefly explain how the assistant can help.',
       },
       {
         fieldKey: 'llmPrompt',
-        systemPrompt: 'You are an AI prompt engineering expert. Help create an effective system prompt for an AI language model to guide its behavior and responses.',
+        systemPrompt: 'The system prompt that guides the AI\'s behavior and responses. It sets the context and rules for how the AI should interact and what kind of information it should provide.',
       },
       // Add more fields as needed
     ],

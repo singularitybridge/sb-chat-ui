@@ -33,15 +33,27 @@ const AIAssistedTextareaContainer: React.FC<AIAssistedTextareaContainerProps> = 
   const streamRef = useRef<MediaStream | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
 
-  const handleAIAssist = async (aiPrompt: string) => {
+  const handleAIAssist = async (userInstructions: string) => {
     setIsLoading(true);
     try {
+      const formattedSystemPrompt = `
+        You are a form-filling assistant. Your task is to modify or complete text in form fields based on the given field name, existing text, and user instructions. Provide only the modified or completed text for the field, without any additional explanations.
+        ${systemPrompt}
+      `;
+
+      const formattedUserInput = `
+        Field Name: ${id}
+        Current Text: ${value}
+        Instructions: ${userInstructions}
+      `;
+
       const completionRequest = {
-        systemPrompt,
-        userInput: aiPrompt,
+        systemPrompt: formattedSystemPrompt,
+        userInput: formattedUserInput,
       };
+
       const completionContent = await getCompletion(completionRequest);
-      onChange(value + ' ' + completionContent); // Append completion to existing text
+      onChange(completionContent); // Replace the current text with the AI-generated content
       setAiPrompt(''); // Clear the AI prompt after processing
     } catch (error) {
       console.error('Error getting completion:', error);
