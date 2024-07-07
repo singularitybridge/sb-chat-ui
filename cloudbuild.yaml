@@ -38,14 +38,22 @@ steps:
       - '-c'
       - |
         set -e
-        echo "Checking build status..."
+        echo "Waiting for build to complete..."
         
+        # Wait for the build to complete
+        while true; do
+          build_status=$(gcloud builds describe $BUILD_ID --format="value(status)")
+          if [[ "$build_status" == "SUCCESS" || "$build_status" == "FAILURE" ]]; then
+            break
+          fi
+          echo "Build still in progress. Current status: $build_status"
+          sleep 10
+        done
 
-        bool_status=$(gcloud builds describe $BUILD_ID --format="value(steps.status)" | grep -c "FAILURE")
-        echo "bool_status: $bool_status"
+        echo "Build completed. Final status: $build_status"
 
-        # Check if any of the previous steps failed
-        if [[ $(gcloud builds describe $BUILD_ID --format="value(steps.status)" | grep -c "FAILURE") -gt 0 ]]; then
+        # Set status based on build result
+        if [[ "$build_status" == "FAILURE" ]]; then
           status_message="Build $BUILD_ID failed"
           status=1
         else
@@ -54,7 +62,6 @@ steps:
         fi
 
         echo "$status_message"
-
 
         webhook_url=$(gcloud secrets versions access latest --secret=SLACK_WEBHOOK)
         chmod +x ./scripts/notify_slack.sh
