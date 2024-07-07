@@ -37,11 +37,17 @@ steps:
     args:
       - '-c'
       - |
-        set -e 
+        set -e
         status=0
         build_status=$(gcloud builds describe $BUILD_ID --format='value(status)')
 
-        echo "Build status: $build_status"
+        while [[ "$build_status" == "WORKING" ]]; do
+          echo "Current build status: $build_status. Checking again in 10 seconds..."
+          sleep 10
+          build_status=$(gcloud builds describe $BUILD_ID --format='value(status)')
+        done
+
+        echo "Final build status: $build_status"
 
         if [[ "$build_status" == "FAILURE" ]]; then
           status_message="Build $BUILD_ID failed"
