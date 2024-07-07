@@ -42,7 +42,7 @@ steps:
         
         # Wait for the build to complete
         while true; do
-          build_status=$(gcloud builds describe $BUILD_ID --format="value(status)")
+          build_status=$(gcloud builds describe $BUILD_ID --format="value(steps[0].status)")
           if [[ "$build_status" == "SUCCESS" || "$build_status" == "FAILURE" ]]; then
             break
           fi
