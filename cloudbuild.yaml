@@ -40,8 +40,6 @@ steps:
         set -e
         echo "Checking build status..."
         
-        # build_status=$(gcloud builds describe $BUILD_ID --format='json(steps)' | jq '.steps[] | {name: .name, status: .status}')
-        # echo "Build status: $build_status"
 
         bool_status=$(gcloud builds describe $BUILD_ID --format="value(steps.status)" | grep -c "FAILURE")
         echo "bool_status: $bool_status"
