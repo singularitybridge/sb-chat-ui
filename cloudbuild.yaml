@@ -78,6 +78,7 @@ images:
   - $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
 
 options:
+  failFast: false
   substitutionOption: ALLOW_LOOSE
   logging: CLOUD_LOGGING_ONLY
 
