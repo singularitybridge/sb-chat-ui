@@ -8,7 +8,6 @@ import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
 import { Textarea } from '../../components/sb-core-ui-kit/Textarea';
 import { TextareaWithLabel } from '../../components/sb-core-ui-kit/TextareaWithLabel';
 import { TvIcon } from '@heroicons/react/24/outline';
-import { AIAssistedTextarea } from '../../components/sb-core-ui-kit/AIAssistedTextarea';
 import { AIAssistedTextareaContainer } from '../../components/sb-core-ui-kit/AIAssistedTextareaContainer';
 
 const UIKitTestPage = () => {
