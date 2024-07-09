@@ -330,6 +330,7 @@ const RootStore = types
 
     addCompany: flow(function* (company: ICompany) {
       try {
+        debugger
         const newCompany = yield addCompany(company);
         newCompany.token = newCompany.token.value;
         self.companies.push(newCompany);

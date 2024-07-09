@@ -27,6 +27,7 @@ const OnboardingPage: React.FC = () => {
 
   const handleSignup = async () => {
     try {
+      debugger
       // Create new company for user with default values
       const defaultCompany = {
         name: `${user.given_name} Default Company`,
@@ -58,11 +59,6 @@ const OnboardingPage: React.FC = () => {
       const mobxUser = User.create(res);
       rootStore.setCurrentUser(mobxUser);
       setLocalStorageItem(LOCALSTORAGE_USER_ID, res._id);
-
-      //create new session and set the new company as the active company
-      const session = await createSession(res._id, newCompany._id);
-      const sessionData = await getSessionById(session._id);
-      rootStore.sessionStore.setActiveSession(sessionData);
 
       await rootStore.loadUsers();
       rootStore.sessionStore.loadSessions();
@@ -131,7 +127,7 @@ const OnboardingPage: React.FC = () => {
             />
           </div>
           <div className="flex justify-end">
-            <Button onClick={handleSignup} isArrowButton={true} disabled={ description === '' || name === ''}>
+            <Button onClick={handleSignup} isArrowButton={true} disabled={description === '' || name === ''}>
               כניסה למערכת
             </Button>
           </div>
