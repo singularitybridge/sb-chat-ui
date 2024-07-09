@@ -36,6 +36,8 @@ interface SBChatKitUIProps {
   onClear: () => void;
   className?: string;
   style?: React.CSSProperties;
+  onToggleAudio: () => void;
+  isAudioEnabled: boolean;  
 }
 
 const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
@@ -44,6 +46,8 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
   assistantName,
   onSendMessage,
   onClear,
+  onToggleAudio,
+  isAudioEnabled,
   className = '',
   style = {},
 }) => {
@@ -79,8 +83,9 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
         description={assistant?.description || ''}
         avatar={assistant?.avatar || ''}
         onClear={onClear}
-      />
-      <div className="flex-grow overflow-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-300">
+        onToggleAudio={onToggleAudio}
+        isAudioEnabled={isAudioEnabled}
+      />      <div className="flex-grow overflow-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-300">
         {messages.map((message, index) => {
           if (message.metadata?.message_type === 'human-agent-response') {
             return (

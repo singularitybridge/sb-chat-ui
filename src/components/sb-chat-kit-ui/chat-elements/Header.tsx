@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import {
   CircleFadingPlus,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -9,6 +11,8 @@ interface HeaderProps {
   description: string;
   avatar: string;
   onClear: () => void;
+  onToggleAudio: () => void;
+  isAudioEnabled: boolean;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -16,7 +20,10 @@ const Header: React.FC<HeaderProps> = ({
   description,
   avatar,
   onClear,
+  onToggleAudio,
+  isAudioEnabled,
 }) => {
+
   const [isExpanded, setIsExpanded] = useState(false);
 
   const toggleDescription = () => {
@@ -57,13 +64,30 @@ const Header: React.FC<HeaderProps> = ({
         <h2 className="font-semibold text-lg tracking-tight">{title}</h2>
         <div className="flex items-start pb-5">{renderDescription()}</div>
       </div>
-      <button
-        onClick={onClear}
-        className="p-1 rounded-full transition-colors hover:bg-gray-100"
-        aria-label="Clear chat"
-      >
-        <CircleFadingPlus className="w-6 h-6 text-gray-500 hover:text-primary-600" />
-      </button>
+
+
+      <div className="flex items-center space-x-1 space-x-reverse">
+        <button
+          onClick={onToggleAudio}
+          className="p-1 rounded-full transition-colors hover:bg-gray-100"
+          aria-label={isAudioEnabled ? 'Disable audio' : 'Enable audio'}
+        >
+          {isAudioEnabled ? (
+            <Volume2 className="w-6 h-6 text-lime-500 hover:text-primary-600" />
+          ) : (
+            <VolumeX className="w-6 h-6 text-gray-500 hover:text-primary-600" />
+          )}
+        </button>
+        <button
+          onClick={onClear}
+          className="p-1 rounded-full transition-colors hover:bg-gray-100"
+          aria-label="Clear chat"
+        >
+          <CircleFadingPlus className="w-6 h-6 text-gray-500 hover:text-primary-600" />
+        </button>
+      </div>
+
+      
     </div>
   );
 };

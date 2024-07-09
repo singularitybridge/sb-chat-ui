@@ -19,6 +19,7 @@ import {
   updateSessionAssistant,
 } from '../../services/api/sessionService';
 import { SBChatKitUI } from '../sb-chat-kit-ui/SBChatKitUI';
+import { textToSpeech } from '../../services/api/voiceService';
 
 interface Metadata {
   message_type: string;
@@ -36,6 +37,10 @@ const ChatContainer = observer(() => {
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [assistant, setAssistant] = useState<IAssistant | undefined>();
+  const [isAudioEnabled, setIsAudioEnabled] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+
 
   const { activeSession } = rootStore.sessionStore;
   const userId = activeSession?.userId;
@@ -100,9 +105,27 @@ const ChatContainer = observer(() => {
         ...prevMessages,
         { content: response, role: 'assistant' },
       ]);
+
+      if (isAudioEnabled) {
+        try {
+          const audioUrl = await textToSpeech(response, 'shimmer');
+          if (audioRef.current) {
+            audioRef.current.src = audioUrl;
+            console.log('Playing audio response:', audioUrl);
+            audioRef.current.play();
+          }
+        } catch (error) {
+          console.error('Failed to play audio response:', error);
+        }
+      }
     }
   };
 
+  const handleToggleAudio = () => {
+    setIsAudioEnabled(!isAudioEnabled);
+  };
+
+    
   const handleClear = async () => {
     if (activeSession) {
       const { companyId, userId } = activeSession;
@@ -139,9 +162,13 @@ const ChatContainer = observer(() => {
         assistantName="AI Assistant"
         onSendMessage={handleSubmitMessage}
         onClear={handleClear}
+        onToggleAudio={handleToggleAudio}
+        isAudioEnabled={isAudioEnabled}
       />
+      <audio ref={audioRef} style={{ display: 'none' }} />
     </div>
   );
 });
+
 
 export { ChatContainer };
