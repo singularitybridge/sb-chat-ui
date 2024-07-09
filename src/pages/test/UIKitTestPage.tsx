@@ -1,3 +1,4 @@
+// file_path: src/pages/test/UIKitTestPage.tsx
 import React, { useEffect, useState } from 'react';
 import { Input } from '../../components/sb-core-ui-kit/Input';
 import InputWithLabel from '../../components/sb-core-ui-kit/InputWithLabel';
@@ -7,7 +8,6 @@ import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
 import { Textarea } from '../../components/sb-core-ui-kit/Textarea';
 import { TextareaWithLabel } from '../../components/sb-core-ui-kit/TextareaWithLabel';
 import { TvIcon } from '@heroicons/react/24/outline';
-import { AIAssistedTextarea } from '../../components/sb-core-ui-kit/AIAssistedTextarea';
 import { AIAssistedTextareaContainer } from '../../components/sb-core-ui-kit/AIAssistedTextareaContainer';
 
 const UIKitTestPage = () => {
@@ -161,7 +161,7 @@ const UIKitTestPage = () => {
         </div>
         <div className="border border-gray-300 flex flex-col items-center justify-center h-[600px]">
           <div className="h-full w-full p-4 space-y-3">
-            <AIAssistedTextarea
+            {/* <AIAssistedTextarea
               id="test"
               label="שם הפרויקט"
               value={aiAssistedText}              
@@ -174,16 +174,34 @@ const UIKitTestPage = () => {
               value={aiAssistedText2}
               onChange={setAiAssistedText2}
               placeholder="כתבו כאן משהו"
-            />
+            /> */}
 
             <AIAssistedTextareaContainer
-              id="my-textarea"
+              id="customer-name"
+              language='he'
+              value={aiAssistedText}
+              onChange={setAiAssistedText}
+              placeholder="Enter your text here..."
+              label="customer name"
+              systemPrompt="customer name is used to identify the customer in the system, a good customer name is descriptive and unique"
+            />
+            <AIAssistedTextareaContainer
+              id="task-name"
+              language='he'
+              value={aiAssistedText2}
+              onChange={setAiAssistedText2}
+              placeholder="Enter your text here..."
+              label="task name"
+              systemPrompt="task name is used to identify the task in the system, a good task name is descriptive and unique"
+            />
+            <AIAssistedTextareaContainer
+              id="project-name"
               language='he'
               value={textValue}
               onChange={setTextValue}
               placeholder="Enter your text here..."
-              label="My AI-Assisted Textarea"
-              systemPrompt="You are a helpful assistant. Please provide concise and relevant information."
+              label="project name"
+              systemPrompt="project name is used to identify the project in the system, a good project name is descriptive and unique"
             />
           </div>
         </div>
