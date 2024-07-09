@@ -24,6 +24,9 @@ interface ChatMessage {
   actions?: Action[];
 }
 
+type AudioState = 'disabled' | 'enabled' | 'playing';
+
+
 interface SBChatKitUIProps {
   messages: ChatMessage[];
   assistant?: {
@@ -37,8 +40,11 @@ interface SBChatKitUIProps {
   className?: string;
   style?: React.CSSProperties;
   onToggleAudio: () => void;
-  isAudioEnabled: boolean;  
+  audioState: AudioState;
+
 }
+
+
 
 const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
   messages,
@@ -47,11 +53,10 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
   onSendMessage,
   onClear,
   onToggleAudio,
-  isAudioEnabled,
+  audioState,
   className = '',
   style = {},
-}) => {
-  const messagesEndRef = useRef<null | HTMLDivElement>(null);
+}) => {  const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const [disabledMessages, setDisabledMessages] = useState<number[]>([]);
 
   useEffect(() => {
@@ -78,14 +83,15 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
       }}
       className={`p-4 flex flex-col ${className} h-full w-full`}
     >
-      <Header
+        <Header
         title={assistant?.name || ''}
         description={assistant?.description || ''}
         avatar={assistant?.avatar || ''}
         onClear={onClear}
         onToggleAudio={onToggleAudio}
-        isAudioEnabled={isAudioEnabled}
-      />      <div className="flex-grow overflow-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-300">
+        audioState={audioState}
+      />
+      <div className="flex-grow overflow-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-300">
         {messages.map((message, index) => {
           if (message.metadata?.message_type === 'human-agent-response') {
             return (

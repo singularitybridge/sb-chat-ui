@@ -32,12 +32,15 @@ interface ChatMessage {
   assistantName?: string;
 }
 
+type AudioState = 'disabled' | 'enabled' | 'playing';
+
+
 const ChatContainer = observer(() => {
   const rootStore = useRootStore();
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [assistant, setAssistant] = useState<IAssistant | undefined>();
-  const [isAudioEnabled, setIsAudioEnabled] = useState(false);
+  const [audioState, setAudioState] = useState<AudioState>('disabled');
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
 
@@ -106,13 +109,14 @@ const ChatContainer = observer(() => {
         { content: response, role: 'assistant' },
       ]);
 
-      if (isAudioEnabled) {
+      if (audioState === 'enabled') {
         try {
           const audioUrl = await textToSpeech(response, 'shimmer');
           if (audioRef.current) {
             audioRef.current.src = audioUrl;
             console.log('Playing audio response:', audioUrl);
             audioRef.current.play();
+            setAudioState('playing');
           }
         } catch (error) {
           console.error('Failed to play audio response:', error);
@@ -121,9 +125,28 @@ const ChatContainer = observer(() => {
     }
   };
 
+
   const handleToggleAudio = () => {
-    setIsAudioEnabled(!isAudioEnabled);
+    if (audioState === 'disabled') {
+      setAudioState('enabled');
+    } else if (audioState === 'enabled') {
+      setAudioState('disabled');
+    } else if (audioState === 'playing') {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+      setAudioState('enabled');
+    }
   };
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.onended = () => {
+        setAudioState('enabled');
+      };
+    }
+  }, []);
 
     
   const handleClear = async () => {
@@ -163,7 +186,7 @@ const ChatContainer = observer(() => {
         onSendMessage={handleSubmitMessage}
         onClear={handleClear}
         onToggleAudio={handleToggleAudio}
-        isAudioEnabled={isAudioEnabled}
+        audioState={audioState}
       />
       <audio ref={audioRef} style={{ display: 'none' }} />
     </div>
