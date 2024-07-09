@@ -1,3 +1,4 @@
+/// file_path: src/components/chat-container/ChatContainer.tsx
 import React, { useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { useRootStore } from '../../store/common/RootStoreContext';

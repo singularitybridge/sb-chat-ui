@@ -1,3 +1,4 @@
+/// file_path: src/components/sb-chat-kit-ui/chat-elements/Header.tsx
 import React, { useState } from 'react';
 import {
   CircleFadingPlus,

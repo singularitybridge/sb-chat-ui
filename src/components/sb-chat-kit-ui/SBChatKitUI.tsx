@@ -1,4 +1,4 @@
-// /file path: src/components/sb-chat-kit-ui/SBChatKitUI.tsx
+/// file_path: src/components/sb-chat-kit-ui/SBChatKitUI.tsx
 import React, { useEffect, useRef, useState } from 'react';
 import { Header } from './chat-elements/Header';
 import { AssistantMessage } from './chat-elements/AssistantMessage';
