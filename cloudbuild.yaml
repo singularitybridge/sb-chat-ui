@@ -9,7 +9,6 @@ steps:
       - .
       - '-f'
       - dockerfile
-    allowExitCodes: [2] 
 
     id: Build
   - name: gcr.io/cloud-builders/docker
