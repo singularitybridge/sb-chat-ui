@@ -1,4 +1,4 @@
-// file_path: src/pages/test/UIKitTestPage.tsx
+/// file_path: src/pages/test/UIKitTestPage.tsx
 import React, { useState, useRef, useCallback } from 'react';
 import { AIAssistedTextarea } from './AIAssistedTextarea';
 import { getCompletion } from '../../services/api/assistantService';

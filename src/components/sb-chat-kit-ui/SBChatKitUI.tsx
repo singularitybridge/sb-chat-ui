@@ -41,10 +41,8 @@ interface SBChatKitUIProps {
   style?: React.CSSProperties;
   onToggleAudio: () => void;
   audioState: AudioState;
-
+  language?: string;
 }
-
-
 
 const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
   messages,
@@ -56,7 +54,9 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
   audioState,
   className = '',
   style = {},
-}) => {  const messagesEndRef = useRef<null | HTMLDivElement>(null);
+  language = 'en',
+}) => {
+  const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const [disabledMessages, setDisabledMessages] = useState<number[]>([]);
 
   useEffect(() => {
@@ -83,7 +83,7 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
       }}
       className={`p-4 flex flex-col ${className} h-full w-full`}
     >
-        <Header
+      <Header
         title={assistant?.name || ''}
         description={assistant?.description || ''}
         avatar={assistant?.avatar || ''}
@@ -123,7 +123,8 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
         })}
         <div ref={messagesEndRef} />
       </div>
-      <ChatInput onSendMessage={onSendMessage} />
+      <ChatInput onSendMessage={onSendMessage} language={language} />
+
     </div>
   );
 };

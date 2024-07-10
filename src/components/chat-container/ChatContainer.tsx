@@ -187,6 +187,7 @@ const ChatContainer = observer(() => {
         onClear={handleClear}
         onToggleAudio={handleToggleAudio}
         audioState={audioState}
+        language={'he'} // Add this line
       />
       <audio ref={audioRef} style={{ display: 'none' }} />
     </div>

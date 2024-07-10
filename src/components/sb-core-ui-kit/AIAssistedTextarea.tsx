@@ -1,4 +1,4 @@
-// file_path: src/components/sb-core-ui-kit/AIAssistedTextarea.tsx
+/// file_path: src/components/sb-core-ui-kit/AIAssistedTextarea.tsx
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Textarea } from './Textarea';
 import { Loader, Mic, Sparkles } from 'lucide-react';
