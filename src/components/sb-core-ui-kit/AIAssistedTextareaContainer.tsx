@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { AIAssistedTextarea } from './AIAssistedTextarea';
 import { getCompletion } from '../../services/api/assistantService';
 
@@ -27,6 +27,7 @@ const AIAssistedTextareaContainer: React.FC<AIAssistedTextareaContainerProps> = 
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [aiPrompt, setAiPrompt] = useState('');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleAIAssist = async (userInstructions: string) => {
     setIsLoading(true);
@@ -50,6 +51,15 @@ const AIAssistedTextareaContainer: React.FC<AIAssistedTextareaContainerProps> = 
       const completionContent = await getCompletion(completionRequest);
       onChange(completionContent); // Replace the current text with the AI-generated content
       setAiPrompt(''); // Clear the AI prompt after processing
+      
+      // Focus on the textarea after receiving the response
+      setTimeout(() => {
+        if (textareaRef.current) {
+          textareaRef.current.focus();
+          // Optionally, move the cursor to the end of the text
+          textareaRef.current.setSelectionRange(completionContent.length, completionContent.length);
+        }
+      }, 0);
     } catch (error) {
       console.error('Error getting completion:', error);
       // You might want to show an error message to the user here
@@ -60,6 +70,7 @@ const AIAssistedTextareaContainer: React.FC<AIAssistedTextareaContainerProps> = 
 
   return (
     <AIAssistedTextarea
+      ref={textareaRef}
       id={id}
       value={value}
       onChange={onChange}

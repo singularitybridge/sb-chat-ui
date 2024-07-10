@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, forwardRef, ForwardRefRenderFunction } from 'react';
 import { Textarea } from './Textarea';
 import { Loader, Sparkles } from 'lucide-react';
 import clsx from 'clsx';
@@ -20,7 +20,7 @@ interface AIAssistedTextareaProps {
   language?: string;
 }
 
-const AIAssistedTextarea: React.FC<AIAssistedTextareaProps> = ({
+const AIAssistedTextareaBase: ForwardRefRenderFunction<HTMLTextAreaElement, AIAssistedTextareaProps> = ({
   id,
   value,
   onChange,
@@ -32,10 +32,9 @@ const AIAssistedTextarea: React.FC<AIAssistedTextareaProps> = ({
   isLoading = false,
   aiPrompt,
   onAIPromptChange,
-  language = 'he',
-}) => {
+  language = 'en',
+}, ref) => {
   const [isAIMode, setIsAIMode] = useState(false);
-  const mainTextareaRef = useRef<HTMLTextAreaElement>(null);
   const aiTextareaRef = useRef<HTMLTextAreaElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -49,10 +48,10 @@ const AIAssistedTextarea: React.FC<AIAssistedTextareaProps> = ({
   useEffect(() => {
     if (isAIMode) {
       aiTextareaRef.current?.focus();
-    } else {
-      mainTextareaRef.current?.focus();
+    } else if (ref && 'current' in ref) {
+      (ref as React.RefObject<HTMLTextAreaElement>).current?.focus();
     }
-  }, [isAIMode]);
+  }, [isAIMode, ref]);
 
   const handleAIAssist = async () => {
     if (onAIAssist) {
@@ -89,7 +88,7 @@ const AIAssistedTextarea: React.FC<AIAssistedTextareaProps> = ({
         )}
       >
         <Textarea
-          ref={mainTextareaRef}
+          ref={ref}
           id={id}
           value={value}
           onChange={onChange}
@@ -146,4 +145,6 @@ const AIAssistedTextarea: React.FC<AIAssistedTextareaProps> = ({
   );
 };
 
-export { AIAssistedTextarea };
+export const AIAssistedTextarea = forwardRef<HTMLTextAreaElement, AIAssistedTextareaProps>(AIAssistedTextareaBase);
+
+AIAssistedTextarea.displayName = 'AIAssistedTextarea';
