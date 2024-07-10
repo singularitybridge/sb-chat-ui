@@ -34,10 +34,6 @@ export const SelectList: React.FC<SelectListProps> = ({
   const selectRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-
-    console.log('initialValue', initialValue);
-    console.log('options', options);
-
     setSelectedValue(initialValue);
   }, [initialValue]);
 

@@ -209,7 +209,6 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
               />
             );
           case 'dropdown':
-            console.log('dropdown field', field);
             return (
               <SelectList
                 key={field.id}
