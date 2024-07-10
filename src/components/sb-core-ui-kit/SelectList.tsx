@@ -21,7 +21,7 @@ interface SelectListProps {
 
 export const SelectList: React.FC<SelectListProps> = ({
   label,
-  options,
+  options = [], // Provide a default empty array
   onSelect,
   initialValue,
   placeholder = 'Select an option',
@@ -34,6 +34,10 @@ export const SelectList: React.FC<SelectListProps> = ({
   const selectRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+
+    console.log('initialValue', initialValue);
+    console.log('options', options);
+
     setSelectedValue(initialValue);
   }, [initialValue]);
 
