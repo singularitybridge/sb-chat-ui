@@ -7,6 +7,7 @@ import { HumanAgentResponseMessage } from './chat-elements/HumanAgentResponseMes
 import { NotificationMessage } from './chat-elements/NotificationMessage';
 import { ActionMessage } from './chat-elements/ActionMessage';
 import { ChatInput } from './chat-elements/ChatInput';
+import { DefaultChatView } from './chat-elements/DefaultChatView';
 
 interface Metadata {
   message_type: string;
@@ -83,48 +84,55 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
       }}
       className={`p-4 flex flex-col ${className} h-full w-full`}
     >
-      <Header
-        title={assistant?.name || ''}
-        description={assistant?.description || ''}
-        avatar={assistant?.avatar || ''}
-        onClear={onClear}
-        onToggleAudio={onToggleAudio}
-        audioState={audioState}
-      />
-      <div className="flex-grow overflow-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-300">
-        {messages.map((message, index) => {
-          if (message.metadata?.message_type === 'human-agent-response') {
-            return (
-              <HumanAgentResponseMessage key={index} text={message.content} />
-            );
-          } else if (message.metadata?.message_type === 'notification') {
-            return <NotificationMessage key={index} text={message.content} />;
-          } else if (message.actions && message.actions.length > 0) {
-            return (
-              <ActionMessage
-                key={index}
-                text={message.content}
-                actions={message.actions}
-                role={assistantName}
-                isDisabled={disabledMessages.includes(index)}
-              />
-            );
-          } else if (message.role === 'assistant') {
-            return (
-              <AssistantMessage
-                key={index}
-                text={message.content}
-                assistantName={assistantName}
-              />
-            );
-          } else {
-            return <UserMessage key={index} text={message.content} />;
-          }
-        })}
-        <div ref={messagesEndRef} />
-      </div>
+      {messages.length === 0 && assistant ? (
+        <DefaultChatView
+          assistant={assistant}
+        />
+      ) : (
+        <>
+          <Header
+            title={assistant?.name || ''}
+            description={assistant?.description || ''}
+            avatar={assistant?.avatar || ''}
+            onClear={onClear}
+            onToggleAudio={onToggleAudio}
+            audioState={audioState}
+          />
+          <div className="flex-grow overflow-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-300">
+            {messages.map((message, index) => {
+              if (message.metadata?.message_type === 'human-agent-response') {
+                return (
+                  <HumanAgentResponseMessage key={index} text={message.content} />
+                );
+              } else if (message.metadata?.message_type === 'notification') {
+                return <NotificationMessage key={index} text={message.content} />;
+              } else if (message.actions && message.actions.length > 0) {
+                return (
+                  <ActionMessage
+                    key={index}
+                    text={message.content}
+                    actions={message.actions}
+                    role={assistantName}
+                    isDisabled={disabledMessages.includes(index)}
+                  />
+                );
+              } else if (message.role === 'assistant') {
+                return (
+                  <AssistantMessage
+                    key={index}
+                    text={message.content}
+                    assistantName={assistantName}
+                  />
+                );
+              } else {
+                return <UserMessage key={index} text={message.content} />;
+              }
+            })}
+            <div ref={messagesEndRef} />
+          </div>
+        </>
+      )}
       <ChatInput onSendMessage={onSendMessage} language={language} />
-
     </div>
   );
 };
