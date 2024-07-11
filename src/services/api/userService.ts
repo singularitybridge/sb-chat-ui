@@ -27,6 +27,7 @@ export const getUserById = async (userId: string): Promise<IUser> => {
 export const addUser = async (userData: IUser): Promise<IUser> => {
   try {
     const response = await apiClient.post(`user`, userData);
+    debugger
     return response.data;
   } catch (error) {
     console.error('Failed to create user', error);

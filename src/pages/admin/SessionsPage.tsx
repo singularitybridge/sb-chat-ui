@@ -54,6 +54,7 @@ const SessionsView: React.FC = observer(() => {
         }}
       />
     </div>
+
   );
 
   return (

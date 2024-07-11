@@ -21,10 +21,10 @@ const LoginWithGoogle: React.FC = () => {
     try {
       await rootStore.loadUsers();
       await rootStore.loginSystemUser(res.credential);
-      const user = jwtDecode(res.credential);
+      const current_user = jwtDecode(res.credential);
 
       if (rootStore.needsOnboarding) {
-        navigate('/onboarding', { state: { user } });
+        navigate('/onboarding', { state: { current_user } });
       } else {
         const companyId = getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) || '';
         const userId = getLocalStorageItem(LOCALSTORAGE_USER_ID) || '';

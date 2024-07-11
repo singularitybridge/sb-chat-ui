@@ -83,7 +83,7 @@ const RootStore = types
   .actions((self) => ({
     
     translate: (key: string) => i18n.t(key),
-    setCurrentUser(user: any) {
+    setCurrentUser(user: IUser) {
       self.currentUser = user;
     },
     changeLanguage: flow(function* (newLanguage: string) {
@@ -143,6 +143,7 @@ const RootStore = types
       }
     }),
     completeOnboarding: () => {
+      debugger
       self.isAuthenticated = true;
       self.needsOnboarding = false;
     },
@@ -296,6 +297,7 @@ const RootStore = types
 
     addUser: flow(function* (user: IUser) {
       try {
+        debugger
         const newUser = yield addUser(user);
         self.users.push(newUser);
         emitter.emit(
