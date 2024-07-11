@@ -1,4 +1,3 @@
-// file_path: src/components/sb-core-ui-kit/Textarea.tsx
 import React, { useState, useRef, useEffect, forwardRef } from 'react';
 import clsx from 'clsx';
 
@@ -16,6 +15,7 @@ interface TextareaProps {
   error?: string;
   autogrow?: boolean;
   transparentBg?: boolean;
+  maxHeight?: number; // New prop for maximum height
 }
 
 const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
@@ -32,6 +32,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
   error,
   autogrow = false,
   transparentBg = false,
+  maxHeight = 300,
 }, ref) => {
   const [isFocused, setIsFocused] = useState(false);
   const innerRef = useRef<HTMLTextAreaElement>(null);
@@ -50,10 +51,26 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
 
   useEffect(() => {
     if (autogrow && textareaRef && 'current' in textareaRef && textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+      const textarea = textareaRef.current;
+      
+      // Reset height to auto to get the correct scrollHeight
+      textarea.style.height = 'auto';
+      
+      // Calculate the new height
+      let newHeight = textarea.scrollHeight;
+      
+      // If maxHeight is set and the new height exceeds it, cap the height
+      if (maxHeight && newHeight > maxHeight) {
+        newHeight = maxHeight;
+        textarea.style.overflowY = 'auto'; // Enable vertical scrolling
+      } else {
+        textarea.style.overflowY = 'hidden'; // Disable vertical scrolling
+      }
+      
+      // Set the new height
+      textarea.style.height = `${newHeight}px`;
     }
-  }, [value, autogrow, textareaRef]);
+  }, [value, autogrow, textareaRef, maxHeight]);
 
   return (
     <div className="flex flex-col w-full">
@@ -70,6 +87,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
           },
           className
         )}
+        style={maxHeight ? { maxHeight: `${maxHeight}px` } : {}}
       >
         <textarea
           ref={textareaRef}

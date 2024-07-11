@@ -1,3 +1,4 @@
+/// file_path: src/components/chat-container/ChatContainer.tsx
 import React, { useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { useRootStore } from '../../store/common/RootStoreContext';
@@ -18,6 +19,7 @@ import {
   updateSessionAssistant,
 } from '../../services/api/sessionService';
 import { SBChatKitUI } from '../sb-chat-kit-ui/SBChatKitUI';
+import { textToSpeech } from '../../services/api/voiceService';
 
 interface Metadata {
   message_type: string;
@@ -30,11 +32,18 @@ interface ChatMessage {
   assistantName?: string;
 }
 
+type AudioState = 'disabled' | 'enabled' | 'playing';
+
+
 const ChatContainer = observer(() => {
   const rootStore = useRootStore();
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [assistant, setAssistant] = useState<IAssistant | undefined>();
+  const [audioState, setAudioState] = useState<AudioState>('disabled');
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+
 
   const { activeSession } = rootStore.sessionStore;
   const userId = activeSession?.userId;
@@ -99,9 +108,47 @@ const ChatContainer = observer(() => {
         ...prevMessages,
         { content: response, role: 'assistant' },
       ]);
+
+      if (audioState === 'enabled') {
+        try {
+          const audioUrl = await textToSpeech(response, 'shimmer');
+          if (audioRef.current) {
+            audioRef.current.src = audioUrl;
+            console.log('Playing audio response:', audioUrl);
+            audioRef.current.play();
+            setAudioState('playing');
+          }
+        } catch (error) {
+          console.error('Failed to play audio response:', error);
+        }
+      }
     }
   };
 
+
+  const handleToggleAudio = () => {
+    if (audioState === 'disabled') {
+      setAudioState('enabled');
+    } else if (audioState === 'enabled') {
+      setAudioState('disabled');
+    } else if (audioState === 'playing') {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+      setAudioState('enabled');
+    }
+  };
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.onended = () => {
+        setAudioState('enabled');
+      };
+    }
+  }, []);
+
+    
   const handleClear = async () => {
     if (activeSession) {
       const { companyId, userId } = activeSession;
@@ -138,9 +185,14 @@ const ChatContainer = observer(() => {
         assistantName="AI Assistant"
         onSendMessage={handleSubmitMessage}
         onClear={handleClear}
+        onToggleAudio={handleToggleAudio}
+        audioState={audioState}
+        language={'he'} // Add this line
       />
+      <audio ref={audioRef} style={{ display: 'none' }} />
     </div>
   );
 });
+
 
 export { ChatContainer };

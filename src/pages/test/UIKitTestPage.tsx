@@ -9,6 +9,8 @@ import { Textarea } from '../../components/sb-core-ui-kit/Textarea';
 import { TextareaWithLabel } from '../../components/sb-core-ui-kit/TextareaWithLabel';
 import { TvIcon } from '@heroicons/react/24/outline';
 import { AIAssistedTextareaContainer } from '../../components/sb-core-ui-kit/AIAssistedTextareaContainer';
+import { SelectList, SelectListOption } from '../../components/sb-core-ui-kit/SelectList';
+
 
 const UIKitTestPage = () => {
   const [direction, setDirection] = useState<'ltr' | 'rtl'>('rtl');
@@ -20,8 +22,22 @@ const UIKitTestPage = () => {
 
   const [aiAssistedText, setAiAssistedText] = useState('');
   const [aiAssistedText2, setAiAssistedText2] = useState('');
-
   const [textValue, setTextValue] = useState('');
+
+  const [selectedValue, setSelectedValue] = useState<
+    string | number | undefined
+  >('2');
+
+  const options: SelectListOption[] = [
+    { label: 'Option 1', value: '1', description: 'This is option 1' },
+    { label: 'Option 2', value: '2', description: 'This is option 2' },
+    { label: 'Option 3', value: '3', description: 'This is option 3' },
+  ];
+
+  const handleSelect = (value: string | number) => {
+    setSelectedValue(value);
+    // You can perform additional actions here if needed
+  };
 
   useEffect(() => {
     document.documentElement.dir = direction;
@@ -95,6 +111,22 @@ const UIKitTestPage = () => {
                 <TvIcon className="w-11 h-11 text-slate-800 bg-slate-200 p-2 rounded-full" />
               }
             />
+
+            <SelectList
+              label="Select an option"
+              options={options}
+              onSelect={handleSelect}
+              initialValue={selectedValue}
+              placeholder="Select an option"
+            />
+            <SelectList
+              label="Select an option"
+              options={options}
+              onSelect={handleSelect}
+              initialValue={selectedValue}
+              placeholder="Select an option"
+            />
+
           </div>
         </div>
         <div className="border border-gray-300 flex items-center justify-center ">
@@ -178,7 +210,7 @@ const UIKitTestPage = () => {
 
             <AIAssistedTextareaContainer
               id="customer-name"
-              language='he'
+              language="he"
               value={aiAssistedText}
               onChange={setAiAssistedText}
               placeholder="Enter your text here..."
@@ -187,7 +219,7 @@ const UIKitTestPage = () => {
             />
             <AIAssistedTextareaContainer
               id="task-name"
-              language='he'
+              language="he"
               value={aiAssistedText2}
               onChange={setAiAssistedText2}
               placeholder="Enter your text here..."
@@ -196,7 +228,7 @@ const UIKitTestPage = () => {
             />
             <AIAssistedTextareaContainer
               id="project-name"
-              language='he'
+              language="he"
               value={textValue}
               onChange={setTextValue}
               placeholder="Enter your text here..."

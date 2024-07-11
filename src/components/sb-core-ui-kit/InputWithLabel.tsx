@@ -27,11 +27,10 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
   error,
   disabled,
 }) => {
-
   return (
     <div>
       <div className="mb-1">
-        <TextComponent text={label} size="normal" color="normal" />
+        <TextComponent text={label} size="small" color="normal" />
       </div>
       <Input
         id={id}

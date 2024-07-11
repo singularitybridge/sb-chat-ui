@@ -1,9 +1,9 @@
-// file_path: src/components/sb-core-ui-kit/AIAssistedTextarea.tsx
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, forwardRef, ForwardRefRenderFunction } from 'react';
 import { Textarea } from './Textarea';
-import { Loader, Mic, Sparkles } from 'lucide-react';
+import { Loader, Sparkles } from 'lucide-react';
 import clsx from 'clsx';
 import { TextComponent } from './TextComponent';
+import { AudioRecorder } from './AudioRecorder';
 
 interface AIAssistedTextareaProps {
   id: string;
@@ -14,14 +14,13 @@ interface AIAssistedTextareaProps {
   error?: string;
   label: string;
   onAIAssist?: (aiPrompt: string) => Promise<void>;
-  onRecording?: () => void;
   isLoading?: boolean;
-  isRecording?: boolean;
   aiPrompt: string;
   onAIPromptChange: (value: string) => void;
+  language?: string;
 }
 
-const AIAssistedTextarea: React.FC<AIAssistedTextareaProps> = ({
+const AIAssistedTextareaBase: ForwardRefRenderFunction<HTMLTextAreaElement, AIAssistedTextareaProps> = ({
   id,
   value,
   onChange,
@@ -30,14 +29,12 @@ const AIAssistedTextarea: React.FC<AIAssistedTextareaProps> = ({
   error,
   label,
   onAIAssist,
-  onRecording,
   isLoading = false,
-  isRecording = false,
   aiPrompt,
   onAIPromptChange,
-}) => {
+  language = 'en',
+}, ref) => {
   const [isAIMode, setIsAIMode] = useState(false);
-  const mainTextareaRef = useRef<HTMLTextAreaElement>(null);
   const aiTextareaRef = useRef<HTMLTextAreaElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -51,16 +48,10 @@ const AIAssistedTextarea: React.FC<AIAssistedTextareaProps> = ({
   useEffect(() => {
     if (isAIMode) {
       aiTextareaRef.current?.focus();
-    } else {
-      mainTextareaRef.current?.focus();
+    } else if (ref && 'current' in ref) {
+      (ref as React.RefObject<HTMLTextAreaElement>).current?.focus();
     }
-  }, [isAIMode]);
-
-  const handleRecording = () => {
-    if (onRecording) {
-      onRecording();
-    }
-  };
+  }, [isAIMode, ref]);
 
   const handleAIAssist = async () => {
     if (onAIAssist) {
@@ -79,6 +70,10 @@ const AIAssistedTextarea: React.FC<AIAssistedTextareaProps> = ({
     [isAIMode, onAIPromptChange]
   );
 
+  const handleTranscriptionComplete = (transcription: string) => {
+    onAIPromptChange(transcription);
+  };
+
   return (
     <div ref={containerRef} onKeyDown={handleKeyDown}>
       <div className="mb-1">
@@ -93,7 +88,7 @@ const AIAssistedTextarea: React.FC<AIAssistedTextareaProps> = ({
         )}
       >
         <Textarea
-          ref={mainTextareaRef}
+          ref={ref}
           id={id}
           value={value}
           onChange={onChange}
@@ -126,17 +121,10 @@ const AIAssistedTextarea: React.FC<AIAssistedTextareaProps> = ({
               transparentBg={true}
             />
             <div className="flex items-end space-x-1 rtl:space-x-reverse m-2 justify-end rtl:justify-start">
-              <button
-                onClick={handleRecording}
-                className="p-1.5 rounded-xl text-gray-500 bg-pink-100 hover:bg-pink-200 transition duration-150 ease-in-out"
-                aria-label="Apply AI Assist"
-              >
-                {isRecording ? (
-                  <Mic size={18} className="animate-pulse text-red-500" />
-                ) : (
-                  <Mic size={18} />
-                )}
-              </button>
+              <AudioRecorder
+                onTranscriptionComplete={handleTranscriptionComplete}
+                language={language}
+              />
               <button
                 onClick={handleAIAssist}
                 disabled={isLoading}
@@ -157,4 +145,6 @@ const AIAssistedTextarea: React.FC<AIAssistedTextareaProps> = ({
   );
 };
 
-export { AIAssistedTextarea };
+export const AIAssistedTextarea = forwardRef<HTMLTextAreaElement, AIAssistedTextareaProps>(AIAssistedTextareaBase);
+
+AIAssistedTextarea.displayName = 'AIAssistedTextarea';

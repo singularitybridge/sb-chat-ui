@@ -1,5 +1,4 @@
-import React from 'react'; // Add this line
-
+import React from 'react';
 import { useParams } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { useRootStore } from '../../store/common/RootStoreContext';
@@ -9,6 +8,7 @@ import {
   DynamicForm,
   FieldConfig,
   FormValues,
+  DropdownFieldConfig,
 } from '../../components/DynamicForm';
 import { toJS } from 'mobx';
 import { assistantFieldConfigs } from '../../store/fieldConfigs/assistantFieldConfigs';
@@ -27,19 +27,23 @@ const EditAssistantView: React.FC = observer(() => {
     return <div>Assistant not found</div>;
   }
 
-  const formFields: FieldConfig[] = assistantFieldConfigs.map(
-    ({ id, label, key, type, visibility }) => {
-      const fieldKeyString = String(key);
+  const formFields: FieldConfig[] = assistantFieldConfigs.map((field) => {
+    const fieldKeyString = String(field.key);
+    const value = assistant ? toJS((assistant as any)[fieldKeyString]) : '';
+
+    if (field.type === 'dropdown') {
       return {
-        key: key,
-        label: label,
-        value: assistant ? toJS((assistant as any)[fieldKeyString]) : '',
-        id: id,
-        type: type,
-        visibility: visibility,
-      };
+        ...field,
+        value,
+        options: (field as DropdownFieldConfig).options,
+      } as DropdownFieldConfig;
     }
-  );
+
+    return {
+      ...field,
+      value,
+    };
+  });
 
   const handleSubmit = async (values: FormValues) => {
     console.log('Form Values:', values);
@@ -71,7 +75,8 @@ const EditAssistantView: React.FC = observer(() => {
 
 const EditAssistantPage = withPage(
   'EditAssistantPage.title',
-  'EditAssistantPage.description', 
-  () => { console.log('edit assistant');}
+  'EditAssistantPage.description',
+  () => { console.log('edit assistant'); }
 )(EditAssistantView);
+
 export { EditAssistantPage, EditAssistantView };
