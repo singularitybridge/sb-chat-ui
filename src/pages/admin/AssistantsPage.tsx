@@ -1,3 +1,4 @@
+// file_path: src/pages/admin/AssistantsPage.tsx
 import React, { useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useRootStore } from '../../store/common/RootStoreContext';
@@ -15,7 +16,6 @@ import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
 import { useNavigate } from 'react-router-dom';
 
 const AssistantsPage: React.FC = observer(() => {
-
   const rootStore = useRootStore();
   const navigate = useNavigate();
   const [hoveredAssistantId, setHoveredAssistantId] = useState<string | null>(
@@ -42,8 +42,8 @@ const AssistantsPage: React.FC = observer(() => {
 
   return (
     <div className="flex h-[calc(100vh-96px)] space-x-4 rtl:space-x-reverse">
-      <div className="bg-white p-6 overflow-y-auto flex flex-col rounded-lg w-80">
-        <div className="flex flex-row justify-between items-center w-full mb-6">
+      <div className="bg-white p-3 overflow-y-auto flex flex-col rounded-lg w-80">
+        <div className="flex flex-row justify-between items-center w-full mb-6 px-2 py-1">
           <TextComponent text={t('AssistantsPage.title')} size="subtitle" />
           <IconButton
             icon={<Plus className="w-6 h-6 text-gray-600" />}
@@ -52,54 +52,62 @@ const AssistantsPage: React.FC = observer(() => {
         </div>
 
         <ul className="space-y-2 flex-grow">
-          {rootStore.assistants.map((assistant) => (
-            <li
-              key={assistant._id}
-              className={` rounded-lg p-2 cursor-pointer hover:bg-slate-200 relative ${
-                rootStore.sessionStore.activeSession?.assistantId ===
-                assistant._id
-                  ? ' bg-indigo-100'
-                  : 'bg-gray-50'
-              }`}
-              onClick={() => handleSetAssistant(assistant)}
-              onMouseEnter={() => setHoveredAssistantId(assistant._id)}
-              onMouseLeave={() => setHoveredAssistantId(null)}
-            >
-              <div className="flex items-start space-x-1">
-                <img
-                  src={'/assets/avatars/avatar-_0020_9.png'}
-                  alt={`${assistant.name} avatar`}
-                  className="w-10 h-10 rounded-full object-cover "
-                />
-                <div className="flex-grow">
-                  <h4 className="font-medium text-sm">{assistant.name}</h4>
-                  <p className="text-sm text-gray-600 mt-1">
-                    {assistant.description}
-                  </p>
+          {rootStore.assistants.map((assistant) => {
+            const isActive = rootStore.sessionStore.activeSession?.assistantId === assistant._id;
+            return (
+              <li
+                key={assistant._id}
+                className={`rounded-lg p-3 cursor-pointer hover:bg-slate-200 relative ${
+                  isActive ? 'bg-gray-100' : ''
+                }`}
+                onClick={() => handleSetAssistant(assistant)}
+                onMouseEnter={() => setHoveredAssistantId(assistant._id)}
+                onMouseLeave={() => setHoveredAssistantId(null)}
+              >
+                <div className="flex items-start space-x-3 rtl:space-x-reverse">
+                  <div className={`w-12 h-12 rounded-full flex-shrink-0 overflow-hidden ${
+                    isActive ? 'bg-blue-400' : 'bg-blue-200'
+                  }`}>
+                    <img
+                      src={'/assets/avatars/avatar-_0020_9.png'}
+                      alt={`${assistant.name} avatar`}
+                      className={`w-full h-full object-cover ${
+                        isActive ? 'opacity-75' : ''
+                      }`}
+                    />
+                  </div>
+                  <div className="flex-grow overflow-hidden">
+                    <h4 className="font-bold text-sm truncate h-5">
+                      {assistant.name}
+                    </h4>
+                    <p className="text-sm text-gray-600 mt-1 line-clamp-2 h-10 overflow-hidden">
+                      {assistant.description}
+                    </p>
+                  </div>
                 </div>
-              </div>
-              {hoveredAssistantId === assistant._id && (
-                <div >
-                  <IconButton
-                    icon={<X className="w-4 h-4 text-gray-500" />}
-                    className="absolute top-2 ltr:right-2 p-1 rounded-full rtl:left-2 hover:bg-gray-300"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      handleDelete(assistant);
-                    }}
-                  />
-                  <IconButton
-                    icon={<Settings2 className="w-4 h-4 text-gray-500" />}
-                    className="absolute top-2 ltr:right-8 rtl:left-8 p-1 rounded-full hover:bg-gray-300"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      handleEditAssistant(assistant._id);
-                    }}
-                  />
-                </div>
-              )}
-            </li>
-          ))}
+                {hoveredAssistantId === assistant._id && (
+                  <div>
+                    <IconButton
+                      icon={<X className="w-4 h-4 text-gray-500" />}
+                      className="absolute top-2 ltr:right-2 p-1 rounded-full rtl:left-2 hover:bg-gray-300"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        handleDelete(assistant);
+                      }}
+                    />
+                    <IconButton
+                      icon={<Settings2 className="w-4 h-4 text-gray-500" />}
+                      className="absolute top-2 ltr:right-8 rtl:left-8 p-1 rounded-full hover:bg-gray-300"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        handleEditAssistant(assistant._id);
+                      }}
+                    />
+                  </div>
+                )}
+              </li>
+            );
+          })}
         </ul>
       </div>
       <div className="flex-grow overflow-y-auto">
@@ -108,5 +116,6 @@ const AssistantsPage: React.FC = observer(() => {
     </div>
   );
 });
+
 
 export { AssistantsPage };

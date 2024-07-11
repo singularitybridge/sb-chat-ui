@@ -1,8 +1,6 @@
-// file_path: src/pages/test/UIKitTestPage.tsx
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef } from 'react';
 import { AIAssistedTextarea } from './AIAssistedTextarea';
 import { getCompletion } from '../../services/api/assistantService';
-import { transcribeAudio } from '../../services/api/voiceService';
 
 interface AIAssistedTextareaContainerProps {
   id: string;
@@ -28,11 +26,8 @@ const AIAssistedTextareaContainer: React.FC<AIAssistedTextareaContainerProps> = 
   language = 'en',
 }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
   const [aiPrompt, setAiPrompt] = useState('');
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const streamRef = useRef<MediaStream | null>(null);
-  const audioChunksRef = useRef<Blob[]>([]);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleAIAssist = async (userInstructions: string) => {
     setIsLoading(true);
@@ -56,6 +51,15 @@ const AIAssistedTextareaContainer: React.FC<AIAssistedTextareaContainerProps> = 
       const completionContent = await getCompletion(completionRequest);
       onChange(completionContent); // Replace the current text with the AI-generated content
       setAiPrompt(''); // Clear the AI prompt after processing
+      
+      // Focus on the textarea after receiving the response
+      setTimeout(() => {
+        if (textareaRef.current) {
+          textareaRef.current.focus();
+          // Optionally, move the cursor to the end of the text
+          textareaRef.current.setSelectionRange(completionContent.length, completionContent.length);
+        }
+      }, 0);
     } catch (error) {
       console.error('Error getting completion:', error);
       // You might want to show an error message to the user here
@@ -64,63 +68,9 @@ const AIAssistedTextareaContainer: React.FC<AIAssistedTextareaContainerProps> = 
     }
   };
 
-  const startRecording = useCallback(async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      streamRef.current = stream;
-      const mediaRecorder = new MediaRecorder(stream);
-      mediaRecorderRef.current = mediaRecorder;
-      audioChunksRef.current = [];
-
-      mediaRecorder.ondataavailable = (event) => {
-        audioChunksRef.current.push(event.data);
-      };
-
-      mediaRecorder.start();
-      setIsRecording(true);
-    } catch (error) {
-      console.error('Error starting recording:', error);
-    }
-  }, []);
-
-  const stopRecording = useCallback(async () => {
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
-      mediaRecorderRef.current.stop();
-    }
-    
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
-      streamRef.current = null;
-    }
-    
-    setIsRecording(false);
-
-    // Wait for the mediaRecorder to finish processing the audio
-    await new Promise(resolve => setTimeout(resolve, 100));
-
-    const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-    try {
-      setIsLoading(true);      
-      const transcription = await transcribeAudio(audioBlob, language);
-      setAiPrompt(transcription); // Set the transcribed text as the AI prompt
-    } catch (error) {
-      console.error('Error processing audio:', error);
-      // Handle error (e.g., show error message to user)
-    } finally {
-      setIsLoading(false);
-    }
-  }, [language]);
-
-  const handleRecording = useCallback(() => {
-    if (isRecording) {
-      stopRecording();
-    } else {
-      startRecording();
-    }
-  }, [isRecording, startRecording, stopRecording]);
-
   return (
     <AIAssistedTextarea
+      ref={textareaRef}
       id={id}
       value={value}
       onChange={onChange}
@@ -129,11 +79,10 @@ const AIAssistedTextareaContainer: React.FC<AIAssistedTextareaContainerProps> = 
       error={error}
       label={label}
       onAIAssist={handleAIAssist}
-      onRecording={handleRecording}
       isLoading={isLoading}
-      isRecording={isRecording}
       aiPrompt={aiPrompt}
       onAIPromptChange={setAiPrompt}
+      language={language}
     />
   );
 };

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TagInput } from './TagInput';
-import { CustomDropdown } from './CustomDropdown';
 import { useTranslation } from 'react-i18next';
+import { SelectList } from './sb-core-ui-kit/SelectList';
 
 export interface TagType {
   id: string | number;
@@ -36,14 +36,12 @@ const TagsInput: React.FC<TagsInputProps> = ({
     }
   };
 
-  const handleSelectTag = (option: {
-    value: string | number;
-    label: string;
-  }) => {
-    // Create a TagType object from the selected DropdownOption
-    const tagToAdd: TagType = { id: option.value, name: option.label };
-    addTag(tagToAdd);
-  };
+  const handleSelectTag = ( tagId: string | number) => {
+    const tag = availableTags.find((tag) => tag.id === tagId);
+    if (tag) {
+      addTag(tag);
+    }
+  }
 
   // Filter out tags that are already selected
   const filteredAvailableTags = availableTags.filter(
@@ -66,7 +64,8 @@ const TagsInput: React.FC<TagsInputProps> = ({
         </div>
 
         <div>
-          <CustomDropdown
+          <SelectList
+            label={t('CompaniesPage.addTag')}
             options={filteredAvailableTags.map((tag) => ({
               value: tag.id,
               label: tag.name,
