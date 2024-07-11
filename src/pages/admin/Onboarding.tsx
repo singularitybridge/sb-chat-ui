@@ -36,11 +36,11 @@ const OnboardingPage: React.FC = () => {
       {
         _id: serverResponse._id,
         name: serverResponse.name,
-        nickname: '', // If you have a nickname in your response, use it
+        nickname: '',
         email: serverResponse.email,
         googleId: serverResponse.googleId || '',
         role: serverResponse.role,
-        companyId: '', // Add the companyId if you have it in your response
+        companyId: serverResponse.companyId, 
         identifiers: serverResponse.identifiers.map((identifier: any) => Identifier.create({
           key: identifier.key,
           value: identifier.value,
@@ -54,18 +54,17 @@ const OnboardingPage: React.FC = () => {
     try {
 
       const response = await apiClient.post('onboarding', { current_user, name, description });
-      debugger
+      
       const { user, company, token } = response.data;
-      debugger;
+      
       setLocalStorageItem(LOCALSTORAGE_COMPANY_ID, company._id);
       setLocalStorageItem(LOCALSTORAGE_USER_ID, user._id);
       localStorage.setItem('userToken', token);
 
       // Add new user to the rootStore
-      // const res = await rootStore.addUser(user);
-      debugger
+      
       const userModelInstance = await mapServerResponseToUserModel(user);
-      debugger
+      
       // const mobxUser = User.create(userModelInstance);
       rootStore.setCurrentUser(userModelInstance);
 
