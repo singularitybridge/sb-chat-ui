@@ -49,6 +49,7 @@ const EditCompanyView: React.FC = observer(() => {
       return {
         key: key,
         label: label,
+        options: [],
         value: company ? toJS((company as any)[fieldKeyString]) : '',
         id: id,
         type: type,

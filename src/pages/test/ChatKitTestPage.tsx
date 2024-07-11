@@ -128,6 +128,8 @@ const ChatKitTestPage = () => {
           <div className="h-full w-full">
             <SBChatKitUI
               messages={messages}
+              onToggleAudio={() => console.log('Toggled audio')}
+              audioState='disabled'
               assistant={mockAssistant}
               assistantName="AI Assistant"
               onSendMessage={handleSendMessage}
@@ -139,6 +141,8 @@ const ChatKitTestPage = () => {
           <div className="h-full w-full">
             <SBChatKitUI
               messages={messagesHebrew}
+              onToggleAudio={() => console.log('Toggled audio')}
+              audioState='disabled'
               assistant={mockAssistantHebrew}
               assistantName="סוכן AI"
               onSendMessage={handleSendMessageHebrew}
@@ -183,6 +187,8 @@ const ChatKitTestPage = () => {
         <div className="border bg-white border-gray-300  h-[600px]">
           <SBChatKitUI
             messages={wideMessages}
+            onToggleAudio={() => console.log('Toggled audio')}
+            audioState='disabled'
             assistant={{
               name: 'Wide Mode AI',
               description: 'This is a demo of the wide mode layout.',
