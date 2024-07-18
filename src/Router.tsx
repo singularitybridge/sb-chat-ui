@@ -1,3 +1,4 @@
+/// file_path=src/Router.tsx
 import { NotFound } from './pages/NotFound';
 import { Admin } from './pages/Admin';
 import React from 'react';
@@ -14,7 +15,7 @@ import { EditCompanyPage } from './pages/admin/EditCompanyPage';
 import { ActionsPage } from './pages/admin/ActionsPage';
 import { EditActionPage } from './pages/admin/EditActionPage';
 import RequireAuth from './components/admin/RequireAuth';
-import SignupPage from './pages/admin/SignupPage';
+import { SignupPage } from './pages/SignupPage';
 import OnboardingPage from './pages/admin/Onboarding';
 import { ChatKitTestPage } from './pages/test/ChatKitTestPage';
 import { UIKitTestPage } from './pages/test/UIKitTestPage';

@@ -1,3 +1,4 @@
+/// file_path= src/services/api/sessionService.ts
 import { ISession } from '../../store/models/Session';
 import apiClient from '../AxiosService';
 

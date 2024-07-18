@@ -1,3 +1,4 @@
+/// file_path= src/store/models/User.ts
 import { types, Instance, SnapshotIn, SnapshotOut } from 'mobx-state-tree';
 import { Identifier } from './Assistant';
 

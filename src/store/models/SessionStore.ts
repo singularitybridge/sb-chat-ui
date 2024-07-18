@@ -1,4 +1,4 @@
-// src/store/models/SessionStore.ts
+/// file_path= src/store/models/SessionStore.ts
 import { types, flow, Instance, applySnapshot, clone } from 'mobx-state-tree';
 import { Session } from './Session';
 import {
