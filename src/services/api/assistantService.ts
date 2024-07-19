@@ -89,9 +89,9 @@ export async function handleUserInput(body: HandleUserInputBody): Promise<string
 }
 
 
-export async function getAssistants(companyId : string): Promise<IAssistant[]> {
+export async function getAssistants(): Promise<IAssistant[]> {
   try { 
-    const response = await apiClient.get(`assistant/company/${companyId}`);
+    const response = await apiClient.get('assistant');
     return response.data;
   } catch (error) {
     console.error('Failed to fetch assistants:', error);

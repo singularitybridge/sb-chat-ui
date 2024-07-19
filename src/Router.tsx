@@ -4,7 +4,6 @@ import { Admin } from './pages/Admin';
 import React from 'react';
 import { Navigate, createBrowserRouter } from 'react-router-dom';
 import App from './App';
-// import { ChatbotView } from './pages/admin/ChatbotView';
 import { AssistantsPage } from './pages/admin/AssistantsPage';
 import { EditAssistantPage } from './pages/admin/EditAssistantPage';
 import { CompaniesPage } from './pages/admin/CompaniesPage';
@@ -29,12 +28,8 @@ export const browserRouter = createBrowserRouter([
         element: <SignupPage />,
       },
       {
-        path: 'onboarding',
-        element: <OnboardingPage />,
-      },
-      {
         index: true,
-        element: <Navigate to="/signup" replace />, // Redirect to signup by default
+        element: <Navigate to="/signup" replace />,
       },
       {
         path: 'test/chat',
@@ -56,13 +51,13 @@ export const browserRouter = createBrowserRouter([
             index: true,
             element: <CompaniesPage />,
           },
-          // {
-          //   path: "/chat-sessions/:id",
-          //   element: <ChatSessionView />,
-          // },
           {
             path: 'assistants',
             element: <AssistantsPage />,
+          },
+          {
+            path: 'onboarding',
+            element: <OnboardingPage />,
           },
           {
             path: 'assistants/:key',

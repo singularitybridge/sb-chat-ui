@@ -2,9 +2,9 @@
 import axios from 'axios';
 import apiClient from '../AxiosService';
 
-export const login = async (token: string) => {
+export const loginWithGoogle = async (token: string) => {
     try {
-        const response = await apiClient.post(`auth/google/login`, {
+        const response = await apiClient.post('auth/google/login', {
             token: token
         });
         return response.data;

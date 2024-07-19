@@ -1,6 +1,6 @@
 /// file_path=src/App.tsx
 import React, { useCallback, useEffect, useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { RootStore } from './store/models/RootStore';
 import { RootStoreProvider } from './store/common/RootStoreContext';
 import { ToastContainer, toast } from 'react-toastify';
@@ -8,12 +8,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import { emitter, useEventEmitter } from './services/mittEmitter';
 import { DialogManager } from './components/admin/DialogManager';
 import { pusher } from './services/PusherService';
-import {
-  LOCALSTORAGE_COMPANY_ID,
-  LOCALSTORAGE_USER_ID,
-  getLocalStorageItem,
-  getSessionByCompanyAndUserId,
-} from './services/api/sessionService';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { observer } from 'mobx-react-lite';
 import { ClipLoader } from 'react-spinners';
@@ -25,19 +19,37 @@ import {
   EVENT_SET_ASSISTANT_VALUES,
   EVENT_SET_ACTIVE_ASSISTANT,
 } from './utils/eventNames';
+import { getInitialLanguage } from './i18n';
 
-const initialLanguage = localStorage.getItem('appLanguage') || 'he';
+const initialLanguage = getInitialLanguage();
 
 const rootStore = RootStore.create({
+  authStore: {
+    isAuthenticated: false,
+  },
   assistants: [],
   users: [],
   language: initialLanguage,
 });
 
+
 const App: React.FC = observer(() => {
   
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
   const direction = initialLanguage === 'he' ? 'rtl' : 'ltr';
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const checkAuthAndNavigate = async () => {
+      await rootStore.authStore.checkAuthStatus();
+      if (rootStore.authStore.isAuthenticated && location.pathname === '/signup') {
+        navigate('/admin');
+      }
+    };
+
+    checkAuthAndNavigate();
+  }, [navigate, location.pathname]);
+
 
   useEffect(() => {    
     document.documentElement.lang = rootStore.language;
@@ -74,43 +86,6 @@ const App: React.FC = observer(() => {
     };
   }, []);
 
-  const loadUserSession = async () => {
-    try {
-      if (
-        getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) &&
-        getLocalStorageItem(LOCALSTORAGE_USER_ID)
-      ) {
-        rootStore.sessionStore.loadSessions();
-        console.log('loading session');
-
-        const session = await getSessionByCompanyAndUserId(
-          getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) as string,
-          getLocalStorageItem(LOCALSTORAGE_USER_ID) as string
-        );
-        await rootStore.loadAssistants();
-        rootStore.sessionStore.setActiveSession(session);        
-        await rootStore.loadInboxMessages();
-        await rootStore.loadActions();
-      }
-    } catch (error) {
-      console.log('session not found');
-    }
-  };
-
-  useEffect(() => {
-    const loadData = async () => {
-
-      await rootStore.aiAssistedConfigStore.initialize();
-
-
-      await rootStore.loadUsers();
-      await rootStore.loadCompanies();
-      await loadUserSession();
-      rootStore.checkAuthState();
-      setIsDataLoaded(true);
-    };
-    loadData();
-  }, []);
 
   useEffect(() => {
     const channel = pusher.subscribe('sb');
@@ -129,14 +104,6 @@ const App: React.FC = observer(() => {
       pusher.unsubscribe('sb');
     };
   }, []);
-
-  if (!isDataLoaded) {
-    return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-200">
-        <ClipLoader color="#123abc" loading={true} size={50} />
-      </div>
-    );
-  }
   
   return (
     <GoogleOAuthProvider clientId="836003625529-l01g4b1iuhc0s1i7o33ms9qelgmghcmh.apps.googleusercontent.com">

@@ -10,10 +10,7 @@ import BetaKeyAuth from '../components/admin/BetaKeyAuth';
 import { TextComponent } from '../components/sb-core-ui-kit/TextComponent';
 
 const SignupPage: React.FC = () => {
-  const rootStore = useRootStore();
-  rootStore.logoutSystemUser(
-    getLocalStorageItem(LOCALSTORAGE_SYSTEM_USER_ID) || ''
-  );
+
 
   const [isBetaKeyVerified, setIsBetaKeyVerified] = useState(false);
 
