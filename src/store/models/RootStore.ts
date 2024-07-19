@@ -45,7 +45,6 @@ import {
   updateAction,
 } from '../../services/api/actionService';
 import i18n from '../../i18n';
-import { login } from '../../services/api/authService';
 import { AIAssistedConfigStore } from './AIAssistedConfigStore';
 import { AuthStore } from './AuthStore';
 

@@ -1,4 +1,3 @@
-/// file_path=src/Router.tsx
 import { NotFound } from './pages/NotFound';
 import { Admin } from './pages/Admin';
 import React from 'react';
@@ -13,7 +12,6 @@ import { InboxPage } from './pages/admin/inbox/InboxPage';
 import { EditCompanyPage } from './pages/admin/EditCompanyPage';
 import { ActionsPage } from './pages/admin/ActionsPage';
 import { EditActionPage } from './pages/admin/EditActionPage';
-import RequireAuth from './components/admin/RequireAuth';
 import { SignupPage } from './pages/SignupPage';
 import OnboardingPage from './pages/admin/Onboarding';
 import { ChatKitTestPage } from './pages/test/ChatKitTestPage';
@@ -29,7 +27,7 @@ export const browserRouter = createBrowserRouter([
       },
       {
         index: true,
-        element: <Navigate to="/signup" replace />,
+        element: <Navigate to="/admin/assistants" replace />,
       },
       {
         path: 'test/chat',
@@ -41,11 +39,7 @@ export const browserRouter = createBrowserRouter([
       },
       {
         path: '/admin',
-        element: (
-          <RequireAuth>
-            <Admin />
-          </RequireAuth>
-        ),
+        element: <Admin />,
         children: [
           {
             index: true,

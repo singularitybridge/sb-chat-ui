@@ -1,6 +1,4 @@
-/// file_path=src/store/models/AuthStore.ts
-import { types, flow, getParent } from 'mobx-state-tree';
-import { User } from './User';
+import { types, flow } from 'mobx-state-tree';
 import { loginWithGoogle } from '../../services/api/authService';
 import {
   LOCALSTORAGE_USER_ID,
@@ -15,7 +13,6 @@ export const AuthStore = types
     isUserDataLoaded: types.optional(types.boolean, false),
   })
   .actions((self) => ({
-
     setIsAuthenticated(value: boolean) {
       self.isAuthenticated = value;
     },

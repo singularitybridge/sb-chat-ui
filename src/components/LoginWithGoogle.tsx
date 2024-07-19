@@ -11,7 +11,7 @@ const LoginWithGoogle: React.FC = () => {
   const onSuccess = async (res: any) => {
     try {
       await rootStore.authStore.authenticate(res.credential);
-      navigate('/admin');
+      navigate('/admin'); // Add this line to redirect after successful login
     } catch (error) {
       console.error('Login failed:', error);
     }
@@ -20,7 +20,6 @@ const LoginWithGoogle: React.FC = () => {
   const onError = (error?: any) => {
     console.error('Login failed:', error);
   };
-
 
   return (
     <GoogleLogin
