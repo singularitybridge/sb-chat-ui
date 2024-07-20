@@ -1,3 +1,4 @@
+/// file_path: src/App.tsx
 import React, { useCallback } from 'react';
 import { Outlet } from 'react-router-dom';
 import { RootStore } from './store/models/RootStore';

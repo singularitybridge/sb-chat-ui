@@ -1,3 +1,4 @@
+/// file_path: src/components/AuthManager.tsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useRootStore } from '../store/common/RootStoreContext';
@@ -11,7 +12,11 @@ const AuthManager: React.FC<{ children: React.ReactNode }> = observer(({ childre
   const [loading, setLoading] = useState(true);
 
   const loadInitialData = async () => {
+
     await rootStore.loadAssistants();
+    await rootStore.loadUsers();
+    await rootStore.loadActions();
+
     setLoading(false);
   }
 

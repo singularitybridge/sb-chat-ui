@@ -1,3 +1,4 @@
+/// file_path: src/Router.tsx
 import { NotFound } from './pages/NotFound';
 import { Admin } from './pages/Admin';
 import React from 'react';

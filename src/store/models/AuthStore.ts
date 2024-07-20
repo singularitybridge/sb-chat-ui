@@ -1,3 +1,4 @@
+/// file_path: src/store/models/AuthStore.ts
 import { types, flow } from 'mobx-state-tree';
 import { loginWithGoogle } from '../../services/api/authService';
 import {
@@ -7,15 +8,30 @@ import {
   getLocalStorageItem,
 } from '../../services/api/sessionService';
 
+const UserSessionInfo = types.model('UserSessionInfo', {
+  userName: types.optional(types.string, ''),
+  userRole: types.optional(types.string, ''),
+  companyName: types.optional(types.string, ''),  
+});
+
+
 export const AuthStore = types
   .model('AuthStore', {
+
     isAuthenticated: types.optional(types.boolean, false),
     isUserDataLoaded: types.optional(types.boolean, false),
+    userSessionInfo: types.optional(UserSessionInfo, {}),
+
   })
   .actions((self) => ({
     setIsAuthenticated(value: boolean) {
       self.isAuthenticated = value;
     },
+
+    setUserSessionInfo(info: Partial<typeof self.userSessionInfo>) {
+      self.userSessionInfo = { ...self.userSessionInfo, ...info };
+    },
+
 
     getToken() {
       return localStorage.getItem('userToken');
