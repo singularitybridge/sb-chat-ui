@@ -13,6 +13,7 @@ const AuthManager: React.FC<{ children: React.ReactNode }> = observer(({ childre
 
   const loadInitialData = async () => {
 
+    await rootStore.authStore.loadUserSessionInfo();
     await rootStore.loadAssistants();
     await rootStore.loadUsers();
     await rootStore.loadActions();

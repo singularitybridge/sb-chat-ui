@@ -1,6 +1,6 @@
 /// file_path: src/store/models/AuthStore.ts
 import { types, flow } from 'mobx-state-tree';
-import { loginWithGoogle } from '../../services/api/authService';
+import { getToken, loginWithGoogle, verifyToken } from '../../services/api/authService';
 import {
   LOCALSTORAGE_USER_ID,
   LOCALSTORAGE_COMPANY_ID,
@@ -32,16 +32,33 @@ export const AuthStore = types
       self.userSessionInfo = { ...self.userSessionInfo, ...info };
     },
 
-
-    getToken() {
-      return localStorage.getItem('userToken');
-    },
-
     checkAuthStatus: flow(function* () {
       const token = localStorage.getItem('userToken');
       self.isAuthenticated = !!token;
       return self.isAuthenticated;
     }),
+
+    loadUserSessionInfo: flow(function* () {
+
+      try {
+
+        const response = yield verifyToken();
+        const { user, company, decryptedApiKey } = response;
+
+        self.userSessionInfo = {
+          userName: user.name,
+          userRole: user.role,
+          companyName: company.name,
+        };
+
+        self.isUserDataLoaded = true;
+
+      } catch (error) {
+        console.error('Failed to load user session info', error);
+        throw error;
+      }
+
+    }),    
 
     authenticate: flow(function* (credential: string) {
       try {
@@ -60,7 +77,17 @@ export const AuthStore = types
     }),
 
     logout() {
+
       localStorage.removeItem('userToken');
+
       self.isAuthenticated = false;
+      self.isUserDataLoaded = false;
+      self.userSessionInfo = {
+        userName: '',
+        userRole: '',
+        companyName: '',
+      };
+      
     },
+
   }));
