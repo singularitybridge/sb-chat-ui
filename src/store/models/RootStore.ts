@@ -150,7 +150,7 @@ const RootStore = types
     loadInboxMessages: flow(function* () {
       try {
         const inboxMessages = yield getInboxMessages(
-          self.sessionStore.activeSession?.companyId || ''
+          self.sessionStore.activeSession?._id || ''
         );
         applySnapshot(self.inboxSessions, inboxMessages);
         self.inboxSessionsLoaded = true;

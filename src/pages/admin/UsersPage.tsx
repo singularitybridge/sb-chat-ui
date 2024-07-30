@@ -19,7 +19,7 @@ import {
   LOCALSTORAGE_USER_ID,
   getLocalStorageItem,
   setLocalStorageItem,
-  createSession,
+  // createSession,
   getSessionById,
 } from '../../services/api/sessionService';
 
@@ -36,10 +36,10 @@ const UsersView: React.FC = observer(() => {
   const handleSetUser = async (row: IUser) => {
     setLocalStorageItem(LOCALSTORAGE_USER_ID, row._id);
 
-    const session = await createSession(row._id, companyId);
+    // const session = await createSession(row._id, companyId);
 
-    const sessionData = await getSessionById(session._id);
-    rootStore.sessionStore.setActiveSession(sessionData);
+    // const sessionData = await getSessionById(session._id);
+    // rootStore.sessionStore.setActiveSession(sessionData);
     emitter.emit(EVENT_SHOW_NOTIFICATION, 'User set successfully');
   };
 

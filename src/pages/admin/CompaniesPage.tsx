@@ -19,8 +19,7 @@ import {
   LOCALSTORAGE_USER_ID,
   getLocalStorageItem,
   getSessionById,
-  setLocalStorageItem,
-  createSession,
+  setLocalStorageItem,  
 } from '../../services/api/sessionService';
 import { useTranslation } from 'react-i18next';
 
@@ -37,12 +36,12 @@ const CompaniesView: React.FC = observer(() => {
 
   const handleSetCompany = async (row: ICompany) => {
     setLocalStorageItem(LOCALSTORAGE_COMPANY_ID, row._id);
-    const session = await createSession(
-      getLocalStorageItem(LOCALSTORAGE_USER_ID) || '',
-      row._id
-    );
-    const sessionData = await getSessionById(session._id);
-    rootStore.sessionStore.setActiveSession(sessionData);
+    // const session = await createSession(
+    //   getLocalStorageItem(LOCALSTORAGE_USER_ID) || '',
+    //   row._id
+    // );
+    // const sessionData = await getSessionById(session._id);
+    // rootStore.sessionStore.setActiveSession(sessionData);
     rootStore.loadAssistants();
     rootStore.loadInboxMessages();
 

@@ -44,9 +44,9 @@ export async function getThreadMessages(threadId: string): Promise<any> {
   }
 }
 
-export async function getSessionMessages(companyId: string, userId: string): Promise<any> {
+export async function getSessionMessages(sessionId: string): Promise<any> {
   try {
-    const response = await apiClient.get(`session/messages/${companyId}/${userId}`);
+    const response = await apiClient.get(`session/${sessionId}/messages`);
     return response.data;
   } catch (error) {
     console.error('Failed to get session messages:', error);
@@ -73,9 +73,8 @@ export async function endSession(companyId: string, userId: string): Promise<voi
 }
 
 interface HandleUserInputBody {
-  userInput: string;
-  companyId: string;
-  userId: string;
+  userInput: string;  
+  sessionId: string;
 }
 
 export async function handleUserInput(body: HandleUserInputBody): Promise<string> {

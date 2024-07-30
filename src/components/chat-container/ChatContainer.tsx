@@ -3,7 +3,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { useRootStore } from '../../store/common/RootStoreContext';
 import {
-  endSession,
   getSessionMessages,
   handleUserInput,
 } from '../../services/api/assistantService';
@@ -13,11 +12,6 @@ import {
 } from '../../utils/eventNames';
 import { emitter, useEventEmitter } from '../../services/mittEmitter';
 import { IAssistant } from '../../store/models/Assistant';
-import {
-  createSession,
-  getSessionById,
-  updateSessionAssistant,
-} from '../../services/api/sessionService';
 import { SBChatKitUI } from '../sb-chat-kit-ui/SBChatKitUI';
 import { textToSpeech } from '../../services/api/voiceService';
 
@@ -43,12 +37,9 @@ const ChatContainer = observer(() => {
   const [audioState, setAudioState] = useState<AudioState>('disabled');
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-
-
   const { activeSession } = rootStore.sessionStore;
-  const userId = activeSession?.userId;
   const assistantId = activeSession?.assistantId;
-  const companyId = activeSession?.companyId;
+  
 
   useEffect(() => {
     if (assistantId && rootStore.assistantsLoaded) {
@@ -57,8 +48,8 @@ const ChatContainer = observer(() => {
   }, [assistantId, rootStore.assistantsLoaded]);
 
   const loadMessages = async () => {
-    if (assistant && userId && companyId) {
-      const sessionMessages = await getSessionMessages(companyId, userId);
+    if (activeSession ) {
+      const sessionMessages = await getSessionMessages(activeSession?._id || '');
       const chatMessages = sessionMessages.map(mapToChatMessage);
       setMessages(chatMessages.reverse());
     }
@@ -66,18 +57,17 @@ const ChatContainer = observer(() => {
 
   useEffect(() => {
     loadMessages();
-  }, [userId, assistant?._id]);
+  }, [assistant?._id]);
 
   const handleAssistantUpdated = async (assistantId: string) => {
     if (activeSession) {
-      await updateSessionAssistant(activeSession._id, assistantId);
-      const updatedSession = await getSessionById(activeSession._id);
-      rootStore.sessionStore.setActiveSession(updatedSession);
+      await rootStore.sessionStore.changeAssistant(assistantId);
       setAssistant(rootStore.getAssistantById(assistantId));
     }
   };
 
   useEventEmitter<string>(EVENT_SET_ACTIVE_ASSISTANT, handleAssistantUpdated);
+
 
   const mapToChatMessage = (message: any): ChatMessage => ({
     content: message.content[0].text.value,
@@ -98,11 +88,10 @@ const ChatContainer = observer(() => {
       { content: message, role: 'user' },
     ]);
 
-    if (assistant && userId && companyId) {
+    if (assistant) {
       const response = await handleUserInput({
         userInput: message,
-        companyId,
-        userId,
+        sessionId: activeSession?._id || '',
       });
       setMessages((prevMessages) => [
         ...prevMessages,
@@ -151,14 +140,11 @@ const ChatContainer = observer(() => {
     
   const handleClear = async () => {
     if (activeSession) {
-      const { companyId, userId } = activeSession;
       try {
-        await endSession(companyId, userId);
-        rootStore.sessionStore.clearActiveSession();
+        await rootStore.sessionStore.endActiveSession();
         emitter.emit(EVENT_CHAT_SESSION_DELETED, 'Chat session deleted');
 
-        const newSession = await createSession(userId, companyId, assistant?._id);
-        rootStore.sessionStore.setActiveSession(newSession);
+        await rootStore.sessionStore.fetchActiveSession();
         setMessages([]);
       } catch (error) {
         console.error('Error in handleClear:', error);
@@ -167,6 +153,7 @@ const ChatContainer = observer(() => {
       }
     }
   };
+
 
 
   return (
@@ -187,7 +174,7 @@ const ChatContainer = observer(() => {
         onClear={handleClear}
         onToggleAudio={handleToggleAudio}
         audioState={audioState}
-        language={'he'} // Add this line
+        language={'he'}
       />
       <audio ref={audioRef} style={{ display: 'none' }} />
     </div>
