@@ -1,3 +1,4 @@
+/// file_path: src/components/admin/Menu.tsx
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
@@ -9,8 +10,6 @@ import { TextComponent } from '../sb-core-ui-kit/TextComponent';
 import LogoutButton from '../LogoutButton';
 
 export const Menu = observer(() => {
-  const rootStore = useRootStore();
-  const userRole = rootStore.currentUser?.role;
 
   const menuItems = [
     {
@@ -32,6 +31,7 @@ export const Menu = observer(() => {
     {
       name: 'Sessions',
       link: '/admin/sessions',
+      disabled: true,
     },
     {
       name: 'Inbox',
@@ -52,13 +52,6 @@ export const Menu = observer(() => {
     }
     return location.pathname.startsWith(menuItemLink);
   };
-
-  const filteredMenuItems = menuItems.filter((item) => {
-    if (userRole === 'CompanyUser') {
-      return item.name === 'Users' || item.name === 'Assistants';
-    }
-    return true;
-  });
 
   return (
     <nav
@@ -83,7 +76,7 @@ export const Menu = observer(() => {
             className="list-style-none flex flex-col lg:flex-row "
             data-te-navbar-nav-ref
           >
-            {filteredMenuItems.map((item) => {
+            {menuItems.map((item) => {
               const isActive = isMenuItemActive(item.link);
 
               const menuStyle = isActive

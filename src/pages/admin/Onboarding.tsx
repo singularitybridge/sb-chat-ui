@@ -61,8 +61,8 @@ const OnboardingPage: React.FC = () => {
       // const mobxUser = User.create(userModelInstance);
       rootStore.setCurrentUser(userModelInstance);
 
-      await rootStore.loadUsers();
-      await rootStore.loadCompanies();
+      // await rootStore.loadUsers();
+      // await rootStore.loadCompanies();
 
       // finish onboarding
       // await rootStore.completeOnboarding();

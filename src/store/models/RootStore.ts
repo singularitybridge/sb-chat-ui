@@ -47,32 +47,22 @@ const RootStore = types
   .model('RootStore', {
 
     authStore: types.optional(AuthStore, {}),
-    
-
-
-
 
     assistants: types.array(Assistant),
     companies: types.array(Company),
     companiesLoaded: types.optional(types.boolean, false),
     users: types.array(User),
     assistantsLoaded: types.optional(types.boolean, false),
-
     sessionStore: types.optional(SessionStore, {}),
     aiAssistedConfigStore: types.optional(AIAssistedConfigStore, {}),
 
-
-
     inboxSessions: types.array(InboxSession),
     inboxSessionsLoaded: types.optional(types.boolean, false),
-
     currentUser: types.maybe(types.reference(User)),
-
     actions: types.array(Action),
     actionsLoaded: types.optional(types.boolean, false),
     language: types.optional(types.string, 'en'),
-    // isAuthenticated: types.optional(types.boolean, false),
-    // needsOnboarding: types.optional(types.boolean, false),
+    
   })
   .views((self) => ({
     get isAdmin() {
