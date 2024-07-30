@@ -24,25 +24,9 @@ export async function getCompletion(request: CompletionRequest): Promise<string>
 }
 
 
-export async function addThread(): Promise<string> {
-  try {
-    const newThread = await apiClient.post('assistant/thread');    
-    return newThread.data;
-  } catch (error) {
-    console.error('Failed to add thread:', error);
-    throw error;
-  }
-}
 
-export async function getThreadMessages(threadId: string): Promise<any> {
-  try {
-    const response = await apiClient.get(`assistant/thread/${threadId}/messages`);
-    return response.data;
-  } catch (error) {
-    console.error('Failed to get thread messages:', error);
-    throw error;
-  }
-}
+
+
 
 export async function getSessionMessages(sessionId: string): Promise<any> {
   try {
@@ -54,23 +38,7 @@ export async function getSessionMessages(sessionId: string): Promise<any> {
   }
 }
 
-export async function deleteThread(threadId: string): Promise<void> {
-  try {
-    await apiClient.delete(`assistant/thread/${threadId}`);
-  } catch (error) {
-    console.error('Failed to delete thread:', error);
-    throw error;
-  }
-}
 
-export async function endSession(companyId: string, userId: string): Promise<void> {
-  try {
-    await apiClient.delete(`session/end/${companyId}/${userId}`);
-  } catch (error) {
-    console.error('Failed to end session:', error);
-    throw error;
-  }
-}
 
 interface HandleUserInputBody {
   userInput: string;  

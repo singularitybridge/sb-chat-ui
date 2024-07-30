@@ -2,8 +2,6 @@ import axios from 'axios';
 import { IUser } from '../../store/models/User';
 import apiClient from '../AxiosService';
 
-const baseUrl = 'https://api.singularitybridge.net/user';
-
 export const getAllUsers = async (): Promise<IUser[]> => {
   try {
     const response = await apiClient.get(`user`);

@@ -2,8 +2,6 @@
 import axios from 'axios';
 import apiClient from './AxiosService';
 
-const baseUrl = 'https://api.singularitybridge.net/api';
-
 export const verifyApiKey = async (
   apiKey: string,
   apiKeyId: string

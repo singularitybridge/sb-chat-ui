@@ -25,7 +25,7 @@ const SessionStore = types
       }
       try {
         const updatedSession = yield changeSessionAssistant(self.activeSession._id, assistantId);
-        self.activeSession = Session.create(updatedSession);
+        self.activeSession.assistantId = updatedSession.assistantId;
       } catch (error) {
         console.error('Failed to change assistant', error);
       }

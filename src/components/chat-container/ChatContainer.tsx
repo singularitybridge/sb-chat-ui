@@ -28,7 +28,6 @@ interface ChatMessage {
 
 type AudioState = 'disabled' | 'enabled' | 'playing';
 
-
 const ChatContainer = observer(() => {
   const rootStore = useRootStore();
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
@@ -39,7 +38,6 @@ const ChatContainer = observer(() => {
 
   const { activeSession } = rootStore.sessionStore;
   const assistantId = activeSession?.assistantId;
-  
 
   useEffect(() => {
     if (assistantId && rootStore.assistantsLoaded) {
@@ -48,8 +46,10 @@ const ChatContainer = observer(() => {
   }, [assistantId, rootStore.assistantsLoaded]);
 
   const loadMessages = async () => {
-    if (activeSession ) {
-      const sessionMessages = await getSessionMessages(activeSession?._id || '');
+    if (activeSession) {
+      const sessionMessages = await getSessionMessages(
+        activeSession?._id || ''
+      );
       const chatMessages = sessionMessages.map(mapToChatMessage);
       setMessages(chatMessages.reverse());
     }
@@ -60,14 +60,10 @@ const ChatContainer = observer(() => {
   }, [assistant?._id]);
 
   const handleAssistantUpdated = async (assistantId: string) => {
-    if (activeSession) {
-      await rootStore.sessionStore.changeAssistant(assistantId);
-      setAssistant(rootStore.getAssistantById(assistantId));
-    }
+    await rootStore.sessionStore.changeAssistant(assistantId);
   };
 
   useEventEmitter<string>(EVENT_SET_ACTIVE_ASSISTANT, handleAssistantUpdated);
-
 
   const mapToChatMessage = (message: any): ChatMessage => ({
     content: message.content[0].text.value,
@@ -114,7 +110,6 @@ const ChatContainer = observer(() => {
     }
   };
 
-
   const handleToggleAudio = () => {
     if (audioState === 'disabled') {
       setAudioState('enabled');
@@ -137,7 +132,6 @@ const ChatContainer = observer(() => {
     }
   }, []);
 
-    
   const handleClear = async () => {
     if (activeSession) {
       try {
@@ -153,8 +147,6 @@ const ChatContainer = observer(() => {
       }
     }
   };
-
-
 
   return (
     <div className="h-full w-full bg-white rounded-lg">
@@ -180,6 +172,5 @@ const ChatContainer = observer(() => {
     </div>
   );
 });
-
 
 export { ChatContainer };
