@@ -22,12 +22,7 @@ import {
   refreshCompanyToken,
   updateCompany,
 } from '../../services/api/companyService';
-import {
-  LOCALSTORAGE_COMPANY_ID,
-  LOCALSTORAGE_USER_ID,
-  getLocalStorageItem,
-  setLocalStorageItem,
-} from '../../services/api/sessionService';
+
 import { IUser, User } from './User';
 import {
   addUser,
@@ -312,8 +307,8 @@ const RootStore = types
     createAssistant: flow(function* (assistant: IAssistant) {
       try {
         // set companyId to activeSession companyId
-        assistant.companyId =
-          getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) || '';
+        // assistant.companyId =
+        //   getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) || '';
         const newAssistant = yield addAssistant(assistant);
         self.assistants.push(newAssistant);
         emitter.emit(

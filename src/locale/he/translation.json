@@ -195,6 +195,8 @@
     "actionUpdated": "הפעולה עודכנה בהצלחה",
     "actionDeleted": "הפעולה נמחקה בהצלחה",
 
+    "sessionCleared": "השיחה נוקתה בהצלחה",
+
     "tokenRefreshed": "האסימון רוענן בהצלחה"
   }, 
 

@@ -6,11 +6,11 @@ import { useTranslation } from 'react-i18next';
 import LanguageToggle from '../LanguageToggle';
 import { useRootStore } from '../../store/common/RootStoreContext';
 import { TextComponent } from '../sb-core-ui-kit/TextComponent';
+import LogoutButton from '../LogoutButton';
 
 export const Menu = observer(() => {
   const rootStore = useRootStore();
   const userRole = rootStore.currentUser?.role;
-
 
   const menuItems = [
     {
@@ -105,10 +105,10 @@ export const Menu = observer(() => {
           </ul>
         </div>
 
-        
-        <div className=' space-x-1.5 flex'>
-        <LanguageToggle />
-        <SessionView />
+        <div className=" space-x-1.5 flex space-x-reverse">
+          <SessionView />
+          <LanguageToggle />
+          <LogoutButton />
         </div>
       </div>
     </nav>

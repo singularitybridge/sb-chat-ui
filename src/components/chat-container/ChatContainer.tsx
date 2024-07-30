@@ -14,6 +14,7 @@ import { emitter, useEventEmitter } from '../../services/mittEmitter';
 import { IAssistant } from '../../store/models/Assistant';
 import { SBChatKitUI } from '../sb-chat-kit-ui/SBChatKitUI';
 import { textToSpeech } from '../../services/api/voiceService';
+import i18n from '../../i18n';
 
 interface Metadata {
   message_type: string;
@@ -136,7 +137,7 @@ const ChatContainer = observer(() => {
     if (activeSession) {
       try {
         await rootStore.sessionStore.endActiveSession();
-        emitter.emit(EVENT_CHAT_SESSION_DELETED, 'Chat session deleted');
+        emitter.emit(EVENT_CHAT_SESSION_DELETED, i18n.t('Notifications.sessionCleared'));
 
         await rootStore.sessionStore.fetchActiveSession();
         setMessages([]);

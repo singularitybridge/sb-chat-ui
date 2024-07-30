@@ -12,13 +12,11 @@ const AuthManager: React.FC<{ children: React.ReactNode }> = observer(({ childre
   const [loading, setLoading] = useState(true);
 
   const loadInitialData = async () => {
-
     await rootStore.authStore.loadUserSessionInfo();
     await rootStore.loadAssistants();
     await rootStore.loadUsers();
     await rootStore.loadActions();
     await rootStore.sessionStore.fetchActiveSession();
-
     setLoading(false);
   }
 
@@ -27,15 +25,25 @@ const AuthManager: React.FC<{ children: React.ReactNode }> = observer(({ childre
       const isAuthenticated = await rootStore.authStore.checkAuthStatus();
       if (!isAuthenticated && location.pathname !== '/signup') {
         navigate('/signup');
-      } else if (isAuthenticated && location.pathname === '/signup') {
-        navigate('/admin/assistants');
       } else if (isAuthenticated) {
-        await loadInitialData();
+        try {
+          await loadInitialData();
+        } catch (error) {
+          console.error('Failed to load initial data', error);
+          rootStore.authStore.logout();
+          navigate('/signup');
+        }
       }
       setLoading(false);
     };
     checkAuth();
   }, [navigate, rootStore, location.pathname]);
+
+  useEffect(() => {
+    if (!rootStore.authStore.isAuthenticated && location.pathname !== '/signup') {
+      navigate('/signup');
+    }
+  }, [rootStore.authStore.isAuthenticated, navigate, location.pathname]);
 
   if (loading) {
     return (

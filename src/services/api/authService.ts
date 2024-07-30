@@ -31,6 +31,16 @@ export const verifyBetaKey = async (betaKey: string) => {
 };
 
 export const verifyToken = async () => {
-  const response = await apiClient.post('auth/verify-token');
-  return response.data;
+  try {
+    const response = await apiClient.post('auth/verify-token');
+    return response.data;
+  } catch (error) {
+    console.error('Failed to verify token', error);
+    if (axios.isAxiosError(error) && error.response?.status === 401) {
+      // Token is invalid or expired
+      localStorage.removeItem('userToken');
+    }
+    throw error;
+  }
 };
+

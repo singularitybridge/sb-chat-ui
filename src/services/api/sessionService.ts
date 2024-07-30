@@ -2,23 +2,6 @@
 import { ISession } from '../../store/models/Session';
 import apiClient from '../AxiosService';
 
-export const LOCALSTORAGE_USER_ID = 'userId';
-export const LOCALSTORAGE_COMPANY_ID = 'companyId';
-
-export type LocalStorageKeys =
-  | typeof LOCALSTORAGE_USER_ID
-  | typeof LOCALSTORAGE_COMPANY_ID
-
-export const getLocalStorageItem = (key: LocalStorageKeys): string | null => {
-  return localStorage.getItem(key);
-};
-
-export const setLocalStorageItem = (
-  key: LocalStorageKeys,
-  value: string
-): void => {
-  localStorage.setItem(key, value);
-};
 
 export const getActiveSession = async (): Promise<ISession> => {
   try {

@@ -1,27 +1,22 @@
 /// file_path: src/store/models/AuthStore.ts
 import { types, flow } from 'mobx-state-tree';
-import { getToken, loginWithGoogle, verifyToken } from '../../services/api/authService';
 import {
-  LOCALSTORAGE_USER_ID,
-  LOCALSTORAGE_COMPANY_ID,
-  setLocalStorageItem,
-  getLocalStorageItem,
-} from '../../services/api/sessionService';
+  getToken,
+  loginWithGoogle,
+  verifyToken,
+} from '../../services/api/authService';
 
 const UserSessionInfo = types.model('UserSessionInfo', {
   userName: types.optional(types.string, ''),
   userRole: types.optional(types.string, ''),
-  companyName: types.optional(types.string, ''),  
+  companyName: types.optional(types.string, ''),
 });
-
 
 export const AuthStore = types
   .model('AuthStore', {
-
     isAuthenticated: types.optional(types.boolean, false),
     isUserDataLoaded: types.optional(types.boolean, false),
     userSessionInfo: types.optional(UserSessionInfo, {}),
-
   })
   .actions((self) => ({
     setIsAuthenticated(value: boolean) {
@@ -39,9 +34,7 @@ export const AuthStore = types
     }),
 
     loadUserSessionInfo: flow(function* () {
-
       try {
-
         const response = yield verifyToken();
         const { user, company, decryptedApiKey } = response;
 
@@ -52,21 +45,18 @@ export const AuthStore = types
         };
 
         self.isUserDataLoaded = true;
-
+        self.isAuthenticated = true;
       } catch (error) {
         console.error('Failed to load user session info', error);
+        (self as any).logout(); // Clear the invalid token and reset the auth state
         throw error;
       }
-
-    }),    
+    }),
 
     authenticate: flow(function* (credential: string) {
       try {
         const response = yield loginWithGoogle(credential);
         const { user, sessionToken } = response;
-
-        setLocalStorageItem(LOCALSTORAGE_USER_ID, user._id);
-        setLocalStorageItem(LOCALSTORAGE_COMPANY_ID, user.companyId);
         localStorage.setItem('userToken', sessionToken);
         self.isAuthenticated = true;
         return user.role;
@@ -77,9 +67,7 @@ export const AuthStore = types
     }),
 
     logout() {
-
       localStorage.removeItem('userToken');
-
       self.isAuthenticated = false;
       self.isUserDataLoaded = false;
       self.userSessionInfo = {
@@ -87,7 +75,6 @@ export const AuthStore = types
         userRole: '',
         companyName: '',
       };
-      
+      return true; // Indicate successful logout
     },
-
   }));
