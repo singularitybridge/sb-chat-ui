@@ -47,6 +47,7 @@ const RootStore = types
   .model('RootStore', {
 
     authStore: types.optional(AuthStore, {}),
+    isInitialDataLoaded: types.optional(types.boolean, false),
 
     assistants: types.array(Assistant),
     companies: types.array(Company),
@@ -73,6 +74,10 @@ const RootStore = types
     },
   }))
   .actions((self) => ({
+
+    setInitialDataLoaded() {
+      self.isInitialDataLoaded = true;
+    },
     
     translate: (key: string) => i18n.t(key),
     setCurrentUser(user: IUser) {

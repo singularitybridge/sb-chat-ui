@@ -19,6 +19,7 @@ const AuthManager: React.FC<{ children: React.ReactNode }> = observer(({ childre
     await rootStore.loadCompanies();
     await rootStore.aiAssistedConfigStore.initialize();
     await rootStore.sessionStore.fetchActiveSession();
+    await rootStore.setInitialDataLoaded();
     setLoading(false);
   }
 
@@ -29,7 +30,9 @@ const AuthManager: React.FC<{ children: React.ReactNode }> = observer(({ childre
         navigate('/signup');
       } else if (isAuthenticated) {
         try {
-          await loadInitialData();
+          if (!rootStore.isInitialDataLoaded) {
+            await loadInitialData();
+          }
         } catch (error) {
           console.error('Failed to load initial data', error);
           rootStore.authStore.logout();

@@ -20,15 +20,6 @@ import { getInitialLanguage } from './i18n';
 
 const initialLanguage = getInitialLanguage();
 
-const rootStore = RootStore.create({
-  authStore: {
-    isAuthenticated: false,
-  },
-  assistants: [],
-  users: [],
-  language: initialLanguage,
-});
-
 const App: React.FC = observer(() => {
   const direction = initialLanguage === 'he' ? 'rtl' : 'ltr';
 
@@ -40,23 +31,21 @@ const App: React.FC = observer(() => {
   useEventEmitter<string>(EVENT_ERROR, toastHandler);
   useEventEmitter<string>(EVENT_SHOW_NOTIFICATION, toastHandler);
 
-  React.useEffect(() => {    
-    document.documentElement.lang = rootStore.language;
+  React.useEffect(() => {
+    document.documentElement.lang = initialLanguage;
     document.documentElement.dir = direction;
-  }, [rootStore.language, direction]);
+  }, [direction]);
 
   return (
     <GoogleOAuthProvider clientId="836003625529-l01g4b1iuhc0s1i7o33ms9qelgmghcmh.apps.googleusercontent.com">
-      <RootStoreProvider value={rootStore}>
-        <AuthManager>
-          <PusherManager />
-          <div className="flex flex-col inset-0 font-noto-sans-hebrew">
-            <ToastContainer />
-            <DialogManager />
-            <Outlet />
-          </div>
-        </AuthManager>
-      </RootStoreProvider>
+      <AuthManager>
+        <PusherManager />
+        <div className="flex flex-col inset-0 font-noto-sans-hebrew">
+          <ToastContainer />
+          <DialogManager />
+          <Outlet />
+        </div>
+      </AuthManager>
     </GoogleOAuthProvider>
   );
 });
