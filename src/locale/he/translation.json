@@ -172,7 +172,15 @@
   },
   "EditAssistantPage": {
     "title": "עריכת סוכן",
-    "description": "עדכן כאן את הפרטים של הסוכן שלך"
+    "description": "עדכן כאן את הפרטים של הסוכן שלך",
+    "uploadFile" : "העלה קובץ",
+    "uploadedFiles" : "קבצים שהועלו",
+
+    "uploading" : "מעלה...",
+    "dropFile" : "גרור קובץ לכאן",
+    "dragFileHere" : "גרור קובץ לכאן, או לחץ כדי לבחור"
+
+
   },
   "ChatContainer": {
     "input": "הקלד את הודעתך כאן"

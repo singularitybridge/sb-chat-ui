@@ -216,7 +216,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                 options={(field as DropdownFieldConfig).options}
                 onSelect={(value) => handleChange(field.id, value)}
                 initialValue={values[field.id] as string | number}
-                placeholder={t(`${labelKey}.placeholder`)}
+                placeholder={labelKey}
               />
             );
           default:

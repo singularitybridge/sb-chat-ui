@@ -162,7 +162,12 @@
   },
   "EditAssistantPage": {
     "title": "Edit AI Assistant",
-    "description": "update your ai agents here"
+    "description": "update your ai agents here",
+    "uploadFile" : "Upload File",
+    "uploadedFiles" : "Uploaded Files",
+    "uploading" : "Uploading...",
+    "dropFile" : "Drop file here",
+    "dragFileHere" : "Drag file here, or click to upload"
   },
   "ChatContainer": {
     "input": "Type your message"
