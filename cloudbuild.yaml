@@ -9,6 +9,7 @@ steps:
       - .
       - '-f'
       - dockerfile
+
     id: Build
   - name: gcr.io/cloud-builders/docker
     args:
@@ -31,17 +32,38 @@ steps:
       - '--quiet'
     id: Deploy
     entrypoint: gcloud
-  - name: 'gcr.io/cloud-builders/gcloud'
-    entrypoint: bash
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
     args:
       - '-c'
       - |
-        status=0 # Initialize status to success 
-        for i in {0..2}; do  # Check the status of the first 3 steps (Build, Push, Deploy)
-          if [ "${{ steps[${i}].status }}" != "SUCCESS" ]; then
-            status=1 # Mark as failure if any step failed
+        set -e
+        echo "Waiting for build to complete..."
+        
+        # Wait for the build to complete
+        while true; do
+          build_status=$(gcloud builds describe $BUILD_ID --format="value(steps[0].status)")
+          if [[ "$build_status" == "SUCCESS" || "$build_status" == "FAILURE" ]]; then
+            break
           fi
+          echo "Build still in progress. Current status: $build_status"
+          sleep 10
         done
+
+        echo "Build completed. Final status: $build_status"
+
+        # Set status based on build result
+        if [[ "$build_status" == "FAILURE" ]]; then
+          status_message="Build $BUILD_ID failed"
+          status=1
+        else
+          status_message="Build $BUILD_ID succeeded"
+          status=0 
+        fi
+
+        echo "$status_message"
+
         webhook_url=$(gcloud secrets versions access latest --secret=SLACK_WEBHOOK)
         chmod +x ./scripts/notify_slack.sh
         ./scripts/notify_slack.sh "$status" "$webhook_url" "${BUILD_ID}" "${PROJECT_ID}" "$_BRANCH_NAME" "$_ENVIRONMENT"
@@ -52,23 +74,23 @@ steps:
       - 'ENVIRONMENT=$_ENVIRONMENT'
       - 'BRANCH_NAME=$_BRANCH_NAME'
     waitFor: 
-      - Build 
-      - Push
-      - Deploy
+      - '-'
 images:
-  - >-
-    $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
+  - $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
+
 options:
   substitutionOption: ALLOW_LOOSE
   logging: CLOUD_LOGGING_ONLY
+
 substitutions:
   _DEPLOY_REGION: europe-north1
   _TRIGGER_ID: 81812211-73e8-41b8-85f2-55816362a5c2
   _AR_HOSTNAME: europe-north1-docker.pkg.dev
   _PLATFORM: managed
   _SERVICE_NAME: sb-ui-image
-  _ENVIRONMENT: production  # Default to production
-  _BRANCH_NAME: main        # Default to main 
+  _ENVIRONMENT: production
+  _BRANCH_NAME: main
+
 tags:
   - gcp-cloud-build-deploy-cloud-run
   - gcp-cloud-build-deploy-cloud-run-managed

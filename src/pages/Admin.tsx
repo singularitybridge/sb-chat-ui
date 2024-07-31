@@ -1,3 +1,4 @@
+/// file_path=src/pages/Admin.tsx
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { ContentContainer } from '../components/ContentContainer';

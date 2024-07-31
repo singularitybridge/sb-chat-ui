@@ -1,29 +1,36 @@
 import apiClient from '../AxiosService';
 import { IAssistant } from '../../store/models/Assistant';
 
-export async function addThread(): Promise<string> {
+interface CompletionRequest {
+  systemPrompt: string;
+  userInput: string;
+  model?: string;
+  temperature?: number;
+  maxTokens?: number;
+}
+
+interface CompletionResponse {
+  content: string;
+}
+
+export async function getCompletion(request: CompletionRequest): Promise<string> {
   try {
-    const newThread = await apiClient.post('assistant/thread');    
-    return newThread.data;
+    const response = await apiClient.post<CompletionResponse>('assistant/completion', request);
+    return response.data.content;
   } catch (error) {
-    console.error('Failed to add thread:', error);
+    console.error('Failed to get completion:', error);
     throw error;
   }
 }
 
-export async function getThreadMessages(threadId: string): Promise<any> {
-  try {
-    const response = await apiClient.get(`assistant/thread/${threadId}/messages`);
-    return response.data;
-  } catch (error) {
-    console.error('Failed to get thread messages:', error);
-    throw error;
-  }
-}
 
-export async function getSessionMessages(companyId: string, userId: string): Promise<any> {
+
+
+
+
+export async function getSessionMessages(sessionId: string): Promise<any> {
   try {
-    const response = await apiClient.get(`session/messages/${companyId}/${userId}`);
+    const response = await apiClient.get(`session/${sessionId}/messages`);
     return response.data;
   } catch (error) {
     console.error('Failed to get session messages:', error);
@@ -31,28 +38,11 @@ export async function getSessionMessages(companyId: string, userId: string): Pro
   }
 }
 
-export async function deleteThread(threadId: string): Promise<void> {
-  try {
-    await apiClient.delete(`assistant/thread/${threadId}`);
-  } catch (error) {
-    console.error('Failed to delete thread:', error);
-    throw error;
-  }
-}
 
-export async function endSession(companyId: string, userId: string): Promise<void> {
-  try {
-    await apiClient.delete(`session/end/${companyId}/${userId}`);
-  } catch (error) {
-    console.error('Failed to end session:', error);
-    throw error;
-  }
-}
 
 interface HandleUserInputBody {
-  userInput: string;
-  companyId: string;
-  userId: string;
+  userInput: string;  
+  sessionId: string;
 }
 
 export async function handleUserInput(body: HandleUserInputBody): Promise<string> {
@@ -66,9 +56,9 @@ export async function handleUserInput(body: HandleUserInputBody): Promise<string
 }
 
 
-export async function getAssistants(companyId : string): Promise<IAssistant[]> {
+export async function getAssistants(): Promise<IAssistant[]> {
   try { 
-    const response = await apiClient.get(`assistant/company/${companyId}`);
+    const response = await apiClient.get('assistant');
     return response.data;
   } catch (error) {
     console.error('Failed to fetch assistants:', error);

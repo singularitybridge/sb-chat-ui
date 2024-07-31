@@ -54,13 +54,14 @@ const SessionsView: React.FC = observer(() => {
         }}
       />
     </div>
+
   );
 
   return (
     <>
       <Table
         headers={convertToStringArray(headers)}
-        data={toJS(rootStore.sessionStore.sessions)}
+        data={[]}
         Page="SessionsPage"
         onRowClick={(row: ISession) => navigate(`/admin/sessions/${row._id}`)}
         Actions={Actions}

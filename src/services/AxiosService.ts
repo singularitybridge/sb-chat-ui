@@ -1,14 +1,15 @@
+/// file_path= src/services/api/authService.ts
 import axios from 'axios';
+import { getToken } from './api/authService';
 const apiUrl = import.meta.env.VITE_API_URL;
 
 const apiClient = axios.create({
   baseURL: apiUrl || 'https://api.singularitybridge.net/',
 });
 
-// Request interceptor to include the Bearer token
 apiClient.interceptors.request.use(
   async (config) => {
-    const token = localStorage.getItem('userToken');
+    const token = getToken();
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;

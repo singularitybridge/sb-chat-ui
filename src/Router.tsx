@@ -1,9 +1,9 @@
+/// file_path: src/Router.tsx
 import { NotFound } from './pages/NotFound';
 import { Admin } from './pages/Admin';
 import React from 'react';
 import { Navigate, createBrowserRouter } from 'react-router-dom';
 import App from './App';
-// import { ChatbotView } from './pages/admin/ChatbotView';
 import { AssistantsPage } from './pages/admin/AssistantsPage';
 import { EditAssistantPage } from './pages/admin/EditAssistantPage';
 import { CompaniesPage } from './pages/admin/CompaniesPage';
@@ -13,8 +13,7 @@ import { InboxPage } from './pages/admin/inbox/InboxPage';
 import { EditCompanyPage } from './pages/admin/EditCompanyPage';
 import { ActionsPage } from './pages/admin/ActionsPage';
 import { EditActionPage } from './pages/admin/EditActionPage';
-import RequireAuth from './components/admin/RequireAuth';
-import SignupPage from './pages/admin/SignupPage';
+import { SignupPage } from './pages/SignupPage';
 import OnboardingPage from './pages/admin/Onboarding';
 import { ChatKitTestPage } from './pages/test/ChatKitTestPage';
 import { UIKitTestPage } from './pages/test/UIKitTestPage';
@@ -28,12 +27,8 @@ export const browserRouter = createBrowserRouter([
         element: <SignupPage />,
       },
       {
-        path: 'onboarding',
-        element: <OnboardingPage />,
-      },
-      {
         index: true,
-        element: <Navigate to="/signup" replace />, // Redirect to signup by default
+        element: <Navigate to="/admin/assistants" replace />,
       },
       {
         path: 'test/chat',
@@ -45,23 +40,19 @@ export const browserRouter = createBrowserRouter([
       },
       {
         path: '/admin',
-        element: (
-          <RequireAuth>
-            <Admin />
-          </RequireAuth>
-        ),
+        element: <Admin />,
         children: [
           {
             index: true,
             element: <CompaniesPage />,
           },
-          // {
-          //   path: "/chat-sessions/:id",
-          //   element: <ChatSessionView />,
-          // },
           {
             path: 'assistants',
             element: <AssistantsPage />,
+          },
+          {
+            path: 'onboarding',
+            element: <OnboardingPage />,
           },
           {
             path: 'assistants/:key',

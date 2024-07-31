@@ -183,6 +183,7 @@
     "actionCreated": "Action has been created successfully",
     "actionUpdated": "Action has been updated successfully",
     "actionDeleted": "Action has been deleted successfully",
+    "sessionCleared": "Session has been cleared successfully",
 
     "tokenRefreshed": "Token has been refreshed successfully"
   },

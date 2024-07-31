@@ -2,19 +2,16 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useRootStore } from '../../store/common/RootStoreContext';
-import {
-  LOCALSTORAGE_COMPANY_ID,
-  LOCALSTORAGE_USER_ID,
-  createSession,
-  getSessionById,
-  setLocalStorageItem,
-} from '../../services/api/sessionService';
 import { IUser, User } from '../../store/models/User';
 import { ICompany } from '../../store/models/Company';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
 import Button from '../../components/sb-core-ui-kit/Button';
 import { Input } from '../../components/sb-core-ui-kit/Input';
 import { Textarea } from '../../components/sb-core-ui-kit/Textarea';
+import apiClient from '../../services/AxiosService';
+import { Identifier } from '../../store/models/Assistant';
+
+
 
 const OnboardingPage: React.FC = () => {
   const [name, setName] = useState('');
@@ -23,53 +20,52 @@ const OnboardingPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { user } = location.state as { user: any };
+  const { current_user } = location.state as { current_user: any } || {};
+
+
+  // Utility function to map server response to User model
+  const mapServerResponseToUserModel = async (serverResponse: any) => {
+    const newUser = await User.create(
+      {
+        _id: serverResponse._id,
+        name: serverResponse.name,
+        nickname: '',
+        email: serverResponse.email,
+        googleId: serverResponse.googleId || '',
+        role: serverResponse.role,
+        companyId: serverResponse.companyId, 
+        identifiers: serverResponse.identifiers.map((identifier: any) => Identifier.create({
+          key: identifier.key,
+          value: identifier.value,
+          _id: identifier._id,
+        }))
+      })
+      return newUser;
+  };
 
   const handleSignup = async () => {
     try {
-      // Create new company for user with default values
-      const defaultCompany = {
-        name: `${user.given_name} Default Company`,
-        api_keys: [
-          { key: 'openai_api_key', value: 'defaultValue' },
-          { key: 'gcp_key', value: 'defaultValue' },
-          { key: 'labs11_api_key', value: 'defaultValue' },
-          { key: 'twilio_account_sid', value: 'defaultValue' },
-          { key: 'twilio_auth_token', value: 'defaultValue' },
-        ],
-        identifiers: [{ key: 'email', value: user.email }],
-        __v: 0,
-      };
-      const newCompany = await rootStore.addCompany(defaultCompany as ICompany);
-      setLocalStorageItem(LOCALSTORAGE_COMPANY_ID, newCompany._id);
-      localStorage.setItem('userToken', newCompany.token);
-      // Create new user
-      const newUser = {
-        name: user.name,
-        email: user.email,
-        googleId: user.sub,
-        role: 'CompanyUser',
-        companyId: newCompany._id,
-        identifiers: [{ key: 'email', value: user.email }],
-      } as IUser;
+
+      const response = await apiClient.post('onboarding', { current_user, name, description });
+      
+      const { user, company, token } = response.data;
+      
+      // setLocalStorageItem(LOCALSTORAGE_COMPANY_ID, company._id);
+      // setLocalStorageItem(LOCALSTORAGE_USER_ID, user._id);
+      localStorage.setItem('userToken', token);
 
       // Add new user to the rootStore
-      const res = await rootStore.addUser(newUser);
-      const mobxUser = User.create(res);
-      rootStore.setCurrentUser(mobxUser);
-      setLocalStorageItem(LOCALSTORAGE_USER_ID, res._id);
+      
+      const userModelInstance = await mapServerResponseToUserModel(user);
+      
+      // const mobxUser = User.create(userModelInstance);
+      rootStore.setCurrentUser(userModelInstance);
 
-      //create new session and set the new company as the active company
-      const session = await createSession(res._id, newCompany._id);
-      const sessionData = await getSessionById(session._id);
-      rootStore.sessionStore.setActiveSession(sessionData);
-
-      await rootStore.loadUsers();
-      rootStore.sessionStore.loadSessions();
-      await rootStore.loadCompanies();
+      // await rootStore.loadUsers();
+      // await rootStore.loadCompanies();
 
       // finish onboarding
-      await rootStore.completeOnboarding();
+      // await rootStore.completeOnboarding();
       navigate('/admin/users');
     } catch (error) {
       console.error('Error during signup and company creation:', error);
@@ -131,7 +127,7 @@ const OnboardingPage: React.FC = () => {
             />
           </div>
           <div className="flex justify-end">
-            <Button onClick={handleSignup} isArrowButton={true} disabled={ description === '' || name === ''}>
+            <Button onClick={handleSignup} isArrowButton={true} disabled={description === '' || name === ''}>
               כניסה למערכת
             </Button>
           </div>

@@ -1,4 +1,27 @@
+/// file_path: src/store/fieldConfigs/assistantFieldConfigs.ts
 import { FieldConfig } from '../../components/DynamicForm';
+import { SelectListOption } from '../../components/sb-core-ui-kit/SelectList';
+
+const voiceOptions: SelectListOption[] = [
+  { value: 'alloy', label: 'Alloy' },
+  { value: 'echo', label: 'Echo' },
+  { value: 'fable', label: 'Fable' },
+  { value: 'onyx', label: 'Onyx' },
+  { value: 'nova', label: 'Nova' },
+  { value: 'shimmer', label: 'Shimmer' },
+];
+
+const languageOptions: SelectListOption[] = [
+  { value: 'he', label: 'Hebrew' },
+  { value: 'en', label: 'English' },
+];
+
+const llmModelOptions: SelectListOption[] = [
+  { value: 'gpt-3.5-turbo-1106', label: 'GPT-3.5 Turbo' },
+  { value: 'gpt-4o', label: 'GPT-4o' },
+  { value: 'gpt-4-turbo', label: 'GPT-4 Turbo' },
+  { value: 'gpt-3.5-turbo-0125', label: 'GPT-3.5 Turbo 0125' },
+];
 
 export const assistantFieldConfigs: FieldConfig[] = [
   {
@@ -36,27 +59,31 @@ export const assistantFieldConfigs: FieldConfig[] = [
   {
     id: 'voice',
     key: 'voice',
-    label: 'Voice', // 'Voice'
-    type: 'input',
-    value: 'Polly.Emma',
+    label: 'Voice',
+    type: 'dropdown',
+    value: 'alloy',
+    options: voiceOptions,
     visibility: { create: true, view: true, update: true },
   },
   {
     id: 'language',
     key: 'language',
-    label: 'Language', // 'Language'
-    type: 'input',
-    value: 'en-US',
+    label: 'Language',
+    type: 'dropdown',
+    value: 'he',
+    options: languageOptions,
     visibility: { create: true, view: true, update: true },
   },
   {
     id: 'llmModel',
     key: 'llmModel',
-    label: 'LLM Model', // 'LLM Model'
-    type: 'input',
+    label: 'LLM Model',
+    type: 'dropdown',
     value: 'gpt-3.5-turbo-1106',
+    options: llmModelOptions,
     visibility: { create: true, view: true, update: true },
   },
+
   {
     id: 'llmPrompt',
     key: 'llmPrompt',
@@ -64,5 +91,5 @@ export const assistantFieldConfigs: FieldConfig[] = [
     type: 'textarea',
     value: 'This is a new assistant.',
     visibility: { create: true, view: true, update: true },
-  }
+  },
 ];

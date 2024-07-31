@@ -22,14 +22,7 @@ import {
   refreshCompanyToken,
   updateCompany,
 } from '../../services/api/companyService';
-import {
-  LOCALSTORAGE_COMPANY_ID,
-  LOCALSTORAGE_SYSTEM_USER_ID,
-  LOCALSTORAGE_USER_ID,
-  getLocalStorageItem,
-  setLocalStorageItem,
-  setSystemUserId,
-} from '../../services/api/sessionService';
+
 import { IUser, User } from './User';
 import {
   addUser,
@@ -47,10 +40,14 @@ import {
   updateAction,
 } from '../../services/api/actionService';
 import i18n from '../../i18n';
-import { login } from '../../services/api/authService';
+import { AIAssistedConfigStore } from './AIAssistedConfigStore';
+import { AuthStore } from './AuthStore';
 
 const RootStore = types
   .model('RootStore', {
+
+    authStore: types.optional(AuthStore, {}),
+    isInitialDataLoaded: types.optional(types.boolean, false),
 
     assistants: types.array(Assistant),
     companies: types.array(Company),
@@ -58,15 +55,15 @@ const RootStore = types
     users: types.array(User),
     assistantsLoaded: types.optional(types.boolean, false),
     sessionStore: types.optional(SessionStore, {}),
+    aiAssistedConfigStore: types.optional(AIAssistedConfigStore, {}),
+
     inboxSessions: types.array(InboxSession),
     inboxSessionsLoaded: types.optional(types.boolean, false),
-
     currentUser: types.maybe(types.reference(User)),
     actions: types.array(Action),
     actionsLoaded: types.optional(types.boolean, false),
     language: types.optional(types.string, 'en'),
-    isAuthenticated: types.optional(types.boolean, false),
-    needsOnboarding: types.optional(types.boolean, false),
+    
   })
   .views((self) => ({
     get isAdmin() {
@@ -77,8 +74,13 @@ const RootStore = types
     },
   }))
   .actions((self) => ({
+
+    setInitialDataLoaded() {
+      self.isInitialDataLoaded = true;
+    },
+    
     translate: (key: string) => i18n.t(key),
-    setCurrentUser(user: any) {
+    setCurrentUser(user: IUser) {
       self.currentUser = user;
     },
     changeLanguage: flow(function* (newLanguage: string) {
@@ -87,67 +89,6 @@ const RootStore = types
       localStorage.setItem('appLanguage', newLanguage);
     }),
 
-    checkAuthState
-      : flow(function* () {
-        try {
-          const userId = getLocalStorageItem(LOCALSTORAGE_USER_ID);
-          const userToken = localStorage.getItem('userToken');
-
-          if (userId && userToken) {
-            const user = self.users.find((user) => user._id === userId);
-            if (user) {
-              self.currentUser = user;
-              self.isAuthenticated = true;
-            } else {
-              self.isAuthenticated = false;
-            }
-          } else {
-            self.isAuthenticated = false;
-          }
-        } catch (error) {
-          self.isAuthenticated = false;
-          console.error('Error checking auth state:', error);
-        }
-      }),
-    loginSystemUser: flow(function* (credential: string) {
-      try {
-        const response = yield login(credential);
-        const userData = response.user;
-        const isNewUser = response.isNewUser;
-        if (!isNewUser) {
-          const existingUser = self.users.find(user => user._id === userData._id);
-          if (existingUser) {
-            applySnapshot(existingUser, userData);
-            self.currentUser = existingUser;
-            self.isAuthenticated = true;
-
-            setLocalStorageItem(LOCALSTORAGE_USER_ID, userData._id);
-            setLocalStorageItem(LOCALSTORAGE_COMPANY_ID, userData.companyId);
-            localStorage.setItem('userToken', response.sessionToken);
-
-          } else {
-            console.error('User not found in the store');
-          }
-        }
-
-        self.needsOnboarding = isNewUser;
-
-      } catch (error) {
-        console.error('Failed to login user', error);
-      }
-    }),
-    completeOnboarding: () => {
-      self.isAuthenticated = true;
-      self.needsOnboarding = false;
-    },
-    logoutSystemUser: (userId: string) => {
-      const user = self.users.find(user => user._id === userId);
-      localStorage.removeItem(LOCALSTORAGE_USER_ID);
-      if (user) {
-        self.users.replace(self.users.filter(user => user._id !== userId));
-        self.isAuthenticated = false;
-      }
-    },
     loadActions: flow(function* () {
       try {
         const actions = yield getActions();
@@ -199,7 +140,7 @@ const RootStore = types
     loadInboxMessages: flow(function* () {
       try {
         const inboxMessages = yield getInboxMessages(
-          self.sessionStore.activeSession?.companyId || ''
+          self.sessionStore.activeSession?._id || ''
         );
         applySnapshot(self.inboxSessions, inboxMessages);
         self.inboxSessionsLoaded = true;
@@ -210,9 +151,7 @@ const RootStore = types
 
     loadAssistants: flow(function* () {
       try {
-        const assistants = yield getAssistants(
-          getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) || ''
-        );
+        const assistants = yield getAssistants();
         applySnapshot(self.assistants, assistants);
         self.assistantsLoaded = true;
       } catch (error) {
@@ -290,6 +229,7 @@ const RootStore = types
 
     addUser: flow(function* (user: IUser) {
       try {
+        debugger
         const newUser = yield addUser(user);
         self.users.push(newUser);
         emitter.emit(
@@ -324,6 +264,7 @@ const RootStore = types
 
     addCompany: flow(function* (company: ICompany) {
       try {
+        debugger
         const newCompany = yield addCompany(company);
         newCompany.token = newCompany.token.value;
         self.companies.push(newCompany);
@@ -361,8 +302,8 @@ const RootStore = types
     createAssistant: flow(function* (assistant: IAssistant) {
       try {
         // set companyId to activeSession companyId
-        assistant.companyId =
-          getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) || '';
+        // assistant.companyId =
+        //   getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) || '';
         const newAssistant = yield addAssistant(assistant);
         self.assistants.push(newAssistant);
         emitter.emit(

@@ -1,8 +1,9 @@
+/// file_path= src/store/models/SystemUser.ts
 import { types, Instance, SnapshotIn, SnapshotOut } from 'mobx-state-tree';
 
 const SystemUser = types.model('SystemUser', {
     _id: types.identifier,
-    googleId: types.string,
+    googleId: types.optional(types.string, ''),
     name: types.string,
     email: types.string,
     companyId: types.string, 

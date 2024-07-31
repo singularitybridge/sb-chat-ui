@@ -3,7 +3,7 @@ import {
   DynamicForm,
   FieldConfig,
   FormValues,
-  KeyValueListFieldConfig,
+  DropdownFieldConfig,
 } from '../components/DynamicForm';
 import { assistantFieldConfigs } from '../store/fieldConfigs/assistantFieldConfigs';
 import { observer } from 'mobx-react';
@@ -43,18 +43,15 @@ const NewAssistantView: React.FC = observer(() => {
   );
 
   useEffect(() => {
-    const initialFormFields = assistantFieldConfigs.map(
-      ({ id, key, label, type, visibility, value }) => {
+    const initialFormFields = assistantFieldConfigs.map((field) => {
+      if (field.type === 'dropdown') {
         return {
-          id: id,
-          key: key,
-          label: label,
-          value: value,
-          type: type,
-          visibility: visibility,
-        } as KeyValueListFieldConfig;
+          ...field,
+          options: (field as DropdownFieldConfig).options,
+        } as DropdownFieldConfig;
       }
-    );
+      return field;
+    });
 
     setFormFields(initialFormFields);
   }, []); // Empty dependency array ensures this runs only once
@@ -64,8 +61,10 @@ const NewAssistantView: React.FC = observer(() => {
     await rootStore.createAssistant(values as unknown as IAssistant);
     setIsLoading(false);
   };
+
   return (
     <DynamicForm
+      formContext="assistantFieldConfigs"
       fields={formFields}
       onSubmit={handleSubmit}
       isLoading={isLoading}

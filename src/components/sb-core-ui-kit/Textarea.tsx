@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, forwardRef } from 'react';
 import clsx from 'clsx';
 
 interface TextareaProps {
@@ -14,9 +14,11 @@ interface TextareaProps {
   className?: string;
   error?: string;
   autogrow?: boolean;
+  transparentBg?: boolean;
+  maxHeight?: number; // New prop for maximum height
 }
 
-const Textarea: React.FC<TextareaProps> = ({
+const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
   id,
   value,
   onChange,
@@ -29,9 +31,13 @@ const Textarea: React.FC<TextareaProps> = ({
   className,
   error,
   autogrow = false,
-}) => {
+  transparentBg = false,
+  maxHeight = 300,
+}, ref) => {
   const [isFocused, setIsFocused] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const innerRef = useRef<HTMLTextAreaElement>(null);
+
+  const textareaRef = ref || innerRef;
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -44,18 +50,36 @@ const Textarea: React.FC<TextareaProps> = ({
   };
 
   useEffect(() => {
-    if (autogrow && textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    if (autogrow && textareaRef && 'current' in textareaRef && textareaRef.current) {
+      const textarea = textareaRef.current;
+      
+      // Reset height to auto to get the correct scrollHeight
+      textarea.style.height = 'auto';
+      
+      // Calculate the new height
+      let newHeight = textarea.scrollHeight;
+      
+      // If maxHeight is set and the new height exceeds it, cap the height
+      if (maxHeight && newHeight > maxHeight) {
+        newHeight = maxHeight;
+        textarea.style.overflowY = 'auto'; // Enable vertical scrolling
+      } else {
+        textarea.style.overflowY = 'hidden'; // Disable vertical scrolling
+      }
+      
+      // Set the new height
+      textarea.style.height = `${newHeight}px`;
     }
-  }, [value, autogrow]);
+  }, [value, autogrow, textareaRef, maxHeight]);
 
   return (
     <div className="flex flex-col w-full">
       <div
         className={clsx(
-          'flex py-3 px-5 justify-end items-center gap-2 self-stretch bg-white rounded-lg transition-all duration-200',
+          'flex py-3 px-5 justify-end items-center gap-2 self-stretch rounded-lg transition-all duration-200',
           {
+            'bg-white': !transparentBg,
+            'bg-transparent': transparentBg,
             'border border-gray-400': isFocused && !error,
             'border border-red-500': error,
             'border border-gray-300': !isFocused && !error,
@@ -63,6 +87,7 @@ const Textarea: React.FC<TextareaProps> = ({
           },
           className
         )}
+        style={maxHeight ? { maxHeight: `${maxHeight}px` } : {}}
       >
         <textarea
           ref={textareaRef}
@@ -91,6 +116,8 @@ const Textarea: React.FC<TextareaProps> = ({
       )}
     </div>
   );
-};
+});
+
+Textarea.displayName = 'Textarea';
 
 export { Textarea };

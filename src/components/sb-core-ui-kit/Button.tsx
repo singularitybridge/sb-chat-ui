@@ -9,6 +9,7 @@ export interface ButtonProps {
   isArrowButton?: boolean;
   size?: 'small' | 'normal' | 'large';
   disabled?: boolean;
+  variant?: 'primary' | 'secondary';
 }
 
 const ArrowIcon: React.FC<{ size: 'small' | 'normal' | 'large' }> = ({ size }) => {
@@ -41,6 +42,7 @@ const Button: React.FC<ButtonProps> = ({
   isArrowButton = false,
   size = 'normal',
   disabled = false,
+  variant = 'primary',
 }) => {
   const sizeClasses = {
     small: 'text-sm px-4 py-2',
@@ -48,15 +50,26 @@ const Button: React.FC<ButtonProps> = ({
     large: 'text-lg px-6 py-3',
   };
 
+  const variantClasses = {
+    primary: {
+      default: 'bg-primary text-white hover:bg-primary-dark',
+      disabled: 'bg-gray-300 text-gray-500',
+    },
+    secondary: {
+      default: 'bg-gray-200 text-gray-700 hover:bg-gray-300',
+      disabled: 'bg-gray-100 text-gray-400',
+    },
+  };
+
   const className = clsx(
-    'text-white',
     'rounded-xl',
     'flex items-center justify-center',
     'transition-colors duration-200',
     sizeClasses[size],
     {
-      'bg-primary hover:bg-primary-dark': !disabled,
-      'bg-gray-300 cursor-not-allowed': disabled,
+      [variantClasses[variant].default]: !disabled,
+      [variantClasses[variant].disabled]: disabled,
+      'cursor-not-allowed': disabled,
     },
     additionalClassName
   );

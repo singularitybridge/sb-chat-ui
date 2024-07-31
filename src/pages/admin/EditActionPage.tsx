@@ -31,6 +31,7 @@ const EditActionView: React.FC = observer(() => {
       label: label,
       value: action ? toJS((action as any)[fieldKeyString]) : '',
       id: id,
+      options: [],
       type: type,
       visibility: visibility,
     };

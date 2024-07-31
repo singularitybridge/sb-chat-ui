@@ -1,3 +1,4 @@
+// file_path: src/pages/test/UIKitTestPage.tsx
 import React, { useEffect, useState } from 'react';
 import { Input } from '../../components/sb-core-ui-kit/Input';
 import InputWithLabel from '../../components/sb-core-ui-kit/InputWithLabel';
@@ -7,6 +8,9 @@ import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
 import { Textarea } from '../../components/sb-core-ui-kit/Textarea';
 import { TextareaWithLabel } from '../../components/sb-core-ui-kit/TextareaWithLabel';
 import { TvIcon } from '@heroicons/react/24/outline';
+import { AIAssistedTextareaContainer } from '../../components/sb-core-ui-kit/AIAssistedTextareaContainer';
+import { SelectList, SelectListOption } from '../../components/sb-core-ui-kit/SelectList';
+
 
 const UIKitTestPage = () => {
   const [direction, setDirection] = useState<'ltr' | 'rtl'>('rtl');
@@ -15,6 +19,25 @@ const UIKitTestPage = () => {
   const [someOtherText, setSomeOtherText] = useState('');
   const [labelInput, setLabelInput] = useState('');
   const [autoGrowText, setAutoGrowText] = useState('');
+
+  const [aiAssistedText, setAiAssistedText] = useState('');
+  const [aiAssistedText2, setAiAssistedText2] = useState('');
+  const [textValue, setTextValue] = useState('');
+
+  const [selectedValue, setSelectedValue] = useState<
+    string | number | undefined
+  >('2');
+
+  const options: SelectListOption[] = [
+    { label: 'Option 1', value: '1', description: 'This is option 1' },
+    { label: 'Option 2', value: '2', description: 'This is option 2' },
+    { label: 'Option 3', value: '3', description: 'This is option 3' },
+  ];
+
+  const handleSelect = (value: string | number) => {
+    setSelectedValue(value);
+    // You can perform additional actions here if needed
+  };
 
   useEffect(() => {
     document.documentElement.dir = direction;
@@ -27,6 +50,24 @@ const UIKitTestPage = () => {
 
   return (
     <div className="container mx-auto p-4">
+      <div className="flex p-2">
+        <button
+          onClick={() => toggleDirection('ltr')}
+          className={`px-3 py-2 text-sm ${
+            direction === 'ltr' ? 'bg-blue-500 text-white' : 'bg-gray-200'
+          }`}
+        >
+          LTR
+        </button>
+        <button
+          onClick={() => toggleDirection('rtl')}
+          className={`px-3 py-2 text-sm ${
+            direction === 'rtl' ? 'bg-blue-500 text-white' : 'bg-gray-200'
+          }`}
+        >
+          RTL
+        </button>
+      </div>
       <div className="grid grid-cols-3 gap-4">
         <div className="border  border-gray-300 flex items-center justify-center h-[600px]">
           <div className="h-full w-full p-4 space-y-3">
@@ -70,6 +111,22 @@ const UIKitTestPage = () => {
                 <TvIcon className="w-11 h-11 text-slate-800 bg-slate-200 p-2 rounded-full" />
               }
             />
+
+            <SelectList
+              label="Select an option"
+              options={options}
+              onSelect={handleSelect}
+              initialValue={selectedValue}
+              placeholder="Select an option"
+            />
+            <SelectList
+              label="Select an option"
+              options={options}
+              onSelect={handleSelect}
+              initialValue={selectedValue}
+              placeholder="Select an option"
+            />
+
           </div>
         </div>
         <div className="border border-gray-300 flex items-center justify-center ">
@@ -135,29 +192,51 @@ const UIKitTestPage = () => {
           </div>
         </div>
         <div className="border border-gray-300 flex flex-col items-center justify-center h-[600px]">
-          <div className="flex">
-            <button
-              onClick={() => toggleDirection('ltr')}
-              className={`px-4 py-2 ${
-                direction === 'ltr' ? 'bg-blue-500 text-white' : 'bg-gray-200'
-              }`}
-            >
-              LTR
-            </button>
-            <button
-              onClick={() => toggleDirection('rtl')}
-              className={`px-4 py-2 ${
-                direction === 'rtl' ? 'bg-blue-500 text-white' : 'bg-gray-200'
-              }`}
-            >
-              RTL
-            </button>
+          <div className="h-full w-full p-4 space-y-3">
+            {/* <AIAssistedTextarea
+              id="test"
+              label="שם הפרויקט"
+              value={aiAssistedText}              
+              onChange={setAiAssistedText}
+              placeholder="כתבו כאן משהו"
+            />
+            <AIAssistedTextarea
+              id="test"
+              label="שם הפרויקט"
+              value={aiAssistedText2}
+              onChange={setAiAssistedText2}
+              placeholder="כתבו כאן משהו"
+            /> */}
+
+            <AIAssistedTextareaContainer
+              id="customer-name"
+              language="he"
+              value={aiAssistedText}
+              onChange={setAiAssistedText}
+              placeholder="Enter your text here..."
+              label="customer name"
+              systemPrompt="customer name is used to identify the customer in the system, a good customer name is descriptive and unique"
+            />
+            <AIAssistedTextareaContainer
+              id="task-name"
+              language="he"
+              value={aiAssistedText2}
+              onChange={setAiAssistedText2}
+              placeholder="Enter your text here..."
+              label="task name"
+              systemPrompt="task name is used to identify the task in the system, a good task name is descriptive and unique"
+            />
+            <AIAssistedTextareaContainer
+              id="project-name"
+              language="he"
+              value={textValue}
+              onChange={setTextValue}
+              placeholder="Enter your text here..."
+              label="project name"
+              systemPrompt="project name is used to identify the project in the system, a good project name is descriptive and unique"
+            />
           </div>
         </div>
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 mt-4">
-        <div className="border bg-white border-gray-300  h-[600px]">test</div>
       </div>
     </div>
   );
