@@ -1,3 +1,4 @@
+/// file_path: src/components/sb-chat-kit-ui/chat-elements/AssistantMessage.tsx
 import React from 'react';
 import { SparklesIcon } from '@heroicons/react/24/solid';
 import ReactMarkdown from 'react-markdown';

@@ -15,6 +15,7 @@ import { IAssistant } from '../../store/models/Assistant';
 import { SBChatKitUI } from '../sb-chat-kit-ui/SBChatKitUI';
 import { textToSpeech } from '../../services/api/voiceService';
 import i18n from '../../i18n';
+import { leapfrog } from 'ldrs';
 
 interface Metadata {
   message_type: string;
@@ -27,6 +28,10 @@ interface ChatMessage {
   assistantName?: string;
 }
 
+const removeRAGCitations = (text: string): string => {
+  return text.replace(/【\d+:\d+†source】/g, '');
+};
+
 type AudioState = 'disabled' | 'enabled' | 'playing';
 
 const ChatContainer = observer(() => {
@@ -36,6 +41,7 @@ const ChatContainer = observer(() => {
   const [assistant, setAssistant] = useState<IAssistant | undefined>();
   const [audioState, setAudioState] = useState<AudioState>('disabled');
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { activeSession } = rootStore.sessionStore;
   const assistantId = activeSession?.assistantId;
@@ -67,7 +73,7 @@ const ChatContainer = observer(() => {
   useEventEmitter<string>(EVENT_SET_ACTIVE_ASSISTANT, handleAssistantUpdated);
 
   const mapToChatMessage = (message: any): ChatMessage => ({
-    content: message.content[0].text.value,
+    content: removeRAGCitations(message.content[0].text.value),
     role: message.role,
     metadata: message.metadata,
     assistantName: message.assistantName,
@@ -84,30 +90,41 @@ const ChatContainer = observer(() => {
       ...prevMessages,
       { content: message, role: 'user' },
     ]);
+    setIsLoading(true);
 
     if (assistant) {
-      const response = await handleUserInput({
-        userInput: message,
-        sessionId: activeSession?._id || '',
-      });
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { content: response, role: 'assistant' },
-      ]);
+      try {
+        const response = await handleUserInput({
+          userInput: message,
+          sessionId: activeSession?._id || '',
+        });
+        const cleanedResponse = removeRAGCitations(response);
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { content: cleanedResponse, role: 'assistant' },
+        ]);
 
-      if (audioState === 'enabled') {
-        try {
-          const audioUrl = await textToSpeech(response, 'shimmer');
-          if (audioRef.current) {
-            audioRef.current.src = audioUrl;
-            console.log('Playing audio response:', audioUrl);
-            audioRef.current.play();
-            setAudioState('playing');
+        if (audioState === 'enabled') {
+          try {
+            const audioUrl = await textToSpeech(cleanedResponse, 'shimmer');
+            if (audioRef.current) {
+              audioRef.current.src = audioUrl;
+              console.log('Playing audio response:', audioUrl);
+              audioRef.current.play();
+              setAudioState('playing');
+            }
+          } catch (error) {
+            console.error('Failed to play audio response:', error);
           }
-        } catch (error) {
-          console.error('Failed to play audio response:', error);
         }
+      } catch (error) {
+        console.error('Error getting assistant response:', error);
+        // Optionally add an error message to the chat
+      } finally {
+        setIsLoading(false);
       }
+    } else {
+      setIsLoading(false);
     }
   };
 
@@ -134,13 +151,24 @@ const ChatContainer = observer(() => {
   }, []);
 
   const handleClear = async () => {
-    if (activeSession) {
+    if (activeSession && assistant) {
       try {
-        await rootStore.sessionStore.endActiveSession();
-        emitter.emit(EVENT_CHAT_SESSION_DELETED, i18n.t('Notifications.sessionCleared'));
+        // Store the current assistant locally
+        const currentAssistant = assistant;
 
+        // Clear the session
+        await rootStore.sessionStore.endActiveSession();
+        emitter.emit(
+          EVENT_CHAT_SESSION_DELETED,
+          i18n.t('Notifications.sessionCleared')
+        );
+
+        // Fetch the new active session
         await rootStore.sessionStore.fetchActiveSession();
         setMessages([]);
+
+        // Set the stored assistant as the active assistant
+        emitter.emit(EVENT_SET_ACTIVE_ASSISTANT, assistant._id);
       } catch (error) {
         console.error('Error in handleClear:', error);
         // Optionally, show an error message to the user
@@ -168,6 +196,7 @@ const ChatContainer = observer(() => {
         onToggleAudio={handleToggleAudio}
         audioState={audioState}
         language={'he'}
+        isLoading={isLoading}
       />
       <audio ref={audioRef} style={{ display: 'none' }} />
     </div>

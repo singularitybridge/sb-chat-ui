@@ -8,6 +8,7 @@ import { NotificationMessage } from './chat-elements/NotificationMessage';
 import { ActionMessage } from './chat-elements/ActionMessage';
 import { ChatInput } from './chat-elements/ChatInput';
 import { DefaultChatView } from './chat-elements/DefaultChatView';
+import { dotWave, leapfrog } from 'ldrs';
 
 interface Metadata {
   message_type: string;
@@ -27,7 +28,6 @@ interface ChatMessage {
 
 type AudioState = 'disabled' | 'enabled' | 'playing';
 
-
 interface SBChatKitUIProps {
   messages: ChatMessage[];
   assistant?: {
@@ -43,6 +43,7 @@ interface SBChatKitUIProps {
   onToggleAudio: () => void;
   audioState: AudioState;
   language?: string;
+  isLoading: boolean;
 }
 
 const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
@@ -56,6 +57,7 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
   className = '',
   style = {},
   language = 'en',
+  isLoading,
 }) => {
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const [disabledMessages, setDisabledMessages] = useState<number[]>([]);
@@ -77,6 +79,10 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
     }
   }, [messages]);
 
+  useEffect(() => {
+    dotWave.register();
+  }, []);
+
   return (
     <div
       style={{
@@ -85,9 +91,7 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
       className={`p-4 flex flex-col ${className} h-full w-full`}
     >
       {messages.length === 0 && assistant ? (
-        <DefaultChatView
-          assistant={assistant}
-        />
+        <DefaultChatView assistant={assistant} />
       ) : (
         <>
           <Header
@@ -98,14 +102,20 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
             onToggleAudio={onToggleAudio}
             audioState={audioState}
           />
+
           <div className="flex-grow overflow-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-300">
             {messages.map((message, index) => {
               if (message.metadata?.message_type === 'human-agent-response') {
                 return (
-                  <HumanAgentResponseMessage key={index} text={message.content} />
+                  <HumanAgentResponseMessage
+                    key={index}
+                    text={message.content}
+                  />
                 );
               } else if (message.metadata?.message_type === 'notification') {
-                return <NotificationMessage key={index} text={message.content} />;
+                return (
+                  <NotificationMessage key={index} text={message.content} />
+                );
               } else if (message.actions && message.actions.length > 0) {
                 return (
                   <ActionMessage
@@ -128,6 +138,12 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
                 return <UserMessage key={index} text={message.content} />;
               }
             })}
+            {isLoading && (
+              <div className="flex justify-center items-center my-4">
+                <l-dot-wave size="40" speed="1" color="black"></l-dot-wave>
+              </div>
+            )}
+
             <div ref={messagesEndRef} />
           </div>
         </>

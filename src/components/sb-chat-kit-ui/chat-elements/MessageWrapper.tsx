@@ -1,3 +1,4 @@
+/// file_path: src/components/sb-chat-kit-ui/chat-elements/MessageWrapper.tsx
 import React from 'react';
 
 interface MessageWrapperProps {
