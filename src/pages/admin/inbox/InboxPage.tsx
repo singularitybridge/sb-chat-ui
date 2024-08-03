@@ -1,3 +1,4 @@
+/// file_path /src/pages/admin/inbox/InboxPage.tsx
 import React, { useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { withPage } from '../../../components/admin/HOC/withPage';
@@ -14,25 +15,21 @@ import { useTranslation } from 'react-i18next';
 const DisplayMessages: React.FC<{ session: IInboxSession }> = ({ session }) => {
   return (
     <>
-      {session.messages.map((message: IMessage) =>
-        InboxMessage({ message: message })
-      )}
+      {session.messages.map((message: IMessage) => (
+        <InboxMessage key={message._id} message={message} />
+      ))}
     </>
   );
 };
 
 const InboxView: React.FC = observer(() => {
-
   const rootStore = useRootStore();
 
-  const [selectedSession, setSelectedSession] = useState<IInboxSession | null>(
-    null
-  );
+  const [selectedSession, setSelectedSession] = useState<IInboxSession | null>(null);
   const [message, setMessage] = useState('');
-  const [ isLoading, setIsLoading ] = useState(false); 
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSendMessage = async () => {
-
     setIsLoading(true);
     const sessionId = selectedSession?.sessionId;
 
@@ -43,12 +40,14 @@ const InboxView: React.FC = observer(() => {
     }
 
     try {
-      const response = await addInboxResponse(sessionId, message);
+      // Use the last message's ID as the inboxMessageId
+      const lastMessageId = selectedSession.messages[selectedSession.messages.length - 1]._id;
+      const response = await addInboxResponse(sessionId, message, lastMessageId);
       setMessage('');
-      setIsLoading(false); 
+      setIsLoading(false);
     } catch (error) {
       console.error('Failed to send message', error);
-      setIsLoading(false); 
+      setIsLoading(false);
     }
   };
 
@@ -66,8 +65,8 @@ const InboxView: React.FC = observer(() => {
   return (
     <>
       <div className="flex w-full justify-center">
-        <main className="flex w-full h-full ">
-          <section className="flex flex-col w-4/12  h-full overflow-y-scroll border-r-2 border-sky-100">
+        <main className="flex w-full h-full">
+          <section className="flex flex-col w-4/12 h-full overflow-y-scroll border-r-2 border-sky-100">
             <label className="px-2">
               <input
                 className="rounded-lg p-4 bg-gray-200 transition duration-200 focus:outline-none focus:ring-2 w-full"
@@ -87,13 +86,13 @@ const InboxView: React.FC = observer(() => {
                 ))}
             </ul>
           </section>
-          <section className="w-8/12 px-4 flex flex-col ">
+          <section className="w-8/12 px-4 flex flex-col">
             <div className="flex justify-between items-center border-b-2 mb-4 pb-4">
               <div className="flex space-x-4 items-center">
-                {selectedSession && selectedSession.messages.length > 0 && (
+                {selectedSession && (
                   <div className="flex flex-col">
                     <h3 className="font-semibold text-lg">
-                      {selectedSession.messages[0].userName}
+                      {selectedSession.userName}
                     </h3>
                     <p className="text-light text-gray-400">
                       topic of the session / short intro
@@ -153,4 +152,5 @@ const InboxPage = withPage(
     emitter.emit(EVENT_SHOW_ADD_USER_MODAL, 'Add User');
   }
 )(InboxView);
+
 export { InboxPage };
