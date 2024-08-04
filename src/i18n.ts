@@ -7,9 +7,9 @@ import HttpBackend from 'i18next-http-backend';
 import enTranslations from './locale/en/translation.json';
 import heTranslations from './locale/he/translation.json';
 
-const getInitialLanguage = () => {
+export const getInitialLanguage = () => {
   const storedLang = localStorage.getItem('appLanguage');
-  return storedLang || 'en';
+  return storedLang || 'he';
 };
 
 i18n

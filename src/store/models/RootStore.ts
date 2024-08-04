@@ -22,12 +22,7 @@ import {
   refreshCompanyToken,
   updateCompany,
 } from '../../services/api/companyService';
-import {
-  LOCALSTORAGE_COMPANY_ID,
-  LOCALSTORAGE_USER_ID,
-  getLocalStorageItem,
-  setLocalStorageItem,
-} from '../../services/api/sessionService';
+
 import { IUser, User } from './User';
 import {
   addUser,
@@ -35,8 +30,8 @@ import {
   getAllUsers,
 } from '../../services/api/userService';
 import { SessionStore } from './SessionStore';
-import { getInboxMessages } from '../../services/api/inboxService';
-import { InboxSession } from './Inbox';
+import { addInboxMessage, addInboxResponse, getInboxMessages } from '../../services/api/inboxService';
+import { IInboxSession, InboxSession } from './Inbox';
 import { Action, IAction } from './Action';
 import {
   addAction,
@@ -45,32 +40,30 @@ import {
   updateAction,
 } from '../../services/api/actionService';
 import i18n from '../../i18n';
-import { login } from '../../services/api/authService';
 import { AIAssistedConfigStore } from './AIAssistedConfigStore';
+import { AuthStore } from './AuthStore';
 
 const RootStore = types
   .model('RootStore', {
+
+    authStore: types.optional(AuthStore, {}),
+    isInitialDataLoaded: types.optional(types.boolean, false),
 
     assistants: types.array(Assistant),
     companies: types.array(Company),
     companiesLoaded: types.optional(types.boolean, false),
     users: types.array(User),
     assistantsLoaded: types.optional(types.boolean, false),
-
     sessionStore: types.optional(SessionStore, {}),
     aiAssistedConfigStore: types.optional(AIAssistedConfigStore, {}),
 
-
-
     inboxSessions: types.array(InboxSession),
     inboxSessionsLoaded: types.optional(types.boolean, false),
-
     currentUser: types.maybe(types.reference(User)),
     actions: types.array(Action),
     actionsLoaded: types.optional(types.boolean, false),
     language: types.optional(types.string, 'en'),
-    isAuthenticated: types.optional(types.boolean, false),
-    needsOnboarding: types.optional(types.boolean, false),
+    
   })
   .views((self) => ({
     get isAdmin() {
@@ -81,6 +74,10 @@ const RootStore = types
     },
   }))
   .actions((self) => ({
+
+    setInitialDataLoaded() {
+      self.isInitialDataLoaded = true;
+    },
     
     translate: (key: string) => i18n.t(key),
     setCurrentUser(user: IUser) {
@@ -92,69 +89,6 @@ const RootStore = types
       localStorage.setItem('appLanguage', newLanguage);
     }),
 
-    checkAuthState() {
-      try {
-        const userId = getLocalStorageItem(LOCALSTORAGE_USER_ID);
-        const userToken = localStorage.getItem('userToken');
-
-        if (userId && userToken) {
-          const user = self.users.find((user) => user._id === userId);
-          if (user) {
-            self.currentUser = user;
-            self.isAuthenticated = true;
-          } else {
-            self.isAuthenticated = false;
-          }
-        } else {
-          self.isAuthenticated = false;
-        }
-      } catch (error) {
-        self.isAuthenticated = false;
-        console.error('Error checking auth state:', error);
-      }
-    },
-
-
-    loginSystemUser: flow(function* (credential: string) {
-      try {
-        const response = yield login(credential);
-        const userData = response.user;
-        const isNewUser = response.isNewUser;
-        if (!isNewUser) {
-          const existingUser = self.users.find(user => user._id === userData._id);
-          if (existingUser) {
-            applySnapshot(existingUser, userData);
-            self.currentUser = existingUser;
-            self.isAuthenticated = true;
-
-            setLocalStorageItem(LOCALSTORAGE_USER_ID, userData._id);
-            setLocalStorageItem(LOCALSTORAGE_COMPANY_ID, userData.companyId);
-            localStorage.setItem('userToken', response.sessionToken);
-
-          } else {
-            console.error('User not found in the store');
-          }
-        }
-
-        self.needsOnboarding = isNewUser;
-
-      } catch (error) {
-        console.error('Failed to login user', error);
-      }
-    }),
-    completeOnboarding: () => {
-      debugger
-      self.isAuthenticated = true;
-      self.needsOnboarding = false;
-    },
-    logoutSystemUser: (userId: string) => {
-      const user = self.users.find(user => user._id === userId);
-      localStorage.removeItem(LOCALSTORAGE_USER_ID);
-      if (user) {
-        self.users.replace(self.users.filter(user => user._id !== userId));
-        self.isAuthenticated = false;
-      }
-    },
     loadActions: flow(function* () {
       try {
         const actions = yield getActions();
@@ -205,9 +139,7 @@ const RootStore = types
 
     loadInboxMessages: flow(function* () {
       try {
-        const inboxMessages = yield getInboxMessages(
-          self.sessionStore.activeSession?.companyId || ''
-        );
+        const inboxMessages: IInboxSession[] = yield getInboxMessages();
         applySnapshot(self.inboxSessions, inboxMessages);
         self.inboxSessionsLoaded = true;
       } catch (error) {
@@ -215,11 +147,45 @@ const RootStore = types
       }
     }),
 
+    addInboxMessage: flow(function* (sessionId: string, message: string) {
+      try {
+        const updatedSession: IInboxSession = yield addInboxMessage(sessionId, message);
+        const sessionIndex = self.inboxSessions.findIndex(
+          (session) => session.sessionId === sessionId
+        );
+        if (sessionIndex !== -1) {
+          applySnapshot(self.inboxSessions[sessionIndex], updatedSession);
+        } else {
+          self.inboxSessions.push(updatedSession);
+        }
+        emitter.emit(EVENT_SHOW_NOTIFICATION, i18n.t('Notifications.messageSent'));
+      } catch (error) {
+        console.error('Failed to add inbox message', error);
+        emitter.emit(EVENT_ERROR, 'Failed to send message: ' + (error as Error).message);
+      }
+    }),
+
+    addInboxResponse: flow(function* (sessionId: string, message: string, inboxMessageId: string) {
+      try {
+        const updatedSession: IInboxSession = yield addInboxResponse(sessionId, message, inboxMessageId);
+        const sessionIndex = self.inboxSessions.findIndex(
+          (session) => session.sessionId === sessionId
+        );
+        if (sessionIndex !== -1) {
+          applySnapshot(self.inboxSessions[sessionIndex], updatedSession);
+        }
+        emitter.emit(EVENT_SHOW_NOTIFICATION, i18n.t('Notifications.responseAdded'));
+      } catch (error) {
+        console.error('Failed to add inbox response', error);
+        emitter.emit(EVENT_ERROR, 'Failed to add response: ' + (error as Error).message);
+      }
+    }),
+
+
+
     loadAssistants: flow(function* () {
       try {
-        const assistants = yield getAssistants(
-          getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) || ''
-        );
+        const assistants = yield getAssistants();
         applySnapshot(self.assistants, assistants);
         self.assistantsLoaded = true;
       } catch (error) {
@@ -370,8 +336,8 @@ const RootStore = types
     createAssistant: flow(function* (assistant: IAssistant) {
       try {
         // set companyId to activeSession companyId
-        assistant.companyId =
-          getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) || '';
+        // assistant.companyId =
+        //   getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) || '';
         const newAssistant = yield addAssistant(assistant);
         self.assistants.push(newAssistant);
         emitter.emit(

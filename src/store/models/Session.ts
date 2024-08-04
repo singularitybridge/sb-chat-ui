@@ -1,15 +1,9 @@
+/// file_path= src/store/models/Session.ts
 import { types, Instance, SnapshotIn, SnapshotOut } from 'mobx-state-tree';
 
 const Session = types.model('Session', {
   _id: types.identifier,
-  companyId: types.string,
-  companyName: types.string,
-  userId: types.string,
-  assistantId: types.string,
-  threadId: types.string,
-  active: types.boolean,
-  assistantName: types.string,
-  userName: types.string  
+  assistantId: types.string
 });
 
 type ISession = Instance<typeof Session>;

@@ -1,4 +1,5 @@
-import React from 'react';
+// src/pages/admin/EditAssistantPage.tsx
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { useRootStore } from '../../store/common/RootStoreContext';
@@ -12,12 +13,49 @@ import {
 } from '../../components/DynamicForm';
 import { toJS } from 'mobx';
 import { assistantFieldConfigs } from '../../store/fieldConfigs/assistantFieldConfigs';
+import {
+  uploadFile,
+  listAssistantFiles,
+  deleteFile,
+} from '../../services/api/fileService';
+import FileUpload from '../../components/sb-core-ui-kit/FileUpload';
+import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
+import { FileText, TrashIcon } from 'lucide-react';
+import { IconButton } from '../../components/admin/IconButton';
+import { useTranslation } from 'react-i18next';
+
+interface UploadedFile {
+  fileId: string;
+  openaiFileId: string;
+  filename: string;
+}
 
 const EditAssistantView: React.FC = observer(() => {
+
+  const { t } = useTranslation();
   const { key } = useParams<{ key: string }>();
   const rootStore = useRootStore();
   const assistant = key ? rootStore.getAssistantById(key) : null;
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+
+  useEffect(() => {
+    if (key) {
+      fetchAssistantFiles();
+    }
+  }, [key]);
+
+  const fetchAssistantFiles = async () => {
+    if (key) {
+      try {
+        const files = await listAssistantFiles(key);
+        setUploadedFiles(files);
+      } catch (error) {
+        console.error('Failed to fetch assistant files', error);
+      }
+    }
+  };
 
   if (rootStore.assistantsLoaded === false) {
     return <div>Loading...</div>;
@@ -55,6 +93,38 @@ const EditAssistantView: React.FC = observer(() => {
     setIsLoading(false);
   };
 
+  const handleFileUpload = async (file: File) => {
+    if (!key) return;
+
+    setIsUploading(true);
+    try {
+      const response = await uploadFile(key, file);
+      const newFile: UploadedFile = {
+        fileId: response.fileId,
+        openaiFileId: response.openaiFileId,
+        filename: response.title,
+      };
+      setUploadedFiles([...uploadedFiles, newFile]);
+      console.log('File uploaded successfully:', newFile);
+    } catch (error) {
+      console.error('Error uploading file:', error);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleFileDelete = async (fileId: string) => {
+    if (!key) return;
+
+    try {
+      await deleteFile(key, fileId);
+      setUploadedFiles(uploadedFiles.filter((file) => file.fileId !== fileId));
+      console.log('File deleted successfully');
+    } catch (error) {
+      console.error('Error deleting file:', error);
+    }
+  };
+
   return (
     <>
       <div className="flex w-full space-x-2 rtl:space-x-reverse">
@@ -67,7 +137,45 @@ const EditAssistantView: React.FC = observer(() => {
             formType="update"
           />
         </div>
-        <div className="w-1/2">Test your assistant here</div>
+        <div className="w-1/2">
+          <TextComponent text={t('EditAssistantPage.uploadFile')} size="normal" className="mb-2" />
+          <FileUpload
+            onFileUpload={handleFileUpload}
+            isUploading={isUploading}
+          />
+          {uploadedFiles.length > 0 && (
+            <div className="mt-4">
+              <TextComponent
+                text={t('EditAssistantPage.uploadedFiles')}
+                size="medium"
+                className="mb-2"
+              />
+              <ul>
+                {uploadedFiles.map((file) => (
+                  <li
+                    key={file.fileId}
+                    className="flex justify-between items-center text-sm text-gray-600 mb-2"
+                  >
+                    <div className="flex gap-2">
+                      <FileText size={16} className=" text-slate-500 mt-1" />
+                      <TextComponent
+                        text={file.filename}
+                        size="small"
+                        color="secondary"
+                      />
+                    </div>
+
+                    <IconButton
+                      icon={<TrashIcon size={16} />}
+                      onClick={() => handleFileDelete(file.fileId)}
+                      className=" text-gray-400 hover:text-red-400 transition duration-100"
+                    />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
       </div>
     </>
   );
@@ -76,7 +184,9 @@ const EditAssistantView: React.FC = observer(() => {
 const EditAssistantPage = withPage(
   'EditAssistantPage.title',
   'EditAssistantPage.description',
-  () => { console.log('edit assistant'); }
+  () => {
+    console.log('edit assistant');
+  }
 )(EditAssistantView);
 
 export { EditAssistantPage, EditAssistantView };

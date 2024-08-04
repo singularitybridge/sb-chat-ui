@@ -2,13 +2,6 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useRootStore } from '../../store/common/RootStoreContext';
-import {
-  LOCALSTORAGE_COMPANY_ID,
-  LOCALSTORAGE_USER_ID,
-  createSession,
-  getSessionById,
-  setLocalStorageItem,
-} from '../../services/api/sessionService';
 import { IUser, User } from '../../store/models/User';
 import { ICompany } from '../../store/models/Company';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
@@ -57,8 +50,8 @@ const OnboardingPage: React.FC = () => {
       
       const { user, company, token } = response.data;
       
-      setLocalStorageItem(LOCALSTORAGE_COMPANY_ID, company._id);
-      setLocalStorageItem(LOCALSTORAGE_USER_ID, user._id);
+      // setLocalStorageItem(LOCALSTORAGE_COMPANY_ID, company._id);
+      // setLocalStorageItem(LOCALSTORAGE_USER_ID, user._id);
       localStorage.setItem('userToken', token);
 
       // Add new user to the rootStore
@@ -68,12 +61,11 @@ const OnboardingPage: React.FC = () => {
       // const mobxUser = User.create(userModelInstance);
       rootStore.setCurrentUser(userModelInstance);
 
-      await rootStore.loadUsers();
-      rootStore.sessionStore.loadSessions();
-      await rootStore.loadCompanies();
+      // await rootStore.loadUsers();
+      // await rootStore.loadCompanies();
 
       // finish onboarding
-      await rootStore.completeOnboarding();
+      // await rootStore.completeOnboarding();
       navigate('/admin/users');
     } catch (error) {
       console.error('Error during signup and company creation:', error);

@@ -1,3 +1,4 @@
+/// file_path: src/store/models/Assistant.ts
 import {
   types,
   Instance,

@@ -1,17 +1,8 @@
-//File: src/components/LoginWithGoogle.tsx
+/// file_path=src/components/LoginWithGoogle.tsx
 import React from 'react';
-import {
-  GoogleLogin,
-} from '@react-oauth/google';
+import { GoogleLogin } from '@react-oauth/google';
 import { useRootStore } from '../store/common/RootStoreContext';
 import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
-import {
-  LOCALSTORAGE_COMPANY_ID,
-  LOCALSTORAGE_USER_ID,
-  getLocalStorageItem,
-  getSessionByCompanyAndUserId,
-} from '../services/api/sessionService';
 
 const LoginWithGoogle: React.FC = () => {
   const rootStore = useRootStore();
@@ -19,40 +10,21 @@ const LoginWithGoogle: React.FC = () => {
 
   const onSuccess = async (res: any) => {
     try {
-      await rootStore.loadUsers();
-      await rootStore.loginSystemUser(res.credential);
-      const current_user = jwtDecode(res.credential);
-
-      if (rootStore.needsOnboarding) {
-        navigate('/onboarding', { state: { current_user } });
-      } else {
-        const companyId = getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) || '';
-        const userId = getLocalStorageItem(LOCALSTORAGE_USER_ID) || '';
-        // set the users session:
-        const sessionData = await getSessionByCompanyAndUserId(
-          companyId,
-          userId
-        );
-        rootStore.sessionStore.setActiveSession(sessionData);
-        await rootStore.loadAssistants();
-
-        rootStore.currentUser?.role === 'Admin'
-          ? navigate('/admin')
-          : navigate('/admin/users');
-      }
+      await rootStore.authStore.authenticate(res.credential);
+      navigate('/admin/assistants'); // Add this line to redirect after successful login
     } catch (error) {
       console.error('Login failed:', error);
     }
   };
 
-  const onError = (error: any) => {
+  const onError = (error?: any) => {
     console.error('Login failed:', error);
   };
 
   return (
     <GoogleLogin
       onSuccess={onSuccess}
-      onError={() => onError}
+      onError={onError}
       type="standard"
       shape="rectangular"
       size="large"

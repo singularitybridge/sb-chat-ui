@@ -172,7 +172,15 @@
   },
   "EditAssistantPage": {
     "title": "עריכת סוכן",
-    "description": "עדכן כאן את הפרטים של הסוכן שלך"
+    "description": "עדכן כאן את הפרטים של הסוכן שלך",
+    "uploadFile" : "העלה קובץ",
+    "uploadedFiles" : "קבצים שהועלו",
+
+    "uploading" : "מעלה...",
+    "dropFile" : "גרור קובץ לכאן",
+    "dragFileHere" : "גרור קובץ לכאן, או לחץ כדי לבחור"
+
+
   },
   "ChatContainer": {
     "input": "הקלד את הודעתך כאן"
@@ -194,6 +202,8 @@
     "actionCreated": "הפעולה נוצרה בהצלחה",
     "actionUpdated": "הפעולה עודכנה בהצלחה",
     "actionDeleted": "הפעולה נמחקה בהצלחה",
+
+    "sessionCleared": "השיחה נוקתה בהצלחה",
 
     "tokenRefreshed": "האסימון רוענן בהצלחה"
   }, 
