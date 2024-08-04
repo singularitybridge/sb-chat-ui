@@ -19,6 +19,7 @@ const AuthManager: React.FC<{ children: React.ReactNode }> = observer(({ childre
     await rootStore.loadCompanies();
     await rootStore.aiAssistedConfigStore.initialize();
     await rootStore.sessionStore.fetchActiveSession();
+    await rootStore.loadInboxMessages();
     await rootStore.setInitialDataLoaded();
     setLoading(false);
   }

@@ -1,4 +1,5 @@
-import React  from 'react';
+/// file_path /src/pages/admin/inbox/SessionInfo.tsx
+import React from 'react';
 import { IInboxSession } from '../../../store/models/Inbox';
 import moment from 'moment';
 
@@ -23,16 +24,16 @@ export const SessionInfo: React.FC<SessionInfoProps> = ({
     >
       <div className="flex justify-between items-center">
         <h3 className="font-semibold text-sm">
-          {session.messages[session.messages.length - 1].userName}
+          {session.userName}
         </h3>
         <p className="text-xs text-gray-500">
-          {moment(
-            session.messages[session.messages.length - 1].createdAt
-          ).fromNow()}
+          {moment(session.lastMessageAt).fromNow()}
         </p>
       </div>
       <div className="text-sm text-gray-500">
-        {session.messages[session.messages.length - 1].message}
+        {session.messages.length > 0
+          ? session.messages[session.messages.length - 1].message
+          : 'No messages'}
       </div>
     </li>
   );

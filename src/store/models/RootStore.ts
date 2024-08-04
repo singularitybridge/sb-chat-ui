@@ -30,8 +30,8 @@ import {
   getAllUsers,
 } from '../../services/api/userService';
 import { SessionStore } from './SessionStore';
-import { getInboxMessages } from '../../services/api/inboxService';
-import { InboxSession } from './Inbox';
+import { addInboxMessage, addInboxResponse, getInboxMessages } from '../../services/api/inboxService';
+import { IInboxSession, InboxSession } from './Inbox';
 import { Action, IAction } from './Action';
 import {
   addAction,
@@ -139,15 +139,49 @@ const RootStore = types
 
     loadInboxMessages: flow(function* () {
       try {
-        const inboxMessages = yield getInboxMessages(
-          self.sessionStore.activeSession?._id || ''
-        );
+        const inboxMessages: IInboxSession[] = yield getInboxMessages();
         applySnapshot(self.inboxSessions, inboxMessages);
         self.inboxSessionsLoaded = true;
       } catch (error) {
         console.error('Failed to load inboxMessages', error);
       }
     }),
+
+    addInboxMessage: flow(function* (sessionId: string, message: string) {
+      try {
+        const updatedSession: IInboxSession = yield addInboxMessage(sessionId, message);
+        const sessionIndex = self.inboxSessions.findIndex(
+          (session) => session.sessionId === sessionId
+        );
+        if (sessionIndex !== -1) {
+          applySnapshot(self.inboxSessions[sessionIndex], updatedSession);
+        } else {
+          self.inboxSessions.push(updatedSession);
+        }
+        emitter.emit(EVENT_SHOW_NOTIFICATION, i18n.t('Notifications.messageSent'));
+      } catch (error) {
+        console.error('Failed to add inbox message', error);
+        emitter.emit(EVENT_ERROR, 'Failed to send message: ' + (error as Error).message);
+      }
+    }),
+
+    addInboxResponse: flow(function* (sessionId: string, message: string, inboxMessageId: string) {
+      try {
+        const updatedSession: IInboxSession = yield addInboxResponse(sessionId, message, inboxMessageId);
+        const sessionIndex = self.inboxSessions.findIndex(
+          (session) => session.sessionId === sessionId
+        );
+        if (sessionIndex !== -1) {
+          applySnapshot(self.inboxSessions[sessionIndex], updatedSession);
+        }
+        emitter.emit(EVENT_SHOW_NOTIFICATION, i18n.t('Notifications.responseAdded'));
+      } catch (error) {
+        console.error('Failed to add inbox response', error);
+        emitter.emit(EVENT_ERROR, 'Failed to add response: ' + (error as Error).message);
+      }
+    }),
+
+
 
     loadAssistants: flow(function* () {
       try {

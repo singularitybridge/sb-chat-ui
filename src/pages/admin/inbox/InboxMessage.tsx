@@ -1,5 +1,10 @@
+/// file_path /src/pages/admin/inbox/InboxMessage.tsx
 import React from 'react';
-import { ChatBubbleLeftIcon, UserIcon, BellIcon } from '@heroicons/react/24/outline';
+import {
+  ChatBubbleLeftIcon,
+  UserIcon,
+  BellIcon,
+} from '@heroicons/react/24/outline';
 import { IMessage } from '../../../store/models/Inbox';
 import moment from 'moment';
 
@@ -47,7 +52,9 @@ const InboxMessage: React.FC<InboxMessageProps> = ({ message }) => {
       </span>
       <div>
         <p className="font-bold text-gray-800">
-          {message.type === 'human_agent_response' ? 'Support Reviewer' : (message.assistantName || 'Unknown')}
+          {message.type === 'human_agent_response'
+            ? 'Support Reviewer'
+            : message.assistantName || 'AI Assistant'}
         </p>
         <p className="leading-relaxed">{message.message}</p>
         <p className="text-xs text-gray-500">
