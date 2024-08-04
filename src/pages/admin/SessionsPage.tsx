@@ -17,19 +17,16 @@ const SessionsView: React.FC = observer(() => {
   const navigate = useNavigate();
 
   const headers: SessionKeys[] = [
-    'companyName',
-    'userName',
-    'assistantName',
-    'threadId',
-    'active',
+    '_id',
+    'assistantId',
   ];
 
   const handleDelete = (row: ISession) => {
-    rootStore.sessionStore.deleteSession(row._id);
+    // rootStore.sessionStore.deleteSession(row._id);
   };
 
   const handleSetActiveSession = (row: ISession) => {
-    rootStore.sessionStore.setActiveSessionById(row._id);
+    rootStore.sessionStore.changeAssistant(row._id);
     emitter.emit(EVENT_SHOW_NOTIFICATION, 'Session set successfully');
   };
 

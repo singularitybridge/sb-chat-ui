@@ -1,11 +1,6 @@
 /// file_path= src/pages/SignupPage.tsx
 import React, { useState } from 'react';
 import LoginWithGoogle from '../components/LoginWithGoogle';
-import { useRootStore } from '../store/common/RootStoreContext';
-import {
-  LOCALSTORAGE_SYSTEM_USER_ID,
-  getLocalStorageItem,
-} from '../services/api/sessionService';
 import BetaKeyAuth from '../components/admin/BetaKeyAuth';
 import { TextComponent } from '../components/sb-core-ui-kit/TextComponent';
 

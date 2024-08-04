@@ -130,6 +130,7 @@ const ChatKitTestPage = () => {
               messages={messages}
               onToggleAudio={() => console.log('Toggled audio')}
               audioState='disabled'
+              isLoading={false}
               assistant={mockAssistant}
               assistantName="AI Assistant"
               onSendMessage={handleSendMessage}
@@ -142,6 +143,7 @@ const ChatKitTestPage = () => {
             <SBChatKitUI
               messages={messagesHebrew}
               onToggleAudio={() => console.log('Toggled audio')}
+              isLoading={false}
               audioState='disabled'
               assistant={mockAssistantHebrew}
               assistantName="סוכן AI"
@@ -188,6 +190,7 @@ const ChatKitTestPage = () => {
           <SBChatKitUI
             messages={wideMessages}
             onToggleAudio={() => console.log('Toggled audio')}
+            isLoading={false}
             audioState='disabled'
             assistant={{
               name: 'Wide Mode AI',
