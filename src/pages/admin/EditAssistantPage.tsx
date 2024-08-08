@@ -66,6 +66,9 @@ const EditAssistantView: React.FC = observer(() => {
   }
 
   const formFields: FieldConfig[] = assistantFieldConfigs.map((field) => {
+    if (field.key === 'voice') {
+      field.value = assistant ? toJS(assistant.voice) : '';
+    }
     const fieldKeyString = String(field.key);
     const value = assistant ? toJS((assistant as any)[fieldKeyString]) : '';
 

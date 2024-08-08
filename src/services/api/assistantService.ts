@@ -85,7 +85,7 @@ export async function addAssistant(assistant: IAssistant): Promise<IAssistant> {
   }
 }
 
-export async function updateAssistant(id: string, assistant: IAssistant): Promise<IAssistant> {
+export async function updateAssistant(id: string, assistant: IAssistant & { voice?: string }): Promise<IAssistant> {
   try {
     const response = await apiClient.put(`assistant/${id}`, assistant);
     return response.data;
