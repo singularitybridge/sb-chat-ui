@@ -23,7 +23,7 @@ interface RequestBody {
 const generateAudioFromText = (
   text: string,
   languageCode: string,
-  voiceName: string,
+  voice: string,
 ): Promise<ArrayBuffer> => {
   const trimmedText = text.substring(0, 80);
 
