@@ -30,7 +30,7 @@ const generateAudioFromText = (
   const requestBody: RequestBody = {
     // input: { text },
     input: { text: trimmedText },
-    voice: { languageCode, name: voiceName },
+    voice: { languageCode, name: voice },
     audioConfig: { audioEncoding: 'MP3' },
   };
 

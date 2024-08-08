@@ -106,7 +106,7 @@ const ChatContainer = observer(() => {
 
         if (audioState === 'enabled') {
           try {
-            const audioUrl = await textToSpeech(cleanedResponse, 'shimmer');
+            const audioUrl = await textToSpeech(cleanedResponse, assistant.voice);
             if (audioRef.current) {
               audioRef.current.src = audioUrl;
               console.log('Playing audio response:', audioUrl);
