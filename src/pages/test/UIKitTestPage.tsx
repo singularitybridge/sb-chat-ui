@@ -209,8 +209,7 @@ const UIKitTestPage = () => {
             /> */}
 
             <AIAssistedTextareaContainer
-              id="customer-name"
-              language="he"
+              id="customer-name"             
               value={aiAssistedText}
               onChange={setAiAssistedText}
               placeholder="Enter your text here..."
@@ -218,8 +217,7 @@ const UIKitTestPage = () => {
               systemPrompt="customer name is used to identify the customer in the system, a good customer name is descriptive and unique"
             />
             <AIAssistedTextareaContainer
-              id="task-name"
-              language="he"
+              id="task-name"              
               value={aiAssistedText2}
               onChange={setAiAssistedText2}
               placeholder="Enter your text here..."
@@ -227,8 +225,7 @@ const UIKitTestPage = () => {
               systemPrompt="task name is used to identify the task in the system, a good task name is descriptive and unique"
             />
             <AIAssistedTextareaContainer
-              id="project-name"
-              language="he"
+              id="project-name"              
               value={textValue}
               onChange={setTextValue}
               placeholder="Enter your text here..."

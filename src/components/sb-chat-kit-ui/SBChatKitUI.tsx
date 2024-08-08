@@ -42,7 +42,6 @@ interface SBChatKitUIProps {
   style?: React.CSSProperties;
   onToggleAudio: () => void;
   audioState: AudioState;
-  language?: string;
   isLoading: boolean;
 }
 
@@ -55,8 +54,7 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
   onToggleAudio,
   audioState,
   className = '',
-  style = {},
-  language = 'en',
+  style = {},  
   isLoading,
 }) => {
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
@@ -148,7 +146,7 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
           </div>
         </>
       )}
-      <ChatInput onSendMessage={onSendMessage} language={language} />
+      <ChatInput onSendMessage={onSendMessage} />
     </div>
   );
 };
