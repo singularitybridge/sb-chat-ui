@@ -13,7 +13,7 @@ import {
 import { emitter, useEventEmitter } from '../../services/mittEmitter';
 import { IAssistant } from '../../store/models/Assistant';
 import { SBChatKitUI } from '../sb-chat-kit-ui/SBChatKitUI';
-import { textToSpeech } from '../../services/api/voiceService';
+import { textToSpeech, TTSVoice } from '../../services/api/voiceService';
 import i18n from '../../i18n';
 import { leapfrog } from 'ldrs';
 
@@ -106,7 +106,7 @@ const ChatContainer = observer(() => {
 
         if (audioState === 'enabled') {
           try {
-            const audioUrl = await textToSpeech(cleanedResponse, assistant.voice);
+            const audioUrl = await textToSpeech(cleanedResponse, assistant.voice as TTSVoice)
             if (audioRef.current) {
               audioRef.current.src = audioUrl;
               console.log('Playing audio response:', audioUrl);
@@ -181,7 +181,15 @@ const ChatContainer = observer(() => {
     <div className="h-full w-full bg-white rounded-lg">
       <SBChatKitUI
         messages={messages}
-        assistant={assistant}
+        assistant={
+          assistant
+            ? {
+                name: assistant.name,
+                description: assistant.description,
+                avatar: '/assets/avatars/avatar-_0020_9.png',
+              }
+            : undefined
+        }
         assistantName="AI Assistant"
         onSendMessage={handleSubmitMessage}
         onClear={handleClear}
