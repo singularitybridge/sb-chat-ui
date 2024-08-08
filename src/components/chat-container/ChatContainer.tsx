@@ -181,15 +181,7 @@ const ChatContainer = observer(() => {
     <div className="h-full w-full bg-white rounded-lg">
       <SBChatKitUI
         messages={messages}
-        assistant={
-          assistant
-            ? {
-                name: assistant.name,
-                description: assistant.description,
-                avatar: '/assets/avatars/avatar-_0020_9.png',
-              }
-            : undefined
-        }
+        assistant={assistant}
         assistantName="AI Assistant"
         onSendMessage={handleSubmitMessage}
         onClear={handleClear}
