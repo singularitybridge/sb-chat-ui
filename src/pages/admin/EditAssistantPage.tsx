@@ -23,6 +23,7 @@ import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
 import { FileText, TrashIcon } from 'lucide-react';
 import { IconButton } from '../../components/admin/IconButton';
 import { useTranslation } from 'react-i18next';
+import AvatarSelector from '../../components/AvatarSelector';
 
 interface UploadedFile {
   fileId: string;
@@ -39,12 +40,28 @@ const EditAssistantView: React.FC = observer(() => {
   const [isLoading, setIsLoading] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [selectedAvatarId, setSelectedAvatarId] = useState<string | null>(null);
 
   useEffect(() => {
     if (key) {
       fetchAssistantFiles();
     }
-  }, [key]);
+    if (assistant && assistant.avatarImage) {
+      setSelectedAvatarId(assistant.avatarImage);
+    }
+  }, [key, assistant]);
+
+  const avatars = [
+    { id: 'avatar1', name: 'Avatar 1', imageUrl: '/avatars/avatar1.png' },
+    { id: 'avatar2', name: 'Avatar 2', imageUrl: '/avatars/avatar2.png' },
+    { id: 'avatar3', name: 'Avatar 3', imageUrl: '/avatars/avatar3.png' },
+    { id: 'avatar4', name: 'Avatar 4', imageUrl: '/avatars/avatar4.png' },
+    { id: 'avatar5', name: 'Avatar 5', imageUrl: '/avatars/avatar5.png' },
+    { id: 'avatar6', name: 'Avatar 6', imageUrl: '/avatars/avatar6.png' },
+    { id: 'avatar7', name: 'Avatar 7', imageUrl: '/avatars/avatar7.png' },
+    { id: 'avatar8', name: 'Avatar 8', imageUrl: '/avatars/avatar8.png' },
+    { id: 'avatar9', name: 'Avatar 9', imageUrl: '/avatars/avatar9.png' },
+  ];
 
   const fetchAssistantFiles = async () => {
     if (key) {
@@ -92,7 +109,11 @@ const EditAssistantView: React.FC = observer(() => {
       return;
     }
     setIsLoading(true);
-    await rootStore.updateAssistant(key, values as unknown as IAssistant);
+    const updatedValues = {
+      ...values,
+      avatarImage: selectedAvatarId,
+    };
+    await rootStore.updateAssistant(key, updatedValues as unknown as IAssistant);
     setIsLoading(false);
   };
 
@@ -139,6 +160,13 @@ const EditAssistantView: React.FC = observer(() => {
             isLoading={isLoading}
             formType="update"
           />
+          <div className="mt-4">
+            <AvatarSelector
+              avatars={avatars}
+              selectedAvatarId={selectedAvatarId}
+              onSelectAvatar={setSelectedAvatarId}
+            />
+          </div>
         </div>
         <div className="w-1/2">
           <TextComponent text={t('EditAssistantPage.uploadFile')} size="normal" className="mb-2" />

@@ -35,7 +35,11 @@ const CustomNode: React.FC<CustomNodeProps> = ({
     >
       <div className="flex">
         <div className="w-32 h-32 flex justify-center items-center bg-gray-100">
-          <img src={data.avatarImage} alt="" />
+          <img 
+            src={data.avatarImage || '/avatars/default-avatar.png'} 
+            alt={data.name} 
+            className="w-full h-full object-cover"
+          />
         </div>
         <div className="ml-4">
           <div className="text-lg font-bold">{data.name}</div>

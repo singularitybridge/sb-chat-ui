@@ -23,6 +23,7 @@ const Assistant = types.model('Assistant', {
   language: types.string,  
   llmModel: types.optional(types.string, ''),
   llmPrompt: types.optional(types.string, ''),
+  avatarImage: types.optional(types.string, ''),
 });
 
 type IAssistant = Instance<typeof Assistant>;
