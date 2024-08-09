@@ -167,7 +167,8 @@
     "uploadedFiles" : "Uploaded Files",
     "uploading" : "Uploading...",
     "dropFile" : "Drop file here",
-    "dragFileHere" : "Drag file here, or click to upload"
+    "dragFileHere" : "Drag file here, or click to upload",
+    "selectAvatar": "Select Avatar"
   },
   "ChatContainer": {
     "input": "Type your message"

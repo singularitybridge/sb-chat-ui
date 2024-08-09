@@ -50,8 +50,7 @@ const AvatarSelector: React.FC<AvatarSelectorProps> = ({
 }) => {
   return (
     <div>
-      <TextComponent text="Select an avatar" size="medium" className="mb-2" />
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-5 gap-3">
         {avatars.map((avatar) => (
           <div
             key={avatar.id}
