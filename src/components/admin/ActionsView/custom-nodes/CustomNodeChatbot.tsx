@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
-import ReactFlow, { Handle, Position } from 'reactflow';
-import { CalculatorIcon, KeyIcon } from '@heroicons/react/24/outline';
-import { LabelText } from '../../../chat/LabelText';
+import React, { useEffect } from 'react';
+import { Handle, Position } from 'react-flow-renderer';
+import { LabelText } from '../../../sb-core-ui-kit/LabelText';
+import { CalculatorIcon, KeyIcon } from 'lucide-react';
+import { TextComponent } from '../../../sb-core-ui-kit/TextComponent';
 
 type CustomNodeData = {
   name: string;
@@ -34,16 +35,16 @@ const CustomNode: React.FC<CustomNodeProps> = ({
       }`}
     >
       <div className="flex">
-        <div className="w-32 h-32 flex justify-center items-center bg-gray-100">
+        <div className="w-32 h-32 flex justify-center items-center bg-gray-100 rounded-md">
           <img 
             src={data.avatarImage || '/avatars/default-avatar.png'} 
             alt={data.name} 
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover rounded-md"
           />
         </div>
         <div className="ml-4">
-          <div className="text-lg font-bold">{data.name}</div>
-          <div className="text-gray-500">{data.description}</div>
+          <TextComponent text={data.name} size="large" weight="bold" />
+          <TextComponent text={data.description} size="small" color="secondary" />
 
           <div className="flex items-center pt-5">
             <LabelText

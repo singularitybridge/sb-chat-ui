@@ -20,7 +20,7 @@ import {
 } from '../../services/api/fileService';
 import FileUpload from '../../components/sb-core-ui-kit/FileUpload';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
-import { FileText, TrashIcon } from 'lucide-react';
+import { FileText, Trash2 as TrashIcon } from 'lucide-react';
 import { IconButton } from '../../components/admin/IconButton';
 import { useTranslation } from 'react-i18next';
 import AvatarSelector from '../../components/AvatarSelector';

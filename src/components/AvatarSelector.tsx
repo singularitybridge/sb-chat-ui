@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextComponent } from '../sb-core-ui-kit/TextComponent';
+import { TextComponent } from '../../sb-core-ui-kit/TextComponent';
 
 interface Avatar {
   id: string;
