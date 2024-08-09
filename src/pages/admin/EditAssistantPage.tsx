@@ -75,11 +75,11 @@ const EditAssistantView: React.FC = observer(() => {
   };
 
   if (rootStore.assistantsLoaded === false) {
-    return <div>Loading...</div>;
+    return <TextComponent text="Loading..." size="medium" />;
   }
 
   if (!assistant) {
-    return <div>Assistant not found</div>;
+    return <TextComponent text="Assistant not found" size="medium" />;
   }
 
   const formFields: FieldConfig[] = assistantFieldConfigs.map((field) => {
@@ -150,65 +150,63 @@ const EditAssistantView: React.FC = observer(() => {
   };
 
   return (
-    <>
-      <div className="flex w-full space-x-2 rtl:space-x-reverse">
-        <div className="w-1/2">
-          <DynamicForm
-            formContext="assistantFieldConfigs"
-            fields={formFields}
-            onSubmit={handleSubmit}
-            isLoading={isLoading}
-            formType="update"
+    <div className="flex w-full space-x-2 rtl:space-x-reverse">
+      <div className="w-1/2">
+        <DynamicForm
+          formContext="assistantFieldConfigs"
+          fields={formFields}
+          onSubmit={handleSubmit}
+          isLoading={isLoading}
+          formType="update"
+        />
+        <div className="mt-4">
+          <AvatarSelector
+            avatars={avatars}
+            selectedAvatarId={selectedAvatarId}
+            onSelectAvatar={setSelectedAvatarId}
           />
-          <div className="mt-4">
-            <AvatarSelector
-              avatars={avatars}
-              selectedAvatarId={selectedAvatarId}
-              onSelectAvatar={setSelectedAvatarId}
-            />
-          </div>
-        </div>
-        <div className="w-1/2">
-          <TextComponent text={t('EditAssistantPage.uploadFile')} size="normal" className="mb-2" />
-          <FileUpload
-            onFileUpload={handleFileUpload}
-            isUploading={isUploading}
-          />
-          {uploadedFiles.length > 0 && (
-            <div className="mt-4">
-              <TextComponent
-                text={t('EditAssistantPage.uploadedFiles')}
-                size="medium"
-                className="mb-2"
-              />
-              <ul>
-                {uploadedFiles.map((file) => (
-                  <li
-                    key={file.fileId}
-                    className="flex justify-between items-center text-sm text-gray-600 mb-2"
-                  >
-                    <div className="flex gap-2">
-                      <FileText size={16} className=" text-slate-500 mt-1" />
-                      <TextComponent
-                        text={file.filename}
-                        size="small"
-                        color="secondary"
-                      />
-                    </div>
-
-                    <IconButton
-                      icon={<TrashIcon size={16} />}
-                      onClick={() => handleFileDelete(file.fileId)}
-                      className=" text-gray-400 hover:text-red-400 transition duration-100"
-                    />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
         </div>
       </div>
-    </>
+      <div className="w-1/2">
+        <TextComponent text={t('EditAssistantPage.uploadFile')} size="normal" className="mb-2" />
+        <FileUpload
+          onFileUpload={handleFileUpload}
+          isUploading={isUploading}
+        />
+        {uploadedFiles.length > 0 && (
+          <div className="mt-4">
+            <TextComponent
+              text={t('EditAssistantPage.uploadedFiles')}
+              size="medium"
+              className="mb-2"
+            />
+            <ul>
+              {uploadedFiles.map((file) => (
+                <li
+                  key={file.fileId}
+                  className="flex justify-between items-center text-sm text-gray-600 mb-2"
+                >
+                  <div className="flex gap-2">
+                    <FileText size={16} className="text-slate-500 mt-1" />
+                    <TextComponent
+                      text={file.filename}
+                      size="small"
+                      color="secondary"
+                    />
+                  </div>
+
+                  <IconButton
+                    icon={<TrashIcon size={16} />}
+                    onClick={() => handleFileDelete(file.fileId)}
+                    className="text-gray-400 hover:text-red-400 transition duration-100"
+                  />
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    </div>
   );
 });
 
@@ -216,7 +214,7 @@ const EditAssistantPage = withPage(
   'EditAssistantPage.title',
   'EditAssistantPage.description',
   () => {
-    console.log('edit assistant');
+    // Removed console.log statement
   }
 )(EditAssistantView);
 

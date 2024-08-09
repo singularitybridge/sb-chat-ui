@@ -48,7 +48,7 @@ const CustomNode: React.FC<CustomNodeProps> = ({
           <div className="flex items-center pt-5">
             <LabelText
               label={<CalculatorIcon className="h-5 w-5 text-slate-400" />}
-              text={data.maxTokens}
+              text={data.maxTokens.toString()}
             />
             <div className="mr-4"></div>
             <LabelText
