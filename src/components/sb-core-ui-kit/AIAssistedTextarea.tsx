@@ -1,4 +1,11 @@
-import React, { useState, useEffect, useCallback, useRef, forwardRef, ForwardRefRenderFunction } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  forwardRef,
+  ForwardRefRenderFunction,
+} from 'react';
 import { Textarea } from './Textarea';
 import { Loader, Sparkles } from 'lucide-react';
 import clsx from 'clsx';
@@ -17,23 +24,27 @@ interface AIAssistedTextareaProps {
   isLoading?: boolean;
   aiPrompt: string;
   onAIPromptChange: (value: string) => void;
-  language?: string;
 }
 
-const AIAssistedTextareaBase: ForwardRefRenderFunction<HTMLTextAreaElement, AIAssistedTextareaProps> = ({
-  id,
-  value,
-  onChange,
-  placeholder,
-  className,
-  error,
-  label,
-  onAIAssist,
-  isLoading = false,
-  aiPrompt,
-  onAIPromptChange,
-  language = 'en',
-}, ref) => {
+const AIAssistedTextareaBase: ForwardRefRenderFunction<
+  HTMLTextAreaElement,
+  AIAssistedTextareaProps
+> = (
+  {
+    id,
+    value,
+    onChange,
+    placeholder,
+    className,
+    error,
+    label,
+    onAIAssist,
+    isLoading = false,
+    aiPrompt,
+    onAIPromptChange,
+  },
+  ref
+) => {
   const [isAIMode, setIsAIMode] = useState(false);
   const aiTextareaRef = useRef<HTMLTextAreaElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -123,7 +134,6 @@ const AIAssistedTextareaBase: ForwardRefRenderFunction<HTMLTextAreaElement, AIAs
             <div className="flex items-end space-x-1 rtl:space-x-reverse m-2 justify-end rtl:justify-start">
               <AudioRecorder
                 onTranscriptionComplete={handleTranscriptionComplete}
-                language={language}
               />
               <button
                 onClick={handleAIAssist}
@@ -145,6 +155,9 @@ const AIAssistedTextareaBase: ForwardRefRenderFunction<HTMLTextAreaElement, AIAs
   );
 };
 
-export const AIAssistedTextarea = forwardRef<HTMLTextAreaElement, AIAssistedTextareaProps>(AIAssistedTextareaBase);
+export const AIAssistedTextarea = forwardRef<
+  HTMLTextAreaElement,
+  AIAssistedTextareaProps
+>(AIAssistedTextareaBase);
 
 AIAssistedTextarea.displayName = 'AIAssistedTextarea';

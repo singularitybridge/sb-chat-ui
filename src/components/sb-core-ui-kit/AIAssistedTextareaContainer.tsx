@@ -10,8 +10,7 @@ interface AIAssistedTextareaContainerProps {
   className?: string;
   error?: string;
   label: string;
-  systemPrompt: string;
-  language?: string;
+  systemPrompt: string;  
 }
 
 const AIAssistedTextareaContainer: React.FC<AIAssistedTextareaContainerProps> = ({
@@ -22,8 +21,7 @@ const AIAssistedTextareaContainer: React.FC<AIAssistedTextareaContainerProps> = 
   className,
   error,
   label,
-  systemPrompt,
-  language = 'en',
+  systemPrompt,  
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [aiPrompt, setAiPrompt] = useState('');
@@ -82,7 +80,6 @@ const AIAssistedTextareaContainer: React.FC<AIAssistedTextareaContainerProps> = 
       isLoading={isLoading}
       aiPrompt={aiPrompt}
       onAIPromptChange={setAiPrompt}
-      language={language}
     />
   );
 };

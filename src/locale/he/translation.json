@@ -175,12 +175,10 @@
     "description": "עדכן כאן את הפרטים של הסוכן שלך",
     "uploadFile" : "העלה קובץ",
     "uploadedFiles" : "קבצים שהועלו",
-
     "uploading" : "מעלה...",
     "dropFile" : "גרור קובץ לכאן",
-    "dragFileHere" : "גרור קובץ לכאן, או לחץ כדי לבחור"
-
-
+    "dragFileHere" : "גרור קובץ לכאן, או לחץ כדי לבחור",
+    "selectAvatar": "בחר אווטאר"
   },
   "ChatContainer": {
     "input": "הקלד את הודעתך כאן"

@@ -1,3 +1,5 @@
+/// file_path: src/components/LanguageToggle.tsx
+
 import React from 'react';
 import { observer } from 'mobx-react';
 import { useRootStore } from '../store/common/RootStoreContext';

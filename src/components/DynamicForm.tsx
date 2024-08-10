@@ -158,8 +158,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                 id={field.id}
                 value={values[field.id] as string}
                 onChange={(newValue) => handleChange(field.id, newValue)}
-                systemPrompt={aiConfig.systemPrompt}
-                language={'he'} // Assuming you have a language property in your field config
+                systemPrompt={aiConfig.systemPrompt}                
               />
             ) : (
               <TextareaWithLabel
