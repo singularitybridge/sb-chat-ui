@@ -31,16 +31,12 @@ export const Menu = observer(() => {
 
   return (
     <nav
-      className="flex-no-wrap relative flex w-full items-center justify-between bg-gray-50 py-3"
+      className="flex-no-wrap relative flex w-full items-center justify-between bg-gray-50 py-3 px-8"
       data-te-navbar-ref
     >
-      <div className="flex w-full flex-wrap items-center justify-between px-3">
-        <div
-          className="!visible hidden flex-grow basis-[100%] items-center lg:!flex lg:basis-auto"
-          id="navbarSupportedContent1"
-          data-te-collapse-item
-        >
-          <Link to="/admin" className="px-8">
+      <div className="flex w-full flex-wrap items-center justify-between">
+        <div className="flex items-center rtl:space-x-reverse space-x-8">
+          <Link to="/admin" >
             <TextComponent
               size="subtitle"
               color="normal"
@@ -49,7 +45,7 @@ export const Menu = observer(() => {
           </Link>
 
           <ul
-            className="list-style-none flex flex-col lg:flex-row"
+            className="list-style-none flex flex-row"
             data-te-navbar-nav-ref
           >
             {menuItems.map((item) => {
@@ -76,7 +72,7 @@ export const Menu = observer(() => {
           </ul>
         </div>
 
-        <div className="space-x-1.5 flex space-x-reverse">
+        <div className="flex items-center space-x-4 rtl:space-x-reverse">
           <SessionView />
           <LanguageToggle />
           <LogoutButton />
