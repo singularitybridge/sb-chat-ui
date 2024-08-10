@@ -1,6 +1,6 @@
 export enum AvatarStyles {
   logo = 'w-14 h-14 m-0',
-  avatar = 'w-12 h-12 m-0',
+  avatar = 'w-14 h-14 m-0',
   large = 'w-28 h-28 m-0',
 }
 
@@ -15,7 +15,7 @@ const Avatar = ({
   avatarStyle: AvatarStyles;
   active?: boolean;
 }) => {
-  const bgColor = active ? 'bg-indigo-300' : 'bg-indigo-100';
+  const bgColor = active ? 'bg-blue-200' : 'bg-gray-100';
   
   return (
     <div className={`${avatarStyle} rounded-full ${bgColor} flex items-center justify-center`}>

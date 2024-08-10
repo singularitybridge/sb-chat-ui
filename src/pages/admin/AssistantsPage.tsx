@@ -52,7 +52,7 @@ const AssistantsPage: React.FC = observer(() => {
           />
         </div>
 
-        <ul className="space-y-2 flex-grow">
+        <ul className="space-y-4 flex-grow">
           {rootStore.assistants.map((assistant) => {
             const isActive =
               rootStore.sessionStore.activeSession?.assistantId ===
@@ -68,17 +68,18 @@ const AssistantsPage: React.FC = observer(() => {
                 onMouseLeave={() => setHoveredAssistantId(null)}
               >
                 <div className="flex items-start space-x-3 rtl:space-x-reverse">
-                  <Avatar
-                    imageUrl={`/assets/avatars/${assistant.avatarImage}.png`}
-                    avatarStyle={AvatarStyles.avatar}
-                    active={isActive}
-                  />
-
-                  <div className="flex-grow">
-                    <h4 className="font-bold text-sm truncate h-5">
+                  <div className="flex-shrink-0">
+                    <Avatar
+                      imageUrl={`/assets/avatars/${assistant.avatarImage}.png`}
+                      avatarStyle={AvatarStyles.avatar}
+                      active={isActive}
+                    />
+                  </div>
+                  <div className="flex-grow min-w-0">
+                    <h4 className="font-bold text-sm truncate">
                       {assistant.name}
                     </h4>
-                    <p className="text-sm text-gray-600 mt-1 line-clamp-1 h-10">
+                    <p className="text-sm text-gray-600 mt-0.5 line-clamp-2">
                       {assistant.description}
                     </p>
                   </div>

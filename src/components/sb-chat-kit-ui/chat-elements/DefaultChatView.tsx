@@ -14,15 +14,20 @@ interface DefaultChatViewProps {
 const DefaultChatView: React.FC<DefaultChatViewProps> = ({ assistant }) => {
   return (
     <div className="flex flex-col items-center justify-center h-full text-center">
+
       <Avatar
         avatarStyle={AvatarStyles.large}
         imageUrl={`/assets/avatars/${assistant.avatar}.png`}
-        className="w-24 h-24 bg-indigo-100 mb-3"
+        active={true}
       />
 
-      <div className="flex flex-col mb-6 max-w-lg space-y-3">
+      <div className="flex flex-col my-8 max-w-lg space-y-1">
         <TextComponent text={assistant.name} size="title" />
-        <TextComponent text={assistant.description} size="medium" color="secondary" />
+        <TextComponent
+          text={assistant.description}
+          size="medium"
+          color="secondary"
+        />
       </div>
 
       <div className="flex flex-row space-x-4 rtl:space-x-reverse">
