@@ -9,6 +9,7 @@ import { ActionMessage } from './chat-elements/ActionMessage';
 import { ChatInput } from './chat-elements/ChatInput';
 import { DefaultChatView } from './chat-elements/DefaultChatView';
 import { dotWave, leapfrog } from 'ldrs';
+import { Avatar, AvatarStyles } from '../Avatar';
 
 interface Metadata {
   message_type: string;

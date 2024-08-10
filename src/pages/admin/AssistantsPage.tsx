@@ -14,6 +14,7 @@ import {
 import { ChatContainer } from '../../components/chat-container/ChatContainer';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
 import { useNavigate } from 'react-router-dom';
+import { Avatar, AvatarStyles } from '../../components/Avatar';
 
 const AssistantsPage: React.FC = observer(() => {
   const rootStore = useRootStore();
@@ -53,7 +54,9 @@ const AssistantsPage: React.FC = observer(() => {
 
         <ul className="space-y-2 flex-grow">
           {rootStore.assistants.map((assistant) => {
-            const isActive = rootStore.sessionStore.activeSession?.assistantId === assistant._id;
+            const isActive =
+              rootStore.sessionStore.activeSession?.assistantId ===
+              assistant._id;
             return (
               <li
                 key={assistant._id}
@@ -65,22 +68,17 @@ const AssistantsPage: React.FC = observer(() => {
                 onMouseLeave={() => setHoveredAssistantId(null)}
               >
                 <div className="flex items-start space-x-3 rtl:space-x-reverse">
-                  <div className={`w-12 h-12 rounded-full flex-shrink-0 overflow-hidden ${
-                    isActive ? 'bg-blue-400' : 'bg-blue-200'
-                  }`}>
-                    <img
-                      src={'/assets/avatars/avatar-_0020_9.png'}
-                      alt={`${assistant.name} avatar`}
-                      className={`w-full h-full object-cover ${
-                        isActive ? 'opacity-75' : ''
-                      }`}
-                    />
-                  </div>
-                  <div className="flex-grow overflow-hidden">
+                  <Avatar
+                    imageUrl={`/assets/avatars/${assistant.avatarImage}.png`}
+                    avatarStyle={AvatarStyles.avatar}
+                    active={isActive}
+                  />
+
+                  <div className="flex-grow">
                     <h4 className="font-bold text-sm truncate h-5">
                       {assistant.name}
                     </h4>
-                    <p className="text-sm text-gray-600 mt-1 line-clamp-2 h-10 overflow-hidden">
+                    <p className="text-sm text-gray-600 mt-1 line-clamp-1 h-10">
                       {assistant.description}
                     </p>
                   </div>
@@ -116,6 +114,5 @@ const AssistantsPage: React.FC = observer(() => {
     </div>
   );
 });
-
 
 export { AssistantsPage };
