@@ -20,7 +20,7 @@ const NewAssistantView: React.FC = observer(() => {
   const rootStore = useRootStore();
   const [isLoading, setIsLoading] = useState(false);
   const [formFields, setFormFields] = useState<FieldConfig[]>([]);
-  const [selectedAvatarId, setSelectedAvatarId] = useState<string | null>(null);
+  const [selectedAvatarId, setSelectedAvatarId] = useState<string | null>('avatar2');
 
   const handleUpdateFormFields = (data: {
     name: string;
@@ -59,6 +59,7 @@ const NewAssistantView: React.FC = observer(() => {
     });
 
     setFormFields(initialFormFields);
+    setSelectedAvatarId('avatar-_0000_29'); // Ensure the second avatar is selected even if fields are reset
   }, []); // Empty dependency array ensures this runs only once
 
   const handleSubmit = async (values: FormValues) => {
@@ -74,7 +75,7 @@ const NewAssistantView: React.FC = observer(() => {
   return (
     <div className="w-full">
       <div className="mb-6">
-        <TextComponent text={t('EditAssistantPage.selectAvatar')} size="medium" className="mb-2" />
+        <TextComponent text={t('EditAssistantPage.selectAvatar')} size="normal" className="mb-4" />
         <AvatarSelector
           selectedAvatarId={selectedAvatarId}
           onSelectAvatar={setSelectedAvatarId}

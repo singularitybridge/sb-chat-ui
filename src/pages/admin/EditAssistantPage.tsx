@@ -150,14 +150,14 @@ const EditAssistantView: React.FC = observer(() => {
       </div>
       <div className="w-1/2">
         <div className="mb-6">
-          <TextComponent text={t('EditAssistantPage.selectAvatar')} size="medium" className="mb-2" />
+          <TextComponent text={t('EditAssistantPage.selectAvatar')} size="normal" className="mb-4" />
           <AvatarSelector
             selectedAvatarId={selectedAvatarId}
             onSelectAvatar={setSelectedAvatarId}
           />
         </div>
         <div className="mb-6">
-          <TextComponent text={t('EditAssistantPage.uploadFile')} size="normal" className="mb-2" />
+          <TextComponent text={t('EditAssistantPage.uploadFile')} size="normal" className="mb-4" />
           <FileUpload
             onFileUpload={handleFileUpload}
             isUploading={isUploading}

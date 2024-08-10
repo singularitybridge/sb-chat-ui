@@ -49,22 +49,19 @@ const AvatarSelector: React.FC<AvatarSelectorProps> = ({
   onSelectAvatar,
 }) => {
   return (
-    <div className="h-96  px-4 py-4 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
-      <div className="grid grid-cols-5 gap-2 p-0">
+    <div className="h-96  overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
+      <div className="grid grid-cols-5 gap-3">
         {avatars.map((avatar) => (
           <div
             key={avatar.id}
-            className={`cursor-pointer`}
+            className={`cursor-pointer flex flex-col items-center`}
             onClick={() => onSelectAvatar(avatar.id)}
           >
-            <div className="flex flex-col items-center">
               <Avatar
                 imageUrl={avatar.imageUrl}
-                avatarStyle={AvatarStyles.avatar}
+                avatarStyle={AvatarStyles.medium}
                 active={selectedAvatarId === avatar.id}
               />
-              <TextComponent text={avatar.name} size="small" className="mt-2" />
-            </div>
           </div>
         ))}
       </div>
