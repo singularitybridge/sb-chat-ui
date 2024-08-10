@@ -43,7 +43,7 @@ const AssistantsPage: React.FC = observer(() => {
 
   return (
     <div className="flex h-[calc(100vh-96px)] space-x-4 rtl:space-x-reverse">
-      <div className="bg-white p-3 overflow-y-auto flex flex-col rounded-lg w-80">
+      <div className="bg-white p-3 overflow-y-auto flex flex-col rounded-lg w-1/4">
         <div className="flex flex-row justify-between items-center w-full mb-6 px-2 py-1">
           <TextComponent text={t('AssistantsPage.title')} size="subtitle" />
           <IconButton
@@ -109,7 +109,7 @@ const AssistantsPage: React.FC = observer(() => {
           })}
         </ul>
       </div>
-      <div className="flex-grow overflow-y-auto">
+      <div className="flex-grow overflow-y-auto w-3/4">
         <ChatContainer />
       </div>
     </div>
