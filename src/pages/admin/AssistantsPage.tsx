@@ -43,7 +43,7 @@ const AssistantsPage: React.FC = observer(() => {
 
   return (
     <div className="flex h-[calc(100vh-96px)] space-x-4 rtl:space-x-reverse">
-      <div className="bg-white p-3 overflow-y-auto flex flex-col rounded-lg w-1/4">
+      <div className="bg-white p-3 flex flex-col rounded-lg w-1/4">
         <div className="flex flex-row justify-between items-center w-full mb-6 px-2 py-1">
           <TextComponent text={t('AssistantsPage.title')} size="subtitle" />
           <IconButton
@@ -52,7 +52,7 @@ const AssistantsPage: React.FC = observer(() => {
           />
         </div>
 
-        <ul className="space-y-4 flex-grow">
+        <ul className="space-y-4 flex-grow overflow-y-auto h-[calc(100%-3rem)]">
           {rootStore.assistants.map((assistant) => {
             const isActive =
               rootStore.sessionStore.activeSession?.assistantId ===
