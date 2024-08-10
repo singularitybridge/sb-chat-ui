@@ -67,11 +67,11 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <div className="flex justify-between items-start space-x-3.5 rtl:space-x-reverse mb-3 bg-slate-100 p-3 rounded-2xl">
+    <div className="flex justify-between items-start space-x-4 rtl:space-x-reverse mb-3 bg-slate-100 p-3 rounded-2xl">
       <Avatar
-        avatarStyle={AvatarStyles.large}
+        avatarStyle={AvatarStyles.medium}
         imageUrl={`/assets/avatars/${avatar}.png`}
-        className="bg-indigo-100"
+        active={true}
       />
 
       <div className="flex-1">

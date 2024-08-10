@@ -11,11 +11,16 @@ import { useRootStore } from '../store/common/RootStoreContext';
 import { IAssistant } from '../store/models/Assistant';
 import { useEventEmitter } from '../services/mittEmitter';
 import { EVENT_SET_ASSISTANT_VALUES } from '../utils/eventNames';
+import AvatarSelector from '../components/AvatarSelector';
+import { TextComponent } from '../components/sb-core-ui-kit/TextComponent';
+import { useTranslation } from 'react-i18next';
 
 const NewAssistantView: React.FC = observer(() => {
+  const { t } = useTranslation();
   const rootStore = useRootStore();
   const [isLoading, setIsLoading] = useState(false);
   const [formFields, setFormFields] = useState<FieldConfig[]>([]);
+  const [selectedAvatarId, setSelectedAvatarId] = useState<string | null>(null);
 
   const handleUpdateFormFields = (data: {
     name: string;
@@ -58,18 +63,31 @@ const NewAssistantView: React.FC = observer(() => {
 
   const handleSubmit = async (values: FormValues) => {
     setIsLoading(true);
-    await rootStore.createAssistant(values as unknown as IAssistant);
+    const assistantData = {
+      ...values,
+      avatarImage: selectedAvatarId,
+    } as unknown as IAssistant;
+    await rootStore.createAssistant(assistantData);
     setIsLoading(false);
   };
 
   return (
-    <DynamicForm
-      formContext="assistantFieldConfigs"
-      fields={formFields}
-      onSubmit={handleSubmit}
-      isLoading={isLoading}
-      formType="create"
-    />
+    <div className="w-full">
+      <div className="mb-6">
+        <TextComponent text={t('EditAssistantPage.selectAvatar')} size="medium" className="mb-2" />
+        <AvatarSelector
+          selectedAvatarId={selectedAvatarId}
+          onSelectAvatar={setSelectedAvatarId}
+        />
+      </div>
+      <DynamicForm
+        formContext="assistantFieldConfigs"
+        fields={formFields}
+        onSubmit={handleSubmit}
+        isLoading={isLoading}
+        formType="create"
+      />
+    </div>
   );
 });
 

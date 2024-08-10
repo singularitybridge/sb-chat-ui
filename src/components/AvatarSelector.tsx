@@ -1,7 +1,8 @@
 import React from 'react';
 import { TextComponent } from './sb-core-ui-kit/TextComponent';
+import { Avatar, AvatarStyles } from './Avatar';
 
-interface Avatar {
+interface AvatarData {
   id: string;
   name: string;
   imageUrl: string;
@@ -12,7 +13,7 @@ interface AvatarSelectorProps {
   onSelectAvatar: (avatarId: string) => void;
 }
 
-const avatars: Avatar[] = [
+const avatars: AvatarData[] = [
   { id: 'avatar-_0000_29', name: 'Alex', imageUrl: '/assets/avatars/avatar-_0000_29.png' },
   { id: 'avatar-_0001_28', name: 'Ben', imageUrl: '/assets/avatars/avatar-_0001_28.png' },
   { id: 'avatar-_0002_27', name: 'Charlie', imageUrl: '/assets/avatars/avatar-_0002_27.png' },
@@ -31,7 +32,6 @@ const avatars: Avatar[] = [
   { id: 'avatar-_0015_14', name: 'Penny', imageUrl: '/assets/avatars/avatar-_0015_14.png' },
   { id: 'avatar-_0016_13', name: 'Quinn', imageUrl: '/assets/avatars/avatar-_0016_13.png' },
   { id: 'avatar-_0017_12', name: 'Ryan', imageUrl: '/assets/avatars/avatar-_0017_12.png' },
-  { id: 'avatar-_0018_11', name: 'Sophia', imageUrl: '/assets/avatars/avatar-_0018_11.png' },
   { id: 'avatar-_0019_10', name: 'Thomas', imageUrl: '/assets/avatars/avatar-_0019_10.png' },
   { id: 'avatar-_0020_9', name: 'Uma', imageUrl: '/assets/avatars/avatar-_0020_9.png' },
   { id: 'avatar-_0021_8', name: 'Victor', imageUrl: '/assets/avatars/avatar-_0021_8.png' },
@@ -49,22 +49,22 @@ const AvatarSelector: React.FC<AvatarSelectorProps> = ({
   onSelectAvatar,
 }) => {
   return (
-    <div className="h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
-      <div className="grid grid-cols-5 gap-3 p-2">
+    <div className="h-96  px-4 py-4 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
+      <div className="grid grid-cols-5 gap-2 p-0">
         {avatars.map((avatar) => (
           <div
             key={avatar.id}
-            className={`cursor-pointer p-2 rounded-md transition-colors duration-200 ${
-              selectedAvatarId === avatar.id ? 'bg-blue-100' : 'hover:bg-gray-100'
-            }`}
+            className={`cursor-pointer`}
             onClick={() => onSelectAvatar(avatar.id)}
           >
-            <img
-              src={avatar.imageUrl}
-              alt={avatar.name}
-              className="w-full h-auto rounded-md"
-            />
-            <TextComponent text={avatar.name} size="small" className="mt-1 text-center" />
+            <div className="flex flex-col items-center">
+              <Avatar
+                imageUrl={avatar.imageUrl}
+                avatarStyle={AvatarStyles.avatar}
+                active={selectedAvatarId === avatar.id}
+              />
+              <TextComponent text={avatar.name} size="small" className="mt-2" />
+            </div>
           </div>
         ))}
       </div>
