@@ -4,15 +4,15 @@ import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { useRootStore } from '../../store/common/RootStoreContext';
 import { User } from '../../store/models/User';
-import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
 import Button from '../../components/sb-core-ui-kit/Button';
-import { Input } from '../../components/sb-core-ui-kit/Input';
-import { Textarea } from '../../components/sb-core-ui-kit/Textarea';
 import apiClient from '../../services/AxiosService';
 import { Identifier } from '../../store/models/Assistant';
 import { OnboardingStatus } from '../../store/models/RootStore';
+import WizardProgress from '../../components/WizardProgress';
+import OnboardingStep1 from '../../components/OnboardingStep1';
 
 const OnboardingDialog: React.FC = observer(() => {
+  const [currentStep, setCurrentStep] = useState(1);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const rootStore = useRootStore();
@@ -55,53 +55,41 @@ const OnboardingDialog: React.FC = observer(() => {
     }
   };
 
-  return (
-    <div className="p-8 w-full max-w-lg">
-      <div className='p-4'>
-      <img 
-        src="/assets/onboarding/welcome.png" 
-        alt="Welcome" 
-        className="w-full mb-6"
-      />
-      </div>
-      <TextComponent
-        text="ברוכים הבאים ל Singularity Bridge AI Agent Portal"
-        size="title"
-        className="mb-4"
-        align="right"
-      />
-      <TextComponent
-        text="ברוכים הבאים למערכת המובילה שלנו בתחום המודלים הנוירלים, המיועדת לשנות את הדרך בה אתם מתקשרים עם טכנולוגיה. הפורטל שלנו מציע חוויה חלקה, המשלבת בין טכנולוגיית ניטור מתקדמת לבין ממשקי משתמש אינטואיטיביים."
-        size="normal"
-        className="mb-10"
-        align="right"
-      />
+  const handleNext = () => {
+    if (currentStep < 3) {
+      setCurrentStep(currentStep + 1);
+    } else {
+      handleOnboarding();
+    }
+  };
 
-      <div className="mb-4">
-        <label className="block text-gray-700 mb-2 font-bold" htmlFor="name">
-          שם
-        </label>
-        <Input
-          id="beta-key"
-          value={name}
-          onChange={setName}
-          placeholder="הזינו את שמכם"
+  const handlePrevious = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  return (
+    <div className="p-4 w-full max-w-lg space-y-4">
+      <WizardProgress totalSteps={3} currentStep={currentStep} />
+      
+      {currentStep === 1 && (
+        <OnboardingStep1
+          name={name}
+          setName={setName}
+          description={description}
+          setDescription={setDescription}
         />
-      </div>
-      <div className="mb-6">
-        <label className="block text-gray-700 mb-2 font-bold" htmlFor="description">
-          ספרו לנו על עצמכם
-        </label>
-        <Textarea
-          id="description"
-          value={description}
-          onChange={setDescription}
-          placeholder="ספרו לנו על עצמכם, במה אתם עוסקים?"
-        />
-      </div>
-      <div className="flex justify-end">
-        <Button onClick={handleOnboarding} isArrowButton={true} disabled={description === '' || name === ''}>
-          כניסה למערכת
+      )}
+      
+      {/* Add Step 2 and Step 3 components here when they are created */}
+      
+      <div className="flex justify-between">
+        <Button onClick={handlePrevious} disabled={currentStep === 1}>
+          הקודם
+        </Button>
+        <Button onClick={handleNext} isArrowButton={true} disabled={currentStep === 1 && (description === '' || name === '')}>
+          {currentStep === 3 ? 'סיום' : 'הבא'}
         </Button>
       </div>
     </div>
