@@ -54,10 +54,10 @@ const AuthManager: React.FC<{ children: React.ReactNode }> = observer(({ childre
   }, [rootStore.authStore.isAuthenticated, navigate, location.pathname]);
 
   useEffect(() => {
-    if (rootStore.authStore.isLoggedIn && rootStore.onboardingStatus === OnboardingStatus.READY_FOR_ASSISTANTS) {
-      rootStore.sessionStore.showDialog('onboarding');
+    if (rootStore.authStore.isLoggedIn) {
+      rootStore.sessionStore.showDialog('onboardingDialog');
     }
-  }, [rootStore.authStore.isLoggedIn, rootStore.onboardingStatus]);
+  }, [rootStore.authStore.isLoggedIn]);
 
   if (loading) {
     return (
