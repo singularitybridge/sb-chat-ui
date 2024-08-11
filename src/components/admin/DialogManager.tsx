@@ -6,6 +6,7 @@ import {
   EVENT_SHOW_ADD_ASSISTANT_MODAL,
   EVENT_SHOW_ADD_COMPANY_MODAL,
   EVENT_SHOW_ADD_USER_MODAL,
+  EVENT_SHOW_ONBOARDING_MODAL,
   EventType,
 } from '../../utils/eventNames';
 import { ModalDialog } from '../core/ModalDialog';
@@ -13,8 +14,11 @@ import {
   DialogComponentEventData,
   dialogComponentFactory,
 } from '../../services/DialogFactory';
+import { observer } from 'mobx-react-lite';
+import { useRootStore } from '../../store/common/RootStoreContext';
 
-const DialogManager = () => {
+const DialogManager = observer(() => {
+  const rootStore = useRootStore();
   const [isOpen, setIsOpen] = useState(false);
   const [dialogContent, setDialogContent] = useState({
     component: <div>Hello</div>,
@@ -54,19 +58,30 @@ const DialogManager = () => {
       updateContent(EVENT_SHOW_ADD_USER_MODAL, eventData)
   );
 
-  useEventEmitter(EVENT_CLOSE_MODAL, () => setIsOpen(false));
+  useEventEmitter(
+    EVENT_SHOW_ONBOARDING_MODAL,
+    (eventData: DialogComponentEventData) =>
+      updateContent(EVENT_SHOW_ONBOARDING_MODAL, eventData)
+  );
+
+  useEventEmitter(EVENT_CLOSE_MODAL, () => {
+    setIsOpen(false);
+    rootStore.sessionStore.closeDialog();
+  });
 
   return (
-    
     <ModalDialog
       title={dialogContent.title}
-      isOpen={isOpen}
-      onClose={() => setIsOpen(false)}
+      isOpen={isOpen || rootStore.sessionStore.isDialogOpen('onboarding')}
+      onClose={() => {
+        setIsOpen(false);
+        rootStore.sessionStore.closeDialog();
+      }}
       onSave={() => {}}
     >
       {dialogContent.component}
     </ModalDialog>
   );
-};
+});
 
 export { DialogManager };

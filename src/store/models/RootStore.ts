@@ -42,13 +42,23 @@ import {
 import i18n from '../../i18n';
 import { AIAssistedConfigStore } from './AIAssistedConfigStore';
 import { AuthStore } from './AuthStore';
+import { getOnboardingStatus } from '../../services/api/onboardingService';
+
+
+// Add this enum
+export enum OnboardingStatus {
+  CREATED = 'created',
+  API_KEY_REQUIRED = 'api_key_required',
+  READY_FOR_ASSISTANTS = 'ready_for_assistants',
+  USING_BASIC_FEATURES = 'using_basic_features',
+  ADVANCED_USER = 'advanced_user',
+  EXPERT_USER = 'expert_user'
+}
 
 const RootStore = types
   .model('RootStore', {
-
     authStore: types.optional(AuthStore, {}),
     isInitialDataLoaded: types.optional(types.boolean, false),
-
     assistants: types.array(Assistant),
     companies: types.array(Company),
     companiesLoaded: types.optional(types.boolean, false),
@@ -56,14 +66,15 @@ const RootStore = types
     assistantsLoaded: types.optional(types.boolean, false),
     sessionStore: types.optional(SessionStore, {}),
     aiAssistedConfigStore: types.optional(AIAssistedConfigStore, {}),
-
     inboxSessions: types.array(InboxSession),
     inboxSessionsLoaded: types.optional(types.boolean, false),
     currentUser: types.maybe(types.reference(User)),
     actions: types.array(Action),
     actionsLoaded: types.optional(types.boolean, false),
     language: types.optional(types.string, 'en'),
-    
+    // Add these new properties
+    onboardingStatus: types.optional(types.enumeration(Object.values(OnboardingStatus)), OnboardingStatus.CREATED),
+    onboardedModules: types.optional(types.array(types.string), []),
   })
   .views((self) => ({
     get isAdmin() {
@@ -74,7 +85,6 @@ const RootStore = types
     },
   }))
   .actions((self) => ({
-
     setInitialDataLoaded() {
       self.isInitialDataLoaded = true;
     },
@@ -87,6 +97,25 @@ const RootStore = types
       self.language = newLanguage;
       yield i18n.changeLanguage(newLanguage);
       localStorage.setItem('appLanguage', newLanguage);
+    }),
+
+    // Add this new action
+    fetchOnboardingStatus: flow(function* () {
+      try {
+        const { onboardingStatus, onboardedModules } = yield getOnboardingStatus();
+        self.onboardingStatus = onboardingStatus;
+        self.onboardedModules.replace(onboardedModules);
+      } catch (error) {
+        console.error('Failed to fetch onboarding status', error);
+      }
+    }),
+
+    // Add this new action
+    updateOnboardingStatus: flow(function* (newStatus: OnboardingStatus, newModules: string[]) {
+      self.onboardingStatus = newStatus;
+      self.onboardedModules.replace(newModules);
+      // Here you might want to call an API to update the status on the server
+      // yield updateOnboardingStatusOnServer(newStatus, newModules);
     }),
 
     loadActions: flow(function* () {
@@ -180,8 +209,6 @@ const RootStore = types
         emitter.emit(EVENT_ERROR, 'Failed to add response: ' + (error as Error).message);
       }
     }),
-
-
 
     loadAssistants: flow(function* () {
       try {

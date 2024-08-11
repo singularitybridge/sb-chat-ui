@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useRootStore } from '../store/common/RootStoreContext';
 import { observer } from 'mobx-react-lite';
 import { ClipLoader } from 'react-spinners';
+import { OnboardingStatus } from '../store/models/RootStore';
 
 const AuthManager: React.FC<{ children: React.ReactNode }> = observer(({ children }) => {
   const rootStore = useRootStore();
@@ -20,6 +21,7 @@ const AuthManager: React.FC<{ children: React.ReactNode }> = observer(({ childre
     await rootStore.aiAssistedConfigStore.initialize();
     await rootStore.sessionStore.fetchActiveSession();
     await rootStore.loadInboxMessages();
+    await rootStore.fetchOnboardingStatus();
     await rootStore.setInitialDataLoaded();
     setLoading(false);
   }
@@ -50,6 +52,12 @@ const AuthManager: React.FC<{ children: React.ReactNode }> = observer(({ childre
       navigate('/signup');
     }
   }, [rootStore.authStore.isAuthenticated, navigate, location.pathname]);
+
+  useEffect(() => {
+    if (rootStore.authStore.isLoggedIn && rootStore.onboardingStatus === OnboardingStatus.READY_FOR_ASSISTANTS) {
+      rootStore.sessionStore.showDialog('onboarding');
+    }
+  }, [rootStore.authStore.isLoggedIn, rootStore.onboardingStatus]);
 
   if (loading) {
     return (

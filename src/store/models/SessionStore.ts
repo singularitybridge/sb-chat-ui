@@ -5,7 +5,8 @@ import { getActiveSession, changeSessionAssistant, endSession } from '../../serv
 
 const SessionStore = types
   .model({
-    activeSession: types.maybeNull(Session)
+    activeSession: types.maybeNull(Session),
+    activeDialog: types.optional(types.string, '')
   })
   .actions((self) => ({
     fetchActiveSession: flow(function* () {
@@ -46,6 +47,18 @@ const SessionStore = types
 
     clearActiveSession() {
       self.activeSession = null;
+    },
+
+    showDialog(dialogName: string) {
+      self.activeDialog = dialogName;
+    },
+
+    closeDialog() {
+      self.activeDialog = '';
+    },
+
+    isDialogOpen(dialogName: string) {
+      return self.activeDialog === dialogName;
     }
   }));
 
