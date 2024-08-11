@@ -16,6 +16,7 @@ import {
 } from '../../services/DialogFactory';
 import { observer } from 'mobx-react-lite';
 import { useRootStore } from '../../store/common/RootStoreContext';
+import OnboardingDialog from '../../pages/admin/Onboarding';
 
 const DialogManager = observer(() => {
   const rootStore = useRootStore();
@@ -69,17 +70,19 @@ const DialogManager = observer(() => {
     rootStore.sessionStore.closeDialog();
   });
 
+  const isOnboardingDialogOpen = rootStore.sessionStore.isDialogOpen('onboardingDialog');
+
   return (
     <ModalDialog
-      title={dialogContent.title}
-      isOpen={isOpen || rootStore.sessionStore.isDialogOpen('onboarding')}
+      title={isOnboardingDialogOpen ? 'Onboarding' : dialogContent.title}
+      isOpen={isOpen || isOnboardingDialogOpen}
       onClose={() => {
         setIsOpen(false);
         rootStore.sessionStore.closeDialog();
       }}
       onSave={() => {}}
     >
-      {dialogContent.component}
+      {isOnboardingDialogOpen ? <OnboardingDialog /> : dialogContent.component}
     </ModalDialog>
   );
 });

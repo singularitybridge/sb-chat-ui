@@ -6,7 +6,7 @@ import { RootStoreProvider } from './store/common/RootStoreContext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useEventEmitter } from './services/mittEmitter';
-import DialogManager from './components/DialogManager';
+import { DialogManager } from './components/admin/DialogManager';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { observer } from 'mobx-react-lite';
 import AuthManager from './components/AuthManager';
