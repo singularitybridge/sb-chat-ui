@@ -57,13 +57,13 @@ const OnboardingDialog: React.FC = observer(() => {
 
   return (
     <div className="p-8 w-full max-w-lg">
-      <TextComponent
-        text="כבר מתחילים ..."
-        size="normal"
-        className="mb-4"
-        color="info"
-        align="right"
+      <div className='p-4'>
+      <img 
+        src="/assets/onboarding/welcome.png" 
+        alt="Welcome" 
+        className="w-full mb-6"
       />
+      </div>
       <TextComponent
         text="ברוכים הבאים ל Singularity Bridge AI Agent Portal"
         size="title"
