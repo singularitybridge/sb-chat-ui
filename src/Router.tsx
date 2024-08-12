@@ -14,7 +14,6 @@ import { EditCompanyPage } from './pages/admin/EditCompanyPage';
 import { ActionsPage } from './pages/admin/ActionsPage';
 import { EditActionPage } from './pages/admin/EditActionPage';
 import { SignupPage } from './pages/SignupPage';
-import OnboardingPage from './pages/admin/Onboarding';
 import { ChatKitTestPage } from './pages/test/ChatKitTestPage';
 import { UIKitTestPage } from './pages/test/UIKitTestPage';
 
@@ -49,10 +48,6 @@ export const browserRouter = createBrowserRouter([
           {
             path: 'assistants',
             element: <AssistantsPage />,
-          },
-          {
-            path: 'onboarding',
-            element: <OnboardingPage />,
           },
           {
             path: 'assistants/:key',

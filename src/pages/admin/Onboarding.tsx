@@ -10,11 +10,14 @@ import { Identifier } from '../../store/models/Assistant';
 import { OnboardingStatus } from '../../store/models/RootStore';
 import WizardProgress from '../../components/WizardProgress';
 import OnboardingStep1 from '../../components/OnboardingStep1';
+import OnboardingStep2 from '../../components/OnboardingStep2';
+import OnboardingStep3 from '../../components/OnboardingStep3';
 
 const OnboardingDialog: React.FC = observer(() => {
   const [currentStep, setCurrentStep] = useState(1);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [apiKey, setApiKey] = useState('');
   const rootStore = useRootStore();
   const navigate = useNavigate();
 
@@ -82,7 +85,21 @@ const OnboardingDialog: React.FC = observer(() => {
         />
       )}
       
-      {/* Add Step 2 and Step 3 components here when they are created */}
+      {currentStep === 2 && (
+        <OnboardingStep2
+          apiKey={apiKey}
+          setApiKey={setApiKey} onApiKeyVerified={function (): void {
+            throw new Error('Function not implemented.');
+          } }        />
+      )}
+
+      {currentStep === 3 && (
+        <OnboardingStep3
+          name={name}
+          description={description}
+          apiKey={apiKey}
+        />
+      )}
       
       <div className="flex justify-between">
         <Button onClick={handlePrevious} disabled={currentStep === 1}>

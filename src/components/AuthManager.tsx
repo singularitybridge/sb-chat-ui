@@ -4,7 +4,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useRootStore } from '../store/common/RootStoreContext';
 import { observer } from 'mobx-react-lite';
 import { ClipLoader } from 'react-spinners';
-import { OnboardingStatus } from '../store/models/RootStore';
 
 const AuthManager: React.FC<{ children: React.ReactNode }> = observer(({ children }) => {
   const rootStore = useRootStore();
