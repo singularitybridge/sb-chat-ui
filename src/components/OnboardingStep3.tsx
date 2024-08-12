@@ -1,44 +1,37 @@
+
 import React from 'react';
 import { TextComponent } from './sb-core-ui-kit/TextComponent';
+import Button from './sb-core-ui-kit/Button';
 
 interface OnboardingStep3Props {
-  name: string;
-  description: string;
-  apiKey: string;
+  onComplete: () => void;
 }
 
-const OnboardingStep3: React.FC<OnboardingStep3Props> = ({
-  name,
-  description,
-  apiKey,
-}) => {
+const OnboardingStep3: React.FC<OnboardingStep3Props> = ({ onComplete }) => {
   return (
     <>
       <div className='p-4'>
         <img 
-          src="/assets/onboarding/summary.png" 
-          alt="Summary" 
+          src="/assets/onboarding/ready.png" 
+          alt="AI Agent Ready" 
           className="w-full mb-6"
         />
       </div>
       <TextComponent
-        text="סיכום"
+        text="סוכן AI חדש מחכה לך!"
         size="subtitle"
       />
       <TextComponent
-        text="להלן סיכום הפרטים שהזנתם:"
+        text="יצרנו סוכן AI מותאם אישית עבורך. הוא מוכן לעזור לך בכל משימה שתרצה!"
         size="small"
       />
 
-      <div className="mb-4">
-        <p><strong>שם:</strong> {name}</p>
-        <p><strong>תיאור:</strong> {description}</p>
-        <p><strong>מפתח API:</strong> {apiKey.substring(0, 5)}...{apiKey.substring(apiKey.length - 5)}</p>
-      </div>
-      <TextComponent
-        text="אנא ודאו שכל הפרטים נכונים לפני שתסיימו את תהליך ההרשמה."
-        size="small"
-      />
+      <Button
+        onClick={onComplete}
+        additionalClassName="w-full mt-6"
+      >
+        בואו נתחיל!
+      </Button>
     </>
   );
 };

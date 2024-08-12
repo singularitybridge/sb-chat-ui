@@ -94,11 +94,9 @@ const OnboardingDialog: React.FC = observer(() => {
       )}
 
       {currentStep === 3 && (
-        <OnboardingStep3
-          name={name}
-          description={description}
-          apiKey={apiKey}
-        />
+        <OnboardingStep3 onComplete={function (): void {
+          throw new Error('Function not implemented.');
+        } }        />
       )}
       
       <div className="flex justify-between">
