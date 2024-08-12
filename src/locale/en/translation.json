@@ -8,6 +8,27 @@
     "Actions": "Actions",
     "Home": "Home"
   },
+  "Onboarding": {
+    "welcome": "Welcome",
+    "welcomeToSingularityBridge": "Welcome to Singularity Bridge",
+    "welcomeDescription": "Let's get started by setting up your profile",
+    "name": "Name",
+    "enterYourName": "Enter your name",
+    "tellUsAboutYourself": "Tell us about yourself",
+    "tellUsAboutYourselfPlaceholder": "Share a bit about yourself...",
+    "aiAgentReady": "AI Agent Ready",
+    "newAIAgentWaiting": "Your new AI agent is waiting for you",
+    "aiAgentDescription": "Start chatting with your personalized AI assistant now",
+    "letsStart": "Let's Start",
+    "enterOpenAIApiKey": "Enter your OpenAI API Key",
+    "apiKeyDescription": "We need your OpenAI API key to power the AI assistant",
+    "openAIApiKey": "OpenAI API Key",
+    "enterYourApiKey": "Enter your API key",
+    "apiKeyVerificationFailed": "API key verification failed. Please try again.",
+    "verifying": "Verifying...",
+    "verifyAndContinue": "Verify and Continue",
+    "apiKey": "API Key"
+  },
   "Navigation": {
     "home": "Home",
     "companies": "Companies",

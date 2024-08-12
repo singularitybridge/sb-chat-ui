@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { TextComponent } from './sb-core-ui-kit/TextComponent';
 import { Input } from './sb-core-ui-kit/Input';
 import Button from './sb-core-ui-kit/Button';
@@ -14,6 +15,7 @@ const OnboardingStep2: React.FC<OnboardingStep2Props> = ({
   setApiKey,
   onApiKeyVerified,
 }) => {
+  const { t } = useTranslation();
   const [isVerifying, setIsVerifying] = useState(false);
   const [verificationError, setVerificationError] = useState<string | null>(null);
 
@@ -28,7 +30,7 @@ const OnboardingStep2: React.FC<OnboardingStep2Props> = ({
       
       onApiKeyVerified();
     } catch (error) {
-      setVerificationError('Failed to verify API key. Please try again.');
+      setVerificationError(t('Onboarding.apiKeyVerificationFailed'));
     } finally {
       setIsVerifying(false);
     }
@@ -39,28 +41,28 @@ const OnboardingStep2: React.FC<OnboardingStep2Props> = ({
       <div className='p-4'>
         <img 
           src="/assets/onboarding/work.png" 
-          alt="API Key" 
+          alt={t('Onboarding.apiKey')} 
           className="w-full mb-6"
         />
       </div>
       <TextComponent
-        text="הזינו את מפתח ה-API של OpenAI"
+        text={t('Onboarding.enterOpenAIApiKey')}
         size="subtitle"
       />
       <TextComponent
-        text="כדי להשתמש במערכת, אנחנו זקוקים למפתח ה-API של OpenAI שלכם. זה מאפשר לנו לתקשר עם המודלים של OpenAI בשמכם."
+        text={t('Onboarding.apiKeyDescription')}
         size="small"
       />
 
       <div className="mb-4">
         <label className="block text-gray-700 mb-2 font-bold" htmlFor="api-key">
-          מפתח API של OpenAI
+          {t('Onboarding.openAIApiKey')}
         </label>
         <Input
           id="api-key"
           value={apiKey}
           onChange={setApiKey}
-          placeholder="הזינו את מפתח ה-API שלכם"
+          placeholder={t('Onboarding.enterYourApiKey')}
           type="password"
         />
       </div>
@@ -74,7 +76,7 @@ const OnboardingStep2: React.FC<OnboardingStep2Props> = ({
         disabled={!apiKey || isVerifying}
         additionalClassName="w-full"
       >
-        {isVerifying ? 'מאמת...' : 'בדוק ועבור לשלב הבא'}
+        {isVerifying ? t('Onboarding.verifying') : t('Onboarding.verifyAndContinue')}
       </Button>
     </>
   );

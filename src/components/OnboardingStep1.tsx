@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { TextComponent } from './sb-core-ui-kit/TextComponent';
 import { Input } from './sb-core-ui-kit/Input';
 import { Textarea } from './sb-core-ui-kit/Textarea';
@@ -16,44 +17,46 @@ const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
   description,
   setDescription,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <>
       <div className='p-4'>
         <img 
           src="/assets/onboarding/welcome.png" 
-          alt="Welcome" 
+          alt={t('Onboarding.welcome')} 
           className="w-full mb-6"
         />
       </div>
       <TextComponent
-        text="ברוכים הבאים ל Singularity Bridge AI Agent Portal"
+        text={t('Onboarding.welcomeToSingularityBridge')}
         size="subtitle"
       />
       <TextComponent
-        text="ברוכים הבאים למערכת המובילה שלנו בתחום המודלים הנוירלים, המיועדת לשנות את הדרך בה אתם מתקשרים עם טכנולוגיה. הפורטל שלנו מציע חוויה חלקה, המשלבת בין טכנולוגיית ניטור מתקדמת לבין ממשקי משתמש אינטואיטיביים."
+        text={t('Onboarding.welcomeDescription')}
         size="small"
       />
 
       <div className="mb-4">
         <label className="block text-gray-700 mb-2 font-bold" htmlFor="name">
-          שם
+          {t('Onboarding.name')}
         </label>
         <Input
-          id="beta-key"
+          id="name"
           value={name}
           onChange={setName}
-          placeholder="הזינו את שמכם"
+          placeholder={t('Onboarding.enterYourName')}
         />
       </div>
       <div className="mb-6">
         <label className="block text-gray-700 mb-2 font-bold" htmlFor="description">
-          ספרו לנו על עצמכם
+          {t('Onboarding.tellUsAboutYourself')}
         </label>
         <Textarea
           id="description"
           value={description}
           onChange={setDescription}
-          placeholder="ספרו לנו על עצמכם, במה אתם עוסקים?"
+          placeholder={t('Onboarding.tellUsAboutYourselfPlaceholder')}
         />
       </div>
     </>

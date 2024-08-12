@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { TextComponent } from './sb-core-ui-kit/TextComponent';
 import Button from './sb-core-ui-kit/Button';
 
@@ -8,21 +9,23 @@ interface OnboardingStep3Props {
 }
 
 const OnboardingStep3: React.FC<OnboardingStep3Props> = ({ onComplete }) => {
+  const { t } = useTranslation();
+
   return (
     <>
       <div className='p-4'>
         <img 
           src="/assets/onboarding/ready.png" 
-          alt="AI Agent Ready" 
+          alt={t('Onboarding.aiAgentReady')} 
           className="w-full mb-6"
         />
       </div>
       <TextComponent
-        text="סוכן AI חדש מחכה לך!"
+        text={t('Onboarding.newAIAgentWaiting')}
         size="subtitle"
       />
       <TextComponent
-        text="יצרנו סוכן AI מותאם אישית עבורך. הוא מוכן לעזור לך בכל משימה שתרצה!"
+        text={t('Onboarding.aiAgentDescription')}
         size="small"
       />
 
@@ -30,7 +33,7 @@ const OnboardingStep3: React.FC<OnboardingStep3Props> = ({ onComplete }) => {
         onClick={onComplete}
         additionalClassName="w-full mt-6"
       >
-        בואו נתחיל!
+        {t('Onboarding.letsStart')}
       </Button>
     </>
   );

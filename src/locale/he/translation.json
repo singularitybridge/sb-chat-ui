@@ -8,6 +8,27 @@
     "Actions": "פעולות",
     "Home": "בית"
   },
+  "Onboarding": {
+    "welcome": "ברוכים הבאים",
+    "welcomeToSingularityBridge": "ברוכים הבאים ל-Singularity Bridge",
+    "welcomeDescription": "בואו נתחיל בהגדרת הפרופיל שלך",
+    "name": "שם",
+    "enterYourName": "הכנס את שמך",
+    "tellUsAboutYourself": "ספר לנו על עצמך",
+    "tellUsAboutYourselfPlaceholder": "שתף קצת על עצמך...",
+    "aiAgentReady": "סוכן הבינה המלאכותית מוכן",
+    "newAIAgentWaiting": "סוכן הבינה המלאכותית החדש שלך מחכה לך",
+    "aiAgentDescription": "התחל לשוחח עם העוזר האישי המותאם אישית שלך עכשיו",
+    "letsStart": "בואו נתחיל",
+    "enterOpenAIApiKey": "הזן את מפתח ה-API של OpenAI שלך",
+    "apiKeyDescription": "אנחנו זקוקים למפתח ה-API של OpenAI שלך כדי להפעיל את העוזר הבינה המלאכותית",
+    "openAIApiKey": "מפתח API של OpenAI",
+    "enterYourApiKey": "הזן את מפתח ה-API שלך",
+    "apiKeyVerificationFailed": "אימות מפתח ה-API נכשל. אנא נסה שוב.",
+    "verifying": "מאמת...",
+    "verifyAndContinue": "אמת והמשך",
+    "apiKey": "מפתח API"
+  },
   "Navigation": {
     "home": "בית",
     "companies": "חברות",
