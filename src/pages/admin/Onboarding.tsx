@@ -77,12 +77,9 @@ const OnboardingDialog: React.FC = observer(() => {
       <WizardProgress totalSteps={3} currentStep={currentStep} />
       
       {currentStep === 1 && (
-        <OnboardingStep1
-          name={name}
-          setName={setName}
-          description={description}
-          setDescription={setDescription}
-        />
+        <OnboardingStep1 onNextStep={function (): void {
+          throw new Error('Function not implemented.');
+        } }        />
       )}
       
       {currentStep === 2 && (

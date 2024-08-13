@@ -79,7 +79,7 @@ export const refreshCompanyToken = async (
 export const updateCompanyInfo = async (companyInfo: {
   companyName: string;
   companyDescription: string;
-  userNickname: string;
+  userName: string;
 }): Promise<ICompany> => {
   try {
     const response = await apiClient.post('onboarding/update-info', companyInfo);

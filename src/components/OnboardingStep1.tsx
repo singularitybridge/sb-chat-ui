@@ -8,93 +8,84 @@ import { updateCompanyInfo } from '../services/api/companyService';
 import InputWithLabel from './sb-core-ui-kit/InputWithLabel';
 
 interface OnboardingStep1Props {
-  companyName: string;
-  setCompanyName: (name: string) => void;
-  description: string;
-  setDescription: (description: string) => void;
   onNextStep: () => void;
 }
 
-const OnboardingStep1: React.FC<OnboardingStep1Props> = observer(({
-  companyName,
-  setCompanyName,
-  description,
-  setDescription,
-  onNextStep,
-}) => {
-  const { t } = useTranslation();
-  const rootStore = useRootStore();
-  
-  const [userNickname, setUserNickname] = useState(rootStore.authStore.userSessionInfo.userName);
+const OnboardingStep1: React.FC<OnboardingStep1Props> = observer(
+  ({ onNextStep }) => {
+    const { t } = useTranslation();
+    const rootStore = useRootStore();
 
-  useEffect(() => {
-    setUserNickname(rootStore.authStore.userSessionInfo.userName);
-  }, [rootStore.authStore.userSessionInfo]);
+    const [companyName, setCompanyName] = useState('');
+    const [companyDescription, setCompanyDescription] = useState('');
+    const [userName, setUserName] = useState(
+      rootStore.authStore.userSessionInfo.userName
+    );
 
-  const handleNextStep = async () => {
-    try {
-      await updateCompanyInfo({
-        companyName,
-        companyDescription: description,
-        userNickname,
-      });
-      onNextStep();
-    } catch (error) {
-      console.error('Error updating company info:', error);
-      // Handle error (e.g., show an error message to the user)
-    }
-  };
+    useEffect(() => {
+      setUserName(rootStore.authStore.userSessionInfo.userName);
+    }, [rootStore.authStore.userSessionInfo]);
 
-  return (
-    <>
-      <div className='p-4'>
-        <img 
-          src="/assets/onboarding/welcome.png" 
-          alt={t('Onboarding.welcome')} 
-          className="w-full mb-6"
+    const handleNextStep = async () => {
+      try {
+        await updateCompanyInfo({
+          companyName,
+          companyDescription,
+          userName,
+        });
+        onNextStep();
+      } catch (error) {
+        console.error('Error updating company info:', error);
+        // Handle error (e.g., show an error message to the user)
+      }
+    };
+
+    return (
+      <>
+        <div className="p-4">
+          <img
+            src="/assets/onboarding/welcome.png"
+            alt={t('Onboarding.welcome')}
+            className="w-full mb-6"
+          />
+        </div>
+        <TextComponent
+          text={t('Onboarding.welcomeToSingularityBridge')}
+          size="subtitle"
         />
-      </div>
-      <TextComponent
-        text={t('Onboarding.welcomeToSingularityBridge')}
-        size="subtitle"
-      />
-      <TextComponent
-        text={t('Onboarding.welcomeDescription')}
-        size="small"
-      />
+        <TextComponent text={t('Onboarding.welcomeDescription')} size="small" />
 
-      <InputWithLabel
-        id="companyName"
-        label={t('Onboarding.companyName')}
-        value={companyName} onChange={function (value: string): void {
-          throw new Error('Function not implemented.');
-        } }        // onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCompanyName(e.target.value)}
-        // placeholder={t('Onboarding.enterYourCompanyName')}
-      />
+        <InputWithLabel
+          id="companyName"
+          label={t('Onboarding.companyName')}
+          value={companyName}
+          onChange={(value: string) => setCompanyName(value)}
+        />
 
-      <InputWithLabel
-        id="userNickname"
-        label={t('Onboarding.userNickname')}
-        value={userNickname}
-        // onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUserNickname(e.target.value)}
-        // placeholder={t('Onboarding.enterYourNickname')}
-        disabled={true} onChange={function (value: string): void {
-          throw new Error('Function not implemented.');
-        } }      />
+        <InputWithLabel
+          id="userName"
+          label={t('Onboarding.userName')}
+          value={userName}
+          onChange={(value: string) => setUserName(value)}
+        />
 
-      <TextareaWithLabel
-        id="description"
-        label={t('Onboarding.tellUsAboutYourCompany')}
-        value={description}
-        onChange={setDescription}
-        placeholder={t('Onboarding.tellUsAboutYourCompanyPlaceholder')}
-      />
+        <TextareaWithLabel
+          id="description"
+          label={t('Onboarding.tellUsAboutYourCompany')}
+          value={companyDescription}
+          onChange={(value: string) => setCompanyDescription(value)}
+          placeholder={t('Onboarding.tellUsAboutYourCompanyPlaceholder')}
+        />
 
-      <button onClick={handleNextStep} className="bg-blue-500 text-white px-4 py-2 rounded mt-4">
-        {t('Onboarding.nextStep')}
-      </button>
-    </>
-  );
-});
+        <button
+          onClick={handleNextStep}
+          className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
+        >
+          {t('Onboarding.nextStep')}
+        </button>
+      </>
+    );
+  }
+);
 
 export default OnboardingStep1;
