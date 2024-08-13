@@ -12,10 +12,12 @@
     "welcome": "ברוכים הבאים",
     "welcomeToSingularityBridge": "ברוכים הבאים ל-Singularity Bridge",
     "welcomeDescription": "בואו נתחיל בהגדרת הפרופיל שלך",
-    "name": "שם",
-    "enterYourName": "הכנס את שמך",
-    "tellUsAboutYourself": "ספר לנו על עצמך",
-    "tellUsAboutYourselfPlaceholder": "שתף קצת על עצמך...",
+    "companyName": "שם החברה",
+    "enterYourCompanyName": "הכנס את שם החברה שלך",
+    "userNickname": "כינוי המשתמש",
+    "enterYourNickname": "הכנס את הכינוי שלך",
+    "tellUsAboutYourCompany": "ספר לנו על החברה שלך",
+    "tellUsAboutYourCompanyPlaceholder": "שתף קצת על החברה שלך...",
     "aiAgentReady": "סוכן הבינה המלאכותית מוכן",
     "newAIAgentWaiting": "סוכן הבינה המלאכותית החדש שלך מחכה לך",
     "aiAgentDescription": "התחל לשוחח עם העוזר האישי המותאם אישית שלך עכשיו",
@@ -27,7 +29,8 @@
     "apiKeyVerificationFailed": "אימות מפתח ה-API נכשל. אנא נסה שוב.",
     "verifying": "מאמת...",
     "verifyAndContinue": "אמת והמשך",
-    "apiKey": "מפתח API"
+    "apiKey": "מפתח API",
+    "nextStep": "השלב הבא"
   },
   "Navigation": {
     "home": "בית",

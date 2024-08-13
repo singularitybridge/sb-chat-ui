@@ -1,23 +1,49 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { observer } from 'mobx-react';
 import { useTranslation } from 'react-i18next';
+import { useRootStore } from '../store/common/RootStoreContext';
 import { TextComponent } from './sb-core-ui-kit/TextComponent';
-import { Input } from './sb-core-ui-kit/Input';
-import { Textarea } from './sb-core-ui-kit/Textarea';
+import { TextareaWithLabel } from './sb-core-ui-kit/TextareaWithLabel';
+import { updateCompanyInfo } from '../services/api/companyService';
+import InputWithLabel from './sb-core-ui-kit/InputWithLabel';
 
 interface OnboardingStep1Props {
-  name: string;
-  setName: (name: string) => void;
+  companyName: string;
+  setCompanyName: (name: string) => void;
   description: string;
   setDescription: (description: string) => void;
+  onNextStep: () => void;
 }
 
-const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
-  name,
-  setName,
+const OnboardingStep1: React.FC<OnboardingStep1Props> = observer(({
+  companyName,
+  setCompanyName,
   description,
   setDescription,
+  onNextStep,
 }) => {
   const { t } = useTranslation();
+  const rootStore = useRootStore();
+  
+  const [userNickname, setUserNickname] = useState(rootStore.authStore.userSessionInfo.userName);
+
+  useEffect(() => {
+    setUserNickname(rootStore.authStore.userSessionInfo.userName);
+  }, [rootStore.authStore.userSessionInfo]);
+
+  const handleNextStep = async () => {
+    try {
+      await updateCompanyInfo({
+        companyName,
+        companyDescription: description,
+        userNickname,
+      });
+      onNextStep();
+    } catch (error) {
+      console.error('Error updating company info:', error);
+      // Handle error (e.g., show an error message to the user)
+    }
+  };
 
   return (
     <>
@@ -37,30 +63,38 @@ const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
         size="small"
       />
 
-      <div className="mb-4">
-        <label className="block text-gray-700 mb-2 font-bold" htmlFor="name">
-          {t('Onboarding.name')}
-        </label>
-        <Input
-          id="name"
-          value={name}
-          onChange={setName}
-          placeholder={t('Onboarding.enterYourName')}
-        />
-      </div>
-      <div className="mb-6">
-        <label className="block text-gray-700 mb-2 font-bold" htmlFor="description">
-          {t('Onboarding.tellUsAboutYourself')}
-        </label>
-        <Textarea
-          id="description"
-          value={description}
-          onChange={setDescription}
-          placeholder={t('Onboarding.tellUsAboutYourselfPlaceholder')}
-        />
-      </div>
+      <InputWithLabel
+        id="companyName"
+        label={t('Onboarding.companyName')}
+        value={companyName} onChange={function (value: string): void {
+          throw new Error('Function not implemented.');
+        } }        // onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCompanyName(e.target.value)}
+        // placeholder={t('Onboarding.enterYourCompanyName')}
+      />
+
+      <InputWithLabel
+        id="userNickname"
+        label={t('Onboarding.userNickname')}
+        value={userNickname}
+        // onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUserNickname(e.target.value)}
+        // placeholder={t('Onboarding.enterYourNickname')}
+        disabled={true} onChange={function (value: string): void {
+          throw new Error('Function not implemented.');
+        } }      />
+
+      <TextareaWithLabel
+        id="description"
+        label={t('Onboarding.tellUsAboutYourCompany')}
+        value={description}
+        onChange={setDescription}
+        placeholder={t('Onboarding.tellUsAboutYourCompanyPlaceholder')}
+      />
+
+      <button onClick={handleNextStep} className="bg-blue-500 text-white px-4 py-2 rounded mt-4">
+        {t('Onboarding.nextStep')}
+      </button>
     </>
   );
-};
+});
 
 export default OnboardingStep1;

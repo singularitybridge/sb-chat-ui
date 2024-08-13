@@ -12,10 +12,12 @@
     "welcome": "Welcome",
     "welcomeToSingularityBridge": "Welcome to Singularity Bridge",
     "welcomeDescription": "Let's get started by setting up your profile",
-    "name": "Name",
-    "enterYourName": "Enter your name",
-    "tellUsAboutYourself": "Tell us about yourself",
-    "tellUsAboutYourselfPlaceholder": "Share a bit about yourself...",
+    "companyName": "Company Name",
+    "enterYourCompanyName": "Enter your company name",
+    "userNickname": "User Nickname",
+    "enterYourNickname": "Enter your nickname",
+    "tellUsAboutYourCompany": "Tell us about your company",
+    "tellUsAboutYourCompanyPlaceholder": "Share a bit about your company...",
     "aiAgentReady": "AI Agent Ready",
     "newAIAgentWaiting": "Your new AI agent is waiting for you",
     "aiAgentDescription": "Start chatting with your personalized AI assistant now",
@@ -27,7 +29,8 @@
     "apiKeyVerificationFailed": "API key verification failed. Please try again.",
     "verifying": "Verifying...",
     "verifyAndContinue": "Verify and Continue",
-    "apiKey": "API Key"
+    "apiKey": "API Key",
+    "nextStep": "Next Step"
   },
   "Navigation": {
     "home": "Home",

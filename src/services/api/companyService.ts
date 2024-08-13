@@ -75,3 +75,17 @@ export const refreshCompanyToken = async (
     throw error;
   }
 };
+
+export const updateCompanyInfo = async (companyInfo: {
+  companyName: string;
+  companyDescription: string;
+  userNickname: string;
+}): Promise<ICompany> => {
+  try {
+    const response = await apiClient.post('onboarding/update-info', companyInfo);
+    return response.data.company;
+  } catch (error) {
+    console.error('Failed to update company info', error);
+    throw error;
+  }
+};
