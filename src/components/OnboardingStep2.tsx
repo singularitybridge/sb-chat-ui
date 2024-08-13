@@ -1,40 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TextComponent } from './sb-core-ui-kit/TextComponent';
 import { Input } from './sb-core-ui-kit/Input';
-import Button from './sb-core-ui-kit/Button';
 
 interface OnboardingStep2Props {
-  apiKey: string;
-  setApiKey: (apiKey: string) => void;
-  onApiKeyVerified: () => void;
+  onStepComplete: (isComplete: boolean) => void;
 }
 
 const OnboardingStep2: React.FC<OnboardingStep2Props> = ({
-  apiKey,
-  setApiKey,
-  onApiKeyVerified,
+  onStepComplete,
 }) => {
+  const [apiKey, setApiKey] = useState('');
+
+  useEffect(() => {
+    onStepComplete(!!apiKey);
+  }, [apiKey, onStepComplete]);
   const { t } = useTranslation();
-  const [isVerifying, setIsVerifying] = useState(false);
-  const [verificationError, setVerificationError] = useState<string | null>(null);
-
-  const verifyApiKey = async () => {
-    setIsVerifying(true);
-    setVerificationError(null);
-
-    try {
-      // TODO: Implement actual API key verification logic here
-      // For now, we'll simulate a successful verification after a short delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      onApiKeyVerified();
-    } catch (error) {
-      setVerificationError(t('Onboarding.apiKeyVerificationFailed'));
-    } finally {
-      setIsVerifying(false);
-    }
-  };
 
   return (
     <>
@@ -66,18 +47,6 @@ const OnboardingStep2: React.FC<OnboardingStep2Props> = ({
           type="password"
         />
       </div>
-      
-      {verificationError && (
-        <div className="text-red-500 mb-4">{verificationError}</div>
-      )}
-
-      <Button
-        onClick={verifyApiKey}
-        disabled={!apiKey || isVerifying}
-        additionalClassName="w-full"
-      >
-        {isVerifying ? t('Onboarding.verifying') : t('Onboarding.verifyAndContinue')}
-      </Button>
     </>
   );
 };

@@ -1,4 +1,3 @@
-//File: src/pages/admin/Onboarding.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
@@ -12,12 +11,13 @@ import WizardProgress from '../../components/WizardProgress';
 import OnboardingStep1 from '../../components/OnboardingStep1';
 import OnboardingStep2 from '../../components/OnboardingStep2';
 import OnboardingStep3 from '../../components/OnboardingStep3';
+import { useTranslation } from 'react-i18next';
 
 const OnboardingDialog: React.FC = observer(() => {
+  const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(1);
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
   const [apiKey, setApiKey] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const rootStore = useRootStore();
   const navigate = useNavigate();
 
@@ -41,7 +41,7 @@ const OnboardingDialog: React.FC = observer(() => {
 
   const handleOnboarding = async () => {
     try {
-      const response = await apiClient.post('onboarding', { current_user: rootStore.currentUser, name, description });
+      const response = await apiClient.post('onboarding', { current_user: rootStore.currentUser });
       
       const { user, company, token } = response.data;
       
@@ -55,20 +55,31 @@ const OnboardingDialog: React.FC = observer(() => {
       navigate('/admin/users');
     } catch (error) {
       console.error('Error during onboarding:', error);
+      setError(t('Onboarding.errorFinishingOnboarding'));
     }
   };
 
-  const handleNext = () => {
-    if (currentStep < 3) {
-      setCurrentStep(currentStep + 1);
-    } else {
-      handleOnboarding();
+  const [stepData, setStepData] = useState({});
+
+  const handleStepComplete = (isComplete: boolean, data: any = {}) => {
+    setStepData({ ...stepData, ...data });
+    if (isComplete) {
+      if (currentStep < 3) {
+        setCurrentStep(currentStep + 1);
+      } else {
+        handleOnboarding();
+      }
     }
   };
 
-  const handlePrevious = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
+  const updateCompanyInfo = async (companyData: any) => {
+    try {
+      await apiClient.post('updateCompanyInfo', companyData);
+      return true;
+    } catch (error) {
+      console.error('Error updating company info:', error);
+      setError(t('Onboarding.errorUpdatingCompanyInfo'));
+      return false;
     }
   };
 
@@ -77,33 +88,21 @@ const OnboardingDialog: React.FC = observer(() => {
       <WizardProgress totalSteps={3} currentStep={currentStep} />
       
       {currentStep === 1 && (
-        <OnboardingStep1 onNextStep={function (): void {
-          throw new Error('Function not implemented.');
-        } }        />
+        <OnboardingStep1 
+          onStepComplete={handleStepComplete} 
+          updateCompanyInfo={updateCompanyInfo}
+        />
       )}
       
       {currentStep === 2 && (
-        <OnboardingStep2
-          apiKey={apiKey}
-          setApiKey={setApiKey} onApiKeyVerified={function (): void {
-            throw new Error('Function not implemented.');
-          } }        />
+        <OnboardingStep2 onStepComplete={handleStepComplete} />
       )}
 
       {currentStep === 3 && (
-        <OnboardingStep3 onComplete={function (): void {
-          throw new Error('Function not implemented.');
-        } }        />
+        <OnboardingStep3 onStepComplete={handleStepComplete} />
       )}
       
-      <div className="flex justify-between">
-        <Button onClick={handlePrevious} disabled={currentStep === 1}>
-          הקודם
-        </Button>
-        <Button onClick={handleNext} isArrowButton={true} disabled={currentStep === 1 && (description === '' || name === '')}>
-          {currentStep === 3 ? 'סיום' : 'הבא'}
-        </Button>
-      </div>
+      {error && <div className="text-red-500">{error}</div>}
     </div>
   );
 });

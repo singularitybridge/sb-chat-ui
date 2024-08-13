@@ -1,14 +1,16 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TextComponent } from './sb-core-ui-kit/TextComponent';
-import Button from './sb-core-ui-kit/Button';
 
 interface OnboardingStep3Props {
-  onComplete: () => void;
+  onStepComplete: (isComplete: boolean) => void;
 }
 
-const OnboardingStep3: React.FC<OnboardingStep3Props> = ({ onComplete }) => {
+const OnboardingStep3: React.FC<OnboardingStep3Props> = ({ onStepComplete }) => {
+  useEffect(() => {
+    onStepComplete(true);
+  }, [onStepComplete]);
   const { t } = useTranslation();
 
   return (
@@ -28,13 +30,6 @@ const OnboardingStep3: React.FC<OnboardingStep3Props> = ({ onComplete }) => {
         text={t('Onboarding.aiAgentDescription')}
         size="small"
       />
-
-      <Button
-        onClick={onComplete}
-        additionalClassName="w-full mt-6"
-      >
-        {t('Onboarding.letsStart')}
-      </Button>
     </>
   );
 };
