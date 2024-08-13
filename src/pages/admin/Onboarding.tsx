@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { useRootStore } from '../../store/common/RootStoreContext';
 import { User } from '../../store/models/User';
-import Button from '../../components/sb-core-ui-kit/Button';
 import apiClient from '../../services/AxiosService';
 import { Identifier } from '../../store/models/Assistant';
 import { OnboardingStatus } from '../../store/models/RootStore';
@@ -16,7 +15,6 @@ import { useTranslation } from 'react-i18next';
 const OnboardingDialog: React.FC = observer(() => {
   const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(1);
-  const [apiKey, setApiKey] = useState('');
   const [error, setError] = useState<string | null>(null);
   const rootStore = useRootStore();
   const navigate = useNavigate();
@@ -59,27 +57,13 @@ const OnboardingDialog: React.FC = observer(() => {
     }
   };
 
-  const [stepData, setStepData] = useState({});
-
-  const handleStepComplete = (isComplete: boolean, data: any = {}) => {
-    setStepData({ ...stepData, ...data });
+  const handleStepComplete = (isComplete: boolean) => {
     if (isComplete) {
       if (currentStep < 3) {
         setCurrentStep(currentStep + 1);
       } else {
         handleOnboarding();
       }
-    }
-  };
-
-  const updateCompanyInfo = async (companyData: any) => {
-    try {
-      await apiClient.post('updateCompanyInfo', companyData);
-      return true;
-    } catch (error) {
-      console.error('Error updating company info:', error);
-      setError(t('Onboarding.errorUpdatingCompanyInfo'));
-      return false;
     }
   };
 
@@ -90,7 +74,6 @@ const OnboardingDialog: React.FC = observer(() => {
       {currentStep === 1 && (
         <OnboardingStep1 
           onStepComplete={handleStepComplete} 
-          updateCompanyInfo={updateCompanyInfo}
         />
       )}
       

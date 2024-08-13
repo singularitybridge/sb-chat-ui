@@ -6,13 +6,13 @@ import { TextComponent } from './sb-core-ui-kit/TextComponent';
 import { TextareaWithLabel } from './sb-core-ui-kit/TextareaWithLabel';
 import InputWithLabel from './sb-core-ui-kit/InputWithLabel';
 import Button from './sb-core-ui-kit/Button';
+import { updateCompanyInfo } from '../services/api/companyService';
 
 interface OnboardingStep1Props {
-  onStepComplete: (isComplete: boolean, data?: any) => void;
-  updateCompanyInfo: (companyData: any) => Promise<boolean>;
+  onStepComplete: (isComplete: boolean) => void;
 }
 
-const OnboardingStep1: React.FC<OnboardingStep1Props> = observer(({ onStepComplete, updateCompanyInfo }) => {
+const OnboardingStep1: React.FC<OnboardingStep1Props> = observer(({ onStepComplete }) => {
   const { t } = useTranslation();
   const rootStore = useRootStore();
 
@@ -42,12 +42,16 @@ const OnboardingStep1: React.FC<OnboardingStep1Props> = observer(({ onStepComple
         companyDescription,
         userName,
       });
+
       if (success) {
         if (rootStore.activeCompany) {
           rootStore.activeCompany.name = companyName;
           rootStore.activeCompany.description = companyDescription;
         }
-        onStepComplete(true, { companyName, companyDescription, userName });
+        if (rootStore.authStore.userSessionInfo) {
+          rootStore.authStore.userSessionInfo.userName = userName;
+        }
+        onStepComplete(true);
       } else {
         setError(t('Onboarding.errorUpdatingCompanyInfo'));
       }
