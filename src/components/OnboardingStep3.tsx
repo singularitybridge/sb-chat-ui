@@ -1,17 +1,19 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { TextComponent } from './sb-core-ui-kit/TextComponent';
+import Button from './sb-core-ui-kit/Button';
 
 interface OnboardingStep3Props {
   onStepComplete: (isComplete: boolean) => void;
 }
 
 const OnboardingStep3: React.FC<OnboardingStep3Props> = ({ onStepComplete }) => {
-  useEffect(() => {
-    onStepComplete(true);
-  }, [onStepComplete]);
   const { t } = useTranslation();
+
+  const handleContinue = () => {
+    onStepComplete(true);
+  };
 
   return (
     <>
@@ -30,6 +32,14 @@ const OnboardingStep3: React.FC<OnboardingStep3Props> = ({ onStepComplete }) => 
         text={t('Onboarding.aiAgentDescription')}
         size="small"
       />
+      <div className="mt-6">
+        <Button
+          onClick={handleContinue}
+          additionalClassName="w-full bg-blue-500 hover:bg-blue-600"
+        >
+          {t('Onboarding.continue')}
+        </Button>
+      </div>
     </>
   );
 };
