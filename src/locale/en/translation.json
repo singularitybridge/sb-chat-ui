@@ -32,7 +32,10 @@
     "continue": "Continue",
     "apiKey": "API Key",
     "nextStep": "Next Step",
-    "submitting" : "Please wait..."
+    "submitting" : "Please wait...",
+    "tryAgain" : "Try Again",
+    "apiKeyInvalid": "Invalid API key. Please try again.",
+    "apiKeyVerified": "API key verified successfully"
   },
   "Navigation": {
     "home": "Home",

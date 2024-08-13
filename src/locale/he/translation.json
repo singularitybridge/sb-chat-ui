@@ -32,7 +32,10 @@
     "verifyAndContinue": "אמת והמשך",
     "apiKey": "מפתח API",
     "nextStep": "השלב הבא",
-    "submitting" : "אנא המתן..."
+    "submitting" : "אנא המתן...",
+    "tryAgain" : "נסה שוב",
+    "apiKeyInvalid": "מפתח API לא תקין. אנא נסה שוב.",
+    "apiKeyVerified": "מפתח API אומת בהצלחה"
   },
   "Navigation": {
     "home": "בית",
