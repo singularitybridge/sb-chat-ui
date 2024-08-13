@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TextComponent } from './sb-core-ui-kit/TextComponent';
 import { Input } from './sb-core-ui-kit/Input';
+import InputWithLabel from './sb-core-ui-kit/InputWithLabel';
 
 interface OnboardingStep2Props {
   onStepComplete: (isComplete: boolean) => void;
@@ -19,31 +20,22 @@ const OnboardingStep2: React.FC<OnboardingStep2Props> = ({
 
   return (
     <>
-      <div className='p-4'>
-        <img 
-          src="/assets/onboarding/work.png" 
-          alt={t('Onboarding.apiKey')} 
+      <div className="p-4">
+        <img
+          src="/assets/onboarding/work.png"
+          alt={t('Onboarding.apiKey')}
           className="w-full mb-6"
         />
       </div>
-      <TextComponent
-        text={t('Onboarding.enterOpenAIApiKey')}
-        size="subtitle"
-      />
-      <TextComponent
-        text={t('Onboarding.apiKeyDescription')}
-        size="small"
-      />
+      <TextComponent text={t('Onboarding.enterOpenAIApiKey')} size="subtitle" />
+      <TextComponent text={t('Onboarding.apiKeyDescription')} size="small" />
 
       <div className="mb-4">
-        <label className="block text-gray-700 mb-2 font-bold" htmlFor="api-key">
-          {t('Onboarding.openAIApiKey')}
-        </label>
-        <Input
+        <InputWithLabel
+          label={t('Onboarding.apiKey')}
           id="api-key"
           value={apiKey}
           onChange={setApiKey}
-          placeholder={t('Onboarding.enterYourApiKey')}
           type="password"
         />
       </div>
@@ -52,4 +44,3 @@ const OnboardingStep2: React.FC<OnboardingStep2Props> = ({
 };
 
 export default OnboardingStep2;
-

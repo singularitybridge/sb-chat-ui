@@ -12,7 +12,7 @@ const WizardProgress: React.FC<WizardProgressProps> = ({ totalSteps, currentStep
         <div
           key={index}
           className={`w-2.5 h-2.5 rounded-full ${
-            index < currentStep ? 'bg-slate-600' : 'bg-gray-300'
+            index === currentStep - 1 ? 'bg-slate-600' : 'bg-gray-300'
           }`}
         ></div>
       ))}

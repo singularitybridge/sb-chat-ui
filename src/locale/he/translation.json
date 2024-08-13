@@ -28,9 +28,11 @@
     "enterYourApiKey": "הזן את מפתח ה-API שלך",
     "apiKeyVerificationFailed": "אימות מפתח ה-API נכשל. אנא נסה שוב.",
     "verifying": "מאמת...",
+    "continue": "המשך",
     "verifyAndContinue": "אמת והמשך",
     "apiKey": "מפתח API",
-    "nextStep": "השלב הבא"
+    "nextStep": "השלב הבא",
+    "submitting" : "אנא המתן..."
   },
   "Navigation": {
     "home": "בית",

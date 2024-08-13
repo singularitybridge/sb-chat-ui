@@ -29,8 +29,10 @@
     "apiKeyVerificationFailed": "API key verification failed. Please try again.",
     "verifying": "Verifying...",
     "verifyAndContinue": "Verify and Continue",
+    "continue": "Continue",
     "apiKey": "API Key",
-    "nextStep": "Next Step"
+    "nextStep": "Next Step",
+    "submitting" : "Please wait..."
   },
   "Navigation": {
     "home": "Home",
