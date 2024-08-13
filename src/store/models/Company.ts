@@ -6,15 +6,33 @@ export const ApiKey = types.model('ApiKey', {
   value: types.string,
 });
 
-const Company = types.model('Company', {
-  _id: types.identifier,
-  name: types.string,
-  description: types.string,
-  token: types.string,
-  api_keys: types.array(ApiKey),
-  identifiers: types.optional(types.array(Identifier), []),
-  __v: types.number,
+export const Token = types.model('Token', {
+  value: types.string,
+  iv: types.string,
+  tag: types.string,
 });
+
+const Company = types
+  .model('Company', {
+    _id: types.identifier,
+    name: types.string,
+    description: types.string,
+    token: Token,
+    api_keys: types.array(ApiKey),
+    identifiers: types.optional(types.array(Identifier), []),
+    __v: types.number,
+  })
+  .actions((self) => ({
+    updateToken(token: typeof Token.Type) {
+      self.token = token;
+    },
+    updateApiKeys(apiKeys: typeof ApiKey.Type[]) {
+      self.api_keys.replace(apiKeys);
+    },
+    updateIdentifiers(identifiers: typeof Identifier.Type[]) {
+      self.identifiers.replace(identifiers);
+    },
+  }));
 
 type ICompany = Instance<typeof Company>;
 type CompanySnapshotIn = SnapshotIn<typeof Company>;

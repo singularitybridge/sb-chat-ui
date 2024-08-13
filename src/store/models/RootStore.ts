@@ -13,7 +13,7 @@ import {
   EVENT_ERROR,
   EVENT_SHOW_NOTIFICATION,
 } from '../../utils/eventNames';
-import { Company, ICompany } from './Company';
+import { Company, ICompany, Token } from './Company';
 import {
   addCompany,
   deleteCompany,
@@ -226,9 +226,6 @@ const RootStore = types
     loadCompanies: flow(function* () {
       try {
         const companies = yield getCompanies();
-        companies.forEach((company: any) => {
-          company.token = company.token.value;
-        });
         applySnapshot(self.companies, companies);
         self.companiesLoaded = true; // Set this to true after loading companies
       } catch (error) {
@@ -238,8 +235,7 @@ const RootStore = types
 
     getCompanyById: flow(function* (_id: string) {
       try {
-        const decryptedCompany: any = yield getDecryptedCompanyById(_id);
-        decryptedCompany.token = decryptedCompany.token.value;
+        const decryptedCompany: ICompany = yield getDecryptedCompanyById(_id);
         return decryptedCompany;
       } catch (error) {
         console.error('Failed to load decrypted company', error);
@@ -250,7 +246,6 @@ const RootStore = types
     updateCompany: flow(function* (_id: string, company: ICompany) {
       try {
         const updatedCompany = yield updateCompany(_id, company);
-        updatedCompany.token = updatedCompany.token.value;
         const index = self.companies.findIndex((comp) => comp._id === _id);
         if (index !== -1) {
           self.companies[index] = updatedCompany;
@@ -266,8 +261,7 @@ const RootStore = types
 
     refreshToken: flow(function* (_id: string, company: ICompany) {
       try {
-        const updatedCompany: any = yield refreshCompanyToken(_id, company);
-        updatedCompany.token = updatedCompany.token.value;
+        const updatedCompany: ICompany = yield refreshCompanyToken(_id, company);
         const index = self.companies.findIndex((comp) => comp._id === _id);
         if (index !== -1) {
           self.companies[index] = updatedCompany;
@@ -279,6 +273,32 @@ const RootStore = types
         return updatedCompany;
       } catch (error) {
         console.error('Failed to update company', error);
+      }
+    }),
+
+    updateCompanyApiKey: flow(function* (apiKey: string) {
+      try {
+
+        if (!self.activeCompany) {
+          throw new Error('No active company');
+        }
+        
+        // Use MobX-State-Tree array methods
+        self.activeCompany.api_keys.replace(
+          self.activeCompany.api_keys.filter(key => key.key !== 'openai_api_key')
+        );
+        self.activeCompany.api_keys.push({ key: 'openai_api_key', value: apiKey });
+
+        const updatedCompany = yield updateCompany(self.activeCompany._id, self.activeCompany);
+
+        const index = self.companies.findIndex((comp) => comp._id === self.activeCompany._id);
+        if (index !== -1) {
+          self.companies.splice(index, 1, updatedCompany);
+        }
+        return updatedCompany;
+      } catch (error) {
+        console.error('Failed to update company API key', error);
+        throw error;
       }
     }),
 

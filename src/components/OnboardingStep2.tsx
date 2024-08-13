@@ -4,25 +4,29 @@ import { TextComponent } from './sb-core-ui-kit/TextComponent';
 import InputWithLabel from './sb-core-ui-kit/InputWithLabel';
 import { verifyApiKey } from '../services/apiKeyVerificationService';
 import Button from './sb-core-ui-kit/Button';
+import { observer } from 'mobx-react-lite';
+import { useRootStore } from '../store/common/RootStoreContext';
 
 interface OnboardingStep2Props {
   onStepComplete: (isComplete: boolean) => void;
 }
 
-const OnboardingStep2: React.FC<OnboardingStep2Props> = ({
+const OnboardingStep2: React.FC<OnboardingStep2Props> = observer(({
   onStepComplete,
 }) => {
   const [apiKey, setApiKey] = useState('');
   const [buttonState, setButtonState] = useState<'idle' | 'verifying' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const { t } = useTranslation();
+  const rootStore = useRootStore();
 
   const handleVerify = async () => {
     setButtonState('verifying');
     setErrorMessage('');
     try {
-      const isValid = await verifyApiKey(apiKey, 'openai_api_key'); // Use 'default' as apiKeyId for now
+      const isValid = await verifyApiKey(apiKey, 'openai_api_key');
       if (isValid) {
+        await rootStore.updateCompanyApiKey(apiKey);
         setButtonState('success');
         setTimeout(() => {
           onStepComplete(true);
@@ -94,6 +98,6 @@ const OnboardingStep2: React.FC<OnboardingStep2Props> = ({
       </Button>
     </>
   );
-};
+});
 
 export default OnboardingStep2;
