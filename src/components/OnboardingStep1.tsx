@@ -18,13 +18,18 @@ const OnboardingStep1: React.FC<OnboardingStep1Props> = observer(
 
     const [companyName, setCompanyName] = useState('');
     const [companyDescription, setCompanyDescription] = useState('');
-    const [userName, setUserName] = useState(
-      rootStore.authStore.userSessionInfo.userName
-    );
+    const [userName, setUserName] = useState('');
 
     useEffect(() => {
-      setUserName(rootStore.authStore.userSessionInfo.userName);
-    }, [rootStore.authStore.userSessionInfo]);
+      const userSessionInfo = rootStore.authStore.userSessionInfo;
+      setUserName(userSessionInfo.userName || '');
+
+      const activeCompany = rootStore.activeCompany;
+      if (activeCompany) {
+        setCompanyName(activeCompany.name || '');
+        setCompanyDescription(activeCompany.description || '');
+      }
+    }, [rootStore.authStore.userSessionInfo, rootStore.companies]);
 
     const handleNextStep = async () => {
       try {

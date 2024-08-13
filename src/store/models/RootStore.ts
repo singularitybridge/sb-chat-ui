@@ -83,6 +83,9 @@ const RootStore = types
     get isCompanUser() {
       return self.currentUser?.role === 'CompanyUser';
     },
+    get activeCompany() {
+      return self.companies[0];
+    },
   }))
   .actions((self) => ({
     setInitialDataLoaded() {
