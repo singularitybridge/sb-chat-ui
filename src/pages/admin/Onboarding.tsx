@@ -25,7 +25,7 @@ const OnboardingDialog: React.FC<OnboardingDialogProps> = observer(({ isOpen }) 
         setCurrentStep(currentStep + 1);
       } else {
         // Finish onboarding
-        rootStore.updateOnboardingStatus(OnboardingStatus.USING_BASIC_FEATURES, []);
+        rootStore.updateOnboardingStatus(OnboardingStatus.READY_FOR_ASSISTANTS, ['company_info']);
         rootStore.sessionStore.setShowOnboarding(false);
         rootStore.sessionStore.closeDialog();
         navigate('/admin/users');
@@ -33,7 +33,13 @@ const OnboardingDialog: React.FC<OnboardingDialogProps> = observer(({ isOpen }) 
     }
   };
 
-  if (!isOpen || !rootStore.sessionStore.showOnboarding) {
+  React.useEffect(() => {
+    if (rootStore.onboardingStatus === OnboardingStatus.READY_FOR_ASSISTANTS) {
+      rootStore.sessionStore.setShowOnboarding(false);
+    }
+  }, [rootStore.onboardingStatus]);
+
+  if (!isOpen || !rootStore.sessionStore.showOnboarding || rootStore.onboardingStatus === OnboardingStatus.READY_FOR_ASSISTANTS) {
     return null;
   }
 

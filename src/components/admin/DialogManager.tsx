@@ -70,7 +70,7 @@ const DialogManager = observer(() => {
     rootStore.sessionStore.closeDialog();
   });
 
-  const isOnboardingDialogOpen = rootStore.sessionStore.isDialogOpen('onboardingDialog');
+  const isOnboardingDialogOpen = rootStore.sessionStore.showOnboarding && rootStore.onboardingStatus !== OnboardingStatus.READY_FOR_ASSISTANTS;
 
   return (
     <ModalDialog
@@ -79,10 +79,13 @@ const DialogManager = observer(() => {
       onClose={() => {
         setIsOpen(false);
         rootStore.sessionStore.closeDialog();
+        if (isOnboardingDialogOpen) {
+          rootStore.sessionStore.setShowOnboarding(false);
+        }
       }}
       onSave={() => {}}
     >
-      {isOnboardingDialogOpen ? <OnboardingDialog /> : dialogContent.component}
+      {isOnboardingDialogOpen ? <OnboardingDialog isOpen={isOnboardingDialogOpen} /> : dialogContent.component}
     </ModalDialog>
   );
 });

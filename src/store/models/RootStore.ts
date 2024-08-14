@@ -108,6 +108,9 @@ const RootStore = types
         const { onboardingStatus, onboardedModules } = yield getOnboardingStatus();
         self.onboardingStatus = onboardingStatus;
         self.onboardedModules.replace(onboardedModules);
+        
+        // Set showOnboarding based on the fetched status
+        self.sessionStore.setShowOnboarding(onboardingStatus !== OnboardingStatus.READY_FOR_ASSISTANTS);
       } catch (error) {
         console.error('Failed to fetch onboarding status', error);
       }
