@@ -9,7 +9,11 @@ import OnboardingStep2 from '../../components/OnboardingStep2';
 import OnboardingStep3 from '../../components/OnboardingStep3';
 import { useTranslation } from 'react-i18next';
 
-const OnboardingDialog: React.FC = observer(() => {
+interface OnboardingDialogProps {
+  isOpen: boolean;
+}
+
+const OnboardingDialog: React.FC<OnboardingDialogProps> = observer(({ isOpen }) => {
   const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(1);
   const rootStore = useRootStore();
@@ -22,11 +26,16 @@ const OnboardingDialog: React.FC = observer(() => {
       } else {
         // Finish onboarding
         rootStore.updateOnboardingStatus(OnboardingStatus.USING_BASIC_FEATURES, []);
+        rootStore.sessionStore.setShowOnboarding(false);
         rootStore.sessionStore.closeDialog();
         navigate('/admin/users');
       }
     }
   };
+
+  if (!isOpen || !rootStore.sessionStore.showOnboarding) {
+    return null;
+  }
 
   return (
     <div className="p-4 w-full max-w-lg space-y-4">

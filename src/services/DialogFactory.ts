@@ -52,7 +52,7 @@ const dialogComponentFactory = (
     case EVENT_SHOW_ONBOARDING_MODAL:
       return {
         title: eventData.title || i18n.t('dialogTitles.onboarding'),
-        component: React.createElement(OnboardingDialog),
+        component: React.createElement(OnboardingDialog, { isOpen: true }),
       };
 
     default:

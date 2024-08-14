@@ -6,7 +6,8 @@ import { getActiveSession, changeSessionAssistant, endSession } from '../../serv
 const SessionStore = types
   .model({
     activeSession: types.maybeNull(Session),
-    activeDialog: types.optional(types.string, '')
+    activeDialog: types.optional(types.string, ''),
+    showOnboarding: types.optional(types.boolean, true)
   })
   .actions((self) => ({
     fetchActiveSession: flow(function* () {
@@ -59,7 +60,11 @@ const SessionStore = types
 
     isDialogOpen(dialogName: string) {
       return self.activeDialog === dialogName;
-    }
+    },
+
+    setShowOnboarding(show: boolean) {
+      self.showOnboarding = show;
+    },
   }));
 
 export interface ISessionStore extends Instance<typeof SessionStore> {}
