@@ -17,6 +17,7 @@ import {
 import { observer } from 'mobx-react-lite';
 import { useRootStore } from '../../store/common/RootStoreContext';
 import OnboardingDialog from '../../pages/admin/Onboarding';
+import { OnboardingStatus } from '../../store/models/RootStore';
 
 const DialogManager = observer(() => {
   const rootStore = useRootStore();

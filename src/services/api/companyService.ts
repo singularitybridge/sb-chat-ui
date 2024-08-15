@@ -28,6 +28,7 @@ export const getDecryptedCompanyById = async (
 export const addCompany = async (company: ICompany): Promise<ICompany> => {
   try {
     const response = await apiClient.post('company', company);
+    console.log('Server response for new company:', response.data);
     return response.data;
   } catch (error) {
     console.error('Failed to add company', error);
