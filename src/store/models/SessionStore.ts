@@ -12,19 +12,17 @@ const SessionStore = types
   .actions((self) => ({
     fetchActiveSession: flow(function* () {
       try {
-        const response = yield getActiveSession();
-        if (response.keyMissing) {
+        const response = yield getActiveSession();        
+        if (response && response._id && response.assistantId) {
+          self.activeSession = Session.create(response);
+          self.isApiKeyMissing = false;
+        } else if (response && response.keyMissing) {
           self.isApiKeyMissing = true;
           self.activeSession = null;
-          console.log(response.message);
-        } else if (response.data) {
-          self.activeSession = Session.create(response.data);
-          self.isApiKeyMissing = false;
-          if (response.message) {
-            console.log(response.message);
-          }
+          console.log(response.message || 'API key is missing');
         } else {
-          throw new Error('Unexpected response format');
+          console.error('Unexpected response format', response);
+          self.activeSession = null;
         }
       } catch (error: any) {
         console.error('Failed to fetch active session', error);

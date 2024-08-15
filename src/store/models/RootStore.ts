@@ -227,12 +227,19 @@ const RootStore = types
     }),
 
     loadCompanies: flow(function* () {
-      try {
-        const companies = yield getCompanies();
-        applySnapshot(self.companies, companies);
-        self.companiesLoaded = true; // Set this to true after loading companies
-      } catch (error) {
-        console.error('Failed to load companies', error);
+      if (!self.companiesLoaded) {
+        try {
+          const companies = yield getCompanies();
+          applySnapshot(self.companies, companies);
+          self.companiesLoaded = true;
+        } catch (error: any) {
+          console.error('Failed to load companies', error);
+          if (error.message === 'OpenAI API key is not set') {
+            throw new Error('OpenAI API key is not set. Please configure the API key to use this feature.');
+          } else {
+            throw error; // Rethrow other errors
+          }
+        }
       }
     }),
 
