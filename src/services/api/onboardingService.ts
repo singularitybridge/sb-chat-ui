@@ -12,9 +12,9 @@ export const getOnboardingStatus = async () => {
   }
 };
 
-export const updateOnboardingStatus = async (status: OnboardingStatus, modules: string[]) => {
+export const updateOnboardingStatus = async () => {
   try {
-    const response = await apiClient.put('/onboarding/status', { status, modules });
+    const response = await apiClient.post('/onboarding/status', {});
     return response.data;
   } catch (error) {
     console.error('Failed to update onboarding status:', error);

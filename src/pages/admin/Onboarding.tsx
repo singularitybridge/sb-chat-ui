@@ -25,7 +25,7 @@ const OnboardingDialog: React.FC<OnboardingDialogProps> = observer(({ isOpen }) 
         setCurrentStep(currentStep + 1);
       } else {
         // Finish onboarding
-        rootStore.updateOnboardingStatus(OnboardingStatus.READY_FOR_ASSISTANTS, ['company_info']);
+        rootStore.updateOnboardingStatus();
         rootStore.sessionStore.setShowOnboarding(false);
         rootStore.sessionStore.closeDialog();
         navigate('/admin/users');

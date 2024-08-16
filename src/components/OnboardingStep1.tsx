@@ -50,7 +50,7 @@ const OnboardingStep1: React.FC<OnboardingStep1Props> = observer(
           await rootStore.loadCompanies();
 
           // Update onboarding status to API_KEY_REQUIRED
-          await rootStore.updateOnboardingStatus(OnboardingStatus.API_KEY_REQUIRED, ['step1']);
+          await rootStore.updateOnboardingStatus();
 
           onStepComplete(true);
         } else {

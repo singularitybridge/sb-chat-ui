@@ -114,14 +114,16 @@ const RootStore = types
       }
     }),
 
-    updateOnboardingStatus: flow(function* (newStatus: OnboardingStatus, newModules: string[]) {
+    updateOnboardingStatus: flow(function* () {
       try {
         // Update the status on the server
-        yield updateOnboardingStatus(newStatus, newModules);
+        const { onboardingStatus, onboardedModules } = yield updateOnboardingStatus();
 
         // Update the local state
-        self.onboardingStatus = newStatus;
-        self.onboardedModules.replace(newModules);
+        self.onboardingStatus = onboardingStatus;
+        self.onboardedModules.replace(onboardedModules);
+
+        emitter.emit(EVENT_SHOW_NOTIFICATION, i18n.t('Notifications.onboardingStatusUpdated'));
       } catch (error) {
         console.error('Failed to update onboarding status', error);
         emitter.emit(EVENT_ERROR, 'Failed to update onboarding status: ' + (error as Error).message);
