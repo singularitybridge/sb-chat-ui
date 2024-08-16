@@ -1,4 +1,3 @@
-//Filename: src/store/models/RootStore.ts
 import { types, flow, applySnapshot, Instance } from 'mobx-state-tree';
 import { Assistant, IAssistant } from './Assistant';
 import {
@@ -42,7 +41,7 @@ import {
 import i18n from '../../i18n';
 import { AIAssistedConfigStore } from './AIAssistedConfigStore';
 import { AuthStore } from './AuthStore';
-import { getOnboardingStatus } from '../../services/api/onboardingService';
+import { getOnboardingStatus, updateOnboardingStatus } from '../../services/api/onboardingService';
 
 
 // Add this enum
@@ -102,7 +101,6 @@ const RootStore = types
       localStorage.setItem('appLanguage', newLanguage);
     }),
 
-    // Add this new action
     fetchOnboardingStatus: flow(function* () {
       try {
         const { onboardingStatus, onboardedModules } = yield getOnboardingStatus();
@@ -110,18 +108,24 @@ const RootStore = types
         self.onboardedModules.replace(onboardedModules);
         
         // Set showOnboarding based on the fetched status
-        self.sessionStore.setShowOnboarding(onboardingStatus !== OnboardingStatus.READY_FOR_ASSISTANTS);
+        self.sessionStore.setShowOnboarding(self.onboardingStatus !== OnboardingStatus.READY_FOR_ASSISTANTS);
       } catch (error) {
         console.error('Failed to fetch onboarding status', error);
       }
     }),
 
-    // Add this new action
     updateOnboardingStatus: flow(function* (newStatus: OnboardingStatus, newModules: string[]) {
-      self.onboardingStatus = newStatus;
-      self.onboardedModules.replace(newModules);
-      // Here you might want to call an API to update the status on the server
-      // yield updateOnboardingStatusOnServer(newStatus, newModules);
+      try {
+        // Update the status on the server
+        yield updateOnboardingStatus(newStatus, newModules);
+
+        // Update the local state
+        self.onboardingStatus = newStatus;
+        self.onboardedModules.replace(newModules);
+      } catch (error) {
+        console.error('Failed to update onboarding status', error);
+        emitter.emit(EVENT_ERROR, 'Failed to update onboarding status: ' + (error as Error).message);
+      }
     }),
 
     loadActions: flow(function* () {

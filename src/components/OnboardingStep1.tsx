@@ -7,6 +7,7 @@ import { TextareaWithLabel } from './sb-core-ui-kit/TextareaWithLabel';
 import InputWithLabel from './sb-core-ui-kit/InputWithLabel';
 import Button from './sb-core-ui-kit/Button';
 import { updateCompanyInfo } from '../services/api/companyService';
+import { OnboardingStatus } from '../store/models/RootStore';
 
 interface OnboardingStep1Props {
   onStepComplete: (isComplete: boolean) => void;
@@ -47,6 +48,9 @@ const OnboardingStep1: React.FC<OnboardingStep1Props> = observer(
         if (success) {
           await rootStore.authStore.loadUserSessionInfo();
           await rootStore.loadCompanies();
+
+          // Update onboarding status to API_KEY_REQUIRED
+          await rootStore.updateOnboardingStatus(OnboardingStatus.API_KEY_REQUIRED, ['step1']);
 
           onStepComplete(true);
         } else {
