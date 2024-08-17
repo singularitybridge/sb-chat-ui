@@ -1,4 +1,4 @@
-import { types, flow, applySnapshot, Instance } from 'mobx-state-tree';
+import { types, flow, applySnapshot, Instance, getSnapshot } from 'mobx-state-tree';
 import { Assistant, IAssistant } from './Assistant';
 import {
   addAssistant,
@@ -262,8 +262,12 @@ const RootStore = types
     updateCompany: flow(function* (company: Partial<ICompany>) {
       try {
         // Ensure we're sending the full company information
+        const currentCompany = getSnapshot(self.companies[0]);
+        const updatedCompanyData = { ...currentCompany, ...company };
         
-        const updatedCompany = yield updateCompany(company);
+        console.log('Updating company with data:', JSON.stringify(updatedCompanyData));
+        
+        const updatedCompany = yield updateCompany(updatedCompanyData);
         applySnapshot(self.companies, [updatedCompany]);
         emitter.emit(
           EVENT_SHOW_NOTIFICATION,
@@ -295,15 +299,14 @@ const RootStore = types
           throw new Error('No active company');
         }
         
-        const updatedApiKeys = types.array(ApiKey).create(
-          self.activeCompany.api_keys.filter(key => key.key !== 'openai_api_key')
-        );
+        const currentCompany = getSnapshot(self.activeCompany);
+        const updatedApiKeys = currentCompany.api_keys.filter(key => key.key !== 'openai_api_key');
         updatedApiKeys.push({ key: 'openai_api_key', value: apiKey });
 
-
-        console.log('try to update company', updatedApiKeys);
+        console.log('Updating company API key:', JSON.stringify(updatedApiKeys));
     
         const updatedCompany = yield updateCompany({
+          ...currentCompany,
           api_keys: updatedApiKeys
         });
     
