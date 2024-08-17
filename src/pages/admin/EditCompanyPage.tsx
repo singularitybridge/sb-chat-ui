@@ -76,8 +76,10 @@ const EditCompanyView: React.FC = observer(() => {
       id,
       values as unknown as ICompany
     );
-    setCompany(updatedCompany);
-    localStorage.setItem('userToken', updatedCompany.token);
+    if (updatedCompany) {
+      setCompany(updatedCompany as ICompany);
+      localStorage.setItem('userToken', updatedCompany.token.value);
+    }
     setIsLoading(false);
   };
 
