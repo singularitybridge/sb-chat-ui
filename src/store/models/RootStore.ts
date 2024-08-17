@@ -261,6 +261,8 @@ const RootStore = types
 
     updateCompany: flow(function* (company: Partial<ICompany>) {
       try {
+        // Ensure we're sending the full company information
+        
         const updatedCompany = yield updateCompany(company);
         applySnapshot(self.companies, [updatedCompany]);
         emitter.emit(
@@ -269,6 +271,7 @@ const RootStore = types
         );
       } catch (error) {
         console.error('Failed to update company', error);
+        emitter.emit(EVENT_ERROR, 'Failed to update company: ' + (error as Error).message);
       }
     }),
 
@@ -296,6 +299,9 @@ const RootStore = types
           self.activeCompany.api_keys.filter(key => key.key !== 'openai_api_key')
         );
         updatedApiKeys.push({ key: 'openai_api_key', value: apiKey });
+
+
+        console.log('try to update company', updatedApiKeys);
     
         const updatedCompany = yield updateCompany({
           api_keys: updatedApiKeys

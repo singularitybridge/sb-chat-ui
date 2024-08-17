@@ -35,7 +35,8 @@
     "submitting" : "Please wait...",
     "tryAgain" : "Try Again",
     "apiKeyInvalid": "Invalid API key. Please try again.",
-    "apiKeyVerified": "API key verified successfully"
+    "apiKeyVerified": "API key verified successfully",
+    "apiKeyVerificationError" : "An error occurred while verifying the API key. Please try again."
   },
   "Navigation": {
     "home": "Home",

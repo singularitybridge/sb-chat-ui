@@ -35,7 +35,8 @@
     "submitting" : "אנא המתן...",
     "tryAgain" : "נסה שוב",
     "apiKeyInvalid": "מפתח API לא תקין. אנא נסה שוב.",
-    "apiKeyVerified": "מפתח API אומת בהצלחה"
+    "apiKeyVerified": "מפתח API אומת בהצלחה",
+    "apiKeyVerificationError" : "אירעה שגיאה בעת אימות מפתח ה-API. אנא נסה שוב."
   },
   "Navigation": {
     "home": "בית",

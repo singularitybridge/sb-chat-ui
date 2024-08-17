@@ -25,7 +25,7 @@ const EditCompanyView: React.FC = observer(() => {
       }
 
       if (id) {
-        const fetchedCompany = await rootStore.getCompanyById(id);
+        const fetchedCompany = await rootStore.getCompanyById();
         setCompany(fetchedCompany);
         setIsLoading(false);
       }
@@ -45,7 +45,7 @@ const EditCompanyView: React.FC = observer(() => {
   const formFields: FieldConfig[] = companyFieldConfigs.map(
     ({ id, label, key, type, visibility }) => {
       const fieldKeyString = String(key);
-      
+
       return {
         key: key,
         label: label,
@@ -63,7 +63,7 @@ const EditCompanyView: React.FC = observer(() => {
       return;
     }
     setIsLoading(true);
-    await rootStore.updateCompany(id, values as unknown as ICompany);
+    await rootStore.updateCompany(values as unknown as ICompany);
     setIsLoading(false);
   };
 
@@ -72,10 +72,7 @@ const EditCompanyView: React.FC = observer(() => {
       return;
     }
     setIsLoading(true);
-    const updatedCompany = await rootStore.refreshToken(
-      id,
-      values as unknown as ICompany
-    );
+    const updatedCompany = await rootStore.refreshToken();
     if (updatedCompany) {
       setCompany(updatedCompany as ICompany);
       localStorage.setItem('userToken', updatedCompany.token.value);
@@ -89,16 +86,15 @@ const EditCompanyView: React.FC = observer(() => {
         <div className="w-1/2">
           <DynamicForm
             fields={formFields}
-            formContext='EditCompanyPage'
+            formContext="EditCompanyPage"
             onSubmit={handleSubmit}
             refreshToken={handleRefreshToken}
             isLoading={isLoading}
-            formType="update"          
+            formType="update"
           />
         </div>
         <div className="w-1/2"></div>
       </div>
-      
     </>
   );
 });

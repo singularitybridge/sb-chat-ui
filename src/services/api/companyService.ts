@@ -1,3 +1,4 @@
+import { toJS } from 'mobx';
 import { ICompany } from '../../store/models/Company';
 import apiClient from '../AxiosService';
 
@@ -43,6 +44,9 @@ export const deleteCompany = async (): Promise<void> => {
 
 export const updateCompany = async (company: Partial<ICompany>): Promise<ICompany> => {
   try {
+    console.log('cc', toJS(company), company);
+
+
     const response = await apiClient.put('company', company);
     return response.data;
   } catch (error) {
