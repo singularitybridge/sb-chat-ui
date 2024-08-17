@@ -1,23 +1,19 @@
 import { ICompany } from '../../store/models/Company';
 import apiClient from '../AxiosService';
 
-export const getCompanies = async (): Promise<ICompany[]> => {
+export const getCompany = async (): Promise<ICompany> => {
   try {
     const response = await apiClient.get('company');
     return response.data;
   } catch (error) {
-    console.error('Failed to fetch companies', error);
+    console.error('Failed to fetch company', error);
     throw error;
   }
 };
 
-export const getDecryptedCompanyById = async (
-  _id: string
-): Promise<ICompany> => {
+export const getDecryptedCompanyById = async (): Promise<ICompany> => {
   try {
-    const response = await apiClient.get(
-      `company/decrypted/${_id}`
-    );
+    const response = await apiClient.get('company/decrypted');
     return response.data;
   } catch (error) {
     console.error('Failed to fetch decrypted company', error);
@@ -36,24 +32,18 @@ export const addCompany = async (company: ICompany): Promise<ICompany> => {
   }
 };
 
-export const deleteCompany = async (companyId: string): Promise<void> => {
+export const deleteCompany = async (): Promise<void> => {
   try {
-    await apiClient.delete(`company/${companyId}`);
+    await apiClient.delete('company');
   } catch (error) {
     console.error('Failed to delete company', error);
     throw error;
   }
 };
 
-export const updateCompany = async (
-  _id: string,
-  company: ICompany
-): Promise<ICompany> => {
+export const updateCompany = async (company: Partial<ICompany>): Promise<ICompany> => {
   try {
-    const response = await apiClient.put(
-      `company/${_id}`,
-      company
-    );
+    const response = await apiClient.put('company', company);
     return response.data;
   } catch (error) {
     console.error('Failed to update company', error);
@@ -61,15 +51,9 @@ export const updateCompany = async (
   }
 };
 
-export const refreshCompanyToken = async (
-  _id: string,
-  company: ICompany
-): Promise<ICompany> => {
+export const refreshCompanyToken = async (): Promise<ICompany> => {
   try {
-    const response = await apiClient.put(
-      `company/refresh-token/${_id}`,
-      company
-    );
+    const response = await apiClient.put('company/refresh-token');
     return response.data;
   } catch (error) {
     console.error('Failed to refresh company token', error);
