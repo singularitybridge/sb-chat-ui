@@ -17,7 +17,6 @@ import {
   addCompany,
   deleteCompany,
   getCompany,
-  getDecryptedCompanyById,
   refreshCompanyToken,
   updateCompany,
 } from '../../services/api/companyService';
@@ -251,10 +250,10 @@ const RootStore = types
 
     getCompanyById: flow(function* () {
       try {
-        const decryptedCompany: ICompany = yield getDecryptedCompanyById();
-        return decryptedCompany;
+        const company: ICompany = yield getCompany();
+        return company;
       } catch (error) {
-        console.error('Failed to load decrypted company', error);
+        console.error('Failed to load company', error);
         return null;
       }
     }),

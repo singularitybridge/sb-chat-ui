@@ -12,16 +12,6 @@ export const getCompany = async (): Promise<ICompany> => {
   }
 };
 
-export const getDecryptedCompanyById = async (): Promise<ICompany> => {
-  try {
-    const response = await apiClient.get('company/decrypted');
-    return response.data;
-  } catch (error) {
-    console.error('Failed to fetch decrypted company', error);
-    throw error;
-  }
-};
-
 export const addCompany = async (company: ICompany): Promise<ICompany> => {
   try {
     const response = await apiClient.post('company', company);
