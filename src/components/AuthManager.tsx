@@ -4,9 +4,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useRootStore } from '../store/common/RootStoreContext';
 import { observer } from 'mobx-react-lite';
 import { ClipLoader } from 'react-spinners';
-import { emitter } from '../services/mittEmitter';
-import { EVENT_SHOW_ONBOARDING_MODAL } from '../utils/eventNames';
-import { OnboardingStatus } from '../store/models/RootStore';
 
 const AuthManager: React.FC<{ children: React.ReactNode }> = observer(({ children }) => {
   const rootStore = useRootStore();
@@ -23,8 +20,7 @@ const AuthManager: React.FC<{ children: React.ReactNode }> = observer(({ childre
     await rootStore.aiAssistedConfigStore.initialize();
     await rootStore.sessionStore.fetchActiveSession();
     await rootStore.loadInboxMessages();
-    await rootStore.fetchOnboardingStatus();
-    await rootStore.setInitialDataLoaded();
+    await rootStore.setInitialDataLoaded();    
     setLoading(false);
   }
 
@@ -54,15 +50,6 @@ const AuthManager: React.FC<{ children: React.ReactNode }> = observer(({ childre
       navigate('/signup');
     }
   }, [rootStore.authStore.isAuthenticated, navigate, location.pathname]);
-
-  useEffect(() => {
-    if (rootStore.authStore.isLoggedIn) {
-      if (rootStore.onboardingStatus !== OnboardingStatus.READY_FOR_ASSISTANTS) {
-        console.log('show onboarding');
-        emitter.emit(EVENT_SHOW_ONBOARDING_MODAL, { title: 'Onboarding' });
-      }
-    }
-  }, [rootStore.authStore.isLoggedIn, rootStore.onboardingStatus]);
 
   if (loading) {
     return (

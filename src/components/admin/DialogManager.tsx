@@ -60,13 +60,15 @@ const DialogManager = observer(() => {
 
   useEventEmitter(
     EVENT_SHOW_ONBOARDING_MODAL,
-    (eventData: DialogComponentEventData) =>
-      updateContent(EVENT_SHOW_ONBOARDING_MODAL, eventData)
+    (eventData: DialogComponentEventData) => {
+      console.log('EVENT_SHOW_ONBOARDING_MODAL');
+      updateContent(EVENT_SHOW_ONBOARDING_MODAL, eventData);
+    }
+      
   );
 
   useEventEmitter(EVENT_CLOSE_MODAL, () => {
-    setIsOpen(false);
-    rootStore.sessionStore.closeDialog();
+    setIsOpen(false);    
   });
 
   return (
@@ -74,8 +76,7 @@ const DialogManager = observer(() => {
       title={dialogContent.title}
       isOpen={isOpen}
       onClose={() => {
-        setIsOpen(false);
-        rootStore.sessionStore.closeDialog();
+        setIsOpen(false);        
       }}
       onSave={() => {}}
     >

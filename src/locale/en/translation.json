@@ -240,12 +240,14 @@
     "newAssistant": "Create New Assistant",
     "newCompany": "Create New Company",
     "newAction": "Create New Action",
-    "newUser": "Create New User"
+    "newUser": "Create New User",
+    "onboarding": "Get Started"
   },
 
 
   "common" : {
-    "actions": "actions"
+    "actions": "actions",
+    "appName": "Agent Portal"
   }
  
     

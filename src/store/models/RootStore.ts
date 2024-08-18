@@ -11,6 +11,7 @@ import {
   EVENT_CLOSE_MODAL,
   EVENT_ERROR,
   EVENT_SHOW_NOTIFICATION,
+  EVENT_SHOW_ONBOARDING_MODAL,
 } from '../../utils/eventNames';
 import { ApiKey, Company, ICompany, Token } from './Company';
 import {
@@ -102,12 +103,17 @@ const RootStore = types
 
     fetchOnboardingStatus: flow(function* () {
       try {
+
         const { onboardingStatus, onboardedModules } = yield getOnboardingStatus();
+
         self.onboardingStatus = onboardingStatus;
         self.onboardedModules.replace(onboardedModules);
-        
-        // Set showOnboarding based on the fetched status
-        self.sessionStore.setShowOnboarding(self.onboardingStatus !== OnboardingStatus.READY_FOR_ASSISTANTS);
+
+        if (self.onboardingStatus !== OnboardingStatus.READY_FOR_ASSISTANTS) {        
+          console.log('Showing onboarding modal');                      
+          emitter.emit(EVENT_SHOW_ONBOARDING_MODAL, { title: i18n.t('dialogTitles.onboarding') });
+        }
+
       } catch (error) {
         console.error('Failed to fetch onboarding status', error);
       }
@@ -121,8 +127,7 @@ const RootStore = types
         // Update the local state
         self.onboardingStatus = onboardingStatus;
         self.onboardedModules.replace(onboardedModules);
-
-        emitter.emit(EVENT_SHOW_NOTIFICATION, i18n.t('Notifications.onboardingStatusUpdated'));
+        
       } catch (error) {
         console.error('Failed to update onboarding status', error);
         emitter.emit(EVENT_ERROR, 'Failed to update onboarding status: ' + (error as Error).message);

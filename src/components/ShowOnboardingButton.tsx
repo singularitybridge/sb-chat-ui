@@ -5,11 +5,15 @@ import { useNavigate } from 'react-router-dom';
 import { useRootStore } from '../store/common/RootStoreContext';
 import { BotIcon, HelpCircle, LogOutIcon } from 'lucide-react';
 import { IconButton } from './admin/IconButton';
+import { emitter } from '../services/mittEmitter';
+import { EVENT_SHOW_ONBOARDING_MODAL } from '../utils/eventNames';
+import i18n from '../i18n';
 
 const ShowOnboardingButton: React.FC = observer(() => {
 
-  const rootStore = useRootStore();
-  const handleShowOnboarding = () => {};
+  const handleShowOnboarding = () => {    
+    emitter.emit(EVENT_SHOW_ONBOARDING_MODAL, { title: i18n.t('dialogTitles.onboarding') });
+  };
 
   return (
     <IconButton

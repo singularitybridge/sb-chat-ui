@@ -5,8 +5,7 @@ import { getActiveSession, changeSessionAssistant, endSession } from '../../serv
 const SessionStore = types
   .model({
     activeSession: types.maybeNull(Session),
-    activeDialog: types.optional(types.string, ''),
-    showOnboarding: types.optional(types.boolean, true),
+    activeDialog: types.optional(types.string, ''),    
     isApiKeyMissing: types.optional(types.boolean, false)
   })
   .actions((self) => ({
@@ -67,17 +66,10 @@ const SessionStore = types
       self.activeDialog = dialogName;
     },
 
-    closeDialog() {
-      self.activeDialog = '';
-    },
-
     isDialogOpen(dialogName: string) {
       return self.activeDialog === dialogName;
-    },
+    }
 
-    setShowOnboarding(show: boolean) {
-      self.showOnboarding = show;
-    },
   }));
 
 export interface ISessionStore extends Instance<typeof SessionStore> {}

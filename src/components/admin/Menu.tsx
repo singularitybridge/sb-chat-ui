@@ -41,7 +41,8 @@ export const Menu = observer(() => {
             <TextComponent
               size="subtitle"
               color="normal"
-              text="Singularity Bridge"
+              className='text-violet-800 font-medium'
+              text={t('common.appName')}
             />
           </Link>
 

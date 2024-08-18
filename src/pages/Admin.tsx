@@ -1,9 +1,11 @@
 /// file_path=src/pages/Admin.tsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { ContentContainer } from '../components/ContentContainer';
 import { Menu } from '../components/admin/Menu';
 import { Outlet } from 'react-router-dom';
+import { useRootStore } from '../store/common/RootStoreContext';
+import { root } from 'postcss';
 
 // Add this style to your global CSS file or create a new CSS module
 const styles = `
@@ -14,6 +16,14 @@ const styles = `
 `;
 
 const Admin: React.FC = observer(() => {
+
+  const rootStore = useRootStore();
+
+  useEffect(() => {    
+    rootStore.fetchOnboardingStatus();
+  } , [rootStore]);
+  
+
   return (
     <>
       <style>{styles}</style>

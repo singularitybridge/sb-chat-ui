@@ -256,12 +256,15 @@
     "newAssistant": "צור עוזר חדש",
     "newCompany": "צור חברה חדשה",
     "newAction": "צור פעולה חדשה",
-    "newUser": "צור משתמש חדש"
+    "newUser": "צור משתמש חדש",
+    "onboarding": "ברוכים הבאים"
   },
 
 
   "common" : {
-    "actions": "פעולות"
+    "actions": "פעולות",
+    "appName": "פורטל הסוכנים"
+
   }
 
 }

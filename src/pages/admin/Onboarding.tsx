@@ -8,6 +8,8 @@ import OnboardingStep1 from '../../components/OnboardingStep1';
 import OnboardingStep2 from '../../components/OnboardingStep2';
 import OnboardingStep3 from '../../components/OnboardingStep3';
 import { useTranslation } from 'react-i18next';
+import { emitter } from '../../services/mittEmitter';
+import { EVENT_CLOSE_MODAL } from '../../utils/eventNames';
 
 interface OnboardingDialogProps {
   isOpen: boolean;
@@ -25,23 +27,12 @@ const OnboardingDialog: React.FC<OnboardingDialogProps> = observer(({ isOpen }) 
         setCurrentStep(currentStep + 1);
       } else {
         // Finish onboarding
-        rootStore.updateOnboardingStatus();
-        rootStore.sessionStore.setShowOnboarding(false);
-        rootStore.sessionStore.closeDialog();
+        emitter.emit(EVENT_CLOSE_MODAL);
+        rootStore.updateOnboardingStatus();                
         navigate('/admin/users');
       }
     }
   };
-
-  React.useEffect(() => {
-    if (rootStore.onboardingStatus === OnboardingStatus.READY_FOR_ASSISTANTS) {
-      rootStore.sessionStore.setShowOnboarding(false);
-    }
-  }, [rootStore.onboardingStatus]);
-
-  if (!isOpen || !rootStore.sessionStore.showOnboarding || rootStore.onboardingStatus === OnboardingStatus.READY_FOR_ASSISTANTS) {
-    return null;
-  }
 
   return (
     <div className="p-4 w-full max-w-lg space-y-4">
