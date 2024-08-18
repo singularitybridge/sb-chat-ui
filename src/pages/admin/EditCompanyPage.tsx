@@ -18,19 +18,16 @@ const EditCompanyView: React.FC = observer(() => {
   const [company, setCompany] = useState<ICompany | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+
+  const fetchCompany = async () => {
+    if (id) {
+      const fetchedCompany = await rootStore.getCompanyById();
+      setCompany(fetchedCompany);
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchCompany = async () => {
-      if (id && !rootStore.companiesLoaded) {
-        // Optionally, load companies here if not already loaded
-      }
-
-      if (id) {
-        const fetchedCompany = await rootStore.getCompanyById();
-        setCompany(fetchedCompany);
-        setIsLoading(false);
-      }
-    };
-
     fetchCompany();
   }, [id, rootStore, rootStore.companiesLoaded]);
 
@@ -62,8 +59,12 @@ const EditCompanyView: React.FC = observer(() => {
     if (!id) {
       return;
     }
+    
     setIsLoading(true);
     await rootStore.updateCompany(values as unknown as ICompany);
+    await rootStore.loadCompanies();
+    await fetchCompany();
+    await rootStore.authStore.loadUserSessionInfo();
     setIsLoading(false);
   };
 
