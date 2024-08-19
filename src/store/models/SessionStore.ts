@@ -8,6 +8,11 @@ const SessionStore = types
     activeDialog: types.optional(types.string, ''),    
     isApiKeyMissing: types.optional(types.boolean, false)
   })
+  .views((self) => ({
+    get activeSessionId() {
+      return self.activeSession ? self.activeSession._id : null;
+    }
+  }))
   .actions((self) => ({
     fetchActiveSession: flow(function* () {
       try {
