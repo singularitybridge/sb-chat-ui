@@ -20,8 +20,10 @@ const Admin: React.FC = observer(() => {
   const rootStore = useRootStore();
 
   useEffect(() => {    
-    rootStore.fetchOnboardingStatus();
-  } , [rootStore]);
+    if (rootStore.isInitialDataLoaded) {
+      rootStore.fetchOnboardingStatus();
+    }    
+  } , [rootStore.isInitialDataLoaded]);
   
 
   return (
