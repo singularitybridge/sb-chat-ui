@@ -36,7 +36,15 @@
     "tryAgain" : "Try Again",
     "apiKeyInvalid": "Invalid API key. Please try again.",
     "apiKeyVerified": "API key verified successfully",
-    "apiKeyVerificationError" : "An error occurred while verifying the API key. Please try again."
+    "apiKeyVerificationError" : "An error occurred while verifying the API key. Please try again.",
+    "createFirstAssistant": "Create Your First Assistant",
+    "createFirstAssistantTitle": "Let's Create Your First AI Assistant",
+    "createFirstAssistantDescription": "We're going to create your very first AI assistant. This assistant will be ready to help you with various tasks.",
+    "creating": "Creating...",
+    "readyToGo": "Ready to Go!",
+    "readyToGoTitle": "You're All Set!",
+    "readyToGoDescription": "Your AI agent system is now ready to use. Start exploring and interacting with your new assistant!",
+    "finish": "Get Started"
   },
   "Navigation": {
     "home": "Home",

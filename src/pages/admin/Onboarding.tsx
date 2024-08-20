@@ -7,9 +7,11 @@ import WizardProgress from '../../components/WizardProgress';
 import OnboardingStep1 from '../../components/OnboardingStep1';
 import OnboardingStep2 from '../../components/OnboardingStep2';
 import OnboardingStep3 from '../../components/OnboardingStep3';
+import OnboardingStep4 from '../../components/OnboardingStep4';
 import { useTranslation } from 'react-i18next';
 import { emitter } from '../../services/mittEmitter';
 import { EVENT_CLOSE_MODAL } from '../../utils/eventNames';
+
 
 interface OnboardingDialogProps {
   isOpen: boolean;
@@ -23,25 +25,23 @@ const OnboardingDialog: React.FC<OnboardingDialogProps> = observer(({ isOpen }) 
 
   const handleStepComplete = (isComplete: boolean) => {
     if (isComplete) {
-      if (currentStep < 3) {
+      if (currentStep < 4) {
         setCurrentStep(currentStep + 1);
       } else {
         // Finish onboarding
         emitter.emit(EVENT_CLOSE_MODAL);
-        rootStore.updateOnboardingStatus();                
-        navigate('/admin/users');
+        rootStore.updateOnboardingStatus();
+        navigate('/admin/assistants');
       }
     }
   };
 
   return (
     <div className="p-4 w-full max-w-lg space-y-4">
-      <WizardProgress totalSteps={3} currentStep={currentStep} />
+      <WizardProgress totalSteps={4} currentStep={currentStep} />
       
       {currentStep === 1 && (
-        <OnboardingStep1 
-          onStepComplete={handleStepComplete} 
-        />
+        <OnboardingStep1 onStepComplete={handleStepComplete} />
       )}
       
       {currentStep === 2 && (
@@ -50,6 +50,10 @@ const OnboardingDialog: React.FC<OnboardingDialogProps> = observer(({ isOpen }) 
 
       {currentStep === 3 && (
         <OnboardingStep3 onStepComplete={handleStepComplete} />
+      )}
+
+      {currentStep === 4 && (
+        <OnboardingStep4 onStepComplete={handleStepComplete} />
       )}
     </div>
   );
