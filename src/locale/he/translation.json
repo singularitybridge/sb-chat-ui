@@ -36,7 +36,15 @@
     "tryAgain" : "נסה שוב",
     "apiKeyInvalid": "מפתח API לא תקין. אנא נסה שוב.",
     "apiKeyVerified": "מפתח API אומת בהצלחה",
-    "apiKeyVerificationError" : "אירעה שגיאה בעת אימות מפתח ה-API. אנא נסה שוב."
+    "apiKeyVerificationError": "אירעה שגיאה בעת אימות מפתח ה-API. אנא נסה שוב.",
+    "createFirstAssistant": "צור את העוזר הראשון שלך",
+    "createFirstAssistantTitle": "בואו ניצור את העוזר הראשון שלך",
+    "createFirstAssistantDescription": "אנחנו עומדים ליצור את העוזר הראשון שלך בבינה מלאכותית. עוזר זה יהיה מוכן לסייע לך במגוון משימות.",
+    "creating": "יוצר...",
+    "readyToGo": "מוכן לפעולה!",
+    "readyToGoTitle": "הכל מוכן!",
+    "readyToGoDescription": "מערכת העוזר שלך בבינה מלאכותית מוכנה לשימוש. התחל לחקור ולתקשר עם העוזר החדש שלך!",
+    "finish": "התחל"
   },
   "Navigation": {
     "home": "בית",

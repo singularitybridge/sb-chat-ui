@@ -65,6 +65,12 @@ const OnboardingStep2: React.FC<OnboardingStep2Props> = observer(({
     }
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      handleVerify();
+    }
+  };
+
   return (
     <>
       <div className="p-4">
@@ -83,6 +89,7 @@ const OnboardingStep2: React.FC<OnboardingStep2Props> = observer(({
           id="api-key"
           value={apiKey}
           onChange={setApiKey}
+          onKeyDown={handleKeyDown}
           type="password"
         />
       </div>
