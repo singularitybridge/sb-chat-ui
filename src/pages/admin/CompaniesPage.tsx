@@ -21,10 +21,10 @@ const CompaniesView: React.FC = observer(() => {
   const navigate = useNavigate();
 
   const { t } = useTranslation();
-  const headers: CompanyKeys[] = ['name', 'token', 'api_keys'];
+  const headers: CompanyKeys[] = ['name'];
 
   const handleDelete = (row: ICompany) => {
-    rootStore.deleteCompany(row._id);
+    // rootStore.deleteCompany(row._id);
   };
 
   const handleSetCompany = async (row: ICompany) => {

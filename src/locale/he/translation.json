@@ -85,7 +85,9 @@
   "UsersPage": {
     "title": "משתמשים",
     "description": "נהל כאן את המשתמשים שלך",
+    
     "table": {
+      "email": "דואר אלקטרוני",
       "nickname": "כינוי",
       "name": "שם"
     }
@@ -134,6 +136,7 @@
         "gcp_key": "הזן כאן את מפתח ה-GCP שלך",
         "notion_api_key": "הזן כאן את מפתח ה-API של Notion",
         "labs11_api_key": "הזן כאן את מפתח ה-API של 11Labs",
+        "jsonbin_api_key" : "הזן כאן את מפתח ה-API של Jsonbin",
         "twilio_account_sid": "הזן כאן את SID של חשבון Twilio שלך",
         "twilio_auth_token": "הזן כאן את אסימון האימות של Twilio שלך"
       }
@@ -187,6 +190,7 @@
         "gcp_key": "הזן כאן את מפתח ה-GCP שלך",
         "notion_api_key": "הזן כאן את מפתח ה-API של Notion",
         "labs11_api_key": "הזן כאן את מפתח ה-API של 11Labs",
+        "jsonbin_api_key" : "הזן כאן את מפתח ה-API של Json",
         "twilio_account_sid": "הזן כאן את SID של חשבון Twilio שלך",
         "twilio_auth_token": "הזן כאן את אסימון האימות של Twilio שלך"
       }

@@ -40,6 +40,10 @@ export const companyFieldConfigs: FieldConfig[] = [
         value: '-',
       },
       {
+        key: 'jsonbin_api_key',
+        value: '-',
+      },
+      {
         key: 'twilio_account_sid',
         value: '-',
       },

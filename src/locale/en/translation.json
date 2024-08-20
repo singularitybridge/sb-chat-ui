@@ -93,6 +93,7 @@
     "title": "Users",
     "description": "manage your users here",
     "table": {
+      "email" : "Email",
       "nickname": "nickname",
       "name": "name"
     }
@@ -190,6 +191,7 @@
         "gcp_key": "your GCP key here",
         "notion_api_key": "your Notion API key here",
         "labs11_api_key": "your 11Labs API key here",
+        "jsonbin_api_key" : "your JSON Bin API key here",
         "twilio_account_sid": "your Twilio account SID here",
         "twilio_auth_token": "your Twilio auth token here"
       }
