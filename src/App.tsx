@@ -1,4 +1,3 @@
-/// file_path: src/App.tsx
 import React, { useCallback } from 'react';
 import { Outlet } from 'react-router-dom';
 import { RootStore } from './store/models/RootStore';
@@ -41,7 +40,7 @@ const App: React.FC = observer(() => {
       <AuthManager>
         <PusherManager />
         <div className="flex flex-col inset-0 font-noto-sans-hebrew">
-          <ToastContainer />
+          <ToastContainer position="bottom-right" />
           <DialogManager />
           <Outlet />
         </div>
