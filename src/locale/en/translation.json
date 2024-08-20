@@ -257,7 +257,8 @@
 
   "common" : {
     "actions": "actions",
-    "appName": "Agent Portal"
+    "appName": "Agent Portal",
+    "pleaseWait": "Please wait..."
   }
  
     

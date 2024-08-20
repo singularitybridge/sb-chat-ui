@@ -11,12 +11,15 @@ import {
 } from '../../components/DynamicForm';
 import { toJS } from 'mobx';
 import { companyFieldConfigs } from '../../store/fieldConfigs/companyFieldConfigs';
+import { useTranslation } from 'react-i18next';
 
 const EditCompanyView: React.FC = observer(() => {
+
   const { id } = useParams<{ id: string }>();
   const rootStore = useRootStore();
   const [company, setCompany] = useState<ICompany | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { t } = useTranslation();
 
 
   const fetchCompany = async () => {
@@ -32,7 +35,7 @@ const EditCompanyView: React.FC = observer(() => {
   }, [id, rootStore, rootStore.companiesLoaded]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>{t('common.pleaseWait')}</div>;
   }
 
   if (!company) {

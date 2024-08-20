@@ -63,7 +63,7 @@ const EditAssistantView: React.FC = observer(() => {
   };
 
   if (rootStore.assistantsLoaded === false) {
-    return <TextComponent text="Loading..." size="medium" />;
+    return <TextComponent text={t('common.pleaseWait')} size="medium" />;
   }
 
   if (!assistant) {
