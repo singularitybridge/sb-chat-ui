@@ -18,6 +18,11 @@ export const AuthStore = types
     isUserDataLoaded: types.optional(types.boolean, false),
     userSessionInfo: types.optional(UserSessionInfo, {}),
   })
+  .views((self) => ({
+    get isLoggedIn() {
+      return self.isAuthenticated && self.isUserDataLoaded;
+    },
+  }))
   .actions((self) => ({
     setIsAuthenticated(value: boolean) {
       self.isAuthenticated = value;

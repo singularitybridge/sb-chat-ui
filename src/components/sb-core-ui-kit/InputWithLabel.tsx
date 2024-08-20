@@ -10,6 +10,7 @@ interface InputWithLabelProps {
   onChange: (value: string) => void;
   onFocus?: () => void;
   onBlur?: () => void;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   autoFocus?: boolean;
   error?: string;
   disabled?: boolean;
@@ -23,6 +24,7 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
   onChange,
   onFocus,
   onBlur,
+  onKeyDown,
   autoFocus,
   error,
   disabled,
@@ -39,6 +41,7 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
         onChange={onChange}
         onFocus={onFocus}
         onBlur={onBlur}
+        onKeyDown={onKeyDown}
         autoFocus={autoFocus}
         error={error}
         disabled={disabled}

@@ -94,3 +94,13 @@ export async function updateAssistant(id: string, assistant: IAssistant & { voic
     throw error;
   }
 }
+
+export const createDefaultAssistant = async () => {
+  try {
+    const response = await apiClient.post('/assistant/default');
+    return response.data;
+  } catch (error) {
+    console.error('Error creating default assistant:', error);
+    throw error;
+  }
+};

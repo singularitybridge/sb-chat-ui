@@ -26,14 +26,6 @@ const llmModelOptions: SelectListOption[] = [
 
 export const assistantFieldConfigs: FieldConfig[] = [
   {
-    id: 'assistantId',
-    label: 'Assistant ID', // 'Assistant ID
-    key: 'assistantId',
-    type: 'input',
-    value: '-',
-    visibility: { create: false, view: true, update: true },
-  },
-  {
     id: 'name',
     label: 'Name', // 'Name'
     key: 'name',

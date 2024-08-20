@@ -7,6 +7,7 @@ import LanguageToggle from '../LanguageToggle';
 import { useRootStore } from '../../store/common/RootStoreContext';
 import { TextComponent } from '../sb-core-ui-kit/TextComponent';
 import LogoutButton from '../LogoutButton';
+import ShowOnboardingButton from '../ShowOnboardingButton';
 
 export const Menu = observer(() => {
   const menuItems = [
@@ -40,7 +41,8 @@ export const Menu = observer(() => {
             <TextComponent
               size="subtitle"
               color="normal"
-              text="Singularity Bridge"
+              className='text-violet-800 font-medium'
+              text={t('common.appName')}
             />
           </Link>
 
@@ -72,9 +74,10 @@ export const Menu = observer(() => {
           </ul>
         </div>
 
-        <div className="flex items-center space-x-4 rtl:space-x-reverse">
+        <div className="flex items-center space-x-2.5 rtl:space-x-reverse">
           <SessionView />
           <LanguageToggle />
+          <ShowOnboardingButton />
           <LogoutButton />
         </div>
       </div>

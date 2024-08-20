@@ -8,6 +8,44 @@
     "Actions": "Actions",
     "Home": "Home"
   },
+  "Onboarding": {
+    "welcome": "Welcome",
+    "welcomeToSingularityBridge": "Welcome to Singularity Bridge",
+    "welcomeDescription": "Let's get started by setting up your profile",
+    "companyName": "Company Name",
+    "enterYourCompanyName": "Enter your company name",
+    "userName": "User Name",
+    "enterYourNickname": "Enter your nickname",
+    "tellUsAboutYourCompany": "Tell us about your company",
+    "tellUsAboutYourCompanyPlaceholder": "Share a bit about your company...",
+    "aiAgentReady": "AI Agent Ready",
+    "newAIAgentWaiting": "Your new AI agent is waiting for you",
+    "aiAgentDescription": "Start chatting with your personalized AI assistant now",
+    "letsStart": "Let's Start",
+    "enterOpenAIApiKey": "Enter your OpenAI API Key",
+    "apiKeyDescription": "We need your OpenAI API key to power the AI assistant",
+    "openAIApiKey": "OpenAI API Key",
+    "enterYourApiKey": "Enter your API key",
+    "apiKeyVerificationFailed": "API key verification failed. Please try again.",
+    "verifying": "Verifying...",
+    "verifyAndContinue": "Verify and Continue",
+    "continue": "Continue",
+    "apiKey": "API Key",
+    "nextStep": "Next Step",
+    "submitting" : "Please wait...",
+    "tryAgain" : "Try Again",
+    "apiKeyInvalid": "Invalid API key. Please try again.",
+    "apiKeyVerified": "API key verified successfully",
+    "apiKeyVerificationError" : "An error occurred while verifying the API key. Please try again.",
+    "createFirstAssistant": "Create Your First Assistant",
+    "createFirstAssistantTitle": "Let's Create Your First AI Assistant",
+    "createFirstAssistantDescription": "We're going to create your very first AI assistant. This assistant will be ready to help you with various tasks.",
+    "creating": "Creating...",
+    "readyToGo": "Ready to Go!",
+    "readyToGoTitle": "You're All Set!",
+    "readyToGoDescription": "Your AI agent system is now ready to use. Start exploring and interacting with your new assistant!",
+    "finish": "Get Started"
+  },
   "Navigation": {
     "home": "Home",
     "companies": "Companies",
@@ -210,12 +248,14 @@
     "newAssistant": "Create New Assistant",
     "newCompany": "Create New Company",
     "newAction": "Create New Action",
-    "newUser": "Create New User"
+    "newUser": "Create New User",
+    "onboarding": "Get Started"
   },
 
 
   "common" : {
-    "actions": "actions"
+    "actions": "actions",
+    "appName": "Agent Portal"
   }
  
     

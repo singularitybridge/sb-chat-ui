@@ -21,7 +21,7 @@ const CompaniesView: React.FC = observer(() => {
   const navigate = useNavigate();
 
   const { t } = useTranslation();
-  const headers: CompanyKeys[] = ['name', 'token'];
+  const headers: CompanyKeys[] = ['name', 'token', 'api_keys'];
 
   const handleDelete = (row: ICompany) => {
     rootStore.deleteCompany(row._id);
@@ -58,7 +58,11 @@ const CompaniesView: React.FC = observer(() => {
     <>
       <Table
         headers={convertToStringArray(headers)}
-        data={toJS(rootStore.companies)}
+        data={toJS(rootStore.companies).map(company => ({
+          ...company,
+          api_keys: company.api_keys.length.toString(), // Convert to string to display count
+          token: company.token ? '[Encrypted]' : ''
+        }))}
         Page="CompaniesPage"
         onRowClick={(row: ICompany) => navigate(`/admin/companies/${row._id}`)}
         Actions={Actions}

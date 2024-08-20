@@ -1,5 +1,4 @@
-//Filename: src/store/models/RootStore.ts
-import { types, flow, applySnapshot, Instance } from 'mobx-state-tree';
+import { types, flow, applySnapshot, Instance, getSnapshot } from 'mobx-state-tree';
 import { Assistant, IAssistant } from './Assistant';
 import {
   addAssistant,
@@ -12,13 +11,13 @@ import {
   EVENT_CLOSE_MODAL,
   EVENT_ERROR,
   EVENT_SHOW_NOTIFICATION,
+  EVENT_SHOW_ONBOARDING_MODAL,
 } from '../../utils/eventNames';
-import { Company, ICompany } from './Company';
+import { ApiKey, Company, ICompany, Token } from './Company';
 import {
   addCompany,
   deleteCompany,
-  getCompanies,
-  getDecryptedCompanyById,
+  getCompany,
   refreshCompanyToken,
   updateCompany,
 } from '../../services/api/companyService';
@@ -42,13 +41,23 @@ import {
 import i18n from '../../i18n';
 import { AIAssistedConfigStore } from './AIAssistedConfigStore';
 import { AuthStore } from './AuthStore';
+import { getOnboardingStatus, updateOnboardingStatus } from '../../services/api/onboardingService';
+
+
+// Add this enum
+export enum OnboardingStatus {
+  CREATED = 'created',
+  API_KEY_REQUIRED = 'api_key_required',
+  READY_FOR_ASSISTANTS = 'ready_for_assistants',
+  USING_BASIC_FEATURES = 'using_basic_features',
+  ADVANCED_USER = 'advanced_user',
+  EXPERT_USER = 'expert_user'
+}
 
 const RootStore = types
   .model('RootStore', {
-
     authStore: types.optional(AuthStore, {}),
     isInitialDataLoaded: types.optional(types.boolean, false),
-
     assistants: types.array(Assistant),
     companies: types.array(Company),
     companiesLoaded: types.optional(types.boolean, false),
@@ -56,14 +65,15 @@ const RootStore = types
     assistantsLoaded: types.optional(types.boolean, false),
     sessionStore: types.optional(SessionStore, {}),
     aiAssistedConfigStore: types.optional(AIAssistedConfigStore, {}),
-
     inboxSessions: types.array(InboxSession),
     inboxSessionsLoaded: types.optional(types.boolean, false),
     currentUser: types.maybe(types.reference(User)),
     actions: types.array(Action),
     actionsLoaded: types.optional(types.boolean, false),
     language: types.optional(types.string, 'en'),
-    
+    // Add these new properties
+    onboardingStatus: types.optional(types.enumeration(Object.values(OnboardingStatus)), OnboardingStatus.CREATED),
+    onboardedModules: types.optional(types.array(types.string), []),
   })
   .views((self) => ({
     get isAdmin() {
@@ -72,9 +82,11 @@ const RootStore = types
     get isCompanUser() {
       return self.currentUser?.role === 'CompanyUser';
     },
+    get activeCompany() {
+      return self.companies[0];
+    },
   }))
   .actions((self) => ({
-
     setInitialDataLoaded() {
       self.isInitialDataLoaded = true;
     },
@@ -87,6 +99,39 @@ const RootStore = types
       self.language = newLanguage;
       yield i18n.changeLanguage(newLanguage);
       localStorage.setItem('appLanguage', newLanguage);
+    }),
+
+    fetchOnboardingStatus: flow(function* () {
+      try {
+
+        const { onboardingStatus, onboardedModules } = yield getOnboardingStatus();
+
+        self.onboardingStatus = onboardingStatus;
+        self.onboardedModules.replace(onboardedModules);
+
+        if (self.onboardingStatus !== OnboardingStatus.READY_FOR_ASSISTANTS) {        
+          console.log('Showing onboarding modal');                      
+          emitter.emit(EVENT_SHOW_ONBOARDING_MODAL, { title: i18n.t('dialogTitles.onboarding') });
+        }
+
+      } catch (error) {
+        console.error('Failed to fetch onboarding status', error);
+      }
+    }),
+
+    updateOnboardingStatus: flow(function* () {
+      try {
+        // Update the status on the server
+        const { onboardingStatus, onboardedModules } = yield updateOnboardingStatus();
+
+        // Update the local state
+        self.onboardingStatus = onboardingStatus;
+        self.onboardedModules.replace(onboardedModules);
+        
+      } catch (error) {
+        console.error('Failed to update onboarding status', error);
+        emitter.emit(EVENT_ERROR, 'Failed to update onboarding status: ' + (error as Error).message);
+      }
     }),
 
     loadActions: flow(function* () {
@@ -181,8 +226,6 @@ const RootStore = types
       }
     }),
 
-
-
     loadAssistants: flow(function* () {
       try {
         const assistants = yield getAssistants();
@@ -194,61 +237,88 @@ const RootStore = types
     }),
 
     loadCompanies: flow(function* () {
-      try {
-        const companies = yield getCompanies();
-        companies.forEach((company: any) => {
-          company.token = company.token.value;
-        });
-        applySnapshot(self.companies, companies);
-        self.companiesLoaded = true; // Set this to true after loading companies
-      } catch (error) {
-        console.error('Failed to load companies', error);
+      if (!self.companiesLoaded) {
+        try {
+          const company = yield getCompany();
+          applySnapshot(self.companies, [company]); // Wrap the single company in an array
+          self.companiesLoaded = true;
+        } catch (error: any) {
+          console.error('Failed to load company', error);
+          if (error.message === 'OpenAI API key is not set') {
+            throw new Error('OpenAI API key is not set. Please configure the API key to use this feature.');
+          } else {
+            throw error; // Rethrow other errors
+          }
+        }
       }
     }),
 
-    getCompanyById: flow(function* (_id: string) {
+    getCompanyById: flow(function* () {
       try {
-        const decryptedCompany: any = yield getDecryptedCompanyById(_id);
-        decryptedCompany.token = decryptedCompany.token.value;
-        return decryptedCompany;
+        const company: ICompany = yield getCompany();
+        return company;
       } catch (error) {
-        console.error('Failed to load decrypted company', error);
+        console.error('Failed to load company', error);
         return null;
       }
     }),
 
-    updateCompany: flow(function* (_id: string, company: ICompany) {
+    updateCompany: flow(function* (company: Partial<ICompany>) {
       try {
-        const updatedCompany = yield updateCompany(_id, company);
-        updatedCompany.token = updatedCompany.token.value;
-        const index = self.companies.findIndex((comp) => comp._id === _id);
-        if (index !== -1) {
-          self.companies[index] = updatedCompany;
-          emitter.emit(
-            EVENT_SHOW_NOTIFICATION,
-            i18n.t('Notifications.companyUpdated')
-          );
-        }
+        // Ensure we're sending the full company information
+        const currentCompany = getSnapshot(self.companies[0]);
+        const updatedCompanyData = { ...currentCompany, ...company };
+        
+        console.log('Updating company with data:', JSON.stringify(updatedCompanyData));
+        
+        const updatedCompany = yield updateCompany(updatedCompanyData);
+        applySnapshot(self.companies, [updatedCompany]);
+        emitter.emit(
+          EVENT_SHOW_NOTIFICATION,
+          i18n.t('Notifications.companyUpdated')
+        );
+      } catch (error) {
+        console.error('Failed to update company', error);
+        emitter.emit(EVENT_ERROR, 'Failed to update company: ' + (error as Error).message);
+      }
+    }),
+
+    refreshToken: flow(function* () {
+      try {
+        const updatedCompany: ICompany = yield refreshCompanyToken();
+        applySnapshot(self.companies, [updatedCompany]);
+        emitter.emit(
+          EVENT_SHOW_NOTIFICATION,
+          i18n.t('Notifications.tokenRefreshed')
+        );
+        return updatedCompany;
       } catch (error) {
         console.error('Failed to update company', error);
       }
     }),
 
-    refreshToken: flow(function* (_id: string, company: ICompany) {
+    updateCompanyApiKey: flow(function* (apiKey: string) {
       try {
-        const updatedCompany: any = yield refreshCompanyToken(_id, company);
-        updatedCompany.token = updatedCompany.token.value;
-        const index = self.companies.findIndex((comp) => comp._id === _id);
-        if (index !== -1) {
-          self.companies[index] = updatedCompany;
-          emitter.emit(
-            EVENT_SHOW_NOTIFICATION,
-            i18n.t('Notifications.tokenRefreshed')
-          );
+        if (!self.activeCompany) {
+          throw new Error('No active company');
         }
+        
+        const currentCompany = getSnapshot(self.activeCompany);
+        const updatedApiKeys = currentCompany.api_keys.filter(key => key.key !== 'openai_api_key');
+        updatedApiKeys.push({ key: 'openai_api_key', value: apiKey });
+
+        console.log('Updating company API key:', JSON.stringify(updatedApiKeys));
+    
+        const updatedCompany = yield updateCompany({
+          ...currentCompany,
+          api_keys: updatedApiKeys
+        });
+    
+        applySnapshot(self.companies, [updatedCompany]);
         return updatedCompany;
       } catch (error) {
-        console.error('Failed to update company', error);
+        console.error('Failed to update company API key', error);
+        throw error;
       }
     }),
 
@@ -263,7 +333,6 @@ const RootStore = types
 
     addUser: flow(function* (user: IUser) {
       try {
-        debugger
         const newUser = yield addUser(user);
         self.users.push(newUser);
         emitter.emit(
@@ -298,10 +367,9 @@ const RootStore = types
 
     addCompany: flow(function* (company: ICompany) {
       try {
-        debugger
         const newCompany = yield addCompany(company);
         newCompany.token = newCompany.token.value;
-        self.companies.push(newCompany);
+        applySnapshot(self.companies, [newCompany]);
         emitter.emit(
           EVENT_SHOW_NOTIFICATION,
           i18n.t('Notifications.companyCreated')
@@ -315,29 +383,21 @@ const RootStore = types
       }
     }),
 
-    deleteCompany: flow(function* (_id: string) {
+    deleteCompany: flow(function* () {
       try {
-        yield deleteCompany(_id);
-        const index = self.companies.findIndex(
-          (company) => company._id === _id
-        );
-        if (index !== -1) {
-          self.companies.splice(index, 1);
-        }
+        yield deleteCompany();
+        applySnapshot(self.companies, []);
         emitter.emit(
           EVENT_SHOW_NOTIFICATION,
           i18n.t('Notifications.companyDeleted')
         );
       } catch (error) {
-        console.error('Failed to delete assistant', error);
+        console.error('Failed to delete company', error);
       }
     }),
 
     createAssistant: flow(function* (assistant: IAssistant) {
       try {
-        // set companyId to activeSession companyId
-        // assistant.companyId =
-        //   getLocalStorageItem(LOCALSTORAGE_COMPANY_ID) || '';
         const newAssistant = yield addAssistant(assistant);
         self.assistants.push(newAssistant);
         emitter.emit(

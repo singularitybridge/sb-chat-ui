@@ -1,13 +1,11 @@
-/// file_path= src/services/api/sessionService.ts
 import { ISession } from '../../store/models/Session';
 import apiClient from '../AxiosService';
 
-
-export const getActiveSession = async (): Promise<ISession> => {
+export const getActiveSession = async (): Promise<{ data?: ISession; message?: string; keyMissing?: boolean }> => {
   try {
     const response = await apiClient.post('session');
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Failed to fetch active session', error);
     throw error;
   }
