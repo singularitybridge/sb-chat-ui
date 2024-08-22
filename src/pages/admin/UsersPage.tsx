@@ -19,7 +19,7 @@ const UsersView: React.FC = observer(() => {
   const rootStore = useRootStore();
   const navigate = useNavigate();
 
-  const headers: UserKeys[] = ['name', 'nickname'];
+  const headers: UserKeys[] = ['name', 'nickname', 'email'];
   const handleDelete = (row: IUser) => {
     rootStore.deleteUser(row._id);
   };

@@ -15,8 +15,14 @@ interface TextareaProps {
   error?: string;
   autogrow?: boolean;
   transparentBg?: boolean;
-  maxHeight?: number; // New prop for maximum height
+  maxHeight?: number;
 }
+
+// Function to check if text contains Hebrew letters
+const containsHebrew = (text: string): boolean => {
+  const hebrewRegex = /[\u0590-\u05FF]/;
+  return hebrewRegex.test(text);
+};
 
 const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
   id,
@@ -35,6 +41,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
   maxHeight = 300,
 }, ref) => {
   const [isFocused, setIsFocused] = useState(false);
+  const [direction, setDirection] = useState<'ltr' | 'rtl'>('ltr');
   const innerRef = useRef<HTMLTextAreaElement>(null);
 
   const textareaRef = ref || innerRef;
@@ -49,25 +56,27 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
     if (onBlur) onBlur();
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newValue = e.target.value;
+    onChange(newValue);
+    setDirection(containsHebrew(newValue) ? 'rtl' : 'ltr');
+  };
+
   useEffect(() => {
     if (autogrow && textareaRef && 'current' in textareaRef && textareaRef.current) {
       const textarea = textareaRef.current;
       
-      // Reset height to auto to get the correct scrollHeight
       textarea.style.height = 'auto';
       
-      // Calculate the new height
       let newHeight = textarea.scrollHeight;
       
-      // If maxHeight is set and the new height exceeds it, cap the height
       if (maxHeight && newHeight > maxHeight) {
         newHeight = maxHeight;
-        textarea.style.overflowY = 'auto'; // Enable vertical scrolling
+        textarea.style.overflowY = 'auto';
       } else {
-        textarea.style.overflowY = 'hidden'; // Disable vertical scrolling
+        textarea.style.overflowY = 'hidden';
       }
       
-      // Set the new height
       textarea.style.height = `${newHeight}px`;
     }
   }, [value, autogrow, textareaRef, maxHeight]);
@@ -92,7 +101,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
         <textarea
           ref={textareaRef}
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={handleChange}
           onFocus={handleFocus}
           onBlur={handleBlur}
           autoFocus={autoFocus}
@@ -100,7 +109,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
           disabled={disabled}
           rows={autogrow ? 1 : rows}
           className={clsx(
-            'w-full rtl:text-right ltr:text-left text-base font-normal leading-[140%] tracking-[0.56px] focus:outline-none bg-transparent',
+            'w-full text-base font-normal leading-[140%] tracking-[0.56px] focus:outline-none bg-transparent',
             {
               'resize-none': autogrow,
               'resize-vertical': !autogrow,
@@ -109,6 +118,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
             }
           )}
           id={id}
+          dir={direction}
         />
       </div>
       {error && (

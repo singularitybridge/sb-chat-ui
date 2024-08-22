@@ -11,31 +11,31 @@ import {
 } from '../../components/DynamicForm';
 import { toJS } from 'mobx';
 import { companyFieldConfigs } from '../../store/fieldConfigs/companyFieldConfigs';
+import { useTranslation } from 'react-i18next';
 
 const EditCompanyView: React.FC = observer(() => {
+
   const { id } = useParams<{ id: string }>();
   const rootStore = useRootStore();
   const [company, setCompany] = useState<ICompany | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { t } = useTranslation();
+
+
+  const fetchCompany = async () => {
+    if (id) {
+      const fetchedCompany = await rootStore.getCompanyById();
+      setCompany(fetchedCompany);
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchCompany = async () => {
-      if (id && !rootStore.companiesLoaded) {
-        // Optionally, load companies here if not already loaded
-      }
-
-      if (id) {
-        const fetchedCompany = await rootStore.getCompanyById(id);
-        setCompany(fetchedCompany);
-        setIsLoading(false);
-      }
-    };
-
     fetchCompany();
   }, [id, rootStore, rootStore.companiesLoaded]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>{t('common.pleaseWait')}</div>;
   }
 
   if (!company) {
@@ -45,7 +45,7 @@ const EditCompanyView: React.FC = observer(() => {
   const formFields: FieldConfig[] = companyFieldConfigs.map(
     ({ id, label, key, type, visibility }) => {
       const fieldKeyString = String(key);
-      
+
       return {
         key: key,
         label: label,
@@ -62,8 +62,12 @@ const EditCompanyView: React.FC = observer(() => {
     if (!id) {
       return;
     }
+    
     setIsLoading(true);
-    await rootStore.updateCompany(id, values as unknown as ICompany);
+    await rootStore.updateCompany(values as unknown as ICompany);
+    await rootStore.loadCompanies();
+    await fetchCompany();
+    await rootStore.authStore.loadUserSessionInfo();
     setIsLoading(false);
   };
 
@@ -72,12 +76,11 @@ const EditCompanyView: React.FC = observer(() => {
       return;
     }
     setIsLoading(true);
-    const updatedCompany = await rootStore.refreshToken(
-      id,
-      values as unknown as ICompany
-    );
-    setCompany(updatedCompany);
-    localStorage.setItem('userToken', updatedCompany.token);
+    const updatedCompany = await rootStore.refreshToken();
+    if (updatedCompany) {
+      setCompany(updatedCompany as ICompany);
+      localStorage.setItem('userToken', updatedCompany.token.value);
+    }
     setIsLoading(false);
   };
 
@@ -87,16 +90,15 @@ const EditCompanyView: React.FC = observer(() => {
         <div className="w-1/2">
           <DynamicForm
             fields={formFields}
-            formContext='EditCompanyPage'
+            formContext="EditCompanyPage"
             onSubmit={handleSubmit}
             refreshToken={handleRefreshToken}
             isLoading={isLoading}
-            formType="update"          
+            formType="update"
           />
         </div>
         <div className="w-1/2"></div>
       </div>
-      
     </>
   );
 });

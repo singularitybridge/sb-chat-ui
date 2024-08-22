@@ -5,12 +5,10 @@ import { AudioRecorder } from '../../sb-core-ui-kit/AudioRecorder';
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
-  language?: string;
 }
 
 const ChatInput: React.FC<ChatInputProps> = ({
   onSendMessage,
-  language = 'en',
 }) => {
   const [message, setMessage] = useState('');
   const { t } = useTranslation();
@@ -53,7 +51,6 @@ const ChatInput: React.FC<ChatInputProps> = ({
           <div>
           <AudioRecorder
             onTranscriptionComplete={handleTranscriptionComplete}
-            language={language}
           />
           <button
             onClick={() => handleSubmitMessage(message)}

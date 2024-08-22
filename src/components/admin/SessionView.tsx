@@ -4,12 +4,15 @@ import { useRootStore } from '../../store/common/RootStoreContext';
 import {} from '@heroicons/react/24/outline';
 
 import { Building2, UserRound } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export const SessionView = observer(() => {
+  
   const rootStore = useRootStore();
+  const { t } = useTranslation();
 
   if (!rootStore.authStore.isUserDataLoaded) {
-    return <div className="p-3">loading...</div>;
+    return <div className="p-3">{t('common.pleaseWait')}</div>;
   }
 
   return (

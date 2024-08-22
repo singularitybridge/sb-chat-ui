@@ -13,9 +13,10 @@ import {
 import { emitter, useEventEmitter } from '../../services/mittEmitter';
 import { IAssistant } from '../../store/models/Assistant';
 import { SBChatKitUI } from '../sb-chat-kit-ui/SBChatKitUI';
-import { textToSpeech } from '../../services/api/voiceService';
+import { textToSpeech, TTSVoice } from '../../services/api/voiceService';
 import i18n from '../../i18n';
 import { leapfrog } from 'ldrs';
+import { Avatar, AvatarStyles } from '../Avatar';
 
 interface Metadata {
   message_type: string;
@@ -106,7 +107,7 @@ const ChatContainer = observer(() => {
 
         if (audioState === 'enabled') {
           try {
-            const audioUrl = await textToSpeech(cleanedResponse, 'shimmer');
+            const audioUrl = await textToSpeech(cleanedResponse, assistant.voice as TTSVoice)
             if (audioRef.current) {
               audioRef.current.src = audioUrl;
               console.log('Playing audio response:', audioUrl);
@@ -186,7 +187,7 @@ const ChatContainer = observer(() => {
             ? {
                 name: assistant.name,
                 description: assistant.description,
-                avatar: '/assets/avatars/avatar-_0020_9.png',
+                avatar: assistant.avatarImage,
               }
             : undefined
         }
@@ -195,7 +196,6 @@ const ChatContainer = observer(() => {
         onClear={handleClear}
         onToggleAudio={handleToggleAudio}
         audioState={audioState}
-        language={'he'}
         isLoading={isLoading}
       />
       <audio ref={audioRef} style={{ display: 'none' }} />

@@ -23,14 +23,14 @@ interface RequestBody {
 const generateAudioFromText = (
   text: string,
   languageCode: string,
-  voiceName: string,
+  voice: string,
 ): Promise<ArrayBuffer> => {
   const trimmedText = text.substring(0, 80);
 
   const requestBody: RequestBody = {
     // input: { text },
     input: { text: trimmedText },
-    voice: { languageCode, name: voiceName },
+    voice: { languageCode, name: voice },
     audioConfig: { audioEncoding: 'MP3' },
   };
 

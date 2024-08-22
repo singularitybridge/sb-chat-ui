@@ -1,26 +1,13 @@
+import { toJS } from 'mobx';
 import { ICompany } from '../../store/models/Company';
 import apiClient from '../AxiosService';
 
-export const getCompanies = async (): Promise<ICompany[]> => {
+export const getCompany = async (): Promise<ICompany> => {
   try {
     const response = await apiClient.get('company');
     return response.data;
   } catch (error) {
-    console.error('Failed to fetch companies', error);
-    throw error;
-  }
-};
-
-export const getDecryptedCompanyById = async (
-  _id: string
-): Promise<ICompany> => {
-  try {
-    const response = await apiClient.get(
-      `company/decrypted/${_id}`
-    );
-    return response.data;
-  } catch (error) {
-    console.error('Failed to fetch decrypted company', error);
+    console.error('Failed to fetch company', error);
     throw error;
   }
 };
@@ -28,6 +15,7 @@ export const getDecryptedCompanyById = async (
 export const addCompany = async (company: ICompany): Promise<ICompany> => {
   try {
     const response = await apiClient.post('company', company);
+    console.log('Server response for new company:', response.data);
     return response.data;
   } catch (error) {
     console.error('Failed to add company', error);
@@ -35,24 +23,21 @@ export const addCompany = async (company: ICompany): Promise<ICompany> => {
   }
 };
 
-export const deleteCompany = async (companyId: string): Promise<void> => {
+export const deleteCompany = async (): Promise<void> => {
   try {
-    await apiClient.delete(`company/${companyId}`);
+    await apiClient.delete('company');
   } catch (error) {
     console.error('Failed to delete company', error);
     throw error;
   }
 };
 
-export const updateCompany = async (
-  _id: string,
-  company: ICompany
-): Promise<ICompany> => {
+export const updateCompany = async (company: Partial<ICompany>): Promise<ICompany> => {
   try {
-    const response = await apiClient.put(
-      `company/${_id}`,
-      company
-    );
+    console.log('cc', toJS(company), company);
+
+
+    const response = await apiClient.put('company', company);
     return response.data;
   } catch (error) {
     console.error('Failed to update company', error);
@@ -60,18 +45,26 @@ export const updateCompany = async (
   }
 };
 
-export const refreshCompanyToken = async (
-  _id: string,
-  company: ICompany
-): Promise<ICompany> => {
+export const refreshCompanyToken = async (): Promise<ICompany> => {
   try {
-    const response = await apiClient.put(
-      `company/refresh-token/${_id}`,
-      company
-    );
+    const response = await apiClient.put('company/refresh-token');
     return response.data;
   } catch (error) {
     console.error('Failed to refresh company token', error);
+    throw error;
+  }
+};
+
+export const updateCompanyInfo = async (companyInfo: {
+  companyName: string;
+  companyDescription: string;
+  userName: string;
+}): Promise<ICompany> => {
+  try {
+    const response = await apiClient.post('onboarding/update-info', companyInfo);
+    return response.data.company;
+  } catch (error) {
+    console.error('Failed to update company info', error);
     throw error;
   }
 };

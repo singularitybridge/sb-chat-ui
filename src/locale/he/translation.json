@@ -8,6 +8,44 @@
     "Actions": "פעולות",
     "Home": "בית"
   },
+  "Onboarding": {
+    "welcome": "ברוכים הבאים",
+    "welcomeToSingularityBridge": "ברוכים הבאים ל-Singularity Bridge",
+    "welcomeDescription": "בואו נתחיל בהגדרת הפרופיל שלך",
+    "companyName": "שם החברה",
+    "enterYourCompanyName": "הכנס את שם החברה שלך",
+    "userName": "שם משתמש",
+    "enterYourNickname": "הכנס את הכינוי שלך",
+    "tellUsAboutYourCompany": "ספר לנו על החברה שלך",
+    "tellUsAboutYourCompanyPlaceholder": "שתף קצת על החברה שלך...",
+    "aiAgentReady": "סוכן הבינה המלאכותית מוכן",
+    "newAIAgentWaiting": "סוכן הבינה המלאכותית החדש שלך מחכה לך",
+    "aiAgentDescription": "התחל לשוחח עם העוזר האישי המותאם אישית שלך עכשיו",
+    "letsStart": "בואו נתחיל",
+    "enterOpenAIApiKey": "הזן את מפתח ה-API של OpenAI שלך",
+    "apiKeyDescription": "אנחנו זקוקים למפתח ה-API של OpenAI שלך כדי להפעיל את העוזר הבינה המלאכותית",
+    "openAIApiKey": "מפתח API של OpenAI",
+    "enterYourApiKey": "הזן את מפתח ה-API שלך",
+    "apiKeyVerificationFailed": "אימות מפתח ה-API נכשל. אנא נסה שוב.",
+    "verifying": "מאמת...",
+    "continue": "המשך",
+    "verifyAndContinue": "אמת והמשך",
+    "apiKey": "מפתח API",
+    "nextStep": "השלב הבא",
+    "submitting" : "אנא המתן...",
+    "tryAgain" : "נסה שוב",
+    "apiKeyInvalid": "מפתח API לא תקין. אנא נסה שוב.",
+    "apiKeyVerified": "מפתח API אומת בהצלחה",
+    "apiKeyVerificationError": "אירעה שגיאה בעת אימות מפתח ה-API. אנא נסה שוב.",
+    "createFirstAssistant": "צור את העוזר הראשון שלך",
+    "createFirstAssistantTitle": "בואו ניצור את העוזר הראשון שלך",
+    "createFirstAssistantDescription": "אנחנו עומדים ליצור את העוזר הראשון שלך בבינה מלאכותית. עוזר זה יהיה מוכן לסייע לך במגוון משימות.",
+    "creating": "יוצר...",
+    "readyToGo": "מוכן לפעולה!",
+    "readyToGoTitle": "הכל מוכן!",
+    "readyToGoDescription": "מערכת העוזר שלך בבינה מלאכותית מוכנה לשימוש. התחל לחקור ולתקשר עם העוזר החדש שלך!",
+    "finish": "התחל"
+  },
   "Navigation": {
     "home": "בית",
     "companies": "חברות",
@@ -47,7 +85,9 @@
   "UsersPage": {
     "title": "משתמשים",
     "description": "נהל כאן את המשתמשים שלך",
+    
     "table": {
+      "email": "דואר אלקטרוני",
       "nickname": "כינוי",
       "name": "שם"
     }
@@ -96,6 +136,7 @@
         "gcp_key": "הזן כאן את מפתח ה-GCP שלך",
         "notion_api_key": "הזן כאן את מפתח ה-API של Notion",
         "labs11_api_key": "הזן כאן את מפתח ה-API של 11Labs",
+        "jsonbin_api_key" : "הזן כאן את מפתח ה-API של Jsonbin",
         "twilio_account_sid": "הזן כאן את SID של חשבון Twilio שלך",
         "twilio_auth_token": "הזן כאן את אסימון האימות של Twilio שלך"
       }
@@ -149,6 +190,7 @@
         "gcp_key": "הזן כאן את מפתח ה-GCP שלך",
         "notion_api_key": "הזן כאן את מפתח ה-API של Notion",
         "labs11_api_key": "הזן כאן את מפתח ה-API של 11Labs",
+        "jsonbin_api_key" : "הזן כאן את מפתח ה-API של Json",
         "twilio_account_sid": "הזן כאן את SID של חשבון Twilio שלך",
         "twilio_auth_token": "הזן כאן את אסימון האימות של Twilio שלך"
       }
@@ -175,12 +217,10 @@
     "description": "עדכן כאן את הפרטים של הסוכן שלך",
     "uploadFile" : "העלה קובץ",
     "uploadedFiles" : "קבצים שהועלו",
-
     "uploading" : "מעלה...",
     "dropFile" : "גרור קובץ לכאן",
-    "dragFileHere" : "גרור קובץ לכאן, או לחץ כדי לבחור"
-
-
+    "dragFileHere" : "גרור קובץ לכאן, או לחץ כדי לבחור",
+    "selectAvatar": "בחר אווטאר"
   },
   "ChatContainer": {
     "input": "הקלד את הודעתך כאן"
@@ -228,12 +268,16 @@
     "newAssistant": "צור עוזר חדש",
     "newCompany": "צור חברה חדשה",
     "newAction": "צור פעולה חדשה",
-    "newUser": "צור משתמש חדש"
+    "newUser": "צור משתמש חדש",
+    "onboarding": "ברוכים הבאים"
   },
 
 
   "common" : {
-    "actions": "פעולות"
+    "actions": "פעולות",
+    "appName": "פורטל הסוכנים",
+    "pleaseWait": "אנא המתן..."
+
   }
 
 }

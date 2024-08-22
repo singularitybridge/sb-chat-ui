@@ -20,9 +20,10 @@ import {
 } from '../../services/api/fileService';
 import FileUpload from '../../components/sb-core-ui-kit/FileUpload';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
-import { FileText, TrashIcon } from 'lucide-react';
+import { FileText, Trash2 as TrashIcon } from 'lucide-react';
 import { IconButton } from '../../components/admin/IconButton';
 import { useTranslation } from 'react-i18next';
+import AvatarSelector from '../../components/AvatarSelector';
 
 interface UploadedFile {
   fileId: string;
@@ -31,7 +32,6 @@ interface UploadedFile {
 }
 
 const EditAssistantView: React.FC = observer(() => {
-
   const { t } = useTranslation();
   const { key } = useParams<{ key: string }>();
   const rootStore = useRootStore();
@@ -39,12 +39,17 @@ const EditAssistantView: React.FC = observer(() => {
   const [isLoading, setIsLoading] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [selectedAvatarId, setSelectedAvatarId] = useState<string | null>(null);
 
   useEffect(() => {
     if (key) {
       fetchAssistantFiles();
     }
-  }, [key]);
+    if (assistant && assistant.avatarImage) {
+      setSelectedAvatarId(assistant.avatarImage);
+    }
+  }, [key, assistant]);
+
 
   const fetchAssistantFiles = async () => {
     if (key) {
@@ -58,14 +63,17 @@ const EditAssistantView: React.FC = observer(() => {
   };
 
   if (rootStore.assistantsLoaded === false) {
-    return <div>Loading...</div>;
+    return <TextComponent text={t('common.pleaseWait')} size="medium" />;
   }
 
   if (!assistant) {
-    return <div>Assistant not found</div>;
+    return <TextComponent text="Assistant not found" size="medium" />;
   }
 
   const formFields: FieldConfig[] = assistantFieldConfigs.map((field) => {
+    if (field.key === 'voice') {
+      field.value = assistant ? toJS(assistant.voice) : '';
+    }
     const fieldKeyString = String(field.key);
     const value = assistant ? toJS((assistant as any)[fieldKeyString]) : '';
 
@@ -89,7 +97,11 @@ const EditAssistantView: React.FC = observer(() => {
       return;
     }
     setIsLoading(true);
-    await rootStore.updateAssistant(key, values as unknown as IAssistant);
+    const updatedValues = {
+      ...values,
+      avatarImage: selectedAvatarId,
+    };
+    await rootStore.updateAssistant(key, updatedValues as unknown as IAssistant);
     setIsLoading(false);
   };
 
@@ -126,58 +138,64 @@ const EditAssistantView: React.FC = observer(() => {
   };
 
   return (
-    <>
-      <div className="flex w-full space-x-2 rtl:space-x-reverse">
-        <div className="w-1/2">
-          <DynamicForm
-            formContext="assistantFieldConfigs"
-            fields={formFields}
-            onSubmit={handleSubmit}
-            isLoading={isLoading}
-            formType="update"
+    <div className="flex w-full space-x-12 rtl:space-x-reverse">
+      <div className="w-1/2">
+        <DynamicForm
+          formContext="assistantFieldConfigs"
+          fields={formFields}
+          onSubmit={handleSubmit}
+          isLoading={isLoading}
+          formType="update"
+        />
+      </div>
+      <div className="w-1/2">
+        <div className="mb-6">
+          <TextComponent text={t('EditAssistantPage.selectAvatar')} size="normal" className="mb-4" />
+          <AvatarSelector
+            selectedAvatarId={selectedAvatarId}
+            onSelectAvatar={setSelectedAvatarId}
           />
         </div>
-        <div className="w-1/2">
-          <TextComponent text={t('EditAssistantPage.uploadFile')} size="normal" className="mb-2" />
+        <div className="mb-6">
+          <TextComponent text={t('EditAssistantPage.uploadFile')} size="normal" className="mb-4" />
           <FileUpload
             onFileUpload={handleFileUpload}
             isUploading={isUploading}
           />
-          {uploadedFiles.length > 0 && (
-            <div className="mt-4">
-              <TextComponent
-                text={t('EditAssistantPage.uploadedFiles')}
-                size="medium"
-                className="mb-2"
-              />
-              <ul>
-                {uploadedFiles.map((file) => (
-                  <li
-                    key={file.fileId}
-                    className="flex justify-between items-center text-sm text-gray-600 mb-2"
-                  >
-                    <div className="flex gap-2">
-                      <FileText size={16} className=" text-slate-500 mt-1" />
-                      <TextComponent
-                        text={file.filename}
-                        size="small"
-                        color="secondary"
-                      />
-                    </div>
-
-                    <IconButton
-                      icon={<TrashIcon size={16} />}
-                      onClick={() => handleFileDelete(file.fileId)}
-                      className=" text-gray-400 hover:text-red-400 transition duration-100"
-                    />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
         </div>
+        {uploadedFiles.length > 0 && (
+          <div>
+            <TextComponent
+              text={t('EditAssistantPage.uploadedFiles')}
+              size="medium"
+              className="mb-2"
+            />
+            <ul>
+              {uploadedFiles.map((file) => (
+                <li
+                  key={file.fileId}
+                  className="flex justify-between items-center text-sm text-gray-600 mb-2"
+                >
+                  <div className="flex gap-2">
+                    <FileText size={16} className="text-slate-500 mt-1" />
+                    <TextComponent
+                      text={file.filename}
+                      size="small"
+                      color="secondary"
+                    />
+                  </div>
+                  <IconButton
+                    icon={<TrashIcon size={16} />}
+                    onClick={() => handleFileDelete(file.fileId)}
+                    className="text-gray-400 hover:text-red-400 transition duration-100"
+                  />
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
-    </>
+    </div>
   );
 });
 
@@ -185,7 +203,7 @@ const EditAssistantPage = withPage(
   'EditAssistantPage.title',
   'EditAssistantPage.description',
   () => {
-    console.log('edit assistant');
+    // Removed console.log statement
   }
 )(EditAssistantView);
 

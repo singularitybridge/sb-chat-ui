@@ -21,6 +21,10 @@ const Table: React.FC<TableProps> = ({
     if (typeof value === 'boolean') {
       return value.toString();
     }
+    if (typeof value === 'object' && value !== null) {
+      // Handle objects (like the token) by returning a placeholder text
+      return '[Encrypted]';
+    }
     return value;
   };
 

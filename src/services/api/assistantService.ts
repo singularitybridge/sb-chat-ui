@@ -85,7 +85,7 @@ export async function addAssistant(assistant: IAssistant): Promise<IAssistant> {
   }
 }
 
-export async function updateAssistant(id: string, assistant: IAssistant): Promise<IAssistant> {
+export async function updateAssistant(id: string, assistant: IAssistant & { voice?: string }): Promise<IAssistant> {
   try {
     const response = await apiClient.put(`assistant/${id}`, assistant);
     return response.data;
@@ -94,3 +94,13 @@ export async function updateAssistant(id: string, assistant: IAssistant): Promis
     throw error;
   }
 }
+
+export const createDefaultAssistant = async () => {
+  try {
+    const response = await apiClient.post('/assistant/default');
+    return response.data;
+  } catch (error) {
+    console.error('Error creating default assistant:', error);
+    throw error;
+  }
+};

@@ -1,6 +1,7 @@
 /// file_path: src/components/sb-chat-kit-ui/chat-elements/Header.tsx
 import React, { useState } from 'react';
 import { CircleFadingPlus, Pause, Volume2, VolumeX } from 'lucide-react';
+import { Avatar, AvatarStyles } from '../../Avatar';
 
 type AudioState = 'disabled' | 'enabled' | 'playing';
 
@@ -66,12 +67,11 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <div className="flex justify-between items-start space-x-3.5 rtl:space-x-reverse mb-3 bg-slate-100 p-3 rounded-2xl ">
-      <img
-        className="w-20 rounded-full  bg-indigo-100 "
-        src={avatar}
-        alt="Avatar"
-        loading="lazy"
+    <div className="flex justify-between items-start space-x-4 rtl:space-x-reverse mb-3 bg-slate-100 p-3 rounded-2xl">
+      <Avatar
+        avatarStyle={AvatarStyles.medium}
+        imageUrl={`/assets/avatars/${avatar}.png`}
+        active={true}
       />
 
       <div className="flex-1">
@@ -79,7 +79,7 @@ const Header: React.FC<HeaderProps> = ({
         <div className="flex items-start pb-5">{renderDescription()}</div>
       </div>
 
-      <div className="flex items-center space-x-1 space-x-reverse">
+      <div className="flex items-center space-x-1 rtl:space-x-reverse">
         <button
           onClick={onToggleAudio}
           className="p-1 rounded-full transition-colors hover:bg-gray-100"

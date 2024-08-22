@@ -13,8 +13,7 @@ const Identifier = types.model('Identifier', {
 });
 
 const Assistant = types.model('Assistant', {
-  _id: types.identifier,
-  assistantId: types.string,
+  _id: types.identifier,  
   name: types.string,
   description: types.string,
   introMessage: types.string,
@@ -23,6 +22,7 @@ const Assistant = types.model('Assistant', {
   language: types.string,  
   llmModel: types.optional(types.string, ''),
   llmPrompt: types.optional(types.string, ''),
+  avatarImage: types.optional(types.string, ''),
 });
 
 type IAssistant = Instance<typeof Assistant>;

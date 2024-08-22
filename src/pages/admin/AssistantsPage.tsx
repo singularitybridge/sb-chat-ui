@@ -14,6 +14,7 @@ import {
 import { ChatContainer } from '../../components/chat-container/ChatContainer';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
 import { useNavigate } from 'react-router-dom';
+import { Avatar, AvatarStyles } from '../../components/Avatar';
 
 const AssistantsPage: React.FC = observer(() => {
   const rootStore = useRootStore();
@@ -42,7 +43,7 @@ const AssistantsPage: React.FC = observer(() => {
 
   return (
     <div className="flex h-[calc(100vh-96px)] space-x-4 rtl:space-x-reverse">
-      <div className="bg-white p-3 overflow-y-auto flex flex-col rounded-lg w-80">
+      <div className="bg-white p-3 flex flex-col rounded-lg w-1/4">
         <div className="flex flex-row justify-between items-center w-full mb-6 px-2 py-1">
           <TextComponent text={t('AssistantsPage.title')} size="subtitle" />
           <IconButton
@@ -51,9 +52,11 @@ const AssistantsPage: React.FC = observer(() => {
           />
         </div>
 
-        <ul className="space-y-2 flex-grow">
+        <ul className="space-y-4 flex-grow overflow-y-auto h-[calc(100%-3rem)]">
           {rootStore.assistants.map((assistant) => {
-            const isActive = rootStore.sessionStore.activeSession?.assistantId === assistant._id;
+            const isActive =
+              rootStore.sessionStore.activeSession?.assistantId ===
+              assistant._id;
             return (
               <li
                 key={assistant._id}
@@ -65,22 +68,18 @@ const AssistantsPage: React.FC = observer(() => {
                 onMouseLeave={() => setHoveredAssistantId(null)}
               >
                 <div className="flex items-start space-x-3 rtl:space-x-reverse">
-                  <div className={`w-12 h-12 rounded-full flex-shrink-0 overflow-hidden ${
-                    isActive ? 'bg-blue-400' : 'bg-blue-200'
-                  }`}>
-                    <img
-                      src={'/assets/avatars/avatar-_0020_9.png'}
-                      alt={`${assistant.name} avatar`}
-                      className={`w-full h-full object-cover ${
-                        isActive ? 'opacity-75' : ''
-                      }`}
+                  <div className="flex-shrink-0">
+                    <Avatar
+                      imageUrl={`/assets/avatars/${assistant.avatarImage}.png`}
+                      avatarStyle={AvatarStyles.avatar}
+                      active={isActive}
                     />
                   </div>
-                  <div className="flex-grow overflow-hidden">
-                    <h4 className="font-bold text-sm truncate h-5">
+                  <div className="flex-grow min-w-0">
+                    <h4 className="font-bold text-sm truncate">
                       {assistant.name}
                     </h4>
-                    <p className="text-sm text-gray-600 mt-1 line-clamp-2 h-10 overflow-hidden">
+                    <p className="text-sm text-gray-600 mt-0.5 line-clamp-2">
                       {assistant.description}
                     </p>
                   </div>
@@ -110,12 +109,11 @@ const AssistantsPage: React.FC = observer(() => {
           })}
         </ul>
       </div>
-      <div className="flex-grow overflow-y-auto">
+      <div className="flex-grow overflow-y-auto w-3/4">
         <ChatContainer />
       </div>
     </div>
   );
 });
-
 
 export { AssistantsPage };

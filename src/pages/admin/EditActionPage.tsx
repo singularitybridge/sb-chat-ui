@@ -8,16 +8,18 @@ import { withPage } from '../../components/admin/HOC/withPage';
 import { DynamicForm, FieldConfig, FormValues } from '../../components/DynamicForm';
 import { toJS } from 'mobx';
 import { actionFieldConfigs } from '../../store/fieldConfigs/actionFieldConfigs';
+import { useTranslation } from 'react-i18next';
 
 const EditActionView: React.FC = observer(() => {
 
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const rootStore = useRootStore();
   const action = id ? rootStore.getActionById(id) : null;
   const [isLoading, setIsLoading] = useState(false);
 
   if (rootStore.actionsLoaded === false) {
-    return <div>Loading...</div>;
+    return <div>{t('common.pleaseWait')}</div>;
   }
 
   if (!action) {
