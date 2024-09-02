@@ -124,7 +124,7 @@ const ChatKitTestPage = () => {
   return (
     <div className="container mx-auto p-4">
       <div className="grid grid-cols-3 gap-4">
-        <div className="border bg-indigo-50  border-gray-300 flex items-center justify-center h-[600px]">
+        <div className="border bg-indigo-300  border-gray-300 flex items-center justify-center h-[600px]">
           <div className="h-full w-full">
             <SBChatKitUI
               messages={messages}
