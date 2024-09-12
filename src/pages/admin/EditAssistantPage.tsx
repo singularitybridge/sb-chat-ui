@@ -10,6 +10,7 @@ import {
   FieldConfig,
   FormValues,
   DropdownFieldConfig,
+  TagsFieldConfig,
 } from '../../components/DynamicForm';
 import { toJS } from 'mobx';
 import { assistantFieldConfigs } from '../../store/fieldConfigs/assistantFieldConfigs';
@@ -80,12 +81,12 @@ const EditAssistantView: React.FC = observer(() => {
     if (field.key === 'allowedActions') {
       return {
         ...field,
+        value: value || [],
         props: {
-          ...field.props,
+          availableTags: (field as TagsFieldConfig).props.availableTags,
           selectedTags: value || [],
         },
-        value: value || [],
-      };
+      } as TagsFieldConfig;
     }
 
     if (field.type === 'dropdown') {

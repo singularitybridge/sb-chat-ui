@@ -25,11 +25,21 @@ const llmModelOptions: SelectListOption[] = [
 
 const allowedActionOptions = [
   { id: 'getJournalEntries', name: 'Get recent journal entries' },
+  { id: 'getFriendlyJournalEntries', name: 'Get recent journal entries in a friendly format' },
+  { id: 'createJournalEntry', name: 'Create a journal entry' },
   { id: 'sendEmail', name: 'Send Email' },
   { id: 'perplexitySearch', name: 'Run Perplexity Search' },
   { id: 'removeBackground', name: 'Remove Background' },
   { id: 'fetchIssues', name: 'Fetch Linear Issues' },
-  // Add more actions as needed
+  { id: 'createJSONBinFile', name: 'Create JSON Bin File' },
+  { id: 'updateJSONBinFile', name: 'Update JSON Bin File' },
+  { id: 'readJSONBinFile', name: 'Read JSON Bin File' },
+  { id: 'updateJSONBinArrayElement', name: 'Update JSON Bin Array Element' },
+  { id: 'deleteJSONBinArrayElement', name: 'Delete JSON Bin Array Element' },
+  { id: 'insertJSONBinArrayElement', name: 'Insert JSON Bin Array Element' },
+  { id: 'cloneJSONBinFile', name: 'Clone JSON Bin File' },
+  { id: 'generateFluxImage', name: 'Generate Flux Image' },
+  { id: 'generateElevenLabsAudio', name: 'Generate Eleven Labs Audio' },
 ];
 
 export const assistantFieldConfigs: FieldConfig[] = [
