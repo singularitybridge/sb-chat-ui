@@ -50,7 +50,6 @@ const EditAssistantView: React.FC = observer(() => {
     }
   }, [key, assistant]);
 
-
   const fetchAssistantFiles = async () => {
     if (key) {
       try {
@@ -71,11 +70,23 @@ const EditAssistantView: React.FC = observer(() => {
   }
 
   const formFields: FieldConfig[] = assistantFieldConfigs.map((field) => {
-    if (field.key === 'voice') {
-      field.value = assistant ? toJS(assistant.voice) : '';
-    }
     const fieldKeyString = String(field.key);
-    const value = assistant ? toJS((assistant as any)[fieldKeyString]) : '';
+    let value = assistant ? toJS((assistant as any)[fieldKeyString]) : '';
+
+    if (field.key === 'voice') {
+      value = assistant ? toJS(assistant.voice) : '';
+    }
+
+    if (field.key === 'allowedActions') {
+      return {
+        ...field,
+        props: {
+          ...field.props,
+          selectedTags: value || [],
+        },
+        value: value || [],
+      };
+    }
 
     if (field.type === 'dropdown') {
       return {
