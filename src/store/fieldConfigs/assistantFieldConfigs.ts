@@ -24,8 +24,11 @@ const llmModelOptions: SelectListOption[] = [
 ];
 
 const allowedActionOptions = [
-  { id: 'add-user', name: 'Add User' },
-  { id: 'remove-user', name: 'Remove User' },
+  { id: 'getJournalEntries', name: 'Get recent journal entries' },
+  { id: 'sendEmail', name: 'Send Email' },
+  { id: 'perplexitySearch', name: 'Run Perplexity Search' },
+  { id: 'removeBackground', name: 'Remove Background' },
+  { id: 'fetchIssues', name: 'Fetch Linear Issues' },
   // Add more actions as needed
 ];
 
