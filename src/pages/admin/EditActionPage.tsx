@@ -1,4 +1,3 @@
-// file path: 
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { observer } from 'mobx-react';
@@ -11,7 +10,6 @@ import { actionFieldConfigs } from '../../store/fieldConfigs/actionFieldConfigs'
 import { useTranslation } from 'react-i18next';
 
 const EditActionView: React.FC = observer(() => {
-
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const rootStore = useRootStore();
@@ -26,17 +24,17 @@ const EditActionView: React.FC = observer(() => {
     return <div>Action not found</div>;
   }
 
-  const formFields: FieldConfig[] = actionFieldConfigs.map(({ id, label, key, type, visibility }) => {
-    const fieldKeyString = String(key);
+  const formFields: FieldConfig[] = actionFieldConfigs.map((config) => {
+    const fieldKeyString = String(config.key);
     return {
-      key: key,
-      label: label,
+      key: config.key,
+      label: config.label,
       value: action ? toJS((action as any)[fieldKeyString]) : '',
-      id: id,
+      id: config.id,
       options: [],
-      type: type,
-      visibility: visibility,
-    };
+      type: config.type,
+      visibility: config.visibility,
+    } as FieldConfig;
   });
 
   const handleSubmit = async (values: FormValues) => {
@@ -58,7 +56,6 @@ const EditActionView: React.FC = observer(() => {
             onSubmit={handleSubmit}
             isLoading={isLoading}
             formType="update"
-            
           />
         </div>
         <div className="w-1/2">

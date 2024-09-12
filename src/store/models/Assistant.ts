@@ -1,4 +1,3 @@
-/// file_path: src/store/models/Assistant.ts
 import {
   types,
   Instance,
@@ -23,6 +22,7 @@ const Assistant = types.model('Assistant', {
   llmModel: types.optional(types.string, ''),
   llmPrompt: types.optional(types.string, ''),
   avatarImage: types.optional(types.string, ''),
+  allowedActions: types.optional(types.array(types.string), []),
 });
 
 type IAssistant = Instance<typeof Assistant>;

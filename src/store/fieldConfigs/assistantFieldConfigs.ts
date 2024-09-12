@@ -1,6 +1,6 @@
-/// file_path: src/store/fieldConfigs/assistantFieldConfigs.ts
 import { FieldConfig } from '../../components/DynamicForm';
 import { SelectListOption } from '../../components/sb-core-ui-kit/SelectList';
+import { TagsInput } from '../../components/InputTags';
 
 const voiceOptions: SelectListOption[] = [
   { value: 'alloy', label: 'Alloy' },
@@ -23,10 +23,16 @@ const llmModelOptions: SelectListOption[] = [
   { value: 'chatgpt-4o-latest', label: 'ChatGPT-4o Latest' },
 ];
 
+const allowedActionOptions = [
+  { id: 'add-user', name: 'Add User' },
+  { id: 'remove-user', name: 'Remove User' },
+  // Add more actions as needed
+];
+
 export const assistantFieldConfigs: FieldConfig[] = [
   {
     id: 'name',
-    label: 'Name', // 'Name'
+    label: 'Name',
     key: 'name',
     type: 'input',
     value: 'New Assistant',
@@ -35,7 +41,7 @@ export const assistantFieldConfigs: FieldConfig[] = [
   {
     id: 'description',
     key: 'description',
-    label: 'Description', // 'Description'
+    label: 'Description',
     type: 'textarea',
     value: 'This is a new assistant.',
     visibility: { create: true, view: true, update: true },
@@ -43,7 +49,7 @@ export const assistantFieldConfigs: FieldConfig[] = [
   {
     id: 'introMessage',
     key: 'introMessage',
-    label: 'Intro Message', // 'Intro Message'
+    label: 'Intro Message',
     type: 'input',
     value: 'Hello! How can I help you today?',
     visibility: { create: true, view: true, update: true },
@@ -75,13 +81,25 @@ export const assistantFieldConfigs: FieldConfig[] = [
     options: llmModelOptions,
     visibility: { create: true, view: true, update: true },
   },
-
   {
     id: 'llmPrompt',
     key: 'llmPrompt',
-    label: 'LLM Prompt', // 'LLM Prompt'
+    label: 'LLM Prompt',
     type: 'textarea',
     value: 'This is a new assistant.',
+    visibility: { create: true, view: true, update: true },
+  },
+  {
+    id: 'allowedActions',
+    key: 'allowedActions',
+    label: 'Allowed Actions',
+    type: 'tags',
+    value: [],
+    component: TagsInput,
+    props: {
+      availableTags: allowedActionOptions,
+      selectedTags: [],
+    },
     visibility: { create: true, view: true, update: true },
   },
 ];

@@ -14,13 +14,11 @@ import { companyFieldConfigs } from '../../store/fieldConfigs/companyFieldConfig
 import { useTranslation } from 'react-i18next';
 
 const EditCompanyView: React.FC = observer(() => {
-
   const { id } = useParams<{ id: string }>();
   const rootStore = useRootStore();
   const [company, setCompany] = useState<ICompany | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { t } = useTranslation();
-
 
   const fetchCompany = async () => {
     if (id) {
@@ -42,21 +40,19 @@ const EditCompanyView: React.FC = observer(() => {
     return <div>Company not found</div>;
   }
 
-  const formFields: FieldConfig[] = companyFieldConfigs.map(
-    ({ id, label, key, type, visibility }) => {
-      const fieldKeyString = String(key);
+  const formFields: FieldConfig[] = companyFieldConfigs.map((config) => {
+    const fieldKeyString = String(config.key);
 
-      return {
-        key: key,
-        label: label,
-        options: [],
-        value: company ? toJS((company as any)[fieldKeyString]) : '',
-        id: id,
-        type: type,
-        visibility: visibility,
-      };
-    }
-  );
+    return {
+      key: config.key,
+      label: config.label,
+      options: [],
+      value: company ? toJS((company as any)[fieldKeyString]) : '',
+      id: config.id,
+      type: config.type,
+      visibility: config.visibility,
+    } as FieldConfig;
+  });
 
   const handleSubmit = async (values: FormValues) => {
     if (!id) {

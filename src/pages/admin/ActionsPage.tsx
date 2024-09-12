@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { ActionKeys, IAction } from '../../store/models/Action';
 import { useRootStore } from '../../store/common/RootStoreContext';
@@ -19,9 +19,16 @@ const ActionsView: React.FC = observer(() => {
   const navigate = useNavigate();
   const headers: ActionKeys[] = ['_id', 'type', 'name', 'description'];
   const { t } = useTranslation();
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   const handleDelete = async (actionId: string) => {
     await rootStore.deleteAction(actionId);
+  };
+
+  const handleTagsChange = (tags: string[]) => {
+    setSelectedTags(tags);
+    // You might want to do something with the selected tags here,
+    // such as filtering the actions based on the selected tags
   };
 
   const ActionsColumn = (action: IAction) => (
@@ -40,7 +47,7 @@ const ActionsView: React.FC = observer(() => {
         <TagsInput
           title={t('CompaniesPage.actionTitle')}
           description={t('CompaniesPage.action_msg')}
-          selectedTags={[]}
+          selectedTags={selectedTags}
           availableTags={[
             {
               id: 'add-user',
@@ -51,6 +58,7 @@ const ActionsView: React.FC = observer(() => {
               name: t('CompaniesPage.actionTags.removeUser'),
             },
           ]}
+          onChange={handleTagsChange}
         />
         <Table
           headers={convertToStringArray(headers)}
