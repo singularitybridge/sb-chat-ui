@@ -3,6 +3,8 @@ import { ChevronDownIcon } from '@heroicons/react/24/solid';
 import clsx from 'clsx';
 import { TextComponent } from './sb-core-ui-kit/TextComponent';
 import ActionTag from './ActionTag';
+import SearchInput from './SearchInput';
+import ActionOptionsList from './ActionOptionsList';
 
 export interface ActionOption {
   id: string;
@@ -68,14 +70,6 @@ export const ActionSelect: React.FC<ActionSelectProps> = ({
     option.serviceName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Group options by serviceName
-  const groupedOptions = filteredOptions.reduce((groups: { [key: string]: ActionOption[] }, option) => {
-    const group = groups[option.serviceName] || [];
-    group.push(option);
-    groups[option.serviceName] = group;
-    return groups;
-  }, {});
-
   return (
     <div className={className} ref={selectRef}>
       <TextComponent text={label} size="small" color="normal" />
@@ -92,59 +86,28 @@ export const ActionSelect: React.FC<ActionSelectProps> = ({
         >
           <div className="flex items-center">
             {selectedOption ? (
-              <>
-                <ActionTag
-                  iconName={selectedOption.iconName}
-                  title={selectedOption.title}
-                  description={selectedOption.description}
-                  serviceName={selectedOption.serviceName}
-                  className="p-0 bg-transparent"
-                />
-              </>
+              <ActionTag
+                iconName={selectedOption.iconName}
+                title={selectedOption.title}
+                description={selectedOption.description}
+                serviceName={selectedOption.serviceName}
+                className="p-0 bg-transparent"
+              />
             ) : (
               <span className="text-gray-400">{placeholder}</span>
             )}
           </div>
-          <ChevronDownIcon className={clsx('w-5 h-5 text-gray-400', isOpen && 'transform rotate-180')} />
+          <ChevronDownIcon
+            className={clsx('w-5 h-5 text-gray-400', isOpen && 'transform rotate-180')}
+          />
         </div>
         {isOpen && (
           <div className="absolute top-full left-0 z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
             <div className="p-2">
               {/* Search Input */}
-              <input
-                type="text"
-                className="w-full mb-2 p-2 border border-gray-300 rounded-md"
-                placeholder="Search..."
-                value={searchTerm}
-                onChange={e => setSearchTerm(e.target.value)}
-              />
-              {/* Options */}
-              {Object.keys(groupedOptions).length === 0 ? (
-                <div className="text-center text-gray-500 py-2">No results found</div>
-              ) : (
-                Object.entries(groupedOptions).map(([serviceName, options]) => (
-                  <div key={serviceName}>
-                    <div className="px-2 py-1 mt-2 text-sm font-semibold text-gray-700 bg-gray-100 rounded-md">
-                      {serviceName}
-                    </div>
-                    {options.map(option => (
-                      <div
-                        key={option.id}
-                        className="mt-1 cursor-pointer"
-                        onClick={() => handleSelect(option.id)}
-                      >
-                        <ActionTag
-                          iconName={option.iconName}
-                          title={option.title}
-                          description={option.description}
-                          serviceName={option.serviceName}
-                          className="p-2 bg-white hover:bg-gray-50 border border-gray-200 rounded-md"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                ))
-              )}
+              <SearchInput value={searchTerm} onChange={setSearchTerm} />
+              {/* Options List */}
+              <ActionOptionsList options={filteredOptions} onSelect={handleSelect} />
             </div>
           </div>
         )}
