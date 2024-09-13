@@ -1,4 +1,3 @@
-/// file_path: src/components/DynamicForm.tsx
 import React, { useEffect, useState } from 'react';
 import InputWithLabel from './sb-core-ui-kit/InputWithLabel';
 import { TextareaWithLabel } from './sb-core-ui-kit/TextareaWithLabel';
@@ -14,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { useRootStore } from '../store/common/RootStoreContext';
 import { AIAssistedTextareaContainer } from './sb-core-ui-kit/AIAssistedTextareaContainer';
 import { SelectList, SelectListOption } from './sb-core-ui-kit/SelectList';
-import { TagsInput } from './InputTags';
+import { TagsInput, TagType } from './TagsInput';
 
 export type FieldType =
   | 'input'
@@ -76,7 +75,7 @@ export interface TagsFieldConfig extends BaseFieldConfig {
   value: string[];
   component: typeof TagsInput;
   props: {
-    availableTags: { id: string; name: string }[];
+    availableTags: TagType[];
     selectedTags: string[];
   };
 }
@@ -237,13 +236,14 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
               />
             );
           case 'tags':
+            const tagsField = field as TagsFieldConfig;
             return (
               <TagsInput
                 key={field.id}
                 title={t(labelKey)}
                 description={t(`${formContext}.${field.id}_description`)}
                 selectedTags={values[field.id] as string[]}
-                availableTags={(field as TagsFieldConfig).props.availableTags}
+                availableTags={tagsField.props.availableTags}
                 onChange={(newValue) => handleChange(field.id, newValue)}
               />
             );

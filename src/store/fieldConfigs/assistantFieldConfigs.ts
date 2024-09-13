@@ -1,6 +1,6 @@
 import { FieldConfig } from '../../components/DynamicForm';
 import { SelectListOption } from '../../components/sb-core-ui-kit/SelectList';
-import { TagsInput } from '../../components/InputTags';
+import { TagsInput } from '../../components/TagsInput';
 
 const voiceOptions: SelectListOption[] = [
   { value: 'alloy', label: 'Alloy' },
@@ -17,10 +17,8 @@ const languageOptions: SelectListOption[] = [
 ];
 
 const llmModelOptions: SelectListOption[] = [
-
   { value: 'o1-preview', label: 'GPT o1 Preview' },
   { value: 'o1-mini', label: 'GPT o1 Mini' },
-
   { value: 'gpt-4o', label: 'GPT-4o' },
   { value: 'gpt-4o-mini', label: 'GPT-4o Mini' },
   { value: 'gpt-4-turbo', label: 'GPT-4 Turbo' },
@@ -28,22 +26,134 @@ const llmModelOptions: SelectListOption[] = [
 ];
 
 const allowedActionOptions = [
-  { id: 'getJournalEntries', name: 'Get recent journal entries' },
-  { id: 'getFriendlyJournalEntries', name: 'Get recent journal entries in a friendly format' },
-  { id: 'createJournalEntry', name: 'Create a journal entry' },
-  { id: 'sendEmail', name: 'Send Email' },
-  { id: 'perplexitySearch', name: 'Run Perplexity Search' },
-  { id: 'removeBackground', name: 'Remove Background' },
-  { id: 'fetchIssues', name: 'Fetch Linear Issues' },
-  { id: 'createJSONBinFile', name: 'Create JSON Bin File' },
-  { id: 'updateJSONBinFile', name: 'Update JSON Bin File' },
-  { id: 'readJSONBinFile', name: 'Read JSON Bin File' },
-  { id: 'updateJSONBinArrayElement', name: 'Update JSON Bin Array Element' },
-  { id: 'deleteJSONBinArrayElement', name: 'Delete JSON Bin Array Element' },
-  { id: 'insertJSONBinArrayElement', name: 'Insert JSON Bin Array Element' },
-  { id: 'cloneJSONBinFile', name: 'Clone JSON Bin File' },
-  { id: 'generateFluxImage', name: 'Generate Flux Image' },
-  { id: 'generateElevenLabsAudio', name: 'Generate Eleven Labs Audio' },
+  { 
+    id: 'getJournalEntries',
+    name: 'Get recent journal entries',
+    icon: '📅',
+    title: 'Fetch Journal Entries',
+    description: 'Retrieves the most recent journal entries',
+    serviceName: 'Journal Service'
+  },
+  { 
+    id: 'getFriendlyJournalEntries',
+    name: 'Get recent journal entries in a friendly format',
+    icon: '🤗',
+    title: 'Fetch Friendly Journal Entries',
+    description: 'Retrieves recent journal entries in a more user-friendly format',
+    serviceName: 'Journal Service'
+  },
+  { 
+    id: 'createJournalEntry',
+    name: 'Create a journal entry',
+    icon: '✍️',
+    title: 'Create Journal Entry',
+    description: 'Creates a new journal entry',
+    serviceName: 'Journal Service'
+  },
+  { 
+    id: 'sendEmail',
+    name: 'Send Email',
+    icon: '📧',
+    title: 'Send an Email',
+    description: 'Sends an email to specified recipients',
+    serviceName: 'Email Service'
+  },
+  { 
+    id: 'perplexitySearch',
+    name: 'Run Perplexity Search',
+    icon: '🔍',
+    title: 'Perplexity Search',
+    description: 'Performs a search using the Perplexity API',
+    serviceName: 'Perplexity API'
+  },
+  { 
+    id: 'removeBackground',
+    name: 'Remove Background',
+    icon: '🖼️',
+    title: 'Remove Image Background',
+    description: 'Removes the background from an image',
+    serviceName: 'Image Processing Service'
+  },
+  { 
+    id: 'fetchIssues',
+    name: 'Fetch Linear Issues',
+    icon: '🐛',
+    title: 'Fetch Linear Issues',
+    description: 'Retrieves issues from Linear project management tool',
+    serviceName: 'Linear API'
+  },
+  { 
+    id: 'createJSONBinFile',
+    name: 'Create JSON Bin File',
+    icon: '📁',
+    title: 'Create JSON Bin File',
+    description: 'Creates a new JSON Bin file',
+    serviceName: 'JSON Bin'
+  },
+  { 
+    id: 'updateJSONBinFile',
+    name: 'Update JSON Bin File',
+    icon: '🔄',
+    title: 'Update JSON Bin File',
+    description: 'Updates an existing JSON Bin file',
+    serviceName: 'JSON Bin'
+  },
+  { 
+    id: 'readJSONBinFile',
+    name: 'Read JSON Bin File',
+    icon: '👀',
+    title: 'Read JSON Bin File',
+    description: 'Reads the contents of a JSON Bin file',
+    serviceName: 'JSON Bin'
+  },
+  { 
+    id: 'updateJSONBinArrayElement',
+    name: 'Update JSON Bin Array Element',
+    icon: '🔧',
+    title: 'Update JSON Bin Array Element',
+    description: 'Updates a specific element in a JSON Bin array',
+    serviceName: 'JSON Bin'
+  },
+  { 
+    id: 'deleteJSONBinArrayElement',
+    name: 'Delete JSON Bin Array Element',
+    icon: '🗑️',
+    title: 'Delete JSON Bin Array Element',
+    description: 'Deletes a specific element from a JSON Bin array',
+    serviceName: 'JSON Bin'
+  },
+  { 
+    id: 'insertJSONBinArrayElement',
+    name: 'Insert JSON Bin Array Element',
+    icon: '➕',
+    title: 'Insert JSON Bin Array Element',
+    description: 'Inserts a new element into a JSON Bin array',
+    serviceName: 'JSON Bin'
+  },
+  { 
+    id: 'cloneJSONBinFile',
+    name: 'Clone JSON Bin File',
+    icon: '🐑',
+    title: 'Clone JSON Bin File',
+    description: 'Creates a copy of an existing JSON Bin file',
+    serviceName: 'JSON Bin'
+  },
+  { 
+    id: 'generateFluxImage',
+    name: 'Generate Flux Image',
+    icon: '🎨',
+    title: 'Generate Flux Image',
+    description: 'Generates an image using Flux AI',
+    serviceName: 'Flux AI'
+  },
+  { 
+    id: 'generateElevenLabsAudio',
+    name: 'Generate Eleven Labs Audio',
+    icon: '🎵',
+    title: 'Generate Eleven Labs Audio',
+    description: 'Generates audio using Eleven Labs AI',
+    serviceName: 'Eleven Labs'
+  },
 ];
 
 export const assistantFieldConfigs: FieldConfig[] = [

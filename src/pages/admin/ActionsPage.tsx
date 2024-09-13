@@ -11,7 +11,7 @@ import { toJS } from 'mobx';
 import { EVENT_SHOW_ADD_ACTION_MODAL } from '../../utils/eventNames';
 import { emitter } from '../../services/mittEmitter';
 import { useNavigate } from 'react-router-dom';
-import { TagsInput } from '../../components/InputTags';
+import { TagsInput } from '../../components/TagsInput';
 import { useTranslation } from 'react-i18next';
 
 const ActionsView: React.FC = observer(() => {
