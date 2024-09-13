@@ -37,25 +37,27 @@ export interface ActionTagProps {
 
 const ActionTag: React.FC<ActionTagProps> = ({ iconName, title, description, serviceName, onRemove }) => {
   return (
-    <div className="mb-2 p-2 bg-gray-100 rounded-lg">
+    <div className="p-3 bg-slate-100 rounded-xl">
       <div className="flex items-center justify-between">
-        <div className="flex items-center">
+        <div className="flex items-center space-x-2 space-x-reverse">
           {iconName in dynamicIconImports ? (
-            <Icon name={iconName} className="mr-2 w-5 h-5" />
+            <Icon name={iconName} className="w-5 h-5" />
           ) : (
-            <span className="mr-2 w-5 h-5 flex items-center justify-center text-sm">{iconName}</span>
+            <span className="w-5 h-5 flex items-center justify-center text-sm">{iconName}</span>
           )}
-          <span className="font-bold">{title}</span>
+          <span className="font-medium text-base text-slate-600">{title}</span>
         </div>
         <button
           onClick={onRemove}
-          className="text-red-500 hover:text-red-700"
+          className="text-gray-500 hover:text-gray-800"
         >
           <Icon name="x" size={16} />
         </button>
       </div>
-      <p className="text-sm mt-1">{description}</p>
-      <p className="text-xs text-gray-500 mt-1">{serviceName}</p>
+      <p className="text-sm mt-1 text-slate-700">{description}</p>
+      <div className='flex'>
+        <div className="text-xs text-gray-500 mt-4 bg-blue-100 px-2.5 py-1 rounded-2xl">{serviceName}</div>
+      </div>
     </div>
   );
 };
