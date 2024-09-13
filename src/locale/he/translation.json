@@ -71,7 +71,8 @@
       "name": "שם",
       "token": "טוקן"
     },
-    "successfullySet": "חברה נבחרה בהצלחה"
+    "successfullySet": "חברה נבחרה בהצלחה",
+    "addTag": "הוסף תגית"
   },
   "AssistantsPage": {
     "title": "סוכנים וירטואליים",
@@ -172,16 +173,11 @@
       }
     }
   },
-
-
   "EditCompanyPage": {
     "title": "עריכת חברה",
     "description": "עדכן כאן את הפרטים של החברה שלך",
-
-
     "name" : "שם החברה",
     "token" : "טוקן API",
-
     "APIKeys": {
       "title": "מפתחות API",
       "description": "מפתחות API משמשים לאימות ולחיבור למקורות חיצוניים",
@@ -195,8 +191,6 @@
         "twilio_auth_token": "הזן כאן את אסימון האימות של Twilio שלך"
       }
     },
-
-
     "identifiers": {
       "title": "מזהים",
       "description": "מזהים משמשים לחיבור סוכנים למקורות חיצוניים",
@@ -209,8 +203,6 @@
       "token": "טוקן"
     },
     "save": " שמור שינויים"
-
-
   },
   "EditAssistantPage": {
     "title": "עריכת סוכן",
@@ -225,29 +217,22 @@
   "ChatContainer": {
     "input": "הקלד את הודעתך כאן"
   },
-
   "Notifications": {
     "agentCreated": "הסוכן נוצר בהצלחה",
     "agentUpdated": "הסוכן עודכן בהצלחה",
     "agentDeleted": "הסוכן נמחק בהצלחה",
-
     "companyCreated": "החברה נוצרה בהצלחה",
     "companyUpdated": "החברה עודכנה בהצלחה",
     "companyDeleted": "החברה נמחקה בהצלחה",
-
     "userCreated": "המשתמש נוצר בהצלחה",
     "userUpdated": "המשתמש עודכן בהצלחה",
     "userDeleted": "המשתמש נמחק בהצלחה",
-
     "actionCreated": "הפעולה נוצרה בהצלחה",
     "actionUpdated": "הפעולה עודכנה בהצלחה",
     "actionDeleted": "הפעולה נמחקה בהצלחה",
-
     "sessionCleared": "השיחה נוקתה בהצלחה",
-
     "tokenRefreshed": "האסימון רוענן בהצלחה"
   }, 
-
   "assistantFieldConfigs": {
     "assistantId": "מזהה עוזר",
     "name": "שם",
@@ -261,9 +246,10 @@
     "newAssistantDescription": "תיאור עוזר חדש",
     "newAssistantIntroMessage": "הודעת פתיחה של עוזר חדש",
     "defaultLlmPrompt": "אתה משוחח עם עוזר בינה מלאכותית. העוזר מועיל, יצירתי, חכם וידידותי מאוד.",
-    "save" : "שמור שינויים"
+    "save" : "שמור שינויים",
+    "allowedActions": "פעולות מורשות",
+    "allowedActions_description": "תיאור הפעולות המורשות"
   }, 
-
   "dialogTitles" : {
     "newAssistant": "צור עוזר חדש",
     "newCompany": "צור חברה חדשה",
@@ -271,13 +257,9 @@
     "newUser": "צור משתמש חדש",
     "onboarding": "ברוכים הבאים"
   },
-
-
   "common" : {
     "actions": "פעולות",
     "appName": "פורטל הסוכנים",
     "pleaseWait": "אנא המתן..."
-
   }
-
 }

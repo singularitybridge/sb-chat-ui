@@ -17,6 +17,10 @@ const languageOptions: SelectListOption[] = [
 ];
 
 const llmModelOptions: SelectListOption[] = [
+
+  { value: 'o1-preview', label: 'GPT o1 Preview' },
+  { value: 'o1-mini', label: 'GPT o1 Mini' },
+
   { value: 'gpt-4o', label: 'GPT-4o' },
   { value: 'gpt-4o-mini', label: 'GPT-4o Mini' },
   { value: 'gpt-4-turbo', label: 'GPT-4 Turbo' },

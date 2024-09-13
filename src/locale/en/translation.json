@@ -78,7 +78,8 @@
       "token": "token"
     },
     "successfullySet":"Company set successfully",
-    "companyUpdated":"Company has been updated successfully"
+    "companyUpdated":"Company has been updated successfully",
+    "addTag": "Add Tag"
   },
   "AssistantsPage": {
     "title": "Virtual Agents",
@@ -134,7 +135,6 @@
   },
   "CreateNewCompanyPage": {
     "title": "Create New Company",
-
     "placeholders": {
       "name": "New Company",
       "token": "token"
@@ -152,7 +152,6 @@
     "name": "Name",
     "nickname": "Nickname",
     "save": "Save Changes",
-
     "identifiers": {
       "title": "Identifiers",
       "description": "Identifiers are used to identify users based on their contact information",
@@ -160,18 +159,14 @@
         "phone": "phone"
       }
     }
-
-    
   },
   "EditCompanyPage": {
-
     "title": "Edit Company",
     "description": "Update company details here",
     "emitterMessage":"Company has been updated successfully",
     "emitterTokenMessage":"New token generated successfully",
     "name" : "Company Name",
     "token" : "API Token",
-
     "identifiers": {
       "title": "Identifiers",
       "description": "Identifiers are used to connect assistants to external sources",
@@ -179,10 +174,7 @@
         "phone": "phone"
       }
     },
-
     "save" : "Save Changes",
-
-
     "APIKeys": {
       "title": "API Keys",
       "description": "Api keys are used to validate and connect to external sources",
@@ -196,9 +188,6 @@
         "twilio_auth_token": "your Twilio auth token here"
       }
     }    
-
-
-
   },
   "EditAssistantPage": {
     "title": "Edit AI Assistant",
@@ -213,7 +202,6 @@
   "ChatContainer": {
     "input": "Type your message"
   },
-
   "Notifications": {    
     "agentCreated": "Agent has been created successfully",
     "agentUpdated": "Agent has been updated successfully",
@@ -221,19 +209,15 @@
     "companyCreated": "Company has been created successfully",
     "companyUpdated": "Company has been updated successfully",
     "companyDeleted": "Company has been deleted successfully",
-
     "userCreated": "User has been created successfully",
     "userUpdated": "User has been updated successfully",
     "userDeleted": "User has been deleted successfully",
-
     "actionCreated": "Action has been created successfully",
     "actionUpdated": "Action has been updated successfully",
     "actionDeleted": "Action has been deleted successfully",
     "sessionCleared": "Session has been cleared successfully",
-
     "tokenRefreshed": "Token has been refreshed successfully"
   },
-
   "assistantFieldConfigs": {
     "assistantId": "Assistant ID",
     "name": "Name",
@@ -243,9 +227,10 @@
     "language": "Language",
     "llmModel": "LLM Model",
     "llmPrompt": "LLM Prompt",
-    "save": "Save Changes"
+    "save": "Save Changes",
+    "allowedActions": "Allowed Actions",
+    "allowedActions_description": "Description of allowed actions"
   },
-
   "dialogTitles" : {
     "newAssistant": "Create New Assistant",
     "newCompany": "Create New Company",
@@ -253,14 +238,9 @@
     "newUser": "Create New User",
     "onboarding": "Get Started"
   },
-
-
   "common" : {
     "actions": "actions",
     "appName": "Agent Portal",
     "pleaseWait": "Please wait..."
   }
- 
-    
-
 }
