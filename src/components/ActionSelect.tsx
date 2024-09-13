@@ -35,12 +35,14 @@ export const ActionSelect: React.FC<ActionSelectProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [activeServiceName, setActiveServiceName] = useState('');
   const selectRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
       if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
         setIsOpen(false);
+        setActiveServiceName('');
       }
     };
 
@@ -59,6 +61,11 @@ export const ActionSelect: React.FC<ActionSelectProps> = ({
     onSelect(value);
     setIsOpen(false);
     setSearchTerm(''); // Reset search term after selection
+    setActiveServiceName('');
+  };
+
+  const handleOptionHover = (option: ActionOption) => {
+    setActiveServiceName(option.serviceName);
   };
 
   const selectedOption = options.find(option => option.id === selectedValue);
@@ -102,12 +109,25 @@ export const ActionSelect: React.FC<ActionSelectProps> = ({
           />
         </div>
         {isOpen && (
-          <div className="absolute top-full left-0 z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
+          <div className="mt-1 bg-white border-t border-gray-200 rounded-b-md shadow-inner">
             <div className="p-2">
-              {/* Search Input */}
-              <SearchInput value={searchTerm} onChange={setSearchTerm} />
+              {/* Sticky Header */}
+              <div className="sticky top-0 bg-white z-10">
+                {/* Search Input */}
+                <SearchInput value={searchTerm} onChange={setSearchTerm} />
+                {/* Active Service Name */}
+                {activeServiceName && (
+                  <div className="text-sm text-gray-500 bg-blue-100 p-2 rounded-xl mb-1">{activeServiceName}</div>
+                )}
+              </div>
               {/* Options List */}
-              <ActionOptionsList options={filteredOptions} onSelect={handleSelect} />
+              <div className="max-h-60 overflow-y-auto">
+                <ActionOptionsList
+                  options={filteredOptions}
+                  onSelect={handleSelect}
+                  onHover={handleOptionHover}
+                />
+              </div>
             </div>
           </div>
         )}
