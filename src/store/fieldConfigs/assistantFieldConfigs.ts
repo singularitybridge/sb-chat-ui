@@ -29,7 +29,7 @@ const allowedActionOptions = [
   { 
     id: 'getJournalEntries',
     name: 'Get recent journal entries',
-    iconName: 'NotebookText',
+    iconName: 'book-open',
     title: 'Fetch Journal Entries',
     description: 'Retrieves the most recent journal entries',
     serviceName: 'Journal Service'
@@ -37,7 +37,7 @@ const allowedActionOptions = [
   { 
     id: 'getFriendlyJournalEntries',
     name: 'Get recent journal entries in a friendly format',
-    iconName: 'NotebookText',
+    iconName: 'book-open-check',
     title: 'Fetch Friendly Journal Entries',
     description: 'Retrieves recent journal entries in a more user-friendly format',
     serviceName: 'Journal Service'
@@ -45,7 +45,7 @@ const allowedActionOptions = [
   { 
     id: 'createJournalEntry',
     name: 'Create a journal entry',
-    iconName: 'NotebookPen',
+    iconName: 'pencil',
     title: 'Create Journal Entry',
     description: 'Creates a new journal entry',
     serviceName: 'Journal Service'
@@ -53,7 +53,7 @@ const allowedActionOptions = [
   { 
     id: 'sendEmail',
     name: 'Send Email',
-    iconName: 'Mail',
+    iconName: 'mail',
     title: 'Send an Email',
     description: 'Sends an email to specified recipients',
     serviceName: 'Email Service'
@@ -61,7 +61,7 @@ const allowedActionOptions = [
   { 
     id: 'perplexitySearch',
     name: 'Run Perplexity Search',
-    iconName: 'Binoculars',
+    iconName: 'search',
     title: 'Perplexity Search',
     description: 'Performs a search using the Perplexity API',
     serviceName: 'Perplexity API'
@@ -69,7 +69,7 @@ const allowedActionOptions = [
   { 
     id: 'removeBackground',
     name: 'Remove Background',
-    iconName: 'Wand',
+    iconName: 'image',
     title: 'Remove Image Background',
     description: 'Removes the background from an image',
     serviceName: 'Image Processing Service'
@@ -77,7 +77,7 @@ const allowedActionOptions = [
   { 
     id: 'fetchIssues',
     name: 'Fetch Linear Issues',
-    iconName: '🐛',
+    iconName: 'bug',
     title: 'Fetch Linear Issues',
     description: 'Retrieves issues from Linear project management tool',
     serviceName: 'Linear API'
@@ -85,7 +85,7 @@ const allowedActionOptions = [
   { 
     id: 'createJSONBinFile',
     name: 'Create JSON Bin File',
-    iconName: '📁',
+    iconName: 'file-plus',
     title: 'Create JSON Bin File',
     description: 'Creates a new JSON Bin file',
     serviceName: 'JSON Bin'
@@ -93,7 +93,7 @@ const allowedActionOptions = [
   { 
     id: 'updateJSONBinFile',
     name: 'Update JSON Bin File',
-    iconName: 'Braces',
+    iconName: 'braces',
     title: 'Update JSON Bin File',
     description: 'Updates an existing JSON Bin file',
     serviceName: 'JSON Bin'
@@ -101,7 +101,7 @@ const allowedActionOptions = [
   { 
     id: 'readJSONBinFile',
     name: 'Read JSON Bin File',
-    iconName: '👀',
+    iconName: 'file-text',
     title: 'Read JSON Bin File',
     description: 'Reads the contents of a JSON Bin file',
     serviceName: 'JSON Bin'
@@ -109,7 +109,7 @@ const allowedActionOptions = [
   { 
     id: 'updateJSONBinArrayElement',
     name: 'Update JSON Bin Array Element',
-    iconName: '🔧',
+    iconName: 'list-plus',
     title: 'Update JSON Bin Array Element',
     description: 'Updates a specific element in a JSON Bin array',
     serviceName: 'JSON Bin'
@@ -117,7 +117,7 @@ const allowedActionOptions = [
   { 
     id: 'deleteJSONBinArrayElement',
     name: 'Delete JSON Bin Array Element',
-    iconName: '🗑️',
+    iconName: 'list-minus',
     title: 'Delete JSON Bin Array Element',
     description: 'Deletes a specific element from a JSON Bin array',
     serviceName: 'JSON Bin'
@@ -125,7 +125,7 @@ const allowedActionOptions = [
   { 
     id: 'insertJSONBinArrayElement',
     name: 'Insert JSON Bin Array Element',
-    iconName: '➕',
+    iconName: 'list-plus',
     title: 'Insert JSON Bin Array Element',
     description: 'Inserts a new element into a JSON Bin array',
     serviceName: 'JSON Bin'
@@ -133,7 +133,7 @@ const allowedActionOptions = [
   { 
     id: 'cloneJSONBinFile',
     name: 'Clone JSON Bin File',
-    iconName: '🐑',
+    iconName: 'copy',
     title: 'Clone JSON Bin File',
     description: 'Creates a copy of an existing JSON Bin file',
     serviceName: 'JSON Bin'
@@ -141,7 +141,7 @@ const allowedActionOptions = [
   { 
     id: 'generateFluxImage',
     name: 'Generate Flux Image',
-    iconName: '🎨',
+    iconName: 'image',
     title: 'Generate Flux Image',
     description: 'Generates an image using Flux AI',
     serviceName: 'Flux AI'
@@ -149,7 +149,7 @@ const allowedActionOptions = [
   { 
     id: 'generateElevenLabsAudio',
     name: 'Generate Eleven Labs Audio',
-    iconName: '🎵',
+    iconName: 'music',
     title: 'Generate Eleven Labs Audio',
     description: 'Generates audio using Eleven Labs AI',
     serviceName: 'Eleven Labs'

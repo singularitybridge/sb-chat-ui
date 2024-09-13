@@ -40,7 +40,11 @@ const ActionTag: React.FC<ActionTagProps> = ({ iconName, title, description, ser
     <div className="mb-2 p-2 bg-gray-100 rounded-lg">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
-          <Icon name={iconName} className="mr-2 w-5 h-5" />
+          {iconName in dynamicIconImports ? (
+            <Icon name={iconName} className="mr-2 w-5 h-5" />
+          ) : (
+            <span className="mr-2 w-5 h-5 flex items-center justify-center text-sm">{iconName}</span>
+          )}
           <span className="font-bold">{title}</span>
         </div>
         <button
