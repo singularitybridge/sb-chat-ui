@@ -13,7 +13,7 @@ import {
   TagsFieldConfig,
 } from '../../components/DynamicForm';
 import { toJS } from 'mobx';
-import { assistantFieldConfigs } from '../../store/fieldConfigs/assistantFieldConfigs';
+import { getAssistantFieldConfigs, defaultAssistantFieldConfigs } from '../../store/fieldConfigs/assistantFieldConfigs';
 import {
   uploadFile,
   listAssistantFiles,
@@ -33,7 +33,7 @@ interface UploadedFile {
 }
 
 const EditAssistantView: React.FC = observer(() => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { key } = useParams<{ key: string }>();
   const rootStore = useRootStore();
   const assistant = key ? rootStore.getAssistantById(key) : null;
@@ -41,15 +41,30 @@ const EditAssistantView: React.FC = observer(() => {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [selectedAvatarId, setSelectedAvatarId] = useState<string | null>(null);
+  const [fieldConfigs, setFieldConfigs] = useState<FieldConfig[]>(defaultAssistantFieldConfigs);
+  const [isFieldConfigsLoading, setIsFieldConfigsLoading] = useState(true);
 
   useEffect(() => {
+    const fetchFieldConfigs = async () => {
+      try {
+        const configs = await getAssistantFieldConfigs(i18n.language);
+        setFieldConfigs(configs);
+      } catch (error) {
+        console.error('Failed to fetch assistant field configs:', error);
+      } finally {
+        setIsFieldConfigsLoading(false);
+      }
+    };
+
+    fetchFieldConfigs();
+
     if (key) {
       fetchAssistantFiles();
     }
     if (assistant && assistant.avatarImage) {
       setSelectedAvatarId(assistant.avatarImage);
     }
-  }, [key, assistant]);
+  }, [key, assistant, i18n.language]);
 
   const fetchAssistantFiles = async () => {
     if (key) {
@@ -62,7 +77,7 @@ const EditAssistantView: React.FC = observer(() => {
     }
   };
 
-  if (rootStore.assistantsLoaded === false) {
+  if (rootStore.assistantsLoaded === false || isFieldConfigsLoading) {
     return <TextComponent text={t('common.pleaseWait')} size="medium" />;
   }
 
@@ -70,7 +85,7 @@ const EditAssistantView: React.FC = observer(() => {
     return <TextComponent text="Assistant not found" size="medium" />;
   }
 
-  const formFields: FieldConfig[] = assistantFieldConfigs.map((field) => {
+  const formFields: FieldConfig[] = fieldConfigs.map((field) => {
     const fieldKeyString = String(field.key);
     let value = assistant ? toJS((assistant as any)[fieldKeyString]) : '';
 

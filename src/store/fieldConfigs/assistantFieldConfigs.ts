@@ -1,6 +1,7 @@
 import { FieldConfig } from '../../components/DynamicForm';
 import { SelectListOption } from '../../components/sb-core-ui-kit/SelectList';
 import { TagsInput } from '../../components/TagsInput';
+import apiCaller from '../../services/AxiosService';
 
 const voiceOptions: SelectListOption[] = [
   { value: 'alloy', label: 'Alloy' },
@@ -25,197 +26,141 @@ const llmModelOptions: SelectListOption[] = [
   { value: 'chatgpt-4o-latest', label: 'ChatGPT-4o Latest' },
 ];
 
-const allowedActionOptions = [
-  { 
-    id: 'getJournalEntries',
-    name: 'Get recent journal entries',
-    iconName: 'book-open',
-    title: 'Fetch Journal Entries',
-    description: 'Retrieves the most recent journal entries',
-    serviceName: 'Journal Service'
-  },
-  { 
-    id: 'getFriendlyJournalEntries',
-    name: 'Get recent journal entries in a friendly format',
-    iconName: 'book-open-check',
-    title: 'Fetch Friendly Journal Entries',
-    description: 'Retrieves recent journal entries in a more user-friendly format',
-    serviceName: 'Journal Service'
-  },
-  { 
-    id: 'createJournalEntry',
-    name: 'Create a journal entry',
-    iconName: 'pencil',
-    title: 'Create Journal Entry',
-    description: 'Creates a new journal entry',
-    serviceName: 'Journal Service'
-  },
-  { 
-    id: 'sendEmail',
-    name: 'Send Email',
-    iconName: 'mail',
-    title: 'Send an Email',
-    description: 'Sends an email to specified recipients',
-    serviceName: 'Email Service'
-  },
-  { 
-    id: 'perplexitySearch',
-    name: 'Run Perplexity Search',
-    iconName: 'search',
-    title: 'Perplexity Search',
-    description: 'Performs a search using the Perplexity API',
-    serviceName: 'Perplexity API'
-  },
-  { 
-    id: 'removeBackground',
-    name: 'Remove Background',
-    iconName: 'image',
-    title: 'Remove Image Background',
-    description: 'Removes the background from an image',
-    serviceName: 'Image Processing Service'
-  },
-  { 
-    id: 'fetchIssues',
-    name: 'Fetch Linear Issues',
-    iconName: 'bug',
-    title: 'Fetch Linear Issues',
-    description: 'Retrieves issues from Linear project management tool',
-    serviceName: 'Linear API'
-  },
-  { 
-    id: 'createJSONBinFile',
-    name: 'Create JSON Bin File',
-    iconName: 'file-plus',
-    title: 'Create JSON Bin File',
-    description: 'Creates a new JSON Bin file',
-    serviceName: 'JSON Bin'
-  },
-  { 
-    id: 'updateJSONBinFile',
-    name: 'Update JSON Bin File',
-    iconName: 'braces',
-    title: 'Update JSON Bin File',
-    description: 'Updates an existing JSON Bin file',
-    serviceName: 'JSON Bin'
-  },
-  { 
-    id: 'readJSONBinFile',
-    name: 'Read JSON Bin File',
-    iconName: 'file-text',
-    title: 'Read JSON Bin File',
-    description: 'Reads the contents of a JSON Bin file',
-    serviceName: 'JSON Bin'
-  },
-  { 
-    id: 'updateJSONBinArrayElement',
-    name: 'Update JSON Bin Array Element',
-    iconName: 'list-plus',
-    title: 'Update JSON Bin Array Element',
-    description: 'Updates a specific element in a JSON Bin array',
-    serviceName: 'JSON Bin'
-  },
-  { 
-    id: 'deleteJSONBinArrayElement',
-    name: 'Delete JSON Bin Array Element',
-    iconName: 'list-minus',
-    title: 'Delete JSON Bin Array Element',
-    description: 'Deletes a specific element from a JSON Bin array',
-    serviceName: 'JSON Bin'
-  },
-  { 
-    id: 'insertJSONBinArrayElement',
-    name: 'Insert JSON Bin Array Element',
-    iconName: 'list-plus',
-    title: 'Insert JSON Bin Array Element',
-    description: 'Inserts a new element into a JSON Bin array',
-    serviceName: 'JSON Bin'
-  },
-  { 
-    id: 'cloneJSONBinFile',
-    name: 'Clone JSON Bin File',
-    iconName: 'copy',
-    title: 'Clone JSON Bin File',
-    description: 'Creates a copy of an existing JSON Bin file',
-    serviceName: 'JSON Bin'
-  },
-  { 
-    id: 'generateFluxImage',
-    name: 'Generate Flux Image',
-    iconName: 'image',
-    title: 'Generate Flux Image',
-    description: 'Generates an image using Flux AI',
-    serviceName: 'Flux AI'
-  },
-  { 
-    id: 'generateElevenLabsAudio',
-    name: 'Generate Eleven Labs Audio',
-    iconName: 'music',
-    title: 'Generate Eleven Labs Audio',
-    description: 'Generates audio using Eleven Labs AI',
-    serviceName: 'Eleven Labs'
-  },
-];
+interface ActionOption {
+  id: string;
+  name: string;
+  iconName: string;
+  title: string;
+  description: string;
+  serviceName: string;
+}
 
-export const assistantFieldConfigs: FieldConfig[] = [
-  {
-    id: 'name',
-    label: 'Name',
-    key: 'name',
-    type: 'input',
-    value: 'New Assistant',
-    visibility: { create: true, view: true, update: true },
-  },
-  {
-    id: 'description',
-    key: 'description',
-    label: 'Description',
-    type: 'textarea',
-    value: 'This is a new assistant.',
-    visibility: { create: true, view: true, update: true },
-  },
-  {
-    id: 'introMessage',
-    key: 'introMessage',
-    label: 'Intro Message',
-    type: 'input',
-    value: 'Hello! How can I help you today?',
-    visibility: { create: true, view: true, update: true },
-  },
-  {
-    id: 'voice',
-    key: 'voice',
-    label: 'Voice',
-    type: 'dropdown',
-    value: 'alloy',
-    options: voiceOptions,
-    visibility: { create: true, view: true, update: true },
-  },
-  {
-    id: 'language',
-    key: 'language',
-    label: 'Language',
-    type: 'dropdown',
-    value: 'he',
-    options: languageOptions,
-    visibility: { create: true, view: true, update: true },
-  },
-  {
-    id: 'llmModel',
-    key: 'llmModel',
-    label: 'LLM Model',
-    type: 'dropdown',
-    value: 'gpt-4o-mini',
-    options: llmModelOptions,
-    visibility: { create: true, view: true, update: true },
-  },
-  {
-    id: 'llmPrompt',
-    key: 'llmPrompt',
-    label: 'LLM Prompt',
-    type: 'textarea',
-    value: 'This is a new assistant.',
-    visibility: { create: true, view: true, update: true },
-  },
+// Cache for storing fetched action options
+const actionOptionsCache: Record<string, ActionOption[]> = {};
+
+/**
+ * Fetches allowed action options from the server for a given language.
+ * Uses caching to avoid unnecessary API calls.
+ * 
+ * @param language - The language code for which to fetch action options
+ * @returns A promise that resolves to an array of ActionOption objects
+ */
+const fetchAllowedActionOptions = async (language: string = 'en'): Promise<ActionOption[]> => {
+  if (actionOptionsCache[language]) {
+    return actionOptionsCache[language];
+  }
+
+  try {
+    const response = await apiCaller.get<any[]>(`/action-discovery/discover?language=${language}`);
+    const actionOptions = response.data.map((action: any) => ({
+      id: action.id,
+      name: action.actionTitle,
+      iconName: action.icon,
+      title: action.actionTitle,
+      description: action.description,
+      serviceName: action.serviceName
+    }));
+
+    actionOptionsCache[language] = actionOptions;
+    return actionOptions;
+  } catch (error) {
+    console.error('Error fetching allowed action options:', error);
+    return [];
+  }
+};
+
+/**
+ * Asynchronously generates the assistant field configurations.
+ * This function fetches the allowed action options from the server based on the specified language.
+ * 
+ * @param language - The language code to use for fetching action options (default: 'en')
+ * @returns A promise that resolves to an array of FieldConfig objects
+ */
+export const getAssistantFieldConfigs = async (language: string = 'en'): Promise<FieldConfig[]> => {
+  const allowedActionOptions = await fetchAllowedActionOptions(language);
+
+  return [
+    {
+      id: 'name',
+      label: 'Name',
+      key: 'name',
+      type: 'input',
+      value: 'New Assistant',
+      visibility: { create: true, view: true, update: true },
+    },
+    {
+      id: 'description',
+      key: 'description',
+      label: 'Description',
+      type: 'textarea',
+      value: 'This is a new assistant.',
+      visibility: { create: true, view: true, update: true },
+    },
+    {
+      id: 'introMessage',
+      key: 'introMessage',
+      label: 'Intro Message',
+      type: 'input',
+      value: 'Hello! How can I help you today?',
+      visibility: { create: true, view: true, update: true },
+    },
+    {
+      id: 'voice',
+      key: 'voice',
+      label: 'Voice',
+      type: 'dropdown',
+      value: 'alloy',
+      options: voiceOptions,
+      visibility: { create: true, view: true, update: true },
+    },
+    {
+      id: 'language',
+      key: 'language',
+      label: 'Language',
+      type: 'dropdown',
+      value: language,
+      options: languageOptions,
+      visibility: { create: true, view: true, update: true },
+    },
+    {
+      id: 'llmModel',
+      key: 'llmModel',
+      label: 'LLM Model',
+      type: 'dropdown',
+      value: 'gpt-4o-mini',
+      options: llmModelOptions,
+      visibility: { create: true, view: true, update: true },
+    },
+    {
+      id: 'llmPrompt',
+      key: 'llmPrompt',
+      label: 'LLM Prompt',
+      type: 'textarea',
+      value: 'This is a new assistant.',
+      visibility: { create: true, view: true, update: true },
+    },
+    {
+      id: 'allowedActions',
+      key: 'allowedActions',
+      label: 'Allowed Actions',
+      type: 'tags',
+      value: [],
+      component: TagsInput,
+      props: {
+        availableTags: allowedActionOptions,
+        selectedTags: [],
+      },
+      visibility: { create: true, view: true, update: true },
+    },
+  ];
+};
+
+/**
+ * Default assistant field configurations without server-fetched action options.
+ * This can be used as a fallback when async loading is not possible or during initial renders.
+ */
+export const defaultAssistantFieldConfigs: FieldConfig[] = [
+  // ... (copy all fields from getAssistantFieldConfigs except 'allowedActions')
   {
     id: 'allowedActions',
     key: 'allowedActions',
@@ -224,7 +169,7 @@ export const assistantFieldConfigs: FieldConfig[] = [
     value: [],
     component: TagsInput,
     props: {
-      availableTags: allowedActionOptions,
+      availableTags: [],
       selectedTags: [],
     },
     visibility: { create: true, view: true, update: true },
