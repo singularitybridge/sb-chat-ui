@@ -1,10 +1,8 @@
 import { NewAssistantView } from '../pages/NewAssistantView';
 import { NewCompanyView } from '../pages/NewCompanyView';
 import { NewUserView } from '../pages/NewUserView';
-import { NewActionView } from '../pages/admin/NewActionView';
 import OnboardingDialog from '../pages/admin/Onboarding';
 import {
-  EVENT_SHOW_ADD_ACTION_MODAL,
   EVENT_SHOW_ADD_ASSISTANT_MODAL,
   EVENT_SHOW_ADD_COMPANY_MODAL,
   EVENT_SHOW_ADD_USER_MODAL,
@@ -35,12 +33,6 @@ const dialogComponentFactory = (
       return {
         title: eventData.title || i18n.t('dialogTitles.newCompany'),
         component: React.createElement(NewCompanyView),
-      };
-
-    case EVENT_SHOW_ADD_ACTION_MODAL:
-      return {
-        title: eventData.title || i18n.t('dialogTitles.newAction'),
-        component: React.createElement(NewActionView),
       };
 
     case EVENT_SHOW_ADD_USER_MODAL:

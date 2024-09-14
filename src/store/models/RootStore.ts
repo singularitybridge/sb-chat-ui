@@ -31,13 +31,6 @@ import {
 import { SessionStore } from './SessionStore';
 import { addInboxMessage, addInboxResponse, getInboxMessages } from '../../services/api/inboxService';
 import { IInboxSession, InboxSession } from './Inbox';
-import { Action, IAction } from './Action';
-import {
-  addAction,
-  deleteAction,
-  getActions,
-  updateAction,
-} from '../../services/api/actionService';
 import i18n from '../../i18n';
 import { AIAssistedConfigStore } from './AIAssistedConfigStore';
 import { AuthStore } from './AuthStore';
@@ -68,8 +61,6 @@ const RootStore = types
     inboxSessions: types.array(InboxSession),
     inboxSessionsLoaded: types.optional(types.boolean, false),
     currentUser: types.maybe(types.reference(User)),
-    actions: types.array(Action),
-    actionsLoaded: types.optional(types.boolean, false),
     language: types.optional(types.string, 'en'),
     // Add these new properties
     onboardingStatus: types.optional(types.enumeration(Object.values(OnboardingStatus)), OnboardingStatus.CREATED),
@@ -133,54 +124,6 @@ const RootStore = types
         emitter.emit(EVENT_ERROR, 'Failed to update onboarding status: ' + (error as Error).message);
       }
     }),
-
-    loadActions: flow(function* () {
-      try {
-        const actions = yield getActions();
-        applySnapshot(self.actions, actions);
-        self.actionsLoaded = true;
-      } catch (error) {
-        console.error('Failed to load actions', error);
-      }
-    }),
-    addAction: flow(function* (action: IAction) {
-      try {
-        const newAction = yield addAction(action);
-        self.actions.push(newAction);
-        emitter.emit(EVENT_SHOW_NOTIFICATION, i18n.t('Notifications.actionCreated'));
-        emitter.emit(EVENT_CLOSE_MODAL); // Emit the close modal event
-      } catch (error: any) {
-        console.error('Failed to add action', error);
-        emitter.emit(EVENT_ERROR, 'Failed to add user: ' + error.message);
-      }
-    }),
-    updateAction: flow(function* (actionId: string, action: IAction) {
-      try {
-        const updatedAction = yield updateAction(actionId, action);
-        const index = self.actions.findIndex((act) => act._id === actionId);
-        if (index !== -1) {
-          self.actions[index] = updatedAction;
-          emitter.emit(EVENT_SHOW_NOTIFICATION, i18n.t('Notifications.actionUpdated'));
-        }
-      } catch (error) {
-        console.error('Failed to update action', error);
-      }
-    }),
-    deleteAction: flow(function* (actionId: string) {
-      try {
-        yield deleteAction(actionId);
-        self.actions.replace(
-          self.actions.filter((act) => act._id !== actionId)
-        );
-        emitter.emit(EVENT_SHOW_NOTIFICATION, i18n.t('Notifications.actionDeleted'));
-      } catch (error) {
-        console.error('Failed to delete action', error);
-      }
-    }),
-
-    getActionById: (actionId: string) => {
-      return self.actions.find((act) => act._id === actionId);
-    },
 
     loadInboxMessages: flow(function* () {
       try {

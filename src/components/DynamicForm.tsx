@@ -7,7 +7,6 @@ import LoadingButton from './core/LoadingButton';
 import { AssistantKeys } from '../store/models/Assistant';
 import { CompanyKeys } from '../store/models/Company';
 import { UserKeys } from '../store/models/User';
-import { ActionKeys } from '../store/models/Action';
 import TokenInput from './admin/TokenInput';
 import { useTranslation } from 'react-i18next';
 import { useRootStore } from '../store/common/RootStoreContext';
@@ -33,7 +32,7 @@ export interface FieldVisibility {
 
 export interface BaseFieldConfig {
   id: string;
-  key: AssistantKeys | CompanyKeys | UserKeys | ActionKeys;
+  key: AssistantKeys | CompanyKeys | UserKeys;
   type: FieldType;
   label: string;
   visibility: FieldVisibility;
