@@ -26,7 +26,7 @@ const llmModelOptions: SelectListOption[] = [
   { value: 'chatgpt-4o-latest', label: 'ChatGPT-4o Latest' },
 ];
 
-interface ActionOption {
+export interface ActionOption {
   id: string;
   name: string;
   iconName: string;
@@ -45,7 +45,7 @@ const actionOptionsCache: Record<string, ActionOption[]> = {};
  * @param language - The language code for which to fetch action options
  * @returns A promise that resolves to an array of ActionOption objects
  */
-const fetchAllowedActionOptions = async (language: string = 'en'): Promise<ActionOption[]> => {
+export const fetchAllowedActionOptions = async (language: string = 'en'): Promise<ActionOption[]> => {
   if (actionOptionsCache[language]) {
     return actionOptionsCache[language];
   }

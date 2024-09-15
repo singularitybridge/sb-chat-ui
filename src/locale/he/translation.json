@@ -212,7 +212,8 @@
     "uploading" : "מעלה...",
     "dropFile" : "גרור קובץ לכאן",
     "dragFileHere" : "גרור קובץ לכאן, או לחץ כדי לבחור",
-    "selectAvatar": "בחר אווטאר"
+    "selectAvatar": "בחר אווטאר",
+    "editAllowedActions": "ערוך פעולות מורשות"
   },
   "ChatContainer": {
     "input": "הקלד את הודעתך כאן"
@@ -260,6 +261,7 @@
   "common" : {
     "actions": "פעולות",
     "appName": "פורטל הסוכנים",
-    "pleaseWait": "אנא המתן..."
+    "pleaseWait": "אנא המתן...",
+    "save": "שמור שינויים"
   }
 }

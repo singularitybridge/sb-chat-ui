@@ -9,6 +9,7 @@ export const EVENT_SHOW_ONBOARDING_MODAL = 'show-onboarding-modal';
 export const EVENT_CLOSE_MODAL = 'close-modal';
 export const EVENT_ERROR = 'error';
 export const EVENT_SET_ASSISTANT_VALUES = 'set-assistant-values';
+export const EVENT_SHOW_EDIT_ASSISTANT_ACTIONS_MODAL = 'show-edit-assistant-actions-modal';
 
 export type EventType =
   | typeof EVENT_SHOW_ADD_ASSISTANT_MODAL
@@ -22,3 +23,4 @@ export type EventType =
   | typeof EVENT_SHOW_NOTIFICATION
   | typeof EVENT_SHOW_ADD_ACTION_MODAL
   | typeof EVENT_SHOW_ONBOARDING_MODAL
+  | typeof EVENT_SHOW_EDIT_ASSISTANT_ACTIONS_MODAL

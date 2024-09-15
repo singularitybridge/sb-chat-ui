@@ -7,6 +7,7 @@ import {
   EVENT_SHOW_ADD_COMPANY_MODAL,
   EVENT_SHOW_ADD_USER_MODAL,
   EVENT_SHOW_ONBOARDING_MODAL,
+  EVENT_SHOW_EDIT_ASSISTANT_ACTIONS_MODAL,
   EventType,
 } from '../../utils/eventNames';
 import { ModalDialog } from '../core/ModalDialog';
@@ -61,10 +62,15 @@ const DialogManager = observer(() => {
   useEventEmitter(
     EVENT_SHOW_ONBOARDING_MODAL,
     (eventData: DialogComponentEventData) => {
-      console.log('EVENT_SHOW_ONBOARDING_MODAL');
       updateContent(EVENT_SHOW_ONBOARDING_MODAL, eventData);
     }
-      
+  );
+
+  useEventEmitter(
+    EVENT_SHOW_EDIT_ASSISTANT_ACTIONS_MODAL,
+    (eventData: DialogComponentEventData) => {
+      updateContent(EVENT_SHOW_EDIT_ASSISTANT_ACTIONS_MODAL, eventData);
+    }
   );
 
   useEventEmitter(EVENT_CLOSE_MODAL, () => {

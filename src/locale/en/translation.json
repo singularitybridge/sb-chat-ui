@@ -197,7 +197,8 @@
     "uploading" : "Uploading...",
     "dropFile" : "Drop file here",
     "dragFileHere" : "Drag file here, or click to upload",
-    "selectAvatar": "Select Avatar"
+    "selectAvatar": "Select Avatar",
+    "editAllowedActions": "Edit Allowed Actions"
   },
   "ChatContainer": {
     "input": "Type your message"
@@ -241,6 +242,7 @@
   "common" : {
     "actions": "actions",
     "appName": "Agent Portal",
-    "pleaseWait": "Please wait..."
+    "pleaseWait": "Please wait...",
+    "save": "Save Changes"
   }
 }
