@@ -55,7 +55,7 @@ const ExtendedInfo: React.FC<ExtendedInfoProps> = ({ action, isExpanded }) => {
 
   return (
     <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? 'max-h-[500px]' : 'max-h-0'}`}>
-      <div className="bg-slate-100 p-3 rounded-b">
+      <div className="bg-gray-100 p-3 rounded-b">
         <h4 className="mb-2 font-light text-lg">Parameters</h4>
         {parameterEntries.length > 0 ? (
           <div className="space-y-2">
@@ -121,7 +121,7 @@ const ActionsGallery: React.FC<ActionsGalleryProps> = ({
           <button
             className={`p-3 flex flex-col items-start w-full ${
               isSelected
-                ? 'bg-indigo-100 text-gray-800'
+                ? 'bg-[#e0fcd6] text-gray-800'
                 : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
             }`}
             onClick={() => handleToggleAction(action.value)}
