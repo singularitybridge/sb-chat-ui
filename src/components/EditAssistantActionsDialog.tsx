@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useRootStore } from '../store/common/RootStoreContext';
-import { TagsInput } from './TagsInput';
 import { TextComponent } from './sb-core-ui-kit/TextComponent';
 import Button from './sb-core-ui-kit/Button';
 import { useTranslation } from 'react-i18next';
 import { IAssistant } from '../store/models/Assistant';
 import { cast } from 'mobx-state-tree';
 import { fetchAllowedActionOptions, ActionOption } from '../store/fieldConfigs/assistantFieldConfigs';
+import ActionsGallery from './ActionsGallery';
 
 interface EditAssistantActionsDialogProps {
   assistantId: string;
@@ -67,15 +67,15 @@ const EditAssistantActionsDialog: React.FC<EditAssistantActionsDialogProps> = ob
     };
 
     return (
-      <div className="p-4">
+      <div className="p-4 h-[80vh] flex flex-col">
         <TextComponent text={t('EditAssistantActionsDialog.title')} size="medium" className="mb-4" />
-        <TagsInput
-          selectedTags={selectedActions}
-          availableTags={availableActions}
-          title={t('EditAssistantActionsDialog.allowedActions')}
-          description={t('EditAssistantActionsDialog.allowedActionsDescription')}
-          onChange={handleActionsChange}
-        />
+        <div className="flex-grow overflow-hidden">
+          <ActionsGallery
+            selectedActions={selectedActions}
+            availableActions={availableActions}
+            onChange={handleActionsChange}
+          />
+        </div>
         <div className="mt-4 flex justify-end">
           <Button onClick={handleSave} disabled={isLoading}>
             {t('common.save')}

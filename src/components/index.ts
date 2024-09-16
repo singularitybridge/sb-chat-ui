@@ -1,2 +1,3 @@
+export { default as ActionsGallery } from './ActionsGallery';
 export { default as EditAssistantActionsDialog } from './EditAssistantActionsDialog';
-// Export other components here as needed
+// Add other component exports here as needed

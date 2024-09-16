@@ -29,11 +29,16 @@ const llmModelOptions: SelectListOption[] = [
 export interface ActionOption {
   id: string;
   name: string;
-  iconName: string;
   title: string;
   description: string;
+  iconName: string;
   serviceName: string;
+  category: string;
+  value: string;
+  label: string;
 }
+
+export type TagType = ActionOption;
 
 // Cache for storing fetched action options
 const actionOptionsCache: Record<string, ActionOption[]> = {};
@@ -55,10 +60,13 @@ export const fetchAllowedActionOptions = async (language: string = 'en'): Promis
     const actionOptions = response.data.map((action: any) => ({
       id: action.id,
       name: action.actionTitle,
-      iconName: action.icon,
       title: action.actionTitle,
       description: action.description,
-      serviceName: action.serviceName
+      iconName: action.icon,
+      serviceName: action.serviceName,
+      category: action.serviceName,
+      value: action.id,
+      label: action.actionTitle
     }));
 
     actionOptionsCache[language] = actionOptions;
