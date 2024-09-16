@@ -239,6 +239,10 @@
     "newUser": "Create New User",
     "onboarding": "Get Started"
   },
+  "actionsGallery" : {
+    "searchPlaceholder": "Search actions"
+
+  },
   "common" : {
     "actions": "actions",
     "appName": "Agent Portal",

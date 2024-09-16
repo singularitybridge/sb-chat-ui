@@ -91,11 +91,11 @@ const ActionsGallery: React.FC<ActionsGalleryProps> = ({
 
   return (
     <div className="h-full flex flex-col overflow-hidden">
-      <div className="mb-4 relative">
+      <div className="mb-8 relative">
         <Input
           id="action-search"
           type="text"
-          placeholder={t('ActionsGallery.searchPlaceholder')}
+          placeholder={t('actionsGallery.searchPlaceholder')}
           value={searchTerm}
           onChange={(value: string) => setSearchTerm(value)}
           className="w-full pr-10"
@@ -109,7 +109,7 @@ const ActionsGallery: React.FC<ActionsGalleryProps> = ({
           </button>
         )}
       </div>
-      <TextComponent text={t('ActionsGallery.availableActions')} size="medium" className="font-bold mb-2" />
+      
       <div className="flex-grow overflow-y-auto">
         {Object.entries(categorizedActions).map(([category, actions]) =>
           renderActionCategory(category, actions)

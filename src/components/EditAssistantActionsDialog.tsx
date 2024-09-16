@@ -67,8 +67,7 @@ const EditAssistantActionsDialog: React.FC<EditAssistantActionsDialogProps> = ob
     };
 
     return (
-      <div className="p-4 h-[80vh] flex flex-col">
-        <TextComponent text={t('EditAssistantActionsDialog.title')} size="medium" className="mb-4" />
+      <div className="p-4 h-[80vh] flex flex-col">        
         <div className="flex-grow overflow-hidden">
           <ActionsGallery
             selectedActions={selectedActions}
