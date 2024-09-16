@@ -258,6 +258,9 @@
     "newUser": "צור משתמש חדש",
     "onboarding": "ברוכים הבאים"
   },
+  "actionsGallery" : {
+    "searchPlaceholder": "חפש פעולות"
+  },  
   "common" : {
     "actions": "פעולות",
     "appName": "פורטל הסוכנים",

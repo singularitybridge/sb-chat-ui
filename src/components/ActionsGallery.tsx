@@ -63,11 +63,11 @@ const ActionsGallery: React.FC<ActionsGalleryProps> = ({
         }`}
         onClick={() => handleToggleAction(action.value)}
       >
-        <div className="flex items-center w-full">
-          <IconComponent className="w-4 h-4 mr-2 flex-shrink-0" />
+        <div className="flex items-center w-full space-x-2 rtl:space-x-reverse">
+          <IconComponent className="w-4 h-4 flex-shrink-0" />
           <span className="text-sm">{action.label}</span>
         </div>
-        <p className="text-xs mt-1 w-full text-left">{action.description}</p>
+        <p className="text-xs mt-1 w-full rtl:text-right ltr:text-left">{action.description}</p>
       </button>
     );
   };
