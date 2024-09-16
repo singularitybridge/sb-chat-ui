@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ActionOption } from '../store/fieldConfigs/assistantFieldConfigs';
 import { TextComponent } from './sb-core-ui-kit/TextComponent';
 import { useTranslation } from 'react-i18next';
 import * as LucideIcons from 'lucide-react';
+import { Input } from './sb-core-ui-kit/Input';
 
 interface ActionsGalleryProps {
   selectedActions: string[];
@@ -28,6 +29,16 @@ const ActionsGallery: React.FC<ActionsGalleryProps> = ({
   onChange,
 }) => {
   const { t } = useTranslation();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredActions, setFilteredActions] = useState(availableActions);
+
+  useEffect(() => {
+    const filtered = availableActions.filter(action =>
+      action.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      action.description.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredActions(filtered);
+  }, [searchTerm, availableActions]);
 
   const handleToggleAction = (actionValue: string) => {
     const updatedActions = selectedActions.includes(actionValue)
@@ -45,15 +56,18 @@ const ActionsGallery: React.FC<ActionsGalleryProps> = ({
     return (
       <button
         key={action.value}
-        className={`p-2 m-1 rounded flex flex-col items-center justify-center w-full h-24 ${
+        className={`p-2 m-1 rounded flex flex-col items-start w-full h-full ${
           isSelected
             ? 'bg-blue-500 text-white'
             : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
         }`}
         onClick={() => handleToggleAction(action.value)}
       >
-        <IconComponent className="w-6 h-6 mb-2" />
-        <span className="text-sm text-center">{action.label}</span>
+        <div className="flex items-center w-full">
+          <IconComponent className="w-4 h-4 mr-2 flex-shrink-0" />
+          <span className="text-sm">{action.label}</span>
+        </div>
+        <p className="text-xs mt-1 w-full text-left">{action.description}</p>
       </button>
     );
   };
@@ -61,13 +75,13 @@ const ActionsGallery: React.FC<ActionsGalleryProps> = ({
   const renderActionCategory = (category: string, actions: ActionOption[]) => (
     <div key={category} className="mb-6">
       <TextComponent text={category} size="medium" className="font-bold mb-2" />
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 gap-2">
         {actions.map(renderActionButton)}
       </div>
     </div>
   );
 
-  const categorizedActions = availableActions.reduce((acc, action) => {
+  const categorizedActions = filteredActions.reduce((acc, action) => {
     if (!acc[action.category]) {
       acc[action.category] = [];
     }
@@ -77,6 +91,24 @@ const ActionsGallery: React.FC<ActionsGalleryProps> = ({
 
   return (
     <div className="h-full flex flex-col overflow-hidden">
+      <div className="mb-4 relative">
+        <Input
+          id="action-search"
+          type="text"
+          placeholder={t('ActionsGallery.searchPlaceholder')}
+          value={searchTerm}
+          onChange={(value: string) => setSearchTerm(value)}
+          className="w-full pr-10"
+        />
+        {searchTerm && (
+          <button
+            onClick={() => setSearchTerm('')}
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+          >
+            <LucideIcons.X size={16} />
+          </button>
+        )}
+      </div>
       <TextComponent text={t('ActionsGallery.availableActions')} size="medium" className="font-bold mb-2" />
       <div className="flex-grow overflow-y-auto">
         {Object.entries(categorizedActions).map(([category, actions]) =>
