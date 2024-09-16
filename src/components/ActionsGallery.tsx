@@ -55,19 +55,19 @@ const ExtendedInfo: React.FC<ExtendedInfoProps> = ({ action, isExpanded }) => {
 
   return (
     <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? 'max-h-[500px]' : 'max-h-0'}`}>
-      <div className="bg-gray-100 p-2 rounded-b">
-        <h4 className="font-bold mb-2">Parameters:</h4>
+      <div className="bg-slate-100 p-3 rounded-b">
+        <h4 className="mb-2 font-light text-lg">Parameters</h4>
         {parameterEntries.length > 0 ? (
           <div className="space-y-2">
             {parameterEntries.map(([name, prop]) => (
               <div key={name} className="border-b border-gray-200 pb-2">
                 <div className="flex justify-between items-center">
-                  <span className="font-semibold">{name}</span>
+                  <span className="text-sm">{name}</span>
                   {action.parameters.required?.includes(name) && (
-                    <span className="text-red-500 text-xs">* Required</span>
+                    <span className="text-red-500 font-light text-lg">*</span>
                   )}
                 </div>
-                <p className="text-sm text-gray-600 mt-1">{prop.description}</p>
+                <p className="text-xs text-gray-600 mt-1">{prop.description}</p>
               </div>
             ))}
           </div>
@@ -119,17 +119,17 @@ const ActionsGallery: React.FC<ActionsGalleryProps> = ({
       <div key={action.value} className="mb-2">
         <div className={`rounded-t ${isExpanded ? 'rounded-b-none' : 'rounded-b'} overflow-hidden`}>
           <button
-            className={`p-2 flex flex-col items-start w-full ${
+            className={`p-3 flex flex-col items-start w-full ${
               isSelected
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                ? 'bg-indigo-100 text-gray-800'
+                : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
             }`}
             onClick={() => handleToggleAction(action.value)}
           >
             <div className="flex items-center w-full justify-between">
               <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                <IconComponent className="w-4 h-4 flex-shrink-0" />
-                <span className="text-sm">{action.label}</span>
+                <IconComponent className="w-5 h-5 flex-shrink-0" />
+                <span className="font-light text-lg">{action.label}</span>
               </div>
               <button
                 onClick={(e) => {
@@ -141,7 +141,7 @@ const ActionsGallery: React.FC<ActionsGalleryProps> = ({
                 <LucideIcons.Info size={16} />
               </button>
             </div>
-            <p className="text-xs mt-1 w-full rtl:text-right ltr:text-left">{action.description}</p>
+            <p className="text-xs mt-2 w-full rtl:text-right ltr:text-left">{action.description}</p>
           </button>
         </div>
         <ExtendedInfo action={action} isExpanded={isExpanded} />
@@ -151,7 +151,7 @@ const ActionsGallery: React.FC<ActionsGalleryProps> = ({
 
   const renderActionCategory = (category: string, actions: ActionOption[]) => (
     <div key={category} className="mb-6">
-      <TextComponent text={category} size="medium" className="font-bold mb-2" />
+      <TextComponent text={category} size="subtitle" className="mb-2" color="secondary" />
       <div className="grid grid-cols-2 gap-2">
         {actions.map(renderActionButton)}
       </div>
