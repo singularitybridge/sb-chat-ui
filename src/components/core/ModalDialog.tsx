@@ -6,24 +6,24 @@ import {
   TEModalHeader,
   TEModalBody,
 } from 'tw-elements-react';
+import { DialogComponentEventData } from '../../services/DialogFactory';
 
 interface ModalDialogProps {
-  title: string;
+  dialogData: DialogComponentEventData;
   onClose: () => void;
-  onSave: () => void;
   isOpen: boolean;
-  children: React.ReactNode;
 }
 
 const ModalDialog: React.FC<ModalDialogProps> = ({
-  title,
-  children,
+  dialogData,
   onClose,
   isOpen,
 }) => {
+  const { title, component, width = 'normal' } = dialogData;
+
   return (
     <TEModal show={isOpen} setShow={onClose}>
-      <TEModalDialog>
+      <TEModalDialog size={width === 'wide' ? 'lg' : undefined}>
         <TEModalContent>
           <TEModalHeader>
             <h5 className="text-xl font-medium leading-normal text-neutral-800 dark:text-neutral-200">
@@ -52,7 +52,7 @@ const ModalDialog: React.FC<ModalDialogProps> = ({
               </svg>
             </button>
           </TEModalHeader>
-          <TEModalBody>{children}</TEModalBody>
+          <TEModalBody>{component}</TEModalBody>
         </TEModalContent>
       </TEModalDialog>
     </TEModal>

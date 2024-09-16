@@ -21,54 +21,55 @@ import { useRootStore } from '../../store/common/RootStoreContext';
 const DialogManager = observer(() => {
   const rootStore = useRootStore();
   const [isOpen, setIsOpen] = useState(false);
-  const [dialogContent, setDialogContent] = useState({
+  const [dialogData, setDialogData] = useState<DialogComponentEventData>({
     component: <div>Hello</div>,
     title: 'Default Title',
+    width: 'normal',
   });
 
   const updateContent = (
     eventType: EventType,
-    eventData: DialogComponentEventData
+    eventData: any
   ) => {
-    const { component, title } = dialogComponentFactory(eventType, eventData);
-    setDialogContent({ component, title });
+    const newDialogData = dialogComponentFactory(eventType, eventData);
+    setDialogData(newDialogData);
     setIsOpen(true);
   };
 
   useEventEmitter(
     EVENT_SHOW_ADD_ASSISTANT_MODAL,
-    (eventData: DialogComponentEventData) =>
+    (eventData: any) =>
       updateContent(EVENT_SHOW_ADD_ASSISTANT_MODAL, eventData)
   );
 
   useEventEmitter(
     EVENT_SHOW_ADD_COMPANY_MODAL,
-    (eventData: DialogComponentEventData) =>
+    (eventData: any) =>
       updateContent(EVENT_SHOW_ADD_COMPANY_MODAL, eventData)
   );
 
   useEventEmitter(
     EVENT_SHOW_ADD_ACTION_MODAL,
-    (eventData: DialogComponentEventData) =>
+    (eventData: any) =>
       updateContent(EVENT_SHOW_ADD_ACTION_MODAL, eventData)
   );
 
   useEventEmitter(
     EVENT_SHOW_ADD_USER_MODAL,
-    (eventData: DialogComponentEventData) =>
+    (eventData: any) =>
       updateContent(EVENT_SHOW_ADD_USER_MODAL, eventData)
   );
 
   useEventEmitter(
     EVENT_SHOW_ONBOARDING_MODAL,
-    (eventData: DialogComponentEventData) => {
+    (eventData: any) => {
       updateContent(EVENT_SHOW_ONBOARDING_MODAL, eventData);
     }
   );
 
   useEventEmitter(
     EVENT_SHOW_EDIT_ASSISTANT_ACTIONS_MODAL,
-    (eventData: DialogComponentEventData) => {
+    (eventData: any) => {
       updateContent(EVENT_SHOW_EDIT_ASSISTANT_ACTIONS_MODAL, eventData);
     }
   );
@@ -79,15 +80,12 @@ const DialogManager = observer(() => {
 
   return (
     <ModalDialog
-      title={dialogContent.title}
+      dialogData={dialogData}
       isOpen={isOpen}
       onClose={() => {
         setIsOpen(false);        
       }}
-      onSave={() => {}}
-    >
-      {dialogContent.component}
-    </ModalDialog>
+    />
   );
 });
 

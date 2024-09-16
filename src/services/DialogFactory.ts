@@ -18,35 +18,40 @@ import React from 'react';
 export interface DialogComponentEventData {
   title: string;
   component: React.ReactElement;
+  width?: 'normal' | 'wide';
 }
 
 const dialogComponentFactory = (
   eventType: EventType,
   eventData: any
-): { title: string; component: React.ReactElement } => {
+): DialogComponentEventData => {
   switch (eventType) {
     case EVENT_SHOW_ADD_ASSISTANT_MODAL:
       return {
         title: eventData.title || i18n.t('dialogTitles.newAssistant'),
         component: React.createElement(NewAssistantView),
+        width: 'normal',
       };
 
     case EVENT_SHOW_ADD_COMPANY_MODAL:
       return {
         title: eventData.title || i18n.t('dialogTitles.newCompany'),
         component: React.createElement(NewCompanyView),
+        width: 'normal',
       };
 
     case EVENT_SHOW_ADD_USER_MODAL:
       return {
         title: eventData.title || i18n.t('dialogTitles.newUser'),
         component: React.createElement(NewUserView),
+        width: 'normal',
       };
 
     case EVENT_SHOW_ONBOARDING_MODAL:
       return {
         title: eventData.title || i18n.t('dialogTitles.onboarding'),
         component: React.createElement(OnboardingDialog, { isOpen: true }),
+        width: 'normal',
       };
 
     case EVENT_SHOW_EDIT_ASSISTANT_ACTIONS_MODAL:
@@ -56,12 +61,14 @@ const dialogComponentFactory = (
           assistantId: eventData.assistantId,
           allowedActions: eventData.allowedActions,
         }),
+        width: 'wide',
       };
 
     default:
       return {
         title: '',
         component: React.createElement('div', {}, 'Unsupported dialog type'),
+        width: 'normal',
       };
   }
 };
