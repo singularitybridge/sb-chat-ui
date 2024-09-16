@@ -1,9 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { ActionOption } from '../store/fieldConfigs/assistantFieldConfigs';
 import { TextComponent } from './sb-core-ui-kit/TextComponent';
 import { useTranslation } from 'react-i18next';
 import * as LucideIcons from 'lucide-react';
 import { Input } from './sb-core-ui-kit/Input';
+
+interface ActionParameter {
+  type: string;
+  description: string;
+}
+
+interface ActionParameters {
+  type: string;
+  properties: {
+    [key: string]: ActionParameter;
+  };
+  required?: string[];
+}
+
+interface ActionOption {
+  id: string;
+  value: string;
+  label: string;
+  description: string;
+  category: string;
+  iconName: string;
+  parameters: ActionParameters;
+}
 
 interface ActionsGalleryProps {
   selectedActions: string[];
@@ -23,6 +45,40 @@ const mapIconName = (iconName: string): keyof typeof LucideIcons => {
   return (specialCases[iconName] || pascalCase) as keyof typeof LucideIcons;
 };
 
+interface ExtendedInfoProps {
+  action: ActionOption;
+  isExpanded: boolean;
+}
+
+const ExtendedInfo: React.FC<ExtendedInfoProps> = ({ action, isExpanded }) => {
+  const parameterEntries = Object.entries(action.parameters.properties);
+
+  return (
+    <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? 'max-h-[500px]' : 'max-h-0'}`}>
+      <div className="bg-gray-100 p-2 rounded-b">
+        <h4 className="font-bold mb-2">Parameters:</h4>
+        {parameterEntries.length > 0 ? (
+          <div className="space-y-2">
+            {parameterEntries.map(([name, prop]) => (
+              <div key={name} className="border-b border-gray-200 pb-2">
+                <div className="flex justify-between items-center">
+                  <span className="font-semibold">{name}</span>
+                  {action.parameters.required?.includes(name) && (
+                    <span className="text-red-500 text-xs">* Required</span>
+                  )}
+                </div>
+                <p className="text-sm text-gray-600 mt-1">{prop.description}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-gray-600">This action does not require any parameters.</p>
+        )}
+      </div>
+    </div>
+  );
+};
+
 const ActionsGallery: React.FC<ActionsGalleryProps> = ({
   selectedActions,
   availableActions,
@@ -31,6 +87,7 @@ const ActionsGallery: React.FC<ActionsGalleryProps> = ({
   const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredActions, setFilteredActions] = useState(availableActions);
+  const [expandedActionId, setExpandedActionId] = useState<string | null>(null);
 
   useEffect(() => {
     const filtered = availableActions.filter(action =>
@@ -47,28 +104,48 @@ const ActionsGallery: React.FC<ActionsGalleryProps> = ({
     onChange(updatedActions);
   };
 
+  const handleToggleExtendedInfo = (actionId: string) => {
+    setExpandedActionId(prevId => prevId === actionId ? null : actionId);
+  };
+
   const renderActionButton = (action: ActionOption) => {    
     const mappedIconName = mapIconName(action.iconName);
     const IconComponent = (LucideIcons[mappedIconName] || LucideIcons.HelpCircle) as React.ComponentType<React.SVGProps<SVGSVGElement>>;
 
     const isSelected = selectedActions.includes(action.value);
+    const isExpanded = expandedActionId === action.id;
 
     return (
-      <button
-        key={action.value}
-        className={`p-2 m-1 rounded flex flex-col items-start w-full h-full ${
-          isSelected
-            ? 'bg-blue-500 text-white'
-            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-        }`}
-        onClick={() => handleToggleAction(action.value)}
-      >
-        <div className="flex items-center w-full space-x-2 rtl:space-x-reverse">
-          <IconComponent className="w-4 h-4 flex-shrink-0" />
-          <span className="text-sm">{action.label}</span>
+      <div key={action.value} className="mb-2">
+        <div className={`rounded-t ${isExpanded ? 'rounded-b-none' : 'rounded-b'} overflow-hidden`}>
+          <button
+            className={`p-2 flex flex-col items-start w-full ${
+              isSelected
+                ? 'bg-blue-500 text-white'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+            onClick={() => handleToggleAction(action.value)}
+          >
+            <div className="flex items-center w-full justify-between">
+              <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                <IconComponent className="w-4 h-4 flex-shrink-0" />
+                <span className="text-sm">{action.label}</span>
+              </div>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleToggleExtendedInfo(action.id);
+                }}
+                className="p-1 rounded-full hover:bg-gray-400"
+              >
+                <LucideIcons.Info size={16} />
+              </button>
+            </div>
+            <p className="text-xs mt-1 w-full rtl:text-right ltr:text-left">{action.description}</p>
+          </button>
         </div>
-        <p className="text-xs mt-1 w-full rtl:text-right ltr:text-left">{action.description}</p>
-      </button>
+        <ExtendedInfo action={action} isExpanded={isExpanded} />
+      </div>
     );
   };
 

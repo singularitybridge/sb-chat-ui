@@ -26,6 +26,19 @@ const llmModelOptions: SelectListOption[] = [
   { value: 'chatgpt-4o-latest', label: 'ChatGPT-4o Latest' },
 ];
 
+interface ActionParameter {
+  type: string;
+  description: string;
+}
+
+interface ActionParameters {
+  type: string;
+  properties: {
+    [key: string]: ActionParameter;
+  };
+  required?: string[];
+}
+
 export interface ActionOption {
   id: string;
   name: string;
@@ -36,6 +49,7 @@ export interface ActionOption {
   category: string;
   value: string;
   label: string;
+  parameters: ActionParameters;
 }
 
 export type TagType = ActionOption;
@@ -66,7 +80,8 @@ export const fetchAllowedActionOptions = async (language: string = 'en'): Promis
       serviceName: action.serviceName,
       category: action.serviceName,
       value: action.id,
-      label: action.actionTitle
+      label: action.actionTitle,
+      parameters: action.parameters || { type: 'object', properties: {}, required: [] }
     }));
 
     actionOptionsCache[language] = actionOptions;
