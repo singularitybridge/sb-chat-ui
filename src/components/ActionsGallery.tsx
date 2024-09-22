@@ -118,8 +118,8 @@ const ActionsGallery: React.FC<ActionsGalleryProps> = ({
     return (
       <div key={action.value} className="mb-2">
         <div className={`rounded-t ${isExpanded ? 'rounded-b-none' : 'rounded-b'} overflow-hidden`}>
-          <button
-            className={`p-3 flex flex-col items-start w-full ${
+          <div
+            className={`p-3 flex flex-col items-start w-full cursor-pointer ${
               isSelected
                 ? 'bg-[#e0fcd6] text-gray-800'
                 : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
@@ -142,7 +142,7 @@ const ActionsGallery: React.FC<ActionsGalleryProps> = ({
               </button>
             </div>
             <p className="text-xs mt-2 w-full rtl:text-right ltr:text-left">{action.description}</p>
-          </button>
+          </div>
         </div>
         <ExtendedInfo action={action} isExpanded={isExpanded} />
       </div>
