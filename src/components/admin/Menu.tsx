@@ -17,7 +17,6 @@ export const Menu = observer(() => {
     { name: 'Users', link: '/admin/users' },
     { name: 'Sessions', link: '/admin/sessions', disabled: true },
     { name: 'Inbox', link: '/admin/inbox' },
-    { name: 'Actions', link: '/admin/actions' },
   ];
 
   const { t } = useTranslation();

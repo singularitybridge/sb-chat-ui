@@ -11,8 +11,6 @@ import { SessionsPage } from './pages/admin/SessionsPage';
 import { UsersPage } from './pages/admin/UsersPage';
 import { InboxPage } from './pages/admin/inbox/InboxPage';
 import { EditCompanyPage } from './pages/admin/EditCompanyPage';
-import { ActionsPage } from './pages/admin/ActionsPage';
-import { EditActionPage } from './pages/admin/EditActionPage';
 import { SignupPage } from './pages/SignupPage';
 import { ChatKitTestPage } from './pages/test/ChatKitTestPage';
 import { UIKitTestPage } from './pages/test/UIKitTestPage';
@@ -56,14 +54,6 @@ export const browserRouter = createBrowserRouter([
           {
             path: 'companies',
             element: <CompaniesPage />,
-          },
-          {
-            path: 'actions',
-            element: <ActionsPage />,
-          },
-          {
-            path: 'actions/:id',
-            element: <EditActionPage />,
           },
           {
             path: 'companies/:id',

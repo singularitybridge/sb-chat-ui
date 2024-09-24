@@ -21,7 +21,7 @@ interface SelectListProps {
 
 export const SelectList: React.FC<SelectListProps> = ({
   label,
-  options = [], // Provide a default empty array
+  options = [],
   onSelect,
   initialValue,
   placeholder = 'Select an option',

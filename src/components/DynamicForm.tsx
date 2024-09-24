@@ -1,4 +1,3 @@
-/// file_path: src/components/DynamicForm.tsx
 import React, { useEffect, useState } from 'react';
 import InputWithLabel from './sb-core-ui-kit/InputWithLabel';
 import { TextareaWithLabel } from './sb-core-ui-kit/TextareaWithLabel';
@@ -8,12 +7,12 @@ import LoadingButton from './core/LoadingButton';
 import { AssistantKeys } from '../store/models/Assistant';
 import { CompanyKeys } from '../store/models/Company';
 import { UserKeys } from '../store/models/User';
-import { ActionKeys } from '../store/models/Action';
 import TokenInput from './admin/TokenInput';
 import { useTranslation } from 'react-i18next';
 import { useRootStore } from '../store/common/RootStoreContext';
 import { AIAssistedTextareaContainer } from './sb-core-ui-kit/AIAssistedTextareaContainer';
 import { SelectList, SelectListOption } from './sb-core-ui-kit/SelectList';
+import { TagsInput, TagType } from './TagsInput';
 
 export type FieldType =
   | 'input'
@@ -22,7 +21,8 @@ export type FieldType =
   | 'verified-input'
   | 'api-key-list'
   | 'token-input'
-  | 'dropdown';
+  | 'dropdown'
+  | 'tags';
 
 export interface FieldVisibility {
   create: boolean;
@@ -32,7 +32,7 @@ export interface FieldVisibility {
 
 export interface BaseFieldConfig {
   id: string;
-  key: AssistantKeys | CompanyKeys | UserKeys | ActionKeys;
+  key: AssistantKeys | CompanyKeys | UserKeys;
   type: FieldType;
   label: string;
   visibility: FieldVisibility;
@@ -69,16 +69,27 @@ export interface DropdownFieldConfig extends BaseFieldConfig {
   options: SelectListOption[];
 }
 
+export interface TagsFieldConfig extends BaseFieldConfig {
+  type: 'tags';
+  value: string[];
+  component: typeof TagsInput;
+  props: {
+    availableTags: TagType[];
+    selectedTags: string[];
+  };
+}
+
 export type FieldConfig =
   | InputFieldConfig
   | TextareaFieldConfig
   | KeyValueListFieldConfig
   | ApiKeysListFieldConfig
   | TokenInputFieldConfig
-  | DropdownFieldConfig;
+  | DropdownFieldConfig
+  | TagsFieldConfig;
 
 export interface FormValues
-  extends Record<string, string | number | KeyValue[] | ApiKey[]> {}
+  extends Record<string, string | number | KeyValue[] | ApiKey[] | string[]> {}
 
 export interface DynamicFormProps {
   fields: FieldConfig[];
@@ -113,7 +124,12 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
 
     const initialValues: FormValues = {};
     newFilteredFields.forEach((field) => {
-      initialValues[field.id] = field.value;
+      if (field.type === 'tags') {
+        initialValues[field.id] =
+          (field as TagsFieldConfig).props.selectedTags || [];
+      } else {
+        initialValues[field.id] = field.value;
+      }
     });
 
     setValues(initialValues);
@@ -125,7 +141,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
 
   const handleChange = (
     id: string,
-    newValue: string | number | KeyValue[] | ApiKey[]
+    newValue: string | number | KeyValue[] | ApiKey[] | string[]
   ) => {
     setValues((prevValues) => ({ ...prevValues, [id]: newValue }));
   };
@@ -158,7 +174,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                 id={field.id}
                 value={values[field.id] as string}
                 onChange={(newValue) => handleChange(field.id, newValue)}
-                systemPrompt={aiConfig.systemPrompt}                
+                systemPrompt={aiConfig.systemPrompt}
               />
             ) : (
               <TextareaWithLabel
@@ -216,6 +232,18 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                 onSelect={(value) => handleChange(field.id, value)}
                 initialValue={values[field.id] as string | number}
                 placeholder={labelKey}
+              />
+            );
+          case 'tags':
+            const tagsField = field as TagsFieldConfig;
+            return (
+              <TagsInput
+                key={field.id}
+                title={t(labelKey)}
+                description={t(`${formContext}.${field.id}_description`)}
+                selectedTags={values[field.id] as string[]}
+                availableTags={tagsField.props.availableTags}
+                onChange={(newValue) => handleChange(field.id, newValue)}
               />
             );
           default:

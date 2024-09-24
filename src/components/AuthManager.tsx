@@ -15,7 +15,6 @@ const AuthManager: React.FC<{ children: React.ReactNode }> = observer(({ childre
     await rootStore.authStore.loadUserSessionInfo();
     await rootStore.loadAssistants();
     await rootStore.loadUsers();
-    await rootStore.loadActions();
     await rootStore.loadCompanies();
     await rootStore.aiAssistedConfigStore.initialize();
     await rootStore.sessionStore.fetchActiveSession();

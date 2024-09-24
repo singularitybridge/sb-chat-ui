@@ -12,7 +12,7 @@ import {
   DropdownFieldConfig,
 } from '../../components/DynamicForm';
 import { toJS } from 'mobx';
-import { assistantFieldConfigs } from '../../store/fieldConfigs/assistantFieldConfigs';
+import { getAssistantFieldConfigs, defaultAssistantFieldConfigs } from '../../store/fieldConfigs/assistantFieldConfigs';
 import {
   uploadFile,
   listAssistantFiles,
@@ -20,10 +20,13 @@ import {
 } from '../../services/api/fileService';
 import FileUpload from '../../components/sb-core-ui-kit/FileUpload';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
+import Button from '../../components/sb-core-ui-kit/Button';
 import { FileText, Trash2 as TrashIcon } from 'lucide-react';
 import { IconButton } from '../../components/admin/IconButton';
 import { useTranslation } from 'react-i18next';
 import AvatarSelector from '../../components/AvatarSelector';
+import { emitter } from '../../services/mittEmitter';
+import { EVENT_SHOW_EDIT_ASSISTANT_ACTIONS_MODAL } from '../../utils/eventNames';
 
 interface UploadedFile {
   fileId: string;
@@ -32,7 +35,7 @@ interface UploadedFile {
 }
 
 const EditAssistantView: React.FC = observer(() => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { key } = useParams<{ key: string }>();
   const rootStore = useRootStore();
   const assistant = key ? rootStore.getAssistantById(key) : null;
@@ -40,16 +43,30 @@ const EditAssistantView: React.FC = observer(() => {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [selectedAvatarId, setSelectedAvatarId] = useState<string | null>(null);
+  const [fieldConfigs, setFieldConfigs] = useState<FieldConfig[]>(defaultAssistantFieldConfigs);
+  const [isFieldConfigsLoading, setIsFieldConfigsLoading] = useState(true);
 
   useEffect(() => {
+    const fetchFieldConfigs = async () => {
+      try {
+        const configs = await getAssistantFieldConfigs(i18n.language);
+        setFieldConfigs(configs);
+      } catch (error) {
+        console.error('Failed to fetch assistant field configs:', error);
+      } finally {
+        setIsFieldConfigsLoading(false);
+      }
+    };
+
+    fetchFieldConfigs();
+
     if (key) {
       fetchAssistantFiles();
     }
-    if (assistant && assistant.avatarImage) {
-      setSelectedAvatarId(assistant.avatarImage);
+    if (assistant) {
+      setSelectedAvatarId(assistant.avatarImage || null);
     }
-  }, [key, assistant]);
-
+  }, [key, assistant, i18n.language]);
 
   const fetchAssistantFiles = async () => {
     if (key) {
@@ -62,7 +79,17 @@ const EditAssistantView: React.FC = observer(() => {
     }
   };
 
-  if (rootStore.assistantsLoaded === false) {
+  const showActionsModal = () => {
+    if (assistant) {
+      emitter.emit(EVENT_SHOW_EDIT_ASSISTANT_ACTIONS_MODAL, {
+        assistantId: assistant._id,
+        allowedActions: assistant.allowedActions,
+        title: t('EditAssistantPage.editAllowedActions'),
+      });
+    }
+  };
+
+  if (rootStore.assistantsLoaded === false || isFieldConfigsLoading) {
     return <TextComponent text={t('common.pleaseWait')} size="medium" />;
   }
 
@@ -70,12 +97,16 @@ const EditAssistantView: React.FC = observer(() => {
     return <TextComponent text="Assistant not found" size="medium" />;
   }
 
-  const formFields: FieldConfig[] = assistantFieldConfigs.map((field) => {
-    if (field.key === 'voice') {
-      field.value = assistant ? toJS(assistant.voice) : '';
+  const formFields: FieldConfig[] = fieldConfigs.map((field) => {
+    if (field.key === 'allowedActions') {
+      return null; // Remove the allowedActions field from the form
     }
     const fieldKeyString = String(field.key);
-    const value = assistant ? toJS((assistant as any)[fieldKeyString]) : '';
+    let value = assistant ? toJS((assistant as any)[fieldKeyString]) : '';
+
+    if (field.key === 'voice') {
+      value = assistant ? toJS(assistant.voice) : '';
+    }
 
     if (field.type === 'dropdown') {
       return {
@@ -89,10 +120,9 @@ const EditAssistantView: React.FC = observer(() => {
       ...field,
       value,
     };
-  });
+  }).filter(Boolean) as FieldConfig[]; // Filter out null values and cast to FieldConfig[]
 
   const handleSubmit = async (values: FormValues) => {
-    console.log('Form Values:', values);
     if (!key) {
       return;
     }
@@ -101,7 +131,7 @@ const EditAssistantView: React.FC = observer(() => {
       ...values,
       avatarImage: selectedAvatarId,
     };
-    await rootStore.updateAssistant(key, updatedValues as unknown as IAssistant);
+    await rootStore.updateAssistant(key, updatedValues as IAssistant);
     setIsLoading(false);
   };
 
@@ -117,7 +147,6 @@ const EditAssistantView: React.FC = observer(() => {
         filename: response.title,
       };
       setUploadedFiles([...uploadedFiles, newFile]);
-      console.log('File uploaded successfully:', newFile);
     } catch (error) {
       console.error('Error uploading file:', error);
     } finally {
@@ -131,7 +160,6 @@ const EditAssistantView: React.FC = observer(() => {
     try {
       await deleteFile(key, fileId);
       setUploadedFiles(uploadedFiles.filter((file) => file.fileId !== fileId));
-      console.log('File deleted successfully');
     } catch (error) {
       console.error('Error deleting file:', error);
     }
@@ -147,6 +175,11 @@ const EditAssistantView: React.FC = observer(() => {
           isLoading={isLoading}
           formType="update"
         />
+        <div className="mt-4">
+          <Button onClick={showActionsModal}>
+            {t('EditAssistantPage.editAllowedActions')}
+          </Button>
+        </div>
       </div>
       <div className="w-1/2">
         <div className="mb-6">
@@ -202,9 +235,7 @@ const EditAssistantView: React.FC = observer(() => {
 const EditAssistantPage = withPage(
   'EditAssistantPage.title',
   'EditAssistantPage.description',
-  () => {
-    // Removed console.log statement
-  }
+  () => {}
 )(EditAssistantView);
 
 export { EditAssistantPage, EditAssistantView };
