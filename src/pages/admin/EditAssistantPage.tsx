@@ -190,7 +190,7 @@ const EditAssistantView: React.FC = observer(() => {
           />
         </div>
         <div className="mb-6">
-          <TextComponent text={t('EditAssistantPage.uploadFile')} size="normal" className="mb-4" />
+          <TextComponent text={t('EditAssistantPage.uploadFile')} size="subtitle" className="mb-4" />
           <FileUpload
             onFileUpload={handleFileUpload}
             isUploading={isUploading}
@@ -200,7 +200,7 @@ const EditAssistantView: React.FC = observer(() => {
           <div>
             <TextComponent
               text={t('EditAssistantPage.uploadedFiles')}
-              size="medium"
+              size="normal"
               className="mb-2"
             />
             <ul>

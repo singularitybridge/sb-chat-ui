@@ -192,8 +192,8 @@
   "EditAssistantPage": {
     "title": "Edit AI Assistant",
     "description": "update your ai agents here",
-    "uploadFile" : "Upload File",
-    "uploadedFiles" : "Uploaded Files",
+    "uploadFile" : "Knowledge and Instructions Files",
+    "uploadedFiles" : "Knowledge and Instructions Files Uploaded",
     "uploading" : "Uploading...",
     "dropFile" : "Drop file here",
     "dragFileHere" : "Drag file here, or click to upload",
