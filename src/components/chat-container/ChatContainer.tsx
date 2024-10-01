@@ -20,6 +20,7 @@ import { Avatar, AvatarStyles } from '../Avatar';
 
 interface Metadata {
   message_type: string;
+  [key: string]: any;
 }
 
 interface ChatMessage {
@@ -179,14 +180,23 @@ const ChatContainer = observer(() => {
   };
 
   const handleActionExecution = (data: any) => {
-    const { status, actionTitle, actionDescription } = data;
-    const content = `Action: ${actionTitle}\nStatus: ${status}\nDescription: ${actionDescription}`;
+    const { status, actionId, serviceName, actionTitle, actionDescription, icon, args, originalActionId } = data;
     setMessages((prevMessages) => [
       ...prevMessages,
-      { 
-        content, 
-        role: 'assistant', 
-        metadata: { message_type: 'notification' } 
+      {
+        content: '',
+        role: 'assistant',
+        metadata: {
+          message_type: 'action_execution',
+          status,
+          actionId,
+          serviceName,
+          actionTitle,
+          actionDescription,
+          icon,
+          args,
+          originalActionId,
+        },
       },
     ]);
   };
