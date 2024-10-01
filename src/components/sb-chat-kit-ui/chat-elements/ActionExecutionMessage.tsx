@@ -58,19 +58,18 @@ const ActionExecutionMessage: React.FC<ActionExecutionMessageProps> = ({
         <div className="p-3 flex flex-col items-start w-full text-gray-800">
           <div className="flex items-center w-full justify-between">
             <div className="flex items-center space-x-2 rtl:space-x-reverse">
-              <IconComponent className="w-5 h-5 flex-shrink-0" />
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="p-1 rounded-full hover:bg-gray-200"
+              >
+                <IconComponent className="w-5 h-5 flex-shrink-0" />
+              </button>
               <span className="font-light text-lg">{actionTitle}</span>
             </div>
-            <button
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="p-1 rounded-full hover:bg-gray-200"
-            >
-              <LucideIcons.Info size={16} />
-            </button>
+            <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800">{serviceName}</span>
           </div>
           <div className="flex items-center mt-2 w-full rtl:text-right ltr:text-left">
             <p className="text-xs flex-grow">{actionDescription}</p>
-            <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800 ml-2">{serviceName}</span>
           </div>
         </div>
       </div>
