@@ -30,6 +30,18 @@ interface ChatMessage {
   assistantName?: string;
 }
 
+interface ActionExecutionMessage {
+  id: string;
+  status: string;
+  actionId: string;
+  serviceName: string;
+  actionTitle: string;
+  actionDescription: string;
+  icon: string;
+  args: any;
+  originalActionId: string;
+}
+
 const removeRAGCitations = (text: string): string => {
   return text.replace(/【\d+:\d+†source】/g, '');
 };
@@ -40,6 +52,7 @@ const ChatContainer = observer(() => {
   const rootStore = useRootStore();
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [actionExecutionMessages, setActionExecutionMessages] = useState<Record<string, ActionExecutionMessage>>({});
   const [assistant, setAssistant] = useState<IAssistant | undefined>();
   const [audioState, setAudioState] = useState<AudioState>('disabled');
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -168,6 +181,7 @@ const ChatContainer = observer(() => {
         // Fetch the new active session
         await rootStore.sessionStore.fetchActiveSession();
         setMessages([]);
+        setActionExecutionMessages({});
 
         // Set the stored assistant as the active assistant
         emitter.emit(EVENT_SET_ACTIVE_ASSISTANT, assistant._id);
@@ -179,29 +193,30 @@ const ChatContainer = observer(() => {
     }
   };
 
-  const handleActionExecution = (data: any) => {
-    const { status, actionId, serviceName, actionTitle, actionDescription, icon, args, originalActionId } = data;
-    setMessages((prevMessages) => [
+  const handleActionExecution = (data: ActionExecutionMessage) => {
+    setActionExecutionMessages((prevMessages) => ({
       ...prevMessages,
-      {
-        content: '',
-        role: 'assistant',
-        metadata: {
-          message_type: 'action_execution',
-          status,
-          actionId,
-          serviceName,
-          actionTitle,
-          actionDescription,
-          icon,
-          args,
-          originalActionId,
-        },
-      },
-    ]);
+      [data.id]: data,
+    }));
   };
 
   useEventEmitter(EVENT_ACTION_EXECUTION, handleActionExecution);
+
+  useEffect(() => {
+    const actionMessages = Object.values(actionExecutionMessages).map((msg) => ({
+      content: '',
+      role: 'assistant',
+      metadata: {
+        message_type: 'action_execution',
+        ...msg,
+      },
+    }));
+
+    setMessages((prevMessages) => {
+      const nonActionMessages = prevMessages.filter((msg) => msg.metadata?.message_type !== 'action_execution');
+      return [...nonActionMessages, ...actionMessages];
+    });
+  }, [actionExecutionMessages]);
 
   return (
     <div className="h-full w-full bg-white rounded-lg">
