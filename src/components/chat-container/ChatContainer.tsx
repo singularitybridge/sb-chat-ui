@@ -1,4 +1,3 @@
-/// file_path: src/components/chat-container/ChatContainer.tsx
 import React, { useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { useRootStore } from '../../store/common/RootStoreContext';
@@ -9,6 +8,7 @@ import {
 import {
   EVENT_CHAT_SESSION_DELETED,
   EVENT_SET_ACTIVE_ASSISTANT,
+  EVENT_ACTION_EXECUTION,
 } from '../../utils/eventNames';
 import { emitter, useEventEmitter } from '../../services/mittEmitter';
 import { IAssistant } from '../../store/models/Assistant';
@@ -177,6 +177,21 @@ const ChatContainer = observer(() => {
       }
     }
   };
+
+  const handleActionExecution = (data: any) => {
+    const { status, actionTitle, actionDescription } = data;
+    const content = `Action: ${actionTitle}\nStatus: ${status}\nDescription: ${actionDescription}`;
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { 
+        content, 
+        role: 'assistant', 
+        metadata: { message_type: 'notification' } 
+      },
+    ]);
+  };
+
+  useEventEmitter(EVENT_ACTION_EXECUTION, handleActionExecution);
 
   return (
     <div className="h-full w-full bg-white rounded-lg">
