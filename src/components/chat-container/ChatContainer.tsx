@@ -15,8 +15,6 @@ import { IAssistant } from '../../store/models/Assistant';
 import { SBChatKitUI } from '../sb-chat-kit-ui/SBChatKitUI';
 import { textToSpeech, TTSVoice } from '../../services/api/voiceService';
 import i18n from '../../i18n';
-import { leapfrog } from 'ldrs';
-import { Avatar, AvatarStyles } from '../Avatar';
 
 interface Metadata {
   message_type: string;
@@ -52,7 +50,6 @@ const ChatContainer = observer(() => {
   const rootStore = useRootStore();
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [actionExecutionMessages, setActionExecutionMessages] = useState<Record<string, ActionExecutionMessage>>({});
   const [assistant, setAssistant] = useState<IAssistant | undefined>();
   const [audioState, setAudioState] = useState<AudioState>('disabled');
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -181,7 +178,6 @@ const ChatContainer = observer(() => {
         // Fetch the new active session
         await rootStore.sessionStore.fetchActiveSession();
         setMessages([]);
-        setActionExecutionMessages({});
 
         // Set the stored assistant as the active assistant
         emitter.emit(EVENT_SET_ACTIVE_ASSISTANT, assistant._id);
@@ -194,29 +190,41 @@ const ChatContainer = observer(() => {
   };
 
   const handleActionExecution = (data: ActionExecutionMessage) => {
-    setActionExecutionMessages((prevMessages) => ({
-      ...prevMessages,
-      [data.id]: data,
-    }));
+    setMessages((prevMessages) => {
+      const index = prevMessages.findIndex(
+        (msg) => msg.metadata?.message_type === 'action_execution' && msg.metadata.id === data.id
+      );
+
+      if (index !== -1) {
+        // Update existing message
+        const updatedMessages = [...prevMessages];
+        updatedMessages[index] = {
+          ...updatedMessages[index],
+          metadata: {
+            ...updatedMessages[index].metadata,
+            ...data,
+            message_type: 'action_execution',
+          },
+        };
+        return updatedMessages;
+      } else {
+        // Add new message
+        return [
+          ...prevMessages,
+          {
+            content: '',
+            role: 'assistant',
+            metadata: {
+              message_type: 'action_execution',
+              ...data,
+            },
+          },
+        ];
+      }
+    });
   };
 
   useEventEmitter(EVENT_ACTION_EXECUTION, handleActionExecution);
-
-  useEffect(() => {
-    const actionMessages = Object.values(actionExecutionMessages).map((msg) => ({
-      content: '',
-      role: 'assistant',
-      metadata: {
-        message_type: 'action_execution',
-        ...msg,
-      },
-    }));
-
-    setMessages((prevMessages) => {
-      const nonActionMessages = prevMessages.filter((msg) => msg.metadata?.message_type !== 'action_execution');
-      return [...nonActionMessages, ...actionMessages];
-    });
-  }, [actionExecutionMessages]);
 
   return (
     <div className="h-full w-full bg-white rounded-lg">
