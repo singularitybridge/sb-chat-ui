@@ -1,5 +1,5 @@
-import React from 'react';
-import { MessageWrapper } from './MessageWrapper';
+import React, { useState } from 'react';
+import * as LucideIcons from 'lucide-react';
 
 interface ActionExecutionMessageProps {
   status: string;
@@ -12,6 +12,18 @@ interface ActionExecutionMessageProps {
   originalActionId: string;
 }
 
+const mapIconName = (iconName: string): keyof typeof LucideIcons => {
+  const pascalCase = iconName.split(/[-_\s]+/).map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join('');
+  
+  const specialCases: { [key: string]: keyof typeof LucideIcons } = {
+    'image': 'Image',
+    'brain': 'Brain',
+    // Add more special cases here if needed
+  };
+
+  return (specialCases[iconName] || pascalCase) as keyof typeof LucideIcons;
+};
+
 const ActionExecutionMessage: React.FC<ActionExecutionMessageProps> = ({
   status,
   actionId,
@@ -22,45 +34,69 @@ const ActionExecutionMessage: React.FC<ActionExecutionMessageProps> = ({
   args,
   originalActionId,
 }) => {
-  const getStatusColor = (status: string) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const getStatusStyle = (status: string) => {
     switch (status.toLowerCase()) {
       case 'completed':
-        return 'text-green-600';
+        return 'bg-green-100';
       case 'failed':
-        return 'text-red-600';
+        return 'bg-red-100';
+      case 'started':
+        return 'bg-blue-100';
       default:
-        return 'text-gray-600';
+        return 'bg-gray-100';
     }
   };
 
-  const getIcon = () => {
-    // You can replace this with actual icon components based on the 'icon' prop
-    return <span className="text-2xl">{icon === 'assistant' ? '🤖' : '⚙️'}</span>;
-  };
+  const mappedIconName = mapIconName(icon);
+  const IconComponent = (LucideIcons[mappedIconName] || LucideIcons.HelpCircle) as React.ComponentType<React.SVGProps<SVGSVGElement>>;
 
   return (
-    <MessageWrapper icon={getIcon()} bgColor="bg-gray-100" borderColor="border-gray-300" role="Action">
-      <div className="flex flex-col space-y-2">
-        <div className="flex justify-between items-center">
-          <span className="font-semibold">{actionTitle}</span>
-          <span className={`font-medium ${getStatusColor(status)}`}>{status}</span>
-        </div>
-        <p className="text-sm text-gray-600">{actionDescription}</p>
-        <div className="text-xs text-gray-500">
-          <p>Service: {serviceName}</p>
-          <p>Action ID: {actionId}</p>
-          <p>Original Action ID: {originalActionId}</p>
-        </div>
-        {Object.keys(args).length > 0 && (
-          <div className="mt-2">
-            <p className="text-sm font-medium">Arguments:</p>
-            <pre className="text-xs bg-gray-200 p-2 rounded mt-1">
-              {JSON.stringify(args, null, 2)}
-            </pre>
+    <div className="mb-2">
+      <div className={`rounded-t ${isExpanded ? 'rounded-b-none' : 'rounded-b'} overflow-hidden ${getStatusStyle(status)}`}>
+        <div className="p-3 flex flex-col items-start w-full text-gray-800">
+          <div className="flex items-center w-full justify-between">
+            <div className="flex items-center space-x-2 rtl:space-x-reverse">
+              <IconComponent className="w-5 h-5 flex-shrink-0" />
+              <span className="font-light text-lg">{actionTitle}</span>
+            </div>
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="p-1 rounded-full hover:bg-gray-200"
+            >
+              <LucideIcons.Info size={16} />
+            </button>
           </div>
-        )}
+          <div className="flex items-center mt-2 w-full rtl:text-right ltr:text-left">
+            <p className="text-xs flex-grow">{actionDescription}</p>
+            <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800 ml-2">{serviceName}</span>
+          </div>
+        </div>
       </div>
-    </MessageWrapper>
+      <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? 'max-h-[500px]' : 'max-h-0'}`}>
+        <div className={`p-3 rounded-b ${getStatusStyle(status)}`}>
+          <div className="space-y-2">
+            <div className="border-b border-gray-200 pb-2">
+              <span className="text-sm">Action ID:</span>
+              <p className="text-xs text-gray-600 mt-1">{actionId}</p>
+            </div>
+            <div className="border-b border-gray-200 pb-2">
+              <span className="text-sm">Original Action ID:</span>
+              <p className="text-xs text-gray-600 mt-1">{originalActionId}</p>
+            </div>
+            {Object.keys(args).length > 0 && (
+              <div className="border-b border-gray-200 pb-2">
+                <span className="text-sm">Arguments:</span>
+                <pre dir='ltr' className="text-xs bg-gray-100 p-3 rounded mt-1 ">
+                  {JSON.stringify(args, null, 2)}
+                </pre>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
