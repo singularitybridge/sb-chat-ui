@@ -72,20 +72,20 @@ const ActionExecutionMessage: React.FC<ActionExecutionMessageProps> = ({
         </div>
       </div>
       <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? 'max-h-[500px]' : 'max-h-0'}`}>
-        <div className={`p-2 rounded-b ${getStatusStyle(status)}`}>
-          <div className="space-y-1 text-xs">
-            <div className="border-b border-gray-200 pb-1">
-              <span className="font-medium">Action ID:</span>
-              <p className="text-gray-600">{actionId}</p>
+        <div className="px-4 py-2 rounded-b  bg-slate-50 w-[calc(100%-16px)] mx-2 border border-gray-200">
+          <div className="space-y-1">
+            <div className="border-b border-indigo-100 pb-1 text-left">
+              <span className="text-xs font-normal">Action ID</span>
+              <p className=" text-base">{actionId}</p>
             </div>
-            <div className="border-b border-gray-200 pb-1">
-              <span className="font-medium">Original Action ID:</span>
-              <p className="text-gray-600">{originalActionId}</p>
+            <div className="border-b border-indigo-100 pb-1 text-left">
+              <span className="text-xs font-normal">Original Action ID</span>
+              <p className="test-base">{originalActionId}</p>
             </div>
             {Object.keys(args).length > 0 && (
-              <div className="border-b border-gray-200 pb-1">
-                <span className="font-medium">Arguments:</span>
-                <pre dir='ltr' className="bg-gray-100 p-2 rounded mt-1 text-xs overflow-x-auto">
+              <div className="border-b border-indigo-100 pb-1 text-left">
+                <span className="font-normal text-xs">request</span>
+                <pre dir='ltr' className="bg-slate-100 p-3 rounded mt-1 text-xs overflow-x-auto text-blue-800">
                   {JSON.stringify(args, null, 2)}
                 </pre>
               </div>
