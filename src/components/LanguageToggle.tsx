@@ -1,17 +1,30 @@
-/// file_path: src/components/LanguageToggle.tsx
-
 import React from 'react';
 import { observer } from 'mobx-react';
 import { useRootStore } from '../store/common/RootStoreContext';
+import { changeSessionLanguage } from '../services/api/sessionService';
 
 const LanguageToggle: React.FC = observer(() => {
   const rootStore = useRootStore();
 
-  const toggleLanguage = (): void => {
+  const toggleLanguage = async (): Promise<void> => {
     const newLanguage = rootStore.language === 'en' ? 'he' : 'en';
-    rootStore.changeLanguage(newLanguage).then(() => {
-      window.location.reload(); // Force reload of the application
-    });
+    
+    try {
+      // Change the language in the root store
+      await rootStore.changeLanguage(newLanguage);
+
+      // If there's an active session, update its language
+      const activeSessionId = rootStore.sessionStore.activeSessionId;
+      if (activeSessionId) {
+        await changeSessionLanguage(activeSessionId, newLanguage);
+      }
+
+      // Reload the application to apply language changes
+      window.location.reload();
+    } catch (error) {
+      console.error('Failed to change language:', error);
+      // Handle the error (e.g., show an error message to the user)
+    }
   };
 
   return (

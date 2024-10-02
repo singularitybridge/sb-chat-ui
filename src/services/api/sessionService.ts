@@ -29,6 +29,16 @@ export const changeSessionAssistant = async (
   }
 };
 
+export const changeSessionLanguage = async (sessionId: string, language: string): Promise<ISession> => {
+  try {
+    const response = await apiClient.put(`/session/${sessionId}/language`, { language });
+    return response.data;
+  } catch (error) {
+    console.error(`Failed to change language for session ${sessionId}`, error);
+    throw error;
+  }
+};
+
 export const getSessionById = async (sessionId: string): Promise<ISession> => {
   try {
     const response = await apiClient.get(`session/${sessionId}`);

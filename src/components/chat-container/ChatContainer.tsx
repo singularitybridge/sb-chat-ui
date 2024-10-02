@@ -15,6 +15,7 @@ import { IAssistant } from '../../store/models/Assistant';
 import { SBChatKitUI } from '../sb-chat-kit-ui/SBChatKitUI';
 import { textToSpeech, TTSVoice } from '../../services/api/voiceService';
 import i18n from '../../i18n';
+import { changeSessionLanguage } from '../../services/api/sessionService';
 
 interface Metadata {
   message_type: string;
@@ -63,6 +64,15 @@ const ChatContainer = observer(() => {
       setAssistant(rootStore.getAssistantById(assistantId));
     }
   }, [assistantId, rootStore.assistantsLoaded]);
+
+  useEffect(() => {
+    const setSessionLanguage = async () => {
+      if (activeSession) {
+        await changeSessionLanguage(activeSession._id, rootStore.language);
+      }
+    };
+    setSessionLanguage();
+  }, [activeSession, rootStore.language]);
 
   const loadMessages = async () => {
     if (activeSession) {
@@ -181,6 +191,8 @@ const ChatContainer = observer(() => {
 
         // Set the stored assistant as the active assistant
         emitter.emit(EVENT_SET_ACTIVE_ASSISTANT, assistant._id);
+
+        // The language will be set automatically by the useEffect hook
       } catch (error) {
         console.error('Error in handleClear:', error);
         // Optionally, show an error message to the user
