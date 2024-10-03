@@ -1,11 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import * as LucideIcons from 'lucide-react';
 import { getMessageById } from '../../../services/api/assistantService';
-import hljs from 'highlight.js/lib/core';
-import json from 'highlight.js/lib/languages/json';
-import 'highlight.js/styles/panda-syntax-light.css';
-
-hljs.registerLanguage('json', json);
+import { JsonViewer } from '../../sb-core-ui-kit/JsonViewer';
 
 interface ActionExecutionMessageProps {
   messageId: string;
@@ -64,19 +60,6 @@ const ActionExecutionMessage: React.FC<ActionExecutionMessageProps> = ({
   const [fullMessageData, setFullMessageData] = useState<FullMessageData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const inputRef = useRef<HTMLPreElement>(null);
-  const outputRef = useRef<HTMLPreElement>(null);
-
-  useEffect(() => {
-    if (isExpanded && fullMessageData) {
-      if (inputRef.current) {
-        hljs.highlightElement(inputRef.current);
-      }
-      if (outputRef.current) {
-        hljs.highlightElement(outputRef.current);
-      }
-    }
-  }, [isExpanded, fullMessageData]);
 
   const getStatusStyle = (status: string) => {
     switch (status.toLowerCase()) {
@@ -135,7 +118,7 @@ const ActionExecutionMessage: React.FC<ActionExecutionMessageProps> = ({
           {isLoading && <p>Loading...</p>}
           {error && <p className="text-red-500">{error}</p>}
           {!isLoading && !error && fullMessageData && (
-            <div className="space-y-1">
+            <div className="space-y-2">
               <div className="border-b border-indigo-100 pb-1 text-left">
                 <span className="text-xs font-normal">Message ID</span>
                 <p className="text-base">{fullMessageData._id}</p>
@@ -155,24 +138,16 @@ const ActionExecutionMessage: React.FC<ActionExecutionMessageProps> = ({
               {fullMessageData.data.input && (
                 <div className="border-b border-indigo-100 pb-1 text-left">
                   <span className="text-xs font-normal">Input</span>
-                  <div className="max-h-40 overflow-y-auto bg-gray-800 rounded" dir='ltr'>
-                    <pre ref={inputRef} className="text-xs p-2 rounded mt-1 text-left">
-                      <code className="language-json">
-                        {JSON.stringify(fullMessageData.data.input, null, 2)}
-                      </code>
-                    </pre>
+                  <div className="mt-1">
+                    <JsonViewer data={fullMessageData.data.input} maxHeight="200px" />
                   </div>
                 </div>
               )}
               {fullMessageData.data.output && (
                 <div className="border-b border-indigo-100 pb-1 text-left">
                   <span className="text-xs font-normal">Output</span>
-                  <div className="max-h-40 overflow-y-auto bg-gray-800 rounded" dir='ltr'>
-                    <pre ref={outputRef} className="text-xs p-2 rounded mt-1 text-left">
-                      <code className="language-json">
-                        {JSON.stringify(fullMessageData.data.output, null, 2)}
-                      </code>
-                    </pre>
+                  <div className="mt-1">
+                    <JsonViewer data={fullMessageData.data.output} maxHeight="200px" />
                   </div>
                 </div>
               )}
