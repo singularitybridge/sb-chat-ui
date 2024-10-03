@@ -94,8 +94,8 @@ const ActionExecutionMessage: React.FC<ActionExecutionMessageProps> = ({
   };
 
   return (
-    <div className="mb-2 rtl:mr-11 ltr:ml-11">
-      <div className={`rounded-lg border ${getStatusStyle(status)} overflow-hidden`}>
+    <div className="mb-2 rtl:mr-11 ltr:ml-11 rtl:pl-2 ltr:pr-2">
+      <div className={`rounded-lg border ${getStatusStyle(status)} overflow-hidden w-[calc(100%-8px)]`}>
         <div className="p-2 flex flex-col items-start w-full text-gray-800">
           <div className="flex items-center w-full justify-between">
             <div className="flex items-center space-x-2 rtl:space-x-reverse">
@@ -113,7 +113,7 @@ const ActionExecutionMessage: React.FC<ActionExecutionMessageProps> = ({
         </div>
       </div>
       <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? 'max-h-[1000px]' : 'max-h-0'}`}>
-        <div className="px-4 py-2 rounded-b bg-slate-50 w-[calc(100%-16px)] mx-2 border border-gray-200">
+        <div className="px-4 py-2 rounded-b bg-slate-50 w-[calc(100%-24px)] mx-2 border border-gray-200">
           {isLoading && <p>Loading...</p>}
           {error && <p className="text-red-500">{error}</p>}
           {!isLoading && !error && fullMessageData && (
