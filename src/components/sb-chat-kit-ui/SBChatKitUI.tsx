@@ -120,13 +120,13 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
                 return (
                   <ActionExecutionMessage
                     key={index}
-                    status={message.metadata.status}
+                    messageId={message.metadata.messageId}
+                    status={message.metadata.status as 'started' | 'completed' | 'failed'}
                     actionId={message.metadata.actionId}
                     serviceName={message.metadata.serviceName}
                     actionTitle={message.metadata.actionTitle}
                     actionDescription={message.metadata.actionDescription}
                     icon={message.metadata.icon}
-                    args={message.metadata.args}
                     originalActionId={message.metadata.originalActionId}
                   />
                 );

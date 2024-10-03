@@ -117,23 +117,8 @@ addEventHandler('setAssistant', (data) => {
   }
 });
 
-addEventHandler('action_start', (data) => {
-  const notification = data.message as ActionNotification;
-  emitter.emit(EventNames.EVENT_ACTION_NOTIFICATION, notification);
-});
-
-addEventHandler('action_end', (data) => {
-  const notification = data.message as ActionNotification;
-  emitter.emit(EventNames.EVENT_ACTION_NOTIFICATION, notification);
-});
-
-addEventHandler('action_error', (data) => {
-  const notification = data.message as ActionNotification;
-  emitter.emit(EventNames.EVENT_ACTION_NOTIFICATION, notification);
-});
-
-addEventHandler('action_execution', (data) => {
-  console.log('Received action_execution event:', data);
+addEventHandler('action_execution_update', (data) => {
+  console.log('Received action_execution_update event:', data);
   emitter.emit(EventNames.EVENT_ACTION_EXECUTION, data);
 });
 

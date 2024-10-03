@@ -30,15 +30,14 @@ interface ChatMessage {
 }
 
 interface ActionExecutionMessage {
-  id: string;
-  status: string;
+  messageId: string;
   actionId: string;
   serviceName: string;
   actionTitle: string;
   actionDescription: string;
   icon: string;
-  args: any;
   originalActionId: string;
+  status: 'started' | 'completed' | 'failed';
 }
 
 const removeRAGCitations = (text: string): string => {
@@ -204,7 +203,7 @@ const ChatContainer = observer(() => {
   const handleActionExecution = (data: ActionExecutionMessage) => {
     setMessages((prevMessages) => {
       const index = prevMessages.findIndex(
-        (msg) => msg.metadata?.message_type === 'action_execution' && msg.metadata.id === data.id
+        (msg) => msg.metadata?.message_type === 'action_execution' && msg.metadata.messageId === data.messageId
       );
 
       if (index !== -1) {

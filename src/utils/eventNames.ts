@@ -19,13 +19,7 @@ export const EVENT_CLOSE_MODAL = 'close-modal';
 
 // Error events
 export const EVENT_ERROR = 'error';
-
-// Action notification events
-export const EVENT_ACTION_START = 'action-start';
-export const EVENT_ACTION_END = 'action-end';
-export const EVENT_ACTION_ERROR = 'action-error';
-export const EVENT_ACTION_NOTIFICATION = 'action-notification';
-export const EVENT_ACTION_EXECUTION = 'action-execution';
+export const EVENT_ACTION_EXECUTION = 'action_execution_update';
 
 export type EventType =
   | typeof EVENT_SET_ACTIVE_ASSISTANT
@@ -40,8 +34,4 @@ export type EventType =
   | typeof EVENT_SHOW_ONBOARDING_MODAL
   | typeof EVENT_CLOSE_MODAL
   | typeof EVENT_ERROR
-  | typeof EVENT_ACTION_START
-  | typeof EVENT_ACTION_END
-  | typeof EVENT_ACTION_ERROR
-  | typeof EVENT_ACTION_NOTIFICATION
   | typeof EVENT_ACTION_EXECUTION;
