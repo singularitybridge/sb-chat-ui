@@ -36,11 +36,23 @@ const AssistantMessage: React.FC<AssistantMessageProps> = ({ text, assistantName
     <tr className="hover:bg-gray-50" {...props} />
   );
 
+  const UlComponent: React.FC<React.DetailedHTMLProps<React.HTMLAttributes<HTMLUListElement>, HTMLUListElement>> = (props) => (
+    <ul className="list-disc rtl:pr-5 ltr:pl-5 my-2" {...props} />
+  );
+
+  const OlComponent: React.FC<React.DetailedHTMLProps<React.OlHTMLAttributes<HTMLOListElement>, HTMLOListElement>> = (props) => (
+    <ol className="list-decimal rtl:pr-5 ltr:pl-5 my-2" {...props} />
+  );
+
+  const LiComponent: React.FC<React.DetailedHTMLProps<React.LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>> = (props) => (
+    <li className="mb-1 rtl:mr-4 ltr:ml-4" {...props} />
+  );
+
   return (
     <MessageWrapper icon={<SparklesIcon className="w-5 h-5 text-gray-700" />} bgColor="" borderColor="bg-blue-100" role={assistantName}>
       <ReactMarkdown 
-        className="prose prose-sm max-w-none break-words"
-        remarkPlugins={[remarkGfm]}
+        className="prose prose-sm max-w-none break-words rtl:text-right ltr:text-left"
+        remarkPlugins={[remarkGfm]}        
         components={{
           pre: PreComponent,
           table: TableComponent,
@@ -48,6 +60,9 @@ const AssistantMessage: React.FC<AssistantMessageProps> = ({ text, assistantName
           th: ThComponent,
           td: TdComponent,
           tr: TrComponent,
+          ul: UlComponent,
+          ol: OlComponent,
+          li: LiComponent,
         }}
       >
         {text}
