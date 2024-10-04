@@ -79,19 +79,31 @@ const ActionExecutionMessage: React.FC<ActionExecutionMessageProps> = ({
 
   const handleExpand = async () => {
     if (!isExpanded && !fullMessageData) {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const data = await getMessageById(messageId);
-        setFullMessageData(data);
-      } catch (err) {
-        setError('Failed to load message details');
-        console.error('Error loading message details:', err);
-      } finally {
-        setIsLoading(false);
-      }
+      await loadFullMessage();
     }
     setIsExpanded(!isExpanded);
+  };
+
+  const loadFullMessage = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const data = await getMessageById(messageId);
+      setFullMessageData(data);
+    } catch (err) {
+      setError('Failed to load message details');
+      console.error('Error loading message details:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleReload = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    await loadFullMessage();
+    if (!isExpanded) {
+      setIsExpanded(true);
+    }
   };
 
   return (
@@ -108,7 +120,16 @@ const ActionExecutionMessage: React.FC<ActionExecutionMessageProps> = ({
               </button>
               <span className="font-medium text-sm">{actionTitle}</span>
             </div>
-            <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800">{serviceName}</span>
+            <div className="flex items-center space-x-2 rtl:space-x-reverse">
+              <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800">{serviceName}</span>
+              <button
+                onClick={handleReload}
+                className="p-1 rounded-full hover:bg-gray-200"
+                title="Reload"
+              >
+                <LucideIcons.RefreshCw className="w-4 h-4 flex-shrink-0" />
+              </button>
+            </div>
           </div>
           <p className="text-xs mt-1 rtl:text-right ltr:text-left">{actionDescription}</p>
         </div>

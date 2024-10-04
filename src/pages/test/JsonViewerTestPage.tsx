@@ -15,11 +15,28 @@ const testData = {
 };
 
 const JsonViewerTestPage: React.FC = () => {
+  const testMessageId = "test-message-123";
+  const testInput = "Test input for upload/save functionality";
+  const testOutput = "Test output for upload/save functionality";
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">JsonViewer Test Page</h1>
       <div className="w-full max-w-2xl">
-        <JsonViewer data={testData} maxHeight="400px" />
+        <JsonViewer 
+          data={testData} 
+          maxHeight="400px" 
+          messageId={testMessageId}
+          input={testInput}
+          output={testOutput}
+        />
+      </div>
+      <div className="mt-4">
+        <p>Test Instructions:</p>
+        <ol className="list-decimal list-inside">
+          <li>Verify that the copy icon (top-right) is slightly smaller and has more space around it.</li>
+          <li>Click the new upload/save icon (second from top-right) and check the browser console for the logged message ID, input, and output.</li>
+        </ol>
       </div>
     </div>
   );
