@@ -11,6 +11,10 @@ interface JsonViewerProps {
   maxHeight?: string;
 }
 
+const formatJson = (obj: any, space: number = 2): string => {
+  return JSON.stringify(obj, null, space);
+};
+
 export const JsonViewer: React.FC<JsonViewerProps> = ({ data, maxHeight = '120px' }) => {
   const preRef = useRef<HTMLPreElement>(null);
 
@@ -30,6 +34,8 @@ export const JsonViewer: React.FC<JsonViewerProps> = ({ data, maxHeight = '120px
       });
   };
 
+  const formattedJson = formatJson(data);
+
   return (
     <div className="relative">
       <button
@@ -39,10 +45,10 @@ export const JsonViewer: React.FC<JsonViewerProps> = ({ data, maxHeight = '120px
       >
         <LucideIcons.Copy className="w-4 h-4 text-gray-300" />
       </button>
-      <div style={{ maxHeight, overflowY: 'auto' }} className="bg-gray-800 rounded" dir='ltr'>
-        <pre ref={preRef} className="text-xs p-2 rounded mt-1 text-left">
+      <div style={{ maxHeight, overflowY: 'auto', overflowX: 'auto' }} className="bg-gray-800 rounded" dir='ltr'>
+        <pre ref={preRef} className="text-xs p-2 rounded mt-1 text-left whitespace-pre-wrap break-words">
           <code className="language-json">
-            {JSON.stringify(data, null, 2)}
+            {formattedJson}
           </code>
         </pre>
       </div>

@@ -1,4 +1,3 @@
-/// file_path: src/Router.tsx
 import { NotFound } from './pages/NotFound';
 import { Admin } from './pages/Admin';
 import React from 'react';
@@ -14,6 +13,7 @@ import { EditCompanyPage } from './pages/admin/EditCompanyPage';
 import { SignupPage } from './pages/SignupPage';
 import { ChatKitTestPage } from './pages/test/ChatKitTestPage';
 import { UIKitTestPage } from './pages/test/UIKitTestPage';
+import JsonViewerTestPage from './pages/test/JsonViewerTestPage';
 
 export const browserRouter = createBrowserRouter([
   {
@@ -34,6 +34,10 @@ export const browserRouter = createBrowserRouter([
       {
         path: 'test/ui',
         element: <UIKitTestPage />,
+      },
+      {
+        path: 'test/json-viewer',
+        element: <JsonViewerTestPage />,
       },
       {
         path: '/admin',
