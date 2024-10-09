@@ -70,7 +70,7 @@ export const fetchAllowedActionOptions = async (language: string = 'en'): Promis
   }
 
   try {
-    const response = await apiCaller.get<any[]>(`/action-discovery/discover?language=${language}`);
+    const response = await apiCaller.get<any[]>(`/integrations/discover?language=${language}`);
     const actionOptions = response.data.map((action: any) => ({
       id: action.id,
       name: action.actionTitle,

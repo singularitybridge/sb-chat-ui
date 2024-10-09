@@ -1,4 +1,3 @@
-// file_path: src/pages/test/UIKitTestPage.tsx
 import React, { useEffect, useState } from 'react';
 import { Input } from '../../components/sb-core-ui-kit/Input';
 import InputWithLabel from '../../components/sb-core-ui-kit/InputWithLabel';
@@ -10,7 +9,8 @@ import { TextareaWithLabel } from '../../components/sb-core-ui-kit/TextareaWithL
 import { TvIcon } from '@heroicons/react/24/outline';
 import { AIAssistedTextareaContainer } from '../../components/sb-core-ui-kit/AIAssistedTextareaContainer';
 import { SelectList, SelectListOption } from '../../components/sb-core-ui-kit/SelectList';
-
+import { EVENT_ACTION_EXECUTION } from '../../utils/eventNames';
+import { emitter } from '../../services/mittEmitter';
 
 const UIKitTestPage = () => {
   const [direction, setDirection] = useState<'ltr' | 'rtl'>('rtl');
@@ -48,6 +48,15 @@ const UIKitTestPage = () => {
     setDirection(newDirection);
   };
 
+  const simulateActionExecution = () => {
+    const testData = {
+      status: 'completed',
+      actionTitle: 'Test Action',
+      actionDescription: 'This is a test action execution',
+    };
+    emitter.emit(EVENT_ACTION_EXECUTION, testData);
+  };
+
   return (
     <div className="container mx-auto p-4">
       <div className="flex p-2">
@@ -67,6 +76,9 @@ const UIKitTestPage = () => {
         >
           RTL
         </button>
+        <Button onClick={simulateActionExecution}>
+          Simulate Action Execution
+        </Button>
       </div>
       <div className="grid grid-cols-3 gap-4">
         <div className="border  border-gray-300 flex items-center justify-center h-[600px]">
@@ -193,21 +205,6 @@ const UIKitTestPage = () => {
         </div>
         <div className="border border-gray-300 flex flex-col items-center justify-center h-[600px]">
           <div className="h-full w-full p-4 space-y-3">
-            {/* <AIAssistedTextarea
-              id="test"
-              label="שם הפרויקט"
-              value={aiAssistedText}              
-              onChange={setAiAssistedText}
-              placeholder="כתבו כאן משהו"
-            />
-            <AIAssistedTextarea
-              id="test"
-              label="שם הפרויקט"
-              value={aiAssistedText2}
-              onChange={setAiAssistedText2}
-              placeholder="כתבו כאן משהו"
-            /> */}
-
             <AIAssistedTextareaContainer
               id="customer-name"             
               value={aiAssistedText}

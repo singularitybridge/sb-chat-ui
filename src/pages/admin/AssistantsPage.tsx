@@ -52,7 +52,7 @@ const AssistantsPage: React.FC = observer(() => {
           />
         </div>
 
-        <ul className="space-y-4 flex-grow overflow-y-auto h-[calc(100%-3rem)]">
+        <ul className="space-y-4 flex-grow overflow-y-auto h-[calc(100%-3rem)] pr-2 rtl:pl-2 rtl:pr-0">
           {rootStore.assistants.map((assistant) => {
             const isActive =
               rootStore.sessionStore.activeSession?.assistantId ===

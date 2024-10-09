@@ -1,4 +1,3 @@
-/// file_path: src/components/chat-container/ChatContainer.tsx
 import React, { useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { useRootStore } from '../../store/common/RootStoreContext';
@@ -9,17 +8,18 @@ import {
 import {
   EVENT_CHAT_SESSION_DELETED,
   EVENT_SET_ACTIVE_ASSISTANT,
+  EVENT_ACTION_EXECUTION,
 } from '../../utils/eventNames';
 import { emitter, useEventEmitter } from '../../services/mittEmitter';
 import { IAssistant } from '../../store/models/Assistant';
 import { SBChatKitUI } from '../sb-chat-kit-ui/SBChatKitUI';
 import { textToSpeech, TTSVoice } from '../../services/api/voiceService';
 import i18n from '../../i18n';
-import { leapfrog } from 'ldrs';
-import { Avatar, AvatarStyles } from '../Avatar';
+import { changeSessionLanguage } from '../../services/api/sessionService';
 
 interface Metadata {
   message_type: string;
+  [key: string]: any;
 }
 
 interface ChatMessage {
@@ -27,6 +27,17 @@ interface ChatMessage {
   role: string;
   metadata?: Metadata;
   assistantName?: string;
+}
+
+interface ActionExecutionMessage {
+  messageId: string;
+  actionId: string;
+  serviceName: string;
+  actionTitle: string;
+  actionDescription: string;
+  icon: string;
+  originalActionId: string;
+  status: 'started' | 'completed' | 'failed';
 }
 
 const removeRAGCitations = (text: string): string => {
@@ -52,6 +63,15 @@ const ChatContainer = observer(() => {
       setAssistant(rootStore.getAssistantById(assistantId));
     }
   }, [assistantId, rootStore.assistantsLoaded]);
+
+  useEffect(() => {
+    const setSessionLanguage = async () => {
+      if (activeSession) {
+        await changeSessionLanguage(activeSession._id, rootStore.language);
+      }
+    };
+    setSessionLanguage();
+  }, [activeSession, rootStore.language]);
 
   const loadMessages = async () => {
     if (activeSession) {
@@ -170,6 +190,8 @@ const ChatContainer = observer(() => {
 
         // Set the stored assistant as the active assistant
         emitter.emit(EVENT_SET_ACTIVE_ASSISTANT, assistant._id);
+
+        // The language will be set automatically by the useEffect hook
       } catch (error) {
         console.error('Error in handleClear:', error);
         // Optionally, show an error message to the user
@@ -178,8 +200,45 @@ const ChatContainer = observer(() => {
     }
   };
 
+  const handleActionExecution = (data: ActionExecutionMessage) => {
+    setMessages((prevMessages) => {
+      const index = prevMessages.findIndex(
+        (msg) => msg.metadata?.message_type === 'action_execution' && msg.metadata.messageId === data.messageId
+      );
+
+      if (index !== -1) {
+        // Update existing message
+        const updatedMessages = [...prevMessages];
+        updatedMessages[index] = {
+          ...updatedMessages[index],
+          metadata: {
+            ...updatedMessages[index].metadata,
+            ...data,
+            message_type: 'action_execution',
+          },
+        };
+        return updatedMessages;
+      } else {
+        // Add new message
+        return [
+          ...prevMessages,
+          {
+            content: '',
+            role: 'assistant',
+            metadata: {
+              message_type: 'action_execution',
+              ...data,
+            },
+          },
+        ];
+      }
+    });
+  };
+
+  useEventEmitter(EVENT_ACTION_EXECUTION, handleActionExecution);
+
   return (
-    <div className="h-full w-full bg-white rounded-lg">
+    <div className="h-full w-full bg-white rounded-lg pr-2 rtl:pl-2 rtl:pr-0">
       <SBChatKitUI
         messages={messages}
         assistant={

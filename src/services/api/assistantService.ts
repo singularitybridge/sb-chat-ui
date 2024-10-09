@@ -23,11 +23,6 @@ export async function getCompletion(request: CompletionRequest): Promise<string>
   }
 }
 
-
-
-
-
-
 export async function getSessionMessages(sessionId: string): Promise<any> {
   try {
     const response = await apiClient.get(`session/${sessionId}/messages`);
@@ -37,8 +32,6 @@ export async function getSessionMessages(sessionId: string): Promise<any> {
     throw error;
   }
 }
-
-
 
 interface HandleUserInputBody {
   userInput: string;  
@@ -54,7 +47,6 @@ export async function handleUserInput(body: HandleUserInputBody): Promise<string
     throw error;
   }
 }
-
 
 export async function getAssistants(): Promise<IAssistant[]> {
   try { 
@@ -104,3 +96,34 @@ export const createDefaultAssistant = async () => {
     throw error;
   }
 };
+
+interface MessageData {
+  _id: string;
+  data: {
+    id: string;
+    actionId: string;
+    serviceName: string;
+    actionTitle: string;
+    actionDescription: string;
+    icon: string;
+    originalActionId: string;
+    language: string;
+    input?: any;
+    output?: any;
+    status: 'started' | 'completed' | 'failed';
+  };
+  sessionId: string;
+  messageType: string;
+  sender: string;
+  timestamp: string;
+}
+
+export async function getMessageById(messageId: string): Promise<MessageData> {
+  try {
+    const response = await apiClient.get<MessageData>(`/assistant/thread/message/${messageId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch message details:', error);
+    throw error;
+  }
+}

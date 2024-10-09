@@ -1,4 +1,3 @@
-/// file_path: src/components/sb-chat-kit-ui/SBChatKitUI.tsx
 import React, { useEffect, useRef, useState } from 'react';
 import { Header } from './chat-elements/Header';
 import { AssistantMessage } from './chat-elements/AssistantMessage';
@@ -10,9 +9,11 @@ import { ChatInput } from './chat-elements/ChatInput';
 import { DefaultChatView } from './chat-elements/DefaultChatView';
 import { dotWave, leapfrog } from 'ldrs';
 import { Avatar, AvatarStyles } from '../Avatar';
+import { ActionExecutionMessage } from './chat-elements/ActionExecutionMessage';
 
 interface Metadata {
   message_type: string;
+  [key: string]: any;
 }
 
 interface Action {
@@ -114,6 +115,20 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
               } else if (message.metadata?.message_type === 'notification') {
                 return (
                   <NotificationMessage key={index} text={message.content} />
+                );
+              } else if (message.metadata?.message_type === 'action_execution') {
+                return (
+                  <ActionExecutionMessage
+                    key={index}
+                    messageId={message.metadata.messageId}
+                    status={message.metadata.status as 'started' | 'completed' | 'failed'}
+                    actionId={message.metadata.actionId}
+                    serviceName={message.metadata.serviceName}
+                    actionTitle={message.metadata.actionTitle}
+                    actionDescription={message.metadata.actionDescription}
+                    icon={message.metadata.icon}
+                    originalActionId={message.metadata.originalActionId}
+                  />
                 );
               } else if (message.actions && message.actions.length > 0) {
                 return (
