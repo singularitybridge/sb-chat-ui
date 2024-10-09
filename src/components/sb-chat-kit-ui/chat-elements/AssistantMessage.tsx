@@ -11,7 +11,7 @@ interface AssistantMessageProps {
 
 const AssistantMessage: React.FC<AssistantMessageProps> = ({ text, assistantName }) => {
   const PreComponent: React.FC<React.HTMLProps<HTMLPreElement>> = (props) => (
-    <pre dir="ltr" {...props} />
+    <pre className='text-left' dir="ltr" {...props} />
   );
 
   const TableComponent: React.FC<React.HTMLProps<HTMLTableElement>> = (props) => (
