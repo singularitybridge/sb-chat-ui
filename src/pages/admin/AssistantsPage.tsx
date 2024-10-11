@@ -16,6 +16,7 @@ import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarStyles } from '../../components/Avatar';
 import Badge from '../../components/Badge';
+import IntegrationIcons from '../../components/IntegrationIcons';
 
 const AssistantsPage: React.FC = observer(() => {
   const rootStore = useRootStore();
@@ -42,6 +43,10 @@ const AssistantsPage: React.FC = observer(() => {
     navigate(`/admin/assistants/${assistantId}`);
   };
 
+  const extractIntegrationNames = (allowedActions: string[]): string[] => {
+    return [...new Set(allowedActions.map((action) => action.split('.')[0]))];
+  };
+
   return (
     <div className="flex h-[calc(100vh-96px)] space-x-4 rtl:space-x-reverse">
       <div className="bg-white p-3 flex flex-col rounded-lg w-1/4">
@@ -58,6 +63,9 @@ const AssistantsPage: React.FC = observer(() => {
             const isActive =
               rootStore.sessionStore.activeSession?.assistantId ===
               assistant._id;
+            const integrationNames = extractIntegrationNames(
+              assistant.allowedActions
+            );
             return (
               <li
                 key={assistant._id}
@@ -83,10 +91,14 @@ const AssistantsPage: React.FC = observer(() => {
                     <p className="text-sm text-gray-600 line-clamp-2">
                       {assistant.description}
                     </p>
-                    <div className="pt-1">
-                      <Badge variant="default">
+                    <div className="pt-1 flex items-center space-x-1 rtl:space-x-reverse">
+                      <Badge variant="default" className="">
                         {assistant.llmModel}
                       </Badge>
+
+                      <div className="flex-grow overflow-hidden">
+                        <IntegrationIcons integrations={integrationNames} />
+                      </div>
                     </div>
                   </div>
                 </div>
