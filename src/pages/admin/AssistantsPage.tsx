@@ -44,7 +44,7 @@ const AssistantsPage: React.FC = observer(() => {
   };
 
   const extractIntegrationNames = (allowedActions: string[]): string[] => {
-    return [...new Set(allowedActions.map((action) => action.split('.')[0]))];
+    return [...new Set(allowedActions.map(action => action.split('.')[0]))];
   };
 
   return (
@@ -63,9 +63,7 @@ const AssistantsPage: React.FC = observer(() => {
             const isActive =
               rootStore.sessionStore.activeSession?.assistantId ===
               assistant._id;
-            const integrationNames = extractIntegrationNames(
-              assistant.allowedActions
-            );
+            const integrationNames = extractIntegrationNames(assistant.allowedActions);
             return (
               <li
                 key={assistant._id}
@@ -76,30 +74,31 @@ const AssistantsPage: React.FC = observer(() => {
                 onMouseEnter={() => setHoveredAssistantId(assistant._id)}
                 onMouseLeave={() => setHoveredAssistantId(null)}
               >
-                <div className="flex items-start space-x-3 rtl:space-x-reverse">
-                  <div className="flex-shrink-0">
-                    <Avatar
-                      imageUrl={`/assets/avatars/${assistant.avatarImage}.png`}
-                      avatarStyle={AvatarStyles.avatar}
-                      active={isActive}
-                    />
-                  </div>
-                  <div className="flex-grow min-w-0 flex flex-col space-y-1">
-                    <h4 className="font-bold text-sm truncate">
-                      {assistant.name}
-                    </h4>
-                    <p className="text-sm text-gray-600 line-clamp-2">
-                      {assistant.description}
-                    </p>
-                    <div className="pt-1 flex items-center space-x-1 rtl:space-x-reverse">
-                      <Badge variant="default" className="">
-                        {assistant.llmModel}
-                      </Badge>
-
-                      <div className="flex-grow overflow-hidden">
-                        <IntegrationIcons integrations={integrationNames} />
-                      </div>
+                <div className="flex flex-col space-y-2">
+                  <div className="flex items-start space-x-3 rtl:space-x-reverse">
+                    <div className="flex-shrink-0">
+                      <Avatar
+                        imageUrl={`/assets/avatars/${assistant.avatarImage}.png`}
+                        avatarStyle={AvatarStyles.avatar}
+                        active={isActive}
+                      />
                     </div>
+                    <div className="flex-grow min-w-0 flex flex-col space-y-1">
+                      <div className="flex justify-between items-center">
+                        <h4 className="font-bold text-sm truncate">
+                          {assistant.name}
+                        </h4>
+                        <Badge variant="default" className="text-xs whitespace-nowrap">
+                          {assistant.llmModel}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-gray-600 line-clamp-2">
+                        {assistant.description}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="w-full">
+                    <IntegrationIcons integrations={integrationNames} />
                   </div>
                 </div>
                 {hoveredAssistantId === assistant._id && (
