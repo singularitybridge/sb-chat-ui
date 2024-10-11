@@ -49,7 +49,7 @@ const AssistantsPage: React.FC = observer(() => {
 
   return (
     <div className="flex h-[calc(100vh-96px)] space-x-4 rtl:space-x-reverse">
-      <div className="bg-white p-3 flex flex-col rounded-lg w-1/4">
+      <div className="bg-white p-3 flex flex-col rounded-lg w-1/3">
         <div className="flex flex-row justify-between items-center w-full mb-6 px-2 py-1">
           <TextComponent text={t('AssistantsPage.title')} size="subtitle" />
           <IconButton
@@ -88,7 +88,7 @@ const AssistantsPage: React.FC = observer(() => {
                         <h4 className="font-bold text-sm truncate">
                           {assistant.name}
                         </h4>
-                        <Badge variant="default" className="text-xs whitespace-nowrap">
+                        <Badge variant="primary" className="text-xs whitespace-nowrap">
                           {assistant.llmModel}
                         </Badge>
                       </div>
@@ -126,7 +126,7 @@ const AssistantsPage: React.FC = observer(() => {
           })}
         </ul>
       </div>
-      <div className="flex-grow overflow-y-auto w-3/4">
+      <div className="flex-grow overflow-y-auto w-2/3">
         <ChatContainer />
       </div>
     </div>

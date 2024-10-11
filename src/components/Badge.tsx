@@ -21,7 +21,7 @@ const variantStyles: Record<BadgeVariant, string> = {
 const Badge: React.FC<BadgeProps> = ({ children, className, variant = 'default' }) => {
   return (
     <span className={clsx(
-      "text-xs px-2 py-1 rounded-full whitespace-nowrap",
+      " text-xs font-base px-2 py-1 rounded-full whitespace-nowrap",
       variantStyles[variant],
       className
     )}>

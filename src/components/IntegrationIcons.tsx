@@ -30,16 +30,16 @@ const IntegrationIcons: React.FC<IntegrationIconsProps> = ({ integrations }) => 
   }, []);
 
   return (
-    <div className="flex flex-wrap gap-1">
+    <div className="flex flex-wrap gap-x-0.5 gap-y-1">
       {integrations.map((integration, index) => {
-        const integrationInfo = integrationData.find(info => info.id === integration);
+        const integrationInfo = integrationData.find(info => info.name.toLowerCase() === integration.toLowerCase());
         return (
-          <div key={index} title={integrationInfo?.description || ''}>
+          <div key={integrationInfo?.name || index} title={integrationInfo?.description || ''}>
             <Badge
               variant="secondary"
               className="text-xs"
             >
-              {integrationInfo?.name || integration}
+              {(integrationInfo?.name || integration).toLowerCase()}
             </Badge>
           </div>
         );
