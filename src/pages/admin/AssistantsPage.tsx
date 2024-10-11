@@ -15,6 +15,7 @@ import { ChatContainer } from '../../components/chat-container/ChatContainer';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarStyles } from '../../components/Avatar';
+import Badge from '../../components/Badge';
 
 const AssistantsPage: React.FC = observer(() => {
   const rootStore = useRootStore();
@@ -75,13 +76,18 @@ const AssistantsPage: React.FC = observer(() => {
                       active={isActive}
                     />
                   </div>
-                  <div className="flex-grow min-w-0">
+                  <div className="flex-grow min-w-0 flex flex-col space-y-1">
                     <h4 className="font-bold text-sm truncate">
                       {assistant.name}
                     </h4>
-                    <p className="text-sm text-gray-600 mt-0.5 line-clamp-2">
+                    <p className="text-sm text-gray-600 line-clamp-2">
                       {assistant.description}
                     </p>
+                    <div className="pt-1">
+                      <Badge variant="default">
+                        {assistant.llmModel}
+                      </Badge>
+                    </div>
                   </div>
                 </div>
                 {hoveredAssistantId === assistant._id && (
