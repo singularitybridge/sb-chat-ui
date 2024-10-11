@@ -14,18 +14,6 @@ interface IntegrationInfo {
   icon: string;
 }
 
-const mapIconName = (iconName: string): keyof typeof LucideIcons => {
-  const pascalCase = iconName.split(/[-_\s]+/).map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join('');
-  
-  const specialCases: { [key: string]: keyof typeof LucideIcons } = {
-    'image': 'Image',
-    'brain': 'Brain',
-    // Add more special cases here if needed
-  };
-
-  return (specialCases[iconName] || pascalCase) as keyof typeof LucideIcons;
-};
-
 const IntegrationIcons: React.FC<IntegrationIconsProps> = ({ integrations }) => {
   const [integrationData, setIntegrationData] = useState<IntegrationInfo[]>([]);
 
@@ -45,9 +33,9 @@ const IntegrationIcons: React.FC<IntegrationIconsProps> = ({ integrations }) => 
   return (
     <div className="flex flex-wrap gap-x-0.5 gap-y-1">
       {integrations.map((integration, index) => {
-        const integrationInfo = integrationData.find(info => info.name.toLowerCase() === integration.toLowerCase());
-        const mappedIconName = mapIconName(integrationInfo?.icon || 'HelpCircle');
-        const IconComponent = (LucideIcons[mappedIconName] || LucideIcons.HelpCircle) as React.ComponentType<React.SVGProps<SVGSVGElement>>;
+        const integrationInfo = integrationData.find(info => info.id.toLowerCase() === integration.toLowerCase());
+        const iconName = integrationInfo?.icon || 'help-circle';
+        const IconComponent = (LucideIcons as any)[iconName.split('-').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('')] || LucideIcons.HelpCircle;        
 
         return (
           <div key={integrationInfo?.name || index} title={integrationInfo?.description || ''}>
