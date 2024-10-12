@@ -238,7 +238,7 @@ const ChatContainer = observer(() => {
   useEventEmitter(EVENT_ACTION_EXECUTION, handleActionExecution);
 
   return (
-    <div className="h-full w-full bg-white rounded-lg pr-2 rtl:pl-2 rtl:pr-0">
+    <div className="h-full w-full bg-white rounded-xl pr-2 rtl:pl-2 rtl:pr-0">
       <SBChatKitUI
         messages={messages}
         assistant={
