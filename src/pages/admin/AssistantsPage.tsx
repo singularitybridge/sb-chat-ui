@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useRootStore } from '../../store/common/RootStoreContext';
 import { IAssistant } from '../../store/models/Assistant';
-import { Plus, Settings2, X } from 'lucide-react';
+import { Plus, Settings, Settings2, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { IconButton } from '../../components/admin/IconButton';
 import { emitter } from '../../services/mittEmitter';
@@ -93,7 +93,7 @@ const AssistantsPage: React.FC = observer(() => {
                         <h4 className="font-bold text-sm truncate text-right rtl:text-left">
                           {assistant.name}
                         </h4>
-                        <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                        <div className="flex items-center space-x-1.5 rtl:space-x-reverse">
                           <AnimatePresence>
                             {hoveredAssistantId === assistant._id && (
                               <motion.div
@@ -101,21 +101,21 @@ const AssistantsPage: React.FC = observer(() => {
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: -10 }}
                                 transition={{ duration: 0.2 }}
-                                className="flex space-x-1 rtl:space-x-reverse"
+                                className="flex space-x-1.5 rtl:space-x-reverse"
                               >
                                 <IconButton
                                   icon={
-                                    <Settings2 className="w-4 h-4 text-gray-500" />
+                                    <Settings className="w-3 h-3 text-gray-500" />
                                   }
-                                  className="p-1 rounded-full hover:bg-gray-300"
+                                  className="p-1 rounded-full hover:bg-gray-300 bg-white"
                                   onClick={(event) => {
                                     event.stopPropagation();
                                     handleEditAssistant(assistant._id);
                                   }}
                                 />
                                 <IconButton
-                                  icon={<X className="w-4 h-4 text-gray-500" />}
-                                  className="p-1 rounded-full hover:bg-gray-300"
+                                  icon={<X className="w-3 h-3 text-gray-500" />}
+                                  className="p-1 rounded-full hover:bg-gray-300 bg-white"
                                   onClick={(event) => {
                                     event.stopPropagation();
                                     handleDelete(assistant);
