@@ -1,4 +1,3 @@
-/// file_path=src/pages/Admin.tsx
 import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { ContentContainer } from '../components/ContentContainer';
@@ -16,24 +15,22 @@ const styles = `
 `;
 
 const Admin: React.FC = observer(() => {
-
   const rootStore = useRootStore();
 
   useEffect(() => {    
     if (rootStore.isInitialDataLoaded) {
       rootStore.fetchOnboardingStatus();
     }    
-  } , [rootStore.isInitialDataLoaded]);
-  
+  }, [rootStore.isInitialDataLoaded]);
 
   return (
-    <>
+    <div className="bg-dot-pattern min-h-screen">
       <style>{styles}</style>
       <Menu />
-      <ContentContainer className="px-8 py-4 bg-dot-pattern">
+      <ContentContainer className="px-8 py-4">
         <Outlet />
       </ContentContainer>
-    </>
+    </div>
   );
 });
 

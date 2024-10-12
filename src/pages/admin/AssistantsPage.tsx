@@ -49,7 +49,7 @@ const AssistantsPage: React.FC = observer(() => {
 
   return (
     <div className="flex h-[calc(100vh-96px)] space-x-4 rtl:space-x-reverse">
-      <div className="bg-white p-3 flex flex-col rounded-lg w-1/3">
+      <div className=" p-3 flex flex-col rounded-lg w-1/3">
         <div className="flex flex-row justify-between items-center w-full mb-6 px-2 py-1">
           <TextComponent text={t('AssistantsPage.title')} size="subtitle" />
           <IconButton
@@ -67,14 +67,14 @@ const AssistantsPage: React.FC = observer(() => {
             return (
               <li
                 key={assistant._id}
-                className={`rounded-lg p-3 cursor-pointer hover:bg-slate-200 relative ${
-                  isActive ? 'bg-gray-100' : ''
+                className={`rounded-lg p-3 cursor-pointer  hover:bg-slate-200 relative ${
+                  isActive ? 'bg-blue-200 bg-opacity-60' : 'bg-white bg-opacity-70'
                 }`}
                 onClick={() => handleSetAssistant(assistant)}
                 onMouseEnter={() => setHoveredAssistantId(assistant._id)}
                 onMouseLeave={() => setHoveredAssistantId(null)}
               >
-                <div className="flex flex-col space-y-2">
+                <div className="flex flex-col space-y-1.5">
                   <div className="flex items-start space-x-3 rtl:space-x-reverse">
                     <div className="flex-shrink-0">
                       <Avatar
@@ -88,7 +88,7 @@ const AssistantsPage: React.FC = observer(() => {
                         <h4 className="font-bold text-sm truncate">
                           {assistant.name}
                         </h4>
-                        <Badge variant="primary" className="text-xs whitespace-nowrap">
+                        <Badge variant="success" className="text-xs whitespace-nowrap">
                           {assistant.llmModel}
                         </Badge>
                       </div>
@@ -97,7 +97,7 @@ const AssistantsPage: React.FC = observer(() => {
                       </p>
                     </div>
                   </div>
-                  <div className="w-full">
+                  <div className="w-full rounded-xl p-1.5">
                     <IntegrationIcons integrations={integrationNames} />
                   </div>
                 </div>

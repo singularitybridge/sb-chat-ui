@@ -82,7 +82,7 @@
     "addTag": "Add Tag"
   },
   "AssistantsPage": {
-    "title": "Virtual Agents",
+    "title": "Your Team",
     "description": "manage your ai agents here",
     "table": {
       "name": "name",

@@ -31,22 +31,22 @@ export const Menu = observer(() => {
 
   return (
     <nav
-      className="flex-no-wrap relative flex w-full items-center justify-between bg-gray-50 py-3 px-8"
+      className="flex-no-wrap relative flex w-full items-center justify-between py-3 px-8 bg-transparent"
       data-te-navbar-ref
     >
-      <div className="flex w-full flex-wrap items-center justify-between">
-        <div className="flex items-center rtl:space-x-reverse space-x-8">
-          <Link to="/admin" >
+      <div className="flex w-full flex-wrap items-center justify-between ">
+        <div className="flex items-center rtl:space-x-reverse space-x-8 px-3 py-1.5 rounded-2xl">
+          <Link to="/admin" className="bg-transparent">
             <TextComponent
               size="subtitle"
               color="normal"
-              className='text-violet-800 font-medium'
+              className='text-violet-800 font-medium bg-transparent'
               text={t('common.appName')}
             />
           </Link>
 
           <ul
-            className="list-style-none flex flex-row"
+            className="list-style-none flex flex-row bg-transparent"
             data-te-navbar-nav-ref
           >
             {menuItems.map((item) => {
@@ -56,10 +56,10 @@ export const Menu = observer(() => {
                 isActive
                   ? 'text-gray-700 hover:text-neutral-700 focus:text-neutral-700'
                   : 'text-neutral-400 hover:text-neutral-600 focus:text-neutral-600'
-              } disabled:text-black/30 dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 px-3`;
+              } disabled:text-black/30 dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 px-3 bg-transparent`;
 
               return (
-                <li className="" data-te-nav-item-ref key={item.name}>
+                <li className="bg-transparent" data-te-nav-item-ref key={item.name}>
                   <Link
                     to={item.link}
                     className={menuStyle}
