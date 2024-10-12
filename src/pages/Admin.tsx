@@ -4,18 +4,21 @@ import { ContentContainer } from '../components/ContentContainer';
 import { Menu } from '../components/admin/Menu';
 import { Outlet } from 'react-router-dom';
 import { useRootStore } from '../store/common/RootStoreContext';
-import { root } from 'postcss';
-
-// Add this style to your global CSS file or create a new CSS module
-const styles = `
-  .bg-dot-pattern {
-    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='2' cy='2' r='1' fill='%23D1D5DB' /%3E%3C/svg%3E");
-    background-color: #F3F4F6;
-  }
-`;
+import DynamicBackground, { setDynamicBackground } from '../components/DynamicBackground';
 
 const Admin: React.FC = observer(() => {
   const rootStore = useRootStore();
+
+  const backgroundProps = setDynamicBackground(
+    'https://cdn.midjourney.com/41d91483-76a4-41f1-add2-638ff6f552e8/0_0.png',
+    [
+      { color: 'rgba(255, 255, 255, 1)', position: '0%' },
+      { color: 'rgba(255, 255, 255, 0.5)', position: '10%' },
+      { color: 'rgba(255, 255, 255, 0)', position: '100%' },
+    ],
+    [],
+    'multiply'
+  );
 
   useEffect(() => {    
     if (rootStore.isInitialDataLoaded) {
@@ -24,12 +27,14 @@ const Admin: React.FC = observer(() => {
   }, [rootStore.isInitialDataLoaded]);
 
   return (
-    <div className="bg-dot-pattern min-h-screen">
-      <style>{styles}</style>
-      <Menu />
-      <ContentContainer className="px-8 py-4">
-        <Outlet />
-      </ContentContainer>
+    <div className="min-h-screen relative">
+      <DynamicBackground {...backgroundProps} />
+      <div className="relative z-10">
+        <Menu />
+        <ContentContainer className="px-8 py-4">
+          <Outlet />
+        </ContentContainer>
+      </div>
     </div>
   );
 });
