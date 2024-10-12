@@ -12,11 +12,15 @@ const Admin: React.FC = observer(() => {
   const backgroundProps = setDynamicBackground(
     'https://cdn.midjourney.com/41d91483-76a4-41f1-add2-638ff6f552e8/0_0.png',
     [
-      { color: 'rgba(255, 255, 255, 1)', position: '0%' },
-      { color: 'rgba(255, 255, 255, 0.5)', position: '10%' },
+      { color: 'rgba(255, 255, 255, 0.95)', position: '0%' },
+      { color: 'rgba(255, 255, 255, 0.8)', position: '8%' },
       { color: 'rgba(255, 255, 255, 0)', position: '100%' },
     ],
-    [],
+    [
+      { color: '#CACACA', stop: '0%', opacity: 0.5 },
+      { color: '#878787', stop: '50%', opacity: 0.6 },
+      { color: '#202022', stop: '100%', opacity: 0.7 },
+    ],
     'multiply'
   );
 
