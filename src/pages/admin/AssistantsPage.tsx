@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useRootStore } from '../../store/common/RootStoreContext';
 import { IAssistant } from '../../store/models/Assistant';
-import { Plus, Settings, Settings2, X } from 'lucide-react';
+import { Plus, Settings, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { IconButton } from '../../components/admin/IconButton';
 import { emitter } from '../../services/mittEmitter';
@@ -70,9 +70,9 @@ const AssistantsPage: React.FC = observer(() => {
             return (
               <li
                 key={assistant._id}
-                className={`rounded-lg p-3 cursor-pointer hover:bg-slate-200 relative ${
+                className={`group rounded-lg p-3 cursor-pointer hover:bg-blue-200 relative ${
                   isActive
-                    ? 'bg-blue-200 bg-opacity-60'
+                    ? 'bg-blue-200 bg-opacity-70'
                     : 'bg-white bg-opacity-70'
                 }`}
                 onClick={() => handleSetAssistant(assistant)}
@@ -138,7 +138,11 @@ const AssistantsPage: React.FC = observer(() => {
                     </div>
                   </div>
                   <div className="w-full rounded-xl p-1.5">
-                    <IntegrationIcons integrations={integrationNames} />
+                    <IntegrationIcons 
+                      integrations={integrationNames} 
+                      isActive={isActive}
+                      className="group-hover:opacity-80 transition-opacity duration-200"
+                    />
                   </div>
                 </div>
               </li>

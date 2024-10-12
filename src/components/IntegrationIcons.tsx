@@ -5,6 +5,8 @@ import * as LucideIcons from 'lucide-react';
 
 interface IntegrationIconsProps {
   integrations: string[];
+  isActive?: boolean;
+  className?: string;
 }
 
 interface IntegrationInfo {
@@ -14,7 +16,7 @@ interface IntegrationInfo {
   icon: string;
 }
 
-const IntegrationIcons: React.FC<IntegrationIconsProps> = ({ integrations }) => {
+const IntegrationIcons: React.FC<IntegrationIconsProps> = ({ integrations, isActive = false, className = '' }) => {
   const [integrationData, setIntegrationData] = useState<IntegrationInfo[]>([]);
 
   useEffect(() => {
@@ -31,7 +33,7 @@ const IntegrationIcons: React.FC<IntegrationIconsProps> = ({ integrations }) => 
   }, []);
 
   return (
-    <div className="flex flex-wrap gap-x-0.5 gap-y-1">
+    <div className={`flex flex-wrap gap-x-0.5 gap-y-1 ${className}`}>
       {integrations.map((integration, index) => {
         const integrationInfo = integrationData.find(info => info.id.toLowerCase() === integration.toLowerCase());
         const iconName = integrationInfo?.icon || 'help-circle';
@@ -40,10 +42,10 @@ const IntegrationIcons: React.FC<IntegrationIconsProps> = ({ integrations }) => 
         return (
           <div key={integrationInfo?.name || index} title={integrationInfo?.description || ''}>
             <Badge
-              variant="secondary"
-              className="flex items-center space-x-0.5 rtl:space-x-reverse"
+              variant={isActive ? "primary" : "secondary"}
+              className={`flex items-center space-x-0.5 rtl:space-x-reverse ${isActive ? 'text-gray-500' : ''}`}
             >
-              <IconComponent className="w-3 h-3 mr-1" />
+              <IconComponent className={`w-3 h-3 mr-1 ${isActive ? 'text-gray-500' : ''}`} />
               <span>{(integrationInfo?.name || integration).toLowerCase()}</span>
             </Badge>
           </div>
