@@ -72,8 +72,8 @@ const AssistantsPage: React.FC = observer(() => {
                 key={assistant._id}
                 className={`group rounded-lg p-3 cursor-pointer hover:bg-blue-200 relative ${
                   isActive
-                    ? 'bg-blue-200 bg-opacity-70'
-                    : 'bg-white bg-opacity-70'
+                    ? 'bg-blue-200 bg-opacity-80 '
+                    : 'bg-slate-50 bg-opacity-80'
                 }`}
                 onClick={() => handleSetAssistant(assistant)}
                 onMouseEnter={() => setHoveredAssistantId(assistant._id)}

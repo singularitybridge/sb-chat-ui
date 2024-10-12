@@ -33,7 +33,7 @@ const IntegrationIcons: React.FC<IntegrationIconsProps> = ({ integrations, isAct
   }, []);
 
   return (
-    <div className={`flex flex-wrap gap-x-0.5 gap-y-1 ${className}`}>
+    <div className={`flex flex-wrap gap-x-1 gap-y-1.5 ${className}`}>
       {integrations.map((integration, index) => {
         const integrationInfo = integrationData.find(info => info.id.toLowerCase() === integration.toLowerCase());
         const iconName = integrationInfo?.icon || 'help-circle';
