@@ -26,6 +26,7 @@ interface ChatMessage {
   role: string;
   metadata?: Metadata;
   actions?: Action[];
+  createdAt: number; // Add this line
 }
 
 type AudioState = 'disabled' | 'enabled' | 'playing';
@@ -146,10 +147,17 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
                     key={index}
                     text={message.content}
                     assistantName={assistantName}
+                    createdAt={message.createdAt} // Add this line
                   />
                 );
               } else {
-                return <UserMessage key={index} text={message.content} />;
+                return (
+                  <UserMessage
+                    key={index}
+                    text={message.content}
+                    createdAt={message.createdAt} // Add this line
+                  />
+                );
               }
             })}
             {isLoading && (

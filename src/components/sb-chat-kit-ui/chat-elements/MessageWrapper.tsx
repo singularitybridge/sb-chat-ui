@@ -1,4 +1,3 @@
-/// file_path: src/components/sb-chat-kit-ui/chat-elements/MessageWrapper.tsx
 import React from 'react';
 
 interface MessageWrapperProps {
@@ -7,9 +6,10 @@ interface MessageWrapperProps {
   borderColor: string;
   role: string;
   children: React.ReactNode;
+  dateText?: string; // Add this line
 }
 
-const MessageWrapper: React.FC<MessageWrapperProps> = ({ icon, bgColor, borderColor, role, children }) => {
+const MessageWrapper: React.FC<MessageWrapperProps> = ({ icon, bgColor, borderColor, role, children, dateText }) => {
   return (
     <div className={`flex ${bgColor} gap-3 my-1 text-gray-600 text-sm flex-1 py-2`}>
       <span className="relative flex shrink-0 overflow-hidden rounded-full w-8 h-8">
@@ -17,8 +17,11 @@ const MessageWrapper: React.FC<MessageWrapperProps> = ({ icon, bgColor, borderCo
           {icon}
         </div>
       </span>
-      <div className="leading-relaxed">
-        <span className="block font-bold text-gray-800">{role}</span>
+      <div className="leading-relaxed flex-grow">
+        <div className="flex justify-between items-center">
+          <span className="font-bold text-gray-800">{role}</span>
+          {dateText && <span className="text-xs text-gray-400">{dateText}</span>}
+        </div>
         {children}
       </div>
     </div>

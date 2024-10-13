@@ -27,6 +27,7 @@ interface ChatMessage {
   role: string;
   metadata?: Metadata;
   assistantName?: string;
+  createdAt: number; // Add this line
 }
 
 interface ActionExecutionMessage {
@@ -98,6 +99,7 @@ const ChatContainer = observer(() => {
     role: message.role,
     metadata: message.metadata,
     assistantName: message.assistantName,
+    createdAt: message.created_at, // Add this line
   });
 
   useEffect(() => {
@@ -109,7 +111,7 @@ const ChatContainer = observer(() => {
   const handleSubmitMessage = async (message: string) => {
     setMessages((prevMessages) => [
       ...prevMessages,
-      { content: message, role: 'user' },
+      { content: message, role: 'user', createdAt: Date.now() / 1000 }, // Add createdAt
     ]);
     setIsLoading(true);
 
@@ -122,7 +124,7 @@ const ChatContainer = observer(() => {
         const cleanedResponse = removeRAGCitations(response);
         setMessages((prevMessages) => [
           ...prevMessages,
-          { content: cleanedResponse, role: 'assistant' },
+          { content: cleanedResponse, role: 'assistant', createdAt: Date.now() / 1000 }, // Add createdAt
         ]);
 
         if (audioState === 'enabled') {
@@ -225,6 +227,7 @@ const ChatContainer = observer(() => {
           {
             content: '',
             role: 'assistant',
+            createdAt: Date.now() / 1000, // Add createdAt
             metadata: {
               message_type: 'action_execution',
               ...data,
