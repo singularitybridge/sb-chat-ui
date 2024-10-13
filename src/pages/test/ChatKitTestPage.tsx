@@ -2,15 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { SBChatKitUI } from '../../components/sb-chat-kit-ui/SBChatKitUI';
 
 const mockMessages = [
-  { content: 'Hello, how can I help you?', role: 'assistant' },
-  { content: 'I need assistance with my project.', role: 'user' },
-  { content: 'Sure, what do you need help with?', role: 'assistant' },
+  { content: 'Hello, how can I help you?', role: 'assistant', createdAt: Date.now() },
+  { content: 'I need assistance with my project.', role: 'user', createdAt: Date.now() + 1000 },
+  { content: 'Sure, what do you need help with?', role: 'assistant', createdAt: Date.now() + 2000 },
 ];
 
 const mockMessagesHebrew = [
-  { content: 'שלום, איך אני יכול לעזור לך?', role: 'assistant' },
-  { content: 'אני צריך עזרה עם הפרויקט שלי.', role: 'user' },
-  { content: 'בטח, במה אתה צריך עזרה?', role: 'assistant' },
+  { content: 'שלום, איך אני יכול לעזור לך?', role: 'assistant', createdAt: Date.now() },
+  { content: 'אני צריך עזרה עם הפרויקט שלי.', role: 'user', createdAt: Date.now() + 1000 },
+  { content: 'בטח, במה אתה צריך עזרה?', role: 'assistant', createdAt: Date.now() + 2000 },
 ];
 
 const mockAssistant = {
@@ -26,15 +26,12 @@ const mockAssistantHebrew = {
 };
 
 const ChatKitTestPage = () => {
-
   const [messages, setMessages] = useState(mockMessages);
   const [messagesHebrew, setMessagesHebrew] = useState(mockMessagesHebrew);
   const [direction, setDirection] = useState<'ltr' | 'rtl'>('ltr');
 
   useEffect(() => {
-    // Update the dir attribute on the html element
     document.documentElement.dir = direction;
-    // You might also want to update the lang attribute
     document.documentElement.lang = direction === 'rtl' ? 'he' : 'en';
   }, [direction]);
 
@@ -42,20 +39,19 @@ const ChatKitTestPage = () => {
     setDirection(newDirection);
   };
 
-
   const handleSendMessage = (message: string) => {
     setMessages((prevMessages) => [
       ...prevMessages,
-      { content: message, role: 'user' },
-      { content: 'This is a mock response.', role: 'assistant' },
+      { content: message, role: 'user', createdAt: Date.now() },
+      { content: 'This is a mock response.', role: 'assistant', createdAt: Date.now() + 1000 },
     ]);
   };
 
   const handleSendMessageHebrew = (message: string) => {
     setMessagesHebrew((prevMessages) => [
       ...prevMessages,
-      { content: message, role: 'user' },
-      { content: 'זו תגובה מדומה.', role: 'assistant' },
+      { content: message, role: 'user', createdAt: Date.now() },
+      { content: 'זו תגובה מדומה.', role: 'assistant', createdAt: Date.now() + 1000 },
     ]);
   };
 
@@ -74,6 +70,7 @@ const ChatKitTestPage = () => {
         content: 'This is a notification message.',
         role: 'system',
         metadata: { message_type: 'notification' },
+        createdAt: Date.now(),
       },
     ]);
   };
@@ -82,10 +79,11 @@ const ChatKitTestPage = () => {
     const addUserMessage = (message: string) => {
       setMessages((prevMessages) => [
         ...prevMessages,
-        { content: message, role: 'user' },
+        { content: message, role: 'user', createdAt: Date.now() },
         {
           content: `You selected ${message}. Here are some options.`,
           role: 'assistant',
+          createdAt: Date.now() + 1000,
         },
       ]);
     };
@@ -99,21 +97,22 @@ const ChatKitTestPage = () => {
           { label: 'Electric', onClick: () => addUserMessage('Electric') },
           { label: 'Gas', onClick: () => addUserMessage('Gas') },
         ],
+        createdAt: Date.now(),
       },
     ]);
   };
 
   const [wideMessages, setWideMessages] = useState([
-    { content: 'Welcome to the wide mode chat!', role: 'assistant' },
-    { content: 'This is a test of the wide mode layout.', role: 'user' },
-    { content: 'How does it look?', role: 'assistant' },
+    { content: 'Welcome to the wide mode chat!', role: 'assistant', createdAt: Date.now() },
+    { content: 'This is a test of the wide mode layout.', role: 'user', createdAt: Date.now() + 1000 },
+    { content: 'How does it look?', role: 'assistant', createdAt: Date.now() + 2000 },
   ]);
 
   const handleSendWideMessage = (message: string) => {
     setWideMessages((prevMessages) => [
       ...prevMessages,
-      { content: message, role: 'user' },
-      { content: 'This is a mock response in wide mode.', role: 'assistant' },
+      { content: message, role: 'user', createdAt: Date.now() },
+      { content: 'This is a mock response in wide mode.', role: 'assistant', createdAt: Date.now() + 1000 },
     ]);
   };
 
@@ -181,7 +180,6 @@ const ChatKitTestPage = () => {
         >
           RTL
         </button>
-
         </div>
       </div>
 
