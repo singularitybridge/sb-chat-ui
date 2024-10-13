@@ -11,6 +11,7 @@ import { AIAssistedTextareaContainer } from '../../components/sb-core-ui-kit/AIA
 import { SelectList, SelectListOption } from '../../components/sb-core-ui-kit/SelectList';
 import { EVENT_ACTION_EXECUTION } from '../../utils/eventNames';
 import { emitter } from '../../services/mittEmitter';
+import Badge from '../../components/Badge';
 
 const UIKitTestPage = () => {
   const [direction, setDirection] = useState<'ltr' | 'rtl'>('rtl');
@@ -138,6 +139,18 @@ const UIKitTestPage = () => {
               initialValue={selectedValue}
               placeholder="Select an option"
             />
+
+            <div className="space-y-2">
+              <TextComponent text="Badge Examples" size="subtitle" />
+              <div className="flex flex-wrap gap-2">
+                <Badge variant="default">Default</Badge>
+                <Badge variant="primary">Primary</Badge>
+                <Badge variant="secondary">Secondary</Badge>
+                <Badge variant="success">Success</Badge>
+                <Badge variant="warning">Warning</Badge>
+                <Badge variant="danger">Danger</Badge>
+              </div>
+            </div>
 
           </div>
         </div>

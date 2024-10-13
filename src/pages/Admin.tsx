@@ -1,39 +1,45 @@
-/// file_path=src/pages/Admin.tsx
 import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { ContentContainer } from '../components/ContentContainer';
 import { Menu } from '../components/admin/Menu';
 import { Outlet } from 'react-router-dom';
 import { useRootStore } from '../store/common/RootStoreContext';
-import { root } from 'postcss';
-
-// Add this style to your global CSS file or create a new CSS module
-const styles = `
-  .bg-dot-pattern {
-    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='2' cy='2' r='1' fill='%23D1D5DB' /%3E%3C/svg%3E");
-    background-color: #F3F4F6;
-  }
-`;
+import DynamicBackground, { setDynamicBackground } from '../components/DynamicBackground';
 
 const Admin: React.FC = observer(() => {
-
   const rootStore = useRootStore();
+
+  const backgroundProps = setDynamicBackground(
+    'https://cdn.midjourney.com/41d91483-76a4-41f1-add2-638ff6f552e8/0_0.png',
+    [
+      { color: 'rgba(255, 255, 255, 0.95)', position: '0%' },
+      { color: 'rgba(255, 255, 255, 0.8)', position: '8%' },
+      { color: 'rgba(255, 255, 255, 0)', position: '100%' },
+    ],
+    [
+      { color: '#CACACA', stop: '0%', opacity: 0.5 },
+      { color: '#878787', stop: '50%', opacity: 0.6 },
+      { color: '#202022', stop: '100%', opacity: 0.7 },
+    ],
+    'multiply'
+  );
 
   useEffect(() => {    
     if (rootStore.isInitialDataLoaded) {
       rootStore.fetchOnboardingStatus();
     }    
-  } , [rootStore.isInitialDataLoaded]);
-  
+  }, [rootStore.isInitialDataLoaded]);
 
   return (
-    <>
-      <style>{styles}</style>
-      <Menu />
-      <ContentContainer className="px-8 py-4 bg-dot-pattern">
-        <Outlet />
-      </ContentContainer>
-    </>
+    <div className="h-screen flex flex-col relative">
+      <DynamicBackground {...backgroundProps} />
+      <div className="relative z-10 flex flex-col h-full">
+        <Menu />
+        <ContentContainer className="px-14 py-10 flex-grow overflow-hidden">
+          <Outlet />
+        </ContentContainer>
+      </div>
+    </div>
   );
 });
 

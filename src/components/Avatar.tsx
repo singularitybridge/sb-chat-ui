@@ -15,7 +15,7 @@ const Avatar = ({
   avatarStyle: AvatarStyles;
   active?: boolean;
 }) => {
-  const bgColor = active ? 'bg-blue-200' : 'bg-gray-100';
+  const bgColor = active ? 'bg-blue-300' : 'bg-gray-300';
   
   return (
     <div className={`${avatarStyle} rounded-full ${bgColor} flex items-center justify-center hover:bg-blue-200`}>

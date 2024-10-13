@@ -1,7 +1,5 @@
-/// file_path /src/pages/admin/inbox/InboxPage.tsx
 import React, { useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
-import { withPage } from '../../../components/admin/HOC/withPage';
 import { emitter } from '../../../services/mittEmitter';
 import { EVENT_SHOW_ADD_USER_MODAL } from '../../../utils/eventNames';
 import { IInboxSession, IMessage } from '../../../store/models/Inbox';
@@ -11,6 +9,7 @@ import { InboxMessage } from './InboxMessage';
 import { SessionInfo } from './SessionInfo';
 import { addInboxResponse } from '../../../services/api/inboxService';
 import { useTranslation } from 'react-i18next';
+import AdminPageContainer from '../../../components/admin/AdminPageContainer';
 
 const DisplayMessages: React.FC<{ session: IInboxSession }> = ({ session }) => {
   return (
@@ -22,8 +21,9 @@ const DisplayMessages: React.FC<{ session: IInboxSession }> = ({ session }) => {
   );
 };
 
-const InboxView: React.FC = observer(() => {
+const InboxPage: React.FC = observer(() => {
   const rootStore = useRootStore();
+  const { t } = useTranslation();
 
   const [selectedSession, setSelectedSession] = useState<IInboxSession | null>(null);
   const [message, setMessage] = useState('');
@@ -40,7 +40,6 @@ const InboxView: React.FC = observer(() => {
     }
 
     try {
-      // Use the last message's ID as the inboxMessageId
       const lastMessageId = selectedSession.messages[selectedSession.messages.length - 1]._id;
       const response = await addInboxResponse(sessionId, message, lastMessageId);
       setMessage('');
@@ -60,10 +59,10 @@ const InboxView: React.FC = observer(() => {
     return () => dispose();
   }, [rootStore.inboxSessions]);
 
-  const { t } = useTranslation();
-
   return (
-    <>
+    <AdminPageContainer>
+      <h1 className="text-2xl font-semibold mb-2">{t('InboxPage.title')}</h1>
+      <p className="text-gray-600 mb-6">{t('InboxPage.description')}</p>
       <div className="flex w-full justify-center">
         <main className="flex w-full h-full">
           <section className="flex flex-col w-4/12 h-full overflow-y-scroll border-r-2 border-sky-100">
@@ -141,16 +140,8 @@ const InboxView: React.FC = observer(() => {
           </section>
         </main>
       </div>
-    </>
+    </AdminPageContainer>
   );
 });
-
-const InboxPage = withPage(
-  'InboxPage.title',
-  'InboxPage.description',
-  () => {
-    emitter.emit(EVENT_SHOW_ADD_USER_MODAL, 'Add User');
-  }
-)(InboxView);
 
 export { InboxPage };

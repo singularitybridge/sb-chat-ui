@@ -5,7 +5,6 @@ import { useRootStore } from '../../store/common/RootStoreContext';
 import { Table } from '../../components/sb-core-ui-kit/Table';
 import { toJS } from 'mobx';
 import { UserKeys, IUser } from '../../store/models/User';
-import { withPage } from '../../components/admin/HOC/withPage';
 import { convertToStringArray } from '../../utils/utils';
 import { PlayIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { IconButton } from '../../components/admin/IconButton';
@@ -14,10 +13,13 @@ import {
   EVENT_SHOW_ADD_USER_MODAL,
   EVENT_SHOW_NOTIFICATION,
 } from '../../utils/eventNames';
+import AdminPageContainer from '../../components/admin/AdminPageContainer';
+import { useTranslation } from 'react-i18next';
 
-const UsersView: React.FC = observer(() => {
+const UsersPage: React.FC = observer(() => {
   const rootStore = useRootStore();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const headers: UserKeys[] = ['name', 'nickname', 'email'];
   const handleDelete = (row: IUser) => {
@@ -48,7 +50,9 @@ const UsersView: React.FC = observer(() => {
   );
 
   return (
-    <>
+    <AdminPageContainer>
+      <h1 className="text-2xl font-semibold mb-2">{t('UsersPage.title')}</h1>
+      <p className="text-gray-600 mb-6">{t('UsersPage.description')}</p>
       <Table
         headers={convertToStringArray(headers)}
         data={toJS(rootStore.users)}
@@ -56,11 +60,8 @@ const UsersView: React.FC = observer(() => {
         onRowClick={(row: IUser) => navigate(`/admin/users/${row._id}`)}
         Actions={Actions}
       />
-    </>
+    </AdminPageContainer>
   );
 });
 
-const UsersPage = withPage('UsersPage.title', 'UsersPage.description', () => {
-  emitter.emit(EVENT_SHOW_ADD_USER_MODAL, 'Add User');
-})(UsersView);
 export { UsersPage };

@@ -3,13 +3,15 @@ import { SparklesIcon } from '@heroicons/react/24/solid';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { MessageWrapper } from './MessageWrapper';
+import { formatRelativeTime } from '../../../utils/dateUtils';
 
 interface AssistantMessageProps {
   text: string;
   assistantName: string;
+  createdAt: number;
 }
 
-const AssistantMessage: React.FC<AssistantMessageProps> = ({ text, assistantName }) => {
+const AssistantMessage: React.FC<AssistantMessageProps> = ({ text, assistantName, createdAt }) => {
   const PreComponent: React.FC<React.HTMLProps<HTMLPreElement>> = (props) => (
     <pre className='text-left' dir="ltr" {...props} />
   );
@@ -49,7 +51,13 @@ const AssistantMessage: React.FC<AssistantMessageProps> = ({ text, assistantName
   );
 
   return (
-    <MessageWrapper icon={<SparklesIcon className="w-5 h-5 text-gray-700" />} bgColor="" borderColor="bg-blue-100" role={assistantName}>
+    <MessageWrapper 
+      icon={<SparklesIcon className="w-5 h-5 text-gray-700" />} 
+      bgColor="" 
+      borderColor="bg-blue-100" 
+      role={assistantName}
+      dateText={formatRelativeTime(createdAt)}
+    >
       <ReactMarkdown 
         className="prose prose-sm max-w-none break-words rtl:text-right ltr:text-left"
         remarkPlugins={[remarkGfm]}        
