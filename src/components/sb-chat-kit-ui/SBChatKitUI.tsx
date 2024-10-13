@@ -88,7 +88,7 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
       style={{
         ...style,
       }}
-      className={`p-2 flex flex-col ${className} h-full w-full`}
+      className={`p-2 flex flex-col ${className} h-full w-full space-y-2`}
     >
       {messages.length === 0 && assistant ? (
         <DefaultChatView assistant={assistant} />
