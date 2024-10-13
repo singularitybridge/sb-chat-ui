@@ -4,7 +4,6 @@ import { useParams } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { useRootStore } from '../../store/common/RootStoreContext';
 import { IAssistant } from '../../store/models/Assistant';
-import { withPage } from '../../components/admin/HOC/withPage';
 import {
   DynamicForm,
   FieldConfig,
@@ -27,6 +26,7 @@ import { useTranslation } from 'react-i18next';
 import AvatarSelector from '../../components/AvatarSelector';
 import { emitter } from '../../services/mittEmitter';
 import { EVENT_SHOW_EDIT_ASSISTANT_ACTIONS_MODAL } from '../../utils/eventNames';
+import AdminPageContainer from '../../components/admin/AdminPageContainer';
 
 interface UploadedFile {
   fileId: string;
@@ -34,7 +34,7 @@ interface UploadedFile {
   filename: string;
 }
 
-const EditAssistantView: React.FC = observer(() => {
+const EditAssistantPage: React.FC = observer(() => {
   const { t, i18n } = useTranslation();
   const { key } = useParams<{ key: string }>();
   const rootStore = useRootStore();
@@ -166,76 +166,74 @@ const EditAssistantView: React.FC = observer(() => {
   };
 
   return (
-    <div className="flex w-full space-x-12 rtl:space-x-reverse">
-      <div className="w-1/2">
-        <DynamicForm
-          formContext="assistantFieldConfigs"
-          fields={formFields}
-          onSubmit={handleSubmit}
-          isLoading={isLoading}
-          formType="update"
-        />
-        <div className="mt-4">
-          <Button onClick={showActionsModal}>
-            {t('EditAssistantPage.editAllowedActions')}
-          </Button>
-        </div>
-      </div>
-      <div className="w-1/2">
-        <div className="mb-6">
-          <TextComponent text={t('EditAssistantPage.selectAvatar')} size="normal" className="mb-4" />
-          <AvatarSelector
-            selectedAvatarId={selectedAvatarId}
-            onSelectAvatar={setSelectedAvatarId}
+    <AdminPageContainer>
+      <h1 className="text-2xl font-semibold mb-2">{t('EditAssistantPage.title')}</h1>
+      <p className="text-gray-600 mb-6">{t('EditAssistantPage.description')}</p>
+      <div className="flex flex-col lg:flex-row space-y-6 lg:space-y-0 lg:space-x-12 rtl:space-x-reverse">
+        <div className="w-full lg:w-1/2">
+          <DynamicForm
+            formContext="assistantFieldConfigs"
+            fields={formFields}
+            onSubmit={handleSubmit}
+            isLoading={isLoading}
+            formType="update"
           />
-        </div>
-        <div className="mb-6">
-          <TextComponent text={t('EditAssistantPage.uploadFile')} size="subtitle" className="mb-4" />
-          <FileUpload
-            onFileUpload={handleFileUpload}
-            isUploading={isUploading}
-          />
-        </div>
-        {uploadedFiles.length > 0 && (
-          <div>
-            <TextComponent
-              text={t('EditAssistantPage.uploadedFiles')}
-              size="normal"
-              className="mb-2"
-            />
-            <ul>
-              {uploadedFiles.map((file) => (
-                <li
-                  key={file.fileId}
-                  className="flex justify-between items-center text-sm text-gray-600 mb-2"
-                >
-                  <div className="flex gap-2">
-                    <FileText size={16} className="text-slate-500 mt-1" />
-                    <TextComponent
-                      text={file.filename}
-                      size="small"
-                      color="secondary"
-                    />
-                  </div>
-                  <IconButton
-                    icon={<TrashIcon size={16} />}
-                    onClick={() => handleFileDelete(file.fileId)}
-                    className="text-gray-400 hover:text-red-400 transition duration-100"
-                  />
-                </li>
-              ))}
-            </ul>
+          <div className="mt-4">
+            <Button onClick={showActionsModal}>
+              {t('EditAssistantPage.editAllowedActions')}
+            </Button>
           </div>
-        )}
+        </div>
+        <div className="w-full lg:w-1/2">
+          <div className="mb-6">
+            <TextComponent text={t('EditAssistantPage.selectAvatar')} size="subtitle" className="mb-4" />
+            <AvatarSelector
+              selectedAvatarId={selectedAvatarId}
+              onSelectAvatar={setSelectedAvatarId}
+            />
+          </div>
+          <div className="mb-6">
+            <TextComponent text={t('EditAssistantPage.uploadFile')} size="subtitle" className="mb-4" />
+            <FileUpload
+              onFileUpload={handleFileUpload}
+              isUploading={isUploading}
+            />
+          </div>
+          {uploadedFiles.length > 0 && (
+            <div>
+              <TextComponent
+                text={t('EditAssistantPage.uploadedFiles')}
+                size="subtitle"
+                className="mb-2"
+              />
+              <ul className="bg-white rounded-lg shadow p-4">
+                {uploadedFiles.map((file) => (
+                  <li
+                    key={file.fileId}
+                    className="flex justify-between items-center text-sm text-gray-600 mb-2 p-2 hover:bg-gray-50"
+                  >
+                    <div className="flex gap-2 items-center">
+                      <FileText size={16} className="text-slate-500" />
+                      <TextComponent
+                        text={file.filename}
+                        size="small"
+                        color="secondary"
+                      />
+                    </div>
+                    <IconButton
+                      icon={<TrashIcon size={16} />}
+                      onClick={() => handleFileDelete(file.fileId)}
+                      className="text-gray-400 hover:text-red-400 transition duration-100"
+                    />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </AdminPageContainer>
   );
 });
 
-const EditAssistantPage = withPage(
-  'EditAssistantPage.title',
-  'EditAssistantPage.description',
-  () => {}
-)(EditAssistantView);
-
-export { EditAssistantPage, EditAssistantView };
+export { EditAssistantPage };

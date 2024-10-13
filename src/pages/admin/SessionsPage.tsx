@@ -4,17 +4,19 @@ import { observer } from 'mobx-react-lite';
 import { useRootStore } from '../../store/common/RootStoreContext';
 import { Table } from '../../components/sb-core-ui-kit/Table';
 import { toJS } from 'mobx';
-import { withPage } from '../../components/admin/HOC/withPage';
 import { convertToStringArray } from '../../utils/utils';
 import { PlayIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { IconButton } from '../../components/admin/IconButton';
 import { SessionKeys, ISession } from '../../store/models/Session';
 import { EVENT_SHOW_NOTIFICATION } from '../../utils/eventNames';
 import { emitter } from '../../services/mittEmitter';
+import AdminPageContainer from '../../components/admin/AdminPageContainer';
+import { useTranslation } from 'react-i18next';
 
-const SessionsView: React.FC = observer(() => {
+const SessionsPage: React.FC = observer(() => {
   const rootStore = useRootStore();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const headers: SessionKeys[] = [
     '_id',
@@ -51,11 +53,12 @@ const SessionsView: React.FC = observer(() => {
         }}
       />
     </div>
-
   );
 
   return (
-    <>
+    <AdminPageContainer>
+      <h1 className="text-2xl font-semibold mb-2">{t('SessionsPage.title')}</h1>
+      <p className="text-gray-600 mb-6">{t('SessionsPage.description')}</p>
       <Table
         headers={convertToStringArray(headers)}
         data={[]}
@@ -63,15 +66,8 @@ const SessionsView: React.FC = observer(() => {
         onRowClick={(row: ISession) => navigate(`/admin/sessions/${row._id}`)}
         Actions={Actions}
       />
-    </>
+    </AdminPageContainer>
   );
 });
 
-const SessionsPage = withPage(
-  'SessionsPage.title',
-  'SessionsPage.description',
-  () => {
-    // emitter.emit(EVENT_SHOW_ADD_SESSION_MODAL, 'Add Session');
-  }
-)(SessionsView);
 export { SessionsPage };

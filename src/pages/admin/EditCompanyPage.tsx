@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { useRootStore } from '../../store/common/RootStoreContext';
 import { ICompany } from '../../store/models/Company';
-import { withPage } from '../../components/admin/HOC/withPage';
 import {
   DynamicForm,
   FieldConfig,
@@ -12,8 +11,10 @@ import {
 import { toJS } from 'mobx';
 import { companyFieldConfigs } from '../../store/fieldConfigs/companyFieldConfigs';
 import { useTranslation } from 'react-i18next';
+import AdminPageContainer from '../../components/admin/AdminPageContainer';
+import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
 
-const EditCompanyView: React.FC = observer(() => {
+const EditCompanyPage: React.FC = observer(() => {
   const { id } = useParams<{ id: string }>();
   const rootStore = useRootStore();
   const [company, setCompany] = useState<ICompany | null>(null);
@@ -33,11 +34,19 @@ const EditCompanyView: React.FC = observer(() => {
   }, [id, rootStore, rootStore.companiesLoaded]);
 
   if (isLoading) {
-    return <div>{t('common.pleaseWait')}</div>;
+    return (
+      <AdminPageContainer>
+        <TextComponent text={t('common.pleaseWait')} size="medium" />
+      </AdminPageContainer>
+    );
   }
 
   if (!company) {
-    return <div>Company not found</div>;
+    return (
+      <AdminPageContainer>
+        <TextComponent text="Company not found" size="medium" />
+      </AdminPageContainer>
+    );
   }
 
   const formFields: FieldConfig[] = companyFieldConfigs.map((config) => {
@@ -81,8 +90,10 @@ const EditCompanyView: React.FC = observer(() => {
   };
 
   return (
-    <>
-      <div className="flex w-full">
+    <AdminPageContainer>
+      <h1 className="text-2xl font-semibold mb-2">{t('EditCompanyPage.title')}</h1>
+      <p className="text-gray-600 mb-6">{t('EditCompanyPage.description')}</p>
+      <div className="flex w-full space-x-12 rtl:space-x-reverse">
         <div className="w-1/2">
           <DynamicForm
             fields={formFields}
@@ -93,18 +104,12 @@ const EditCompanyView: React.FC = observer(() => {
             formType="update"
           />
         </div>
-        <div className="w-1/2"></div>
+        <div className="w-1/2">
+          {/* Additional content can be added here if needed */}
+        </div>
       </div>
-    </>
+    </AdminPageContainer>
   );
 });
 
-const EditCompanyPage = withPage(
-  'EditCompanyPage.title',
-  'EditCompanyPage.description',
-  () => {
-    console.log('edit company');
-  }
-)(EditCompanyView);
-
-export { EditCompanyPage, EditCompanyView };
+export { EditCompanyPage };

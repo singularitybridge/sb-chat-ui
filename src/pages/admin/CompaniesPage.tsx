@@ -4,7 +4,6 @@ import { observer } from 'mobx-react-lite';
 import { useRootStore } from '../../store/common/RootStoreContext';
 import { Table } from '../../components/sb-core-ui-kit/Table';
 import { toJS } from 'mobx';
-import { withPage } from '../../components/admin/HOC/withPage';
 import { convertToStringArray } from '../../utils/utils';
 import { PlayIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { IconButton } from '../../components/admin/IconButton';
@@ -15,8 +14,9 @@ import {
 } from '../../utils/eventNames';
 import { CompanyKeys, ICompany } from '../../store/models/Company';
 import { useTranslation } from 'react-i18next';
+import AdminPageContainer from '../../components/admin/AdminPageContainer';
 
-const CompaniesView: React.FC = observer(() => {
+const CompaniesPage: React.FC = observer(() => {
   const rootStore = useRootStore();
   const navigate = useNavigate();
 
@@ -55,7 +55,9 @@ const CompaniesView: React.FC = observer(() => {
   );
 
   return (
-    <>
+    <AdminPageContainer>
+      <h1 className="text-2xl font-semibold mb-2">{t('CompaniesPage.title')}</h1>
+      <p className="text-gray-600 mb-6">{t('CompaniesPage.description')}</p>
       <Table
         headers={convertToStringArray(headers)}
         data={toJS(rootStore.companies).map(company => ({
@@ -67,15 +69,8 @@ const CompaniesView: React.FC = observer(() => {
         onRowClick={(row: ICompany) => navigate(`/admin/companies/${row._id}`)}
         Actions={Actions}
       />
-    </>
+    </AdminPageContainer>
   );
 });
 
-const CompaniesPage = withPage(
-  'CompaniesPage.title',
-  'CompaniesPage.description',
-  () => {
-    emitter.emit(EVENT_SHOW_ADD_COMPANY_MODAL, 'Add Company');
-  }
-)(CompaniesView);
 export { CompaniesPage };
