@@ -49,17 +49,17 @@ const AssistantsPage: React.FC = observer(() => {
   };
 
   return (
-    <div className="flex h-[calc(100vh-96px)] space-x-4 rtl:space-x-reverse">
-      <div className="p-3 flex flex-col rounded-lg w-1/3">
-        <div className="flex flex-row justify-between items-center w-full mb-6 px-2 py-1">
+    <div className="flex h-full space-x-7 rtl:space-x-reverse">
+      <div className="flex flex-col rounded-lg w-1/3">
+        <div className="flex flex-row justify-between items-center w-full mb-8">
           <TextComponent text={t('AssistantsPage.title')} size="subtitle" />
           <IconButton
-            icon={<Plus className="w-6 h-6 text-gray-600" />}
+            icon={<Plus className="w-7 h-7 text-gray-600" />}
             onClick={handleAddAssistant}
           />
         </div>
 
-        <ul className="space-y-4 flex-grow overflow-y-auto h-[calc(100%-3rem)] pr-2 rtl:pl-2 rtl:pr-0">
+        <ul className="space-y-6 flex-grow overflow-y-auto pr-4 rtl:pl-4 rtl:pr-0">
           {rootStore.assistants.map((assistant) => {
             const isActive =
               rootStore.sessionStore.activeSession?.assistantId ===
@@ -70,7 +70,7 @@ const AssistantsPage: React.FC = observer(() => {
             return (
               <li
                 key={assistant._id}
-                className={`group rounded-lg p-3 cursor-pointer hover:bg-blue-200 relative ${
+                className={`group rounded-lg p-4 cursor-pointer hover:bg-blue-200 relative ${
                   isActive
                     ? 'bg-blue-200 bg-opacity-80 '
                     : 'bg-slate-50 bg-opacity-80'
@@ -79,8 +79,8 @@ const AssistantsPage: React.FC = observer(() => {
                 onMouseEnter={() => setHoveredAssistantId(assistant._id)}
                 onMouseLeave={() => setHoveredAssistantId(null)}
               >
-                <div className="flex flex-col space-y-1.5">
-                  <div className="flex items-start space-x-3 rtl:space-x-reverse">
+                <div className="flex flex-col space-y-2.5">
+                  <div className="flex items-start space-x-4 rtl:space-x-reverse">
                     <div className="flex-shrink-0">
                       <Avatar
                         imageUrl={`/assets/avatars/${assistant.avatarImage}.png`}
@@ -88,12 +88,12 @@ const AssistantsPage: React.FC = observer(() => {
                         active={isActive}
                       />
                     </div>
-                    <div className="flex-grow min-w-0 flex flex-col space-y-1">
+                    <div className="flex-grow min-w-0 flex flex-col space-y-2">
                       <div className="flex justify-between items-center">
-                        <h4 className="font-bold text-sm truncate text-right rtl:text-left">
+                        <h4 className="font-bold text-base truncate text-right rtl:text-left">
                           {assistant.name}
                         </h4>
-                        <div className="flex items-center space-x-1.5 rtl:space-x-reverse">
+                        <div className="flex items-center space-x-2 rtl:space-x-reverse">
                           <AnimatePresence>
                             {hoveredAssistantId === assistant._id && (
                               <motion.div
@@ -101,21 +101,21 @@ const AssistantsPage: React.FC = observer(() => {
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: -10 }}
                                 transition={{ duration: 0.2 }}
-                                className="flex space-x-1.5 rtl:space-x-reverse"
+                                className="flex space-x-2 rtl:space-x-reverse"
                               >
                                 <IconButton
                                   icon={
-                                    <Settings className="w-3 h-3 text-gray-500" />
+                                    <Settings className="w-4 h-4 text-gray-500" />
                                   }
-                                  className="p-1 rounded-full hover:bg-gray-300 bg-white"
+                                  className="p-1.5 rounded-full hover:bg-gray-300 bg-white"
                                   onClick={(event) => {
                                     event.stopPropagation();
                                     handleEditAssistant(assistant._id);
                                   }}
                                 />
                                 <IconButton
-                                  icon={<X className="w-3 h-3 text-gray-500" />}
-                                  className="p-1 rounded-full hover:bg-gray-300 bg-white"
+                                  icon={<X className="w-4 h-4 text-gray-500" />}
+                                  className="p-1.5 rounded-full hover:bg-gray-300 bg-white"
                                   onClick={(event) => {
                                     event.stopPropagation();
                                     handleDelete(assistant);
@@ -126,7 +126,7 @@ const AssistantsPage: React.FC = observer(() => {
                           </AnimatePresence>
                           <Badge
                             variant="success"
-                            className="text-xs whitespace-nowrap"
+                            className="text-sm whitespace-nowrap"
                           >
                             {assistant.llmModel}
                           </Badge>
@@ -137,7 +137,7 @@ const AssistantsPage: React.FC = observer(() => {
                       </p>
                     </div>
                   </div>
-                  <div className="w-full rounded-xl p-1.5">
+                  <div className="w-full rounded-xl p-2">
                     <IntegrationIcons 
                       integrations={integrationNames} 
                       isActive={isActive}
@@ -150,7 +150,7 @@ const AssistantsPage: React.FC = observer(() => {
           })}
         </ul>
       </div>
-      <div className="flex-grow overflow-y-auto w-2/3">
+      <div className="flex-grow w-2/3">
         <ChatContainer />
       </div>
     </div>

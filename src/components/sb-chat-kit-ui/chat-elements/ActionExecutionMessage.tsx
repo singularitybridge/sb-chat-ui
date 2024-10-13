@@ -64,13 +64,13 @@ const ActionExecutionMessage: React.FC<ActionExecutionMessageProps> = ({
   const getStatusStyle = (status: string) => {
     switch (status.toLowerCase()) {
       case 'completed':
-        return 'bg-green-50 border-green-200';
+        return 'bg-green-50';
       case 'failed':
-        return 'bg-red-50 border-red-200';
+        return 'bg-red-50';
       case 'started':
-        return 'bg-blue-50 border-blue-200';
+        return 'bg-blue-50';
       default:
-        return 'bg-gray-50 border-gray-200';
+        return 'bg-gray-50';
     }
   };
 

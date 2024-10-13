@@ -31,14 +31,14 @@ export const Menu = observer(() => {
 
   return (
     <nav
-      className="flex-no-wrap relative flex w-full items-center justify-between py-3 px-8 bg-transparent"
+      className="flex-no-wrap relative flex w-full items-center justify-between pt-8 pb-3 px-14 bg-transparent"
       data-te-navbar-ref
     >
-      <div className="flex w-full flex-wrap items-center justify-between ">
-        <div className="flex items-center rtl:space-x-reverse space-x-8 px-3 py-1.5 rounded-2xl">
+      <div className="flex w-full flex-wrap items-center justify-between">
+        <div className="flex items-center rtl:space-x-reverse space-x-8 py-2 rounded-2xl">
           <Link to="/admin" className="bg-transparent">
             <TextComponent
-              size="subtitle"
+              size="title"
               color="normal"
               className='text-violet-800 font-medium bg-transparent'
               text={t('common.appName')}
@@ -46,7 +46,7 @@ export const Menu = observer(() => {
           </Link>
 
           <ul
-            className="list-style-none flex flex-row bg-transparent"
+            className="list-style-none flex flex-row bg-transparent space-x-1"
             data-te-navbar-nav-ref
           >
             {menuItems.map((item) => {
@@ -56,7 +56,7 @@ export const Menu = observer(() => {
                 isActive
                   ? 'text-gray-700 hover:text-neutral-700 focus:text-neutral-700'
                   : 'text-neutral-400 hover:text-neutral-600 focus:text-neutral-600'
-              } disabled:text-black/30 dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 px-3 bg-transparent`;
+              } disabled:text-black/30 dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 px-3 py-2 bg-transparent`;
 
               return (
                 <li className="bg-transparent" data-te-nav-item-ref key={item.name}>
@@ -73,7 +73,7 @@ export const Menu = observer(() => {
           </ul>
         </div>
 
-        <div className="flex items-center space-x-2.5 rtl:space-x-reverse">
+        <div className="flex items-center space-x-4 rtl:space-x-reverse">
           <SessionView />
           <LanguageToggle />
           <ShowOnboardingButton />

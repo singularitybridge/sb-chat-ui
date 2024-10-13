@@ -31,11 +31,11 @@ const Admin: React.FC = observer(() => {
   }, [rootStore.isInitialDataLoaded]);
 
   return (
-    <div className="min-h-screen relative">
+    <div className="h-screen flex flex-col relative">
       <DynamicBackground {...backgroundProps} />
-      <div className="relative z-10">
+      <div className="relative z-10 flex flex-col h-full">
         <Menu />
-        <ContentContainer className="px-8 py-4">
+        <ContentContainer className="px-14 py-10 flex-grow overflow-hidden">
           <Outlet />
         </ContentContainer>
       </div>
