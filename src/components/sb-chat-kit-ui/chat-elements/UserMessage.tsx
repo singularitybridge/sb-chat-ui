@@ -17,7 +17,7 @@ const UserMessage: React.FC<UserMessageProps> = ({ text, createdAt }) => {
       role="Human"
       dateText={formatRelativeTime(createdAt)}
     >
-      {text}
+      <div className="whitespace-pre-wrap">{text}</div>
     </MessageWrapper>
   );
 };
