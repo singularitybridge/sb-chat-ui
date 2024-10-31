@@ -7,8 +7,7 @@ import { NotificationMessage } from './chat-elements/NotificationMessage';
 import { ActionMessage } from './chat-elements/ActionMessage';
 import { ChatInput } from './chat-elements/ChatInput';
 import { DefaultChatView } from './chat-elements/DefaultChatView';
-import { dotWave, leapfrog } from 'ldrs';
-import { Avatar, AvatarStyles } from '../Avatar';
+import { dotWave } from 'ldrs';
 import { ActionExecutionMessage } from './chat-elements/ActionExecutionMessage';
 
 interface Metadata {
