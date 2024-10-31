@@ -176,8 +176,6 @@ const ChatContainer = observer(() => {
   const handleClear = async () => {
     if (activeSession && assistant) {
       try {
-        // Store the current assistant locally
-        const currentAssistant = assistant;
 
         // Clear the session
         await rootStore.sessionStore.endActiveSession();
