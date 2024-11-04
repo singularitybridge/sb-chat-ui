@@ -28,15 +28,15 @@ export const companyFieldConfigs: FieldConfig[] = [
         value: '-',
       },
       {
-        key: 'gcp_key',
-        value: '-',
-      },
-      {
-        key: 'notion_api_key',
-        value: '-',
-      },
-      {
         key: 'labs11_api_key',
+        value: '-',
+      },
+      {
+        key: 'google_api_key',
+        value: '-',
+      },
+      {
+        key: 'twilio_api_key',
         value: '-',
       },
       {
@@ -44,13 +44,37 @@ export const companyFieldConfigs: FieldConfig[] = [
         value: '-',
       },
       {
-        key: 'twilio_account_sid',
+        key: 'getimg_api_key',
         value: '-',
       },
       {
-        key: 'twilio_auth_token',
+        key: 'perplexity_api_key',
         value: '-',
       },
+      {
+        key: 'sendgrid_api_key',
+        value: '-',
+      },
+      {
+        key: 'photoroom_api_key',
+        value: '-',
+      },
+      {
+        key: 'telegram_bot_api_key',
+        value: '-',
+      },
+      {
+        key: 'linear_api_key',
+        value: '-',
+      },
+      {
+        key: 'executor_agent_url',
+        value: '-',
+      },
+      {
+        key: 'executor_agent_token',
+        value: '-',
+      }
     ],
     visibility: { create: true, view: true, update: true },
   },
