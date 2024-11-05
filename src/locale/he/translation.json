@@ -265,7 +265,11 @@
     "defaultLlmPrompt": "אתה משוחח עם עוזר בינה מלאכותית. העוזר מועיל, יצירתי, חכם וידידותי מאוד.",
     "save" : "שמור שינויים",
     "allowedActions": "פעולות מורשות",
-    "allowedActions_description": "תיאור הפעולות המורשות"
+    "allowedActions_description": "תיאור הפעולות המורשות",
+    "identifiers" : {
+      "title": "מתחילי שיחה",
+      "description": "מתחילי שיחה משמשים להתחלת שיחה עם העוזר"
+    }
   }, 
   "dialogTitles" : {
     "newAssistant": "צור עוזר חדש",

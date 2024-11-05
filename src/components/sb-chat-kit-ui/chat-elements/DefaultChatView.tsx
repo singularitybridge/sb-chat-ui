@@ -42,7 +42,7 @@ const DefaultChatView: React.FC<DefaultChatViewProps> = ({ assistant, onSendMess
         />
       </div>
 
-      <div className="flex flex-col space-y-2 w-full max-w-md">
+      <div className="flex flex-col space-y-2.5 w-full max-w-md">
         {assistant.conversationStarters?.map((starter, index) => (
           <Button
             key={index}
