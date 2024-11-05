@@ -3,18 +3,30 @@ import Button from '../../sb-core-ui-kit/Button';
 import { TextComponent } from '../../sb-core-ui-kit/TextComponent';
 import { Avatar, AvatarStyles } from '../../Avatar';
 
+interface ConversationStarter {
+  key: string;
+  value: string;
+}
+
 interface DefaultChatViewProps {
   assistant: {
     name: string;
     description: string;
     avatar: string;
+    conversationStarters?: ConversationStarter[];
   };
+  onSendMessage?: (message: string) => void;
 }
 
-const DefaultChatView: React.FC<DefaultChatViewProps> = ({ assistant }) => {
+const DefaultChatView: React.FC<DefaultChatViewProps> = ({ assistant, onSendMessage }) => {
+  const handleStarterClick = (starter: ConversationStarter) => {
+    if (onSendMessage) {
+      onSendMessage(starter.value);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center justify-center h-full text-center">
-
       <Avatar
         avatarStyle={AvatarStyles.large}
         imageUrl={`/assets/avatars/${assistant.avatar}.png`}
@@ -30,23 +42,17 @@ const DefaultChatView: React.FC<DefaultChatViewProps> = ({ assistant }) => {
         />
       </div>
 
-      <div className="flex flex-row space-x-4 rtl:space-x-reverse">
-        <Button
-          onClick={() => {
-            // TODO: Implement start chat functionality
-          }}
-          variant="secondary"
-        >
-          התחל שיחה
-        </Button>
-        <Button
-          onClick={() => {
-            // TODO: Implement ask question functionality
-          }}
-          variant="secondary"
-        >
-          שאל שאלה
-        </Button>
+      <div className="flex flex-col space-y-2 w-full max-w-md">
+        {assistant.conversationStarters?.map((starter, index) => (
+          <Button
+            key={index}
+            onClick={() => handleStarterClick(starter)}
+            variant="secondary"
+            additionalClassName="text-left rtl:text-right"
+          >
+            {starter.key}
+          </Button>
+        ))}
       </div>
     </div>
   );

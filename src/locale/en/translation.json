@@ -201,7 +201,17 @@
     "editAllowedActions": "Edit Allowed Actions"
   },
   "ChatContainer": {
-    "input": "Type your message"
+    "input": "Type your message",
+    "defaultStarters": {
+      "startChat": {
+        "key": "Start Chat",
+        "value": "Hi, I would like to start a conversation."
+      },
+      "askQuestion": {
+        "key": "Ask Question",
+        "value": "I have a question I would like to ask."
+      }
+    }
   },
   "Notifications": {    
     "agentCreated": "Agent has been created successfully",
