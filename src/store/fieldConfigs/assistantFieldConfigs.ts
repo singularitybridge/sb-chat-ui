@@ -120,14 +120,6 @@ export const getAssistantFieldConfigs = async (language: string = 'en'): Promise
       visibility: { create: true, view: true, update: true },
     },
     {
-      id: 'introMessage',
-      key: 'introMessage',
-      label: 'Intro Message',
-      type: 'input',
-      value: 'Hello! How can I help you today?',
-      visibility: { create: true, view: true, update: true },
-    },
-    {
       id: 'voice',
       key: 'voice',
       label: 'Voice',
@@ -175,6 +167,14 @@ export const getAssistantFieldConfigs = async (language: string = 'en'): Promise
       },
       visibility: { create: true, view: true, update: true },
     },
+    {
+      id: 'conversationStarters',
+      key: 'conversationStarters',
+      label: 'Conversation Starters',
+      type: 'key-value-list',
+      value: [],
+      visibility: { create: true, view: true, update: true },
+    },
   ];
 };
 
@@ -183,7 +183,57 @@ export const getAssistantFieldConfigs = async (language: string = 'en'): Promise
  * This can be used as a fallback when async loading is not possible or during initial renders.
  */
 export const defaultAssistantFieldConfigs: FieldConfig[] = [
-  // ... (copy all fields from getAssistantFieldConfigs except 'allowedActions')
+  {
+    id: 'name',
+    label: 'Name',
+    key: 'name',
+    type: 'input',
+    value: 'New Assistant',
+    visibility: { create: true, view: true, update: true },
+  },
+  {
+    id: 'description',
+    key: 'description',
+    label: 'Description',
+    type: 'textarea',
+    value: 'This is a new assistant.',
+    visibility: { create: true, view: true, update: true },
+  },
+  {
+    id: 'voice',
+    key: 'voice',
+    label: 'Voice',
+    type: 'dropdown',
+    value: 'alloy',
+    options: voiceOptions,
+    visibility: { create: true, view: true, update: true },
+  },
+  {
+    id: 'language',
+    key: 'language',
+    label: 'Language',
+    type: 'dropdown',
+    value: 'en',
+    options: languageOptions,
+    visibility: { create: true, view: true, update: true },
+  },
+  {
+    id: 'llmModel',
+    key: 'llmModel',
+    label: 'LLM Model',
+    type: 'dropdown',
+    value: 'gpt-4o-mini',
+    options: llmModelOptions,
+    visibility: { create: true, view: true, update: true },
+  },
+  {
+    id: 'llmPrompt',
+    key: 'llmPrompt',
+    label: 'LLM Prompt',
+    type: 'textarea',
+    value: 'This is a new assistant.',
+    visibility: { create: true, view: true, update: true },
+  },
   {
     id: 'allowedActions',
     key: 'allowedActions',
@@ -195,6 +245,14 @@ export const defaultAssistantFieldConfigs: FieldConfig[] = [
       availableTags: [],
       selectedTags: [],
     },
+    visibility: { create: true, view: true, update: true },
+  },
+  {
+    id: 'conversationStarters',
+    key: 'conversationStarters',
+    label: 'Conversation Starters',
+    type: 'key-value-list',
+    value: [],
     visibility: { create: true, view: true, update: true },
   },
 ];

@@ -15,7 +15,6 @@ const Assistant = types.model('Assistant', {
   _id: types.identifier,  
   name: types.string,
   description: types.string,
-  introMessage: types.string,
   companyId: types.string,
   voice: types.string,
   language: types.string,  
@@ -23,6 +22,7 @@ const Assistant = types.model('Assistant', {
   llmPrompt: types.optional(types.string, ''),
   avatarImage: types.optional(types.string, ''),
   allowedActions: types.optional(types.array(types.string), []),
+  conversationStarters: types.optional(types.array(Identifier), []),
 });
 
 type IAssistant = Instance<typeof Assistant>;
