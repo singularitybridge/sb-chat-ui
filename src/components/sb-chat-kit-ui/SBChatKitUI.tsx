@@ -25,7 +25,7 @@ interface ChatMessage {
   role: string;
   metadata?: Metadata;
   actions?: Action[];
-  createdAt: number; // Add this line
+  createdAt: number;
 }
 
 type AudioState = 'disabled' | 'enabled' | 'playing';
@@ -36,6 +36,7 @@ interface SBChatKitUIProps {
     name: string;
     description: string;
     avatar: string;
+    conversationStarters?: Array<{ key: string; value: string }>;
   };
   assistantName: string;
   onSendMessage: (message: string) => void;
@@ -91,7 +92,7 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
       className={`p-2 flex flex-col ${className} h-full w-full space-y-2`}
     >
       {messages.length === 0 && assistant ? (
-        <DefaultChatView assistant={assistant} />
+        <DefaultChatView assistant={assistant} onSendMessage={onSendMessage} />
       ) : (
         <>
           <Header
@@ -146,7 +147,7 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
                     key={index}
                     text={message.content}
                     assistantName={assistantName}
-                    createdAt={message.createdAt} // Add this line
+                    createdAt={message.createdAt}
                   />
                 );
               } else {
@@ -154,7 +155,7 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
                   <UserMessage
                     key={index}
                     text={message.content}
-                    createdAt={message.createdAt} // Add this line
+                    createdAt={message.createdAt}
                   />
                 );
               }
@@ -167,9 +168,9 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
 
             <div ref={messagesEndRef} />
           </div>
+          <ChatInput onSendMessage={onSendMessage} />
         </>
       )}
-      <ChatInput onSendMessage={onSendMessage} />
     </div>
   );
 };

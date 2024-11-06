@@ -27,11 +27,11 @@ const AssistantMessage: React.FC<AssistantMessageProps> = ({ text, assistantName
   );
 
   const ThComponent: React.FC<React.HTMLProps<HTMLTableHeaderCellElement>> = (props) => (
-    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider" {...props} />
+    <th className="px-4 py-2 rtl:text-right ltr:text-left text-sm font-semibold text-gray-700 uppercase tracking-wider" {...props} />
   );
 
   const TdComponent: React.FC<React.HTMLProps<HTMLTableDataCellElement>> = (props) => (
-    <td className="px-4 py-2 text-sm text-gray-900 border-t border-gray-200" {...props} />
+    <td className="px-4 py-2 rtl:text-right ltr:text-left text-sm text-gray-900 border-t border-gray-200" {...props} />
   );
 
   const TrComponent: React.FC<React.HTMLProps<HTMLTableRowElement>> = (props) => (

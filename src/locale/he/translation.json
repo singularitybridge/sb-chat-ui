@@ -56,6 +56,12 @@
     "actions": "פעולות",
     "undefined": ""
   },
+  "Dialog": {
+    "title": "",
+    "content": "This action cannot be undone",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
   "CompaniesPage": {
     "title": "חברות",
     "description": "רשימת חברות",
@@ -216,7 +222,17 @@
     "editAllowedActions": "ערוך פעולות מורשות"
   },
   "ChatContainer": {
-    "input": "הקלד את הודעתך כאן"
+    "input": "הקלד את הודעתך כאן",
+    "defaultStarters": {
+      "startChat": {
+        "key": "התחל שיחה",
+        "value": "היי, אני רוצה להתחיל שיחה."
+      },
+      "askQuestion": {
+        "key": "שאל שאלה",
+        "value": "יש לי שאלה שאני רוצה לשאול."
+      }
+    }
   },
   "Notifications": {
     "agentCreated": "הסוכן נוצר בהצלחה",
@@ -249,7 +265,11 @@
     "defaultLlmPrompt": "אתה משוחח עם עוזר בינה מלאכותית. העוזר מועיל, יצירתי, חכם וידידותי מאוד.",
     "save" : "שמור שינויים",
     "allowedActions": "פעולות מורשות",
-    "allowedActions_description": "תיאור הפעולות המורשות"
+    "allowedActions_description": "תיאור הפעולות המורשות",
+    "identifiers" : {
+      "title": "מתחילי שיחה",
+      "description": "מתחילי שיחה משמשים להתחלת שיחה עם העוזר"
+    }
   }, 
   "dialogTitles" : {
     "newAssistant": "צור עוזר חדש",

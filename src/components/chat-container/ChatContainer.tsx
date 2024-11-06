@@ -27,7 +27,7 @@ interface ChatMessage {
   role: string;
   metadata?: Metadata;
   assistantName?: string;
-  createdAt: number; // Add this line
+  createdAt: number;
 }
 
 interface ActionExecutionMessage {
@@ -46,6 +46,17 @@ const removeRAGCitations = (text: string): string => {
 };
 
 type AudioState = 'disabled' | 'enabled' | 'playing';
+
+const getDefaultConversationStarters = () => [
+  {
+    key: i18n.t('ChatContainer.defaultStarters.startChat.key'),
+    value: i18n.t('ChatContainer.defaultStarters.startChat.value')
+  },
+  {
+    key: i18n.t('ChatContainer.defaultStarters.askQuestion.key'),
+    value: i18n.t('ChatContainer.defaultStarters.askQuestion.value')
+  }
+];
 
 const ChatContainer = observer(() => {
   const rootStore = useRootStore();
@@ -99,7 +110,7 @@ const ChatContainer = observer(() => {
     role: message.role,
     metadata: message.metadata,
     assistantName: message.assistantName,
-    createdAt: message.created_at, // Add this line
+    createdAt: message.created_at,
   });
 
   useEffect(() => {
@@ -111,7 +122,7 @@ const ChatContainer = observer(() => {
   const handleSubmitMessage = async (message: string) => {
     setMessages((prevMessages) => [
       ...prevMessages,
-      { content: message, role: 'user', createdAt: Date.now() / 1000 }, // Add createdAt
+      { content: message, role: 'user', createdAt: Date.now() / 1000 },
     ]);
     setIsLoading(true);
 
@@ -124,7 +135,7 @@ const ChatContainer = observer(() => {
         const cleanedResponse = removeRAGCitations(response);
         setMessages((prevMessages) => [
           ...prevMessages,
-          { content: cleanedResponse, role: 'assistant', createdAt: Date.now() / 1000 }, // Add createdAt
+          { content: cleanedResponse, role: 'assistant', createdAt: Date.now() / 1000 },
         ]);
 
         if (audioState === 'enabled') {
@@ -142,7 +153,6 @@ const ChatContainer = observer(() => {
         }
       } catch (error) {
         console.error('Error getting assistant response:', error);
-        // Optionally add an error message to the chat
       } finally {
         setIsLoading(false);
       }
@@ -176,26 +186,18 @@ const ChatContainer = observer(() => {
   const handleClear = async () => {
     if (activeSession && assistant) {
       try {
-
-        // Clear the session
         await rootStore.sessionStore.endActiveSession();
         emitter.emit(
           EVENT_CHAT_SESSION_DELETED,
           i18n.t('Notifications.sessionCleared')
         );
 
-        // Fetch the new active session
         await rootStore.sessionStore.fetchActiveSession();
         setMessages([]);
 
-        // Set the stored assistant as the active assistant
         emitter.emit(EVENT_SET_ACTIVE_ASSISTANT, assistant._id);
-
-        // The language will be set automatically by the useEffect hook
       } catch (error) {
         console.error('Error in handleClear:', error);
-        // Optionally, show an error message to the user
-        // rootStore.uiStore.showErrorMessage('Failed to clear chat session. Please try again.');
       }
     }
   };
@@ -207,7 +209,6 @@ const ChatContainer = observer(() => {
       );
 
       if (index !== -1) {
-        // Update existing message
         const updatedMessages = [...prevMessages];
         updatedMessages[index] = {
           ...updatedMessages[index],
@@ -219,13 +220,12 @@ const ChatContainer = observer(() => {
         };
         return updatedMessages;
       } else {
-        // Add new message
         return [
           ...prevMessages,
           {
             content: '',
             role: 'assistant',
-            createdAt: Date.now() / 1000, // Add createdAt
+            createdAt: Date.now() / 1000,
             metadata: {
               message_type: 'action_execution',
               ...data,
@@ -248,6 +248,9 @@ const ChatContainer = observer(() => {
                 name: assistant.name,
                 description: assistant.description,
                 avatar: assistant.avatarImage,
+                conversationStarters: assistant.conversationStarters?.length 
+                  ? assistant.conversationStarters 
+                  : getDefaultConversationStarters(),
               }
             : undefined
         }

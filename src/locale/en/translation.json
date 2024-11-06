@@ -201,7 +201,17 @@
     "editAllowedActions": "Edit Allowed Actions"
   },
   "ChatContainer": {
-    "input": "Type your message"
+    "input": "Type your message",
+    "defaultStarters": {
+      "startChat": {
+        "key": "Start Chat",
+        "value": "Hi, I would like to start a conversation."
+      },
+      "askQuestion": {
+        "key": "Ask Question",
+        "value": "I have a question I would like to ask."
+      }
+    }
   },
   "Notifications": {    
     "agentCreated": "Agent has been created successfully",
@@ -230,7 +240,11 @@
     "llmPrompt": "LLM Prompt",
     "save": "Save Changes",
     "allowedActions": "Allowed Actions",
-    "allowedActions_description": "Description of allowed actions"
+    "allowedActions_description": "Description of allowed actions",
+    "identifiers" : {
+      "title": "Conversation Starters",
+      "description": "Conversation starters are used to initiate a conversation with the assistant"      
+    }
   },
   "dialogTitles" : {
     "newAssistant": "Create New Assistant",
