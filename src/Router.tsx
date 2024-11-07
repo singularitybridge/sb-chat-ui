@@ -14,6 +14,7 @@ import { SignupPage } from './pages/SignupPage';
 import { ChatKitTestPage } from './pages/test/ChatKitTestPage';
 import { UIKitTestPage } from './pages/test/UIKitTestPage';
 import JsonViewerTestPage from './pages/test/JsonViewerTestPage';
+import { FocusSessionPage } from './pages/admin/FocusSessionPage';
 
 export const browserRouter = createBrowserRouter([
   {
@@ -50,6 +51,10 @@ export const browserRouter = createBrowserRouter([
           {
             path: 'assistants',
             element: <AssistantsPage />,
+          },
+          {
+            path: 'assistants/focus',
+            element: <FocusSessionPage />,
           },
           {
             path: 'assistants/:key',
