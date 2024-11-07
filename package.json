@@ -12,6 +12,7 @@
   "dependencies": {
     "@babel/standalone": "^7.26.2",
     "@heroicons/react": "^2.0.15",
+    "@monaco-editor/react": "^4.6.0",
     "@react-oauth/google": "^0.12.1",
     "@tailwindcss/typography": "^0.5.10",
     "@types/highlight.js": "^10.1.0",
