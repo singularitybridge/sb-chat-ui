@@ -1,10 +1,13 @@
 // file_path: src/pages/admin/FocusSessionPage.tsx
 import React from 'react';
 import { observer } from 'mobx-react-lite';
+import { useParams } from 'react-router-dom';
 import { ChatContainer } from '../../components/chat-container/ChatContainer';
 import DynamicCodeRenderer from '../../components/DynamicCodeRenderer';
 
 const FocusSessionPage: React.FC = observer(() => {
+  const { documentId } = useParams<{ documentId: string }>();
+
   return (
     <div className="flex justify-center h-full">
       <div className="flex w-full max-w-7xl space-x-7 rtl:space-x-reverse">
@@ -13,7 +16,7 @@ const FocusSessionPage: React.FC = observer(() => {
         </div>
         <div className="flex-grow max-w-3xl w-full">
           <div className="bg-white rounded-lg h-full p-6 shadow-sm">
-            <DynamicCodeRenderer />
+            <DynamicCodeRenderer documentId={documentId} />
           </div>
         </div>
       </div>

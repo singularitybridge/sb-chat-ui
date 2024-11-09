@@ -1,12 +1,13 @@
 import React from 'react';
-import { transform } from '@babel/standalone';
 import Editor from '@monaco-editor/react';
+import { fetchCodeFromStorage, renderDynamicComponent } from '../services/DynamicCodeService';
 
 interface DynamicCodeRendererProps {
   code?: string;
+  documentId?: string;
 }
 
-// Sample code for demonstration
+// Sample code for demonstration when no documentId is provided
 const sampleCode = `
 function DemoComponent() {
   const [count, setCount] = React.useState(0);
@@ -28,41 +29,37 @@ function DemoComponent() {
   );
 }`.trim();
 
-const DynamicCodeRenderer: React.FC<DynamicCodeRendererProps> = ({ code: initialCode }) => {
+const DynamicCodeRenderer: React.FC<DynamicCodeRendererProps> = ({ code: initialCode, documentId }) => {
   const [isEditMode, setIsEditMode] = React.useState(false);
   const [currentCode, setCurrentCode] = React.useState(initialCode || sampleCode);
-  const [renderedComponent, setRenderedComponent] = React.useState<React.ReactNode | null>(null);
+  const [renderedComponent, setRenderedComponent] = React.useState<React.ReactElement | null>(null);
   const [error, setError] = React.useState<string | null>(null);
+  const [isLoading, setIsLoading] = React.useState(false);
 
-  const renderCode = React.useCallback(async (codeToRender: string) => {
+  const loadCode = React.useCallback(async (id: string) => {
+    setIsLoading(true);
     try {
-      // Transform JSX to JavaScript
-      const transformed = transform(codeToRender, {
-        presets: ['react'],
-      }).code;
-
-      // Create a new function that returns the component
-      const ComponentFunction = new Function(
-        'React',
-        'useState',
-        `${transformed} return DemoComponent;`
-      );
-
-      // Get the component
-      const Component = ComponentFunction(React, React.useState);
-      
-      setRenderedComponent(<Component />);
+      const code = await fetchCodeFromStorage(id);
+      setCurrentCode(code);
       setError(null);
     } catch (err) {
-      console.error('Error rendering dynamic code:', err);
-      setError(err instanceof Error ? err.message : 'Error rendering component');
-      // Don't update renderedComponent on error
+      setError(err instanceof Error ? err.message : 'Failed to load code');
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
   React.useEffect(() => {
-    renderCode(currentCode);
-  }, [currentCode, renderCode]);
+    if (documentId) {
+      loadCode(documentId);
+    }
+  }, [documentId, loadCode]);
+
+  React.useEffect(() => {
+    const { component, error } = renderDynamicComponent(currentCode);
+    setRenderedComponent(component);
+    setError(error);
+  }, [currentCode]);
 
   const handleEditorChange = (value: string | undefined) => {
     if (value !== undefined) {
@@ -104,7 +101,11 @@ const DynamicCodeRenderer: React.FC<DynamicCodeRendererProps> = ({ code: initial
     <div className="h-full flex flex-col">
       {renderControls()}
       <div className="flex-1 min-h-0">
-        {isEditMode ? (
+        {isLoading ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-gray-500">Loading code...</div>
+          </div>
+        ) : isEditMode ? (
           <div className="h-full">
             <div className="h-full border rounded-lg overflow-hidden">
               <Editor
