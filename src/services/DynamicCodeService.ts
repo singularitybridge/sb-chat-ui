@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { transform } from '@babel/standalone';
 import React from 'react';
-import 'katex/dist/katex.min.css';
+import { loadKatexResources } from '../utils/katexLoader';
 
 export interface DynamicCodeResult {
   component: React.ReactElement | null;
@@ -23,33 +23,60 @@ export const fetchCodeFromStorage = async (documentId: string): Promise<string> 
 
 export const renderDynamicComponent = (code: string): DynamicCodeResult => {
   try {
+    // Load KaTeX resources
+    loadKatexResources();
+
     // Transform JSX to JavaScript
     const transformed = transform(code, {
       presets: ['react'],
     }).code;
 
+    // Create a function that will render the math expression
+    const createInlineMath = function() {
+      function InlineMathComponent(props: { math: string }) {
+        const containerRef = React.useRef<HTMLSpanElement>(null);
+        
+        React.useEffect(function() {
+          if (containerRef.current && window.katex) {
+            window.katex.render(props.math, containerRef.current, {
+              throwOnError: false,
+              displayMode: false
+            });
+          } else if (containerRef.current) {
+            containerRef.current.textContent = props.math;
+          }
+        }, [props.math]);
+
+        return React.createElement('span', { ref: containerRef });
+      }
+
+      InlineMathComponent.displayName = 'InlineMathComponent';
+      return InlineMathComponent;
+    };
+
     // Create a new function that returns the component
     const ComponentFunction = new Function(
       'React',
       'useState',
+      'useEffect',
+      'useRef',
       'InlineMath',
       `
+      var createInlineMath = ${createInlineMath.toString()};
+      var InlineMathComponent = createInlineMath();
       ${transformed}
       return DemoComponent;
       `
     );
 
-    // Dynamically import KaTeX CSS
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = 'https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css';
-    document.head.appendChild(link);
-
-    // Mock InlineMath component if react-katex is not available
-    const MockInlineMath = ({ math }: { math: string }) => React.createElement('span', {}, math);
-
     // Get the component
-    const Component = ComponentFunction(React, React.useState, MockInlineMath);
+    const Component = ComponentFunction(
+      React,
+      React.useState,
+      React.useEffect,
+      React.useRef,
+      createInlineMath()
+    );
     
     return {
       component: React.createElement(Component),
@@ -63,55 +90,3 @@ export const renderDynamicComponent = (code: string): DynamicCodeResult => {
     };
   }
 };
-
-// Example usage of the demo component:
-export const demoFractionCode = `
-function DemoComponent() {
-  const [numerator, setNumerator] = useState('');
-  const [denominator, setDenominator] = useState('');
-  const [mixedNumber, setMixedNumber] = useState(null);
-
-  const handleConvert = () => {
-    const num = parseInt(numerator, 10);
-    const denom = parseInt(denominator, 10);
-
-    if (denom === 0) {
-      alert('Denominator cannot be zero.');
-      return;
-    }
-
-    const wholePart = Math.floor(num / denom);
-    const remainder = num % denom;
-
-    if (remainder === 0) {
-      setMixedNumber(\`\${wholePart}\`);
-    } else {
-      setMixedNumber(\`\${wholePart} \\\\frac{\${Math.abs(remainder)}}{\${denom}}\`);
-    }
-  };
-
-  return (
-    <div>
-      <h1>Convert Improper Fraction to Mixed Number</h1>
-      <input
-        type="number"
-        value={numerator}
-        onChange={(e) => setNumerator(e.target.value)}
-        placeholder="Numerator"
-      />
-      <input
-        type="number"
-        value={denominator}
-        onChange={(e) => setDenominator(e.target.value)}
-        placeholder="Denominator"
-      />
-      <button onClick={handleConvert}>Convert</button>
-      {mixedNumber !== null && (
-        <h2>
-          Result: <InlineMath math={mixedNumber} />
-        </h2>
-      )}
-    </div>
-  );
-}
-`;

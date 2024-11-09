@@ -1,6 +1,8 @@
 import React from 'react';
 import Editor from '@monaco-editor/react';
 import { fetchCodeFromStorage, renderDynamicComponent } from '../services/DynamicCodeService';
+import 'katex/dist/katex.min.css';
+import '../styles/katex.css';
 
 interface DynamicCodeRendererProps {
   code?: string;

@@ -2,6 +2,8 @@ import React from 'react';
 import { SparklesIcon } from '@heroicons/react/24/solid';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 import { MessageWrapper } from './MessageWrapper';
 import { formatRelativeTime } from '../../../utils/dateUtils';
 
@@ -12,12 +14,42 @@ interface AssistantMessageProps {
 }
 
 const AssistantMessage: React.FC<AssistantMessageProps> = ({ text, assistantName, createdAt }) => {
+  // Convert LaTeX delimiters to standard markdown math delimiters
+  const preprocessLatex = (input: string): string => {
+    // First handle any escaped characters in the input
+    let processed = input
+      .replace(/\\{/g, '\\{')
+      .replace(/\\}/g, '\\}')
+      .replace(/\\_/g, '\\_');
+    
+    // Convert \[ ... \] to $$...$$ for display math
+    processed = processed.replace(/\\\[([\s\S]*?)\\\]/g, (_, formula) => {
+      // Clean up the formula but preserve LaTeX commands
+      const cleanFormula = formula.trim()
+        .replace(/\s+/g, ' ') // normalize spaces
+        .replace(/\s*([=+\-*/])\s*/g, ' $1 '); // ensure proper spacing around operators
+      
+      return `$$${cleanFormula}$$`;
+    });
+    
+    // Convert \( ... \) to $...$ for inline math
+    processed = processed.replace(/\\\(([\s\S]*?)\\\)/g, (_, formula) => {
+      const cleanFormula = formula.trim()
+        .replace(/\s+/g, ' ')
+        .replace(/\s*([=+\-*/])\s*/g, ' $1 ');
+      
+      return `$${cleanFormula}$`;
+    });
+    
+    return processed;
+  };
+
   const PreComponent: React.FC<React.HTMLProps<HTMLPreElement>> = (props) => (
-    <pre className='text-left' dir="ltr" {...props} />
+    <pre className='text-left my-2' dir="ltr" {...props} />
   );
 
   const TableComponent: React.FC<React.HTMLProps<HTMLTableElement>> = (props) => (
-    <div className="overflow-x-auto my-4">
+    <div className="overflow-x-auto my-2">
       <table className="min-w-full bg-white border border-gray-300 shadow-sm rounded-lg overflow-hidden" {...props} />
     </div>
   );
@@ -39,16 +71,41 @@ const AssistantMessage: React.FC<AssistantMessageProps> = ({ text, assistantName
   );
 
   const UlComponent: React.FC<React.DetailedHTMLProps<React.HTMLAttributes<HTMLUListElement>, HTMLUListElement>> = (props) => (
-    <ul className="list-disc rtl:pr-5 ltr:pl-5 my-2" {...props} />
+    <ul className="list-disc rtl:pr-4 ltr:pl-4 my-2" {...props} />
   );
 
   const OlComponent: React.FC<React.DetailedHTMLProps<React.OlHTMLAttributes<HTMLOListElement>, HTMLOListElement>> = (props) => (
-    <ol className="list-decimal rtl:pr-5 ltr:pl-5 my-2" {...props} />
+    <ol className="list-decimal rtl:pr-4 ltr:pl-4 my-2" {...props} />
   );
 
   const LiComponent: React.FC<React.DetailedHTMLProps<React.LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>> = (props) => (
-    <li className="mb-1 rtl:mr-4 ltr:ml-4" {...props} />
+    <li className="mb-1" {...props} />
   );
+
+  const ParagraphComponent: React.FC<React.HTMLProps<HTMLParagraphElement>> = (props) => (
+    <p className="my-2 text-base leading-relaxed" {...props} />
+  );
+
+  const CodeComponent: React.FC<{ node?: any; inline?: boolean; className?: string; children?: React.ReactNode }> = ({
+    inline,
+    className,
+    children,
+    ...props
+  }) => {
+    if (!inline) {
+      return (
+        <pre className={`text-left my-2 ${className}`} dir="ltr" {...props}>
+          <code className={className}>{children}</code>
+        </pre>
+      );
+    }
+
+    return (
+      <code className={className} {...props}>
+        {children}
+      </code>
+    );
+  };
 
   return (
     <MessageWrapper 
@@ -58,23 +115,39 @@ const AssistantMessage: React.FC<AssistantMessageProps> = ({ text, assistantName
       role={assistantName}
       dateText={formatRelativeTime(createdAt)}
     >
-      <ReactMarkdown 
-        className="prose prose-sm max-w-none break-words rtl:text-right ltr:text-left"
-        remarkPlugins={[remarkGfm]}        
-        components={{
-          pre: PreComponent,
-          table: TableComponent,
-          thead: TheadComponent,
-          th: ThComponent,
-          td: TdComponent,
-          tr: TrComponent,
-          ul: UlComponent,
-          ol: OlComponent,
-          li: LiComponent,
-        }}
-      >
-        {text}
-      </ReactMarkdown>
+      <div className="text-base break-words rtl:text-right ltr:text-left overflow-hidden">
+        <ReactMarkdown 
+          remarkPlugins={[remarkGfm, remarkMath]}
+          rehypePlugins={[
+            [rehypeKatex, {
+              strict: false,
+              throwOnError: false,
+              displayMode: false,
+              trust: true,
+              fleqn: false,
+              output: 'html',
+              maxSize: 500,
+              maxExpand: 1000,
+              minRuleThickness: 0.05
+            }]
+          ]}
+          components={{
+            p: ParagraphComponent,
+            pre: PreComponent,
+            table: TableComponent,
+            thead: TheadComponent,
+            th: ThComponent,
+            td: TdComponent,
+            tr: TrComponent,
+            ul: UlComponent,
+            ol: OlComponent,
+            li: LiComponent,
+            code: CodeComponent,
+          }}
+        >
+          {preprocessLatex(text)}
+        </ReactMarkdown>
+      </div>
     </MessageWrapper>
   );
 };
