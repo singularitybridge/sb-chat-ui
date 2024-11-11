@@ -1,6 +1,7 @@
 import React from 'react';
 import Editor from '@monaco-editor/react';
 import { fetchCodeFromStorage, renderDynamicComponent } from '../services/DynamicCodeService';
+import { ErrorBoundary } from './ErrorBoundary';
 import 'katex/dist/katex.min.css';
 import '../styles/katex.css';
 
@@ -136,7 +137,9 @@ const DynamicCodeRenderer: React.FC<DynamicCodeRendererProps> = ({ code: initial
           </div>
         ) : (
           <div className="h-full border rounded-lg p-4 overflow-auto">
-            {renderedComponent}
+            <ErrorBoundary>
+              {renderedComponent}
+            </ErrorBoundary>
             {error && (
               <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
                 <h3 className="text-red-600 font-semibold">Error</h3>
