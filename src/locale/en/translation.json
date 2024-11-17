@@ -8,6 +8,13 @@
     "Actions": "Actions",
     "Home": "Home"
   },
+  "DynamicCodeRenderer": {
+    "title": "Test - Canvas Editor",
+    "preview": "Preview",
+    "code": "Code",
+    "loading": "Loading code...",
+    "error": "Error"
+  },
   "Onboarding": {
     "welcome": "Welcome",
     "welcomeToSingularityBridge": "Welcome to Singularity Bridge",

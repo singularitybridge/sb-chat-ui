@@ -7,8 +7,6 @@ import { RootStore } from './store/models/RootStore';
 // Import i18n for side effects
 import './i18n';
 import './index.css';
-import 'katex/dist/katex.min.css';
-import './styles/katex.css';
 
 // Initialize the root store
 const rootStore = RootStore.create({

@@ -2,8 +2,6 @@ import React from 'react';
 import { SparklesIcon } from '@heroicons/react/24/solid';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import remarkMath from 'remark-math';
-import rehypeKatex from 'rehype-katex';
 import { MessageWrapper } from './MessageWrapper';
 import { formatRelativeTime } from '../../../utils/dateUtils';
 
@@ -14,36 +12,6 @@ interface AssistantMessageProps {
 }
 
 const AssistantMessage: React.FC<AssistantMessageProps> = ({ text, assistantName, createdAt }) => {
-  // Convert LaTeX delimiters to standard markdown math delimiters
-  const preprocessLatex = (input: string): string => {
-    // First handle any escaped characters in the input
-    let processed = input
-      .replace(/\\{/g, '\\{')
-      .replace(/\\}/g, '\\}')
-      .replace(/\\_/g, '\\_');
-    
-    // Convert \[ ... \] to $$...$$ for display math
-    processed = processed.replace(/\\\[([\s\S]*?)\\\]/g, (_, formula) => {
-      // Clean up the formula but preserve LaTeX commands
-      const cleanFormula = formula.trim()
-        .replace(/\s+/g, ' ') // normalize spaces
-        .replace(/\s*([=+\-*/])\s*/g, ' $1 '); // ensure proper spacing around operators
-      
-      return `$$${cleanFormula}$$`;
-    });
-    
-    // Convert \( ... \) to $...$ for inline math
-    processed = processed.replace(/\\\(([\s\S]*?)\\\)/g, (_, formula) => {
-      const cleanFormula = formula.trim()
-        .replace(/\s+/g, ' ')
-        .replace(/\s*([=+\-*/])\s*/g, ' $1 ');
-      
-      return `$${cleanFormula}$`;
-    });
-    
-    return processed;
-  };
-
   const PreComponent: React.FC<React.HTMLProps<HTMLPreElement>> = (props) => (
     <pre className='text-left my-2' dir="ltr" {...props} />
   );
@@ -117,20 +85,7 @@ const AssistantMessage: React.FC<AssistantMessageProps> = ({ text, assistantName
     >
       <div className="text-base break-words rtl:text-right ltr:text-left overflow-hidden">
         <ReactMarkdown 
-          remarkPlugins={[remarkGfm, remarkMath]}
-          rehypePlugins={[
-            [rehypeKatex, {
-              strict: false,
-              throwOnError: false,
-              displayMode: false,
-              trust: true,
-              fleqn: false,
-              output: 'html',
-              maxSize: 500,
-              maxExpand: 1000,
-              minRuleThickness: 0.05
-            }]
-          ]}
+          remarkPlugins={[remarkGfm]}
           components={{
             p: ParagraphComponent,
             pre: PreComponent,
@@ -145,7 +100,7 @@ const AssistantMessage: React.FC<AssistantMessageProps> = ({ text, assistantName
             code: CodeComponent,
           }}
         >
-          {preprocessLatex(text)}
+          {text}
         </ReactMarkdown>
       </div>
     </MessageWrapper>

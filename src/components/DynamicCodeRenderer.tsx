@@ -1,16 +1,14 @@
 import React from 'react';
 import Editor from '@monaco-editor/react';
-import { fetchCodeFromStorage, renderDynamicComponent } from '../services/DynamicCodeService';
-import { ErrorBoundary } from './ErrorBoundary';
-import 'katex/dist/katex.min.css';
-import '../styles/katex.css';
+import { useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import '../styles/monaco-editor.css';
 
 interface DynamicCodeRendererProps {
   code?: string;
   documentId?: string;
 }
 
-// Sample code for demonstration when no documentId is provided
 const sampleCode = `
 function DemoComponent() {
   const [count, setCount] = React.useState(0);
@@ -33,36 +31,31 @@ function DemoComponent() {
 }`.trim();
 
 const DynamicCodeRenderer: React.FC<DynamicCodeRendererProps> = ({ code: initialCode, documentId }) => {
+  const { t } = useTranslation();
+  const location = useLocation();
   const [isEditMode, setIsEditMode] = React.useState(false);
   const [currentCode, setCurrentCode] = React.useState(initialCode || sampleCode);
-  const [renderedComponent, setRenderedComponent] = React.useState<React.ReactElement | null>(null);
-  const [error, setError] = React.useState<string | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
 
-  const loadCode = React.useCallback(async (id: string) => {
-    setIsLoading(true);
-    try {
-      const code = await fetchCodeFromStorage(id);
-      setCurrentCode(code);
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load code');
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const getId = () => {
+    const matches = location.pathname.match(/\/admin\/assistants\/focus\/([^/]+)/);
+    return matches ? matches[1] : '';
+  };
+
+  const id = getId();
+  const previewUrl = `http://localhost:5175/page/${id}`;
 
   React.useEffect(() => {
     if (documentId) {
-      loadCode(documentId);
+      setIsLoading(true);
+      // Here you would typically fetch the code from your backend
+      // For now, we'll just simulate a delay and use the initial code
+      setTimeout(() => {
+        setCurrentCode(initialCode || sampleCode);
+        setIsLoading(false);
+      }, 1000);
     }
-  }, [documentId, loadCode]);
-
-  React.useEffect(() => {
-    const { component, error } = renderDynamicComponent(currentCode);
-    setRenderedComponent(component);
-    setError(error);
-  }, [currentCode]);
+  }, [documentId, initialCode]);
 
   const handleEditorChange = (value: string | undefined) => {
     if (value !== undefined) {
@@ -70,10 +63,14 @@ const DynamicCodeRenderer: React.FC<DynamicCodeRendererProps> = ({ code: initial
     }
   };
 
+  const handleIframeLoad = () => {
+    setIsLoading(false);
+  };
+
   const renderControls = () => (
     <div className="flex justify-between items-center mb-4">
       <h3 className="text-gray-700 font-medium">
-        Test - Canvas Editor
+        {t('DynamicCodeRenderer.title')}
       </h3>
       <div className="inline-flex rounded-full border overflow-hidden text-sm">
         <button
@@ -84,7 +81,7 @@ const DynamicCodeRenderer: React.FC<DynamicCodeRendererProps> = ({ code: initial
               : 'bg-white text-gray-500 hover:bg-gray-50'
           }`}
         >
-          Preview
+          {t('DynamicCodeRenderer.preview')}
         </button>
         <button
           onClick={() => setIsEditMode(true)}
@@ -94,7 +91,7 @@ const DynamicCodeRenderer: React.FC<DynamicCodeRendererProps> = ({ code: initial
               : 'bg-white text-gray-500 hover:bg-gray-50'
           }`}
         >
-          Code
+          {t('DynamicCodeRenderer.code')}
         </button>
       </div>
     </div>
@@ -106,7 +103,7 @@ const DynamicCodeRenderer: React.FC<DynamicCodeRendererProps> = ({ code: initial
       <div className="flex-1 min-h-0">
         {isLoading ? (
           <div className="flex items-center justify-center h-full">
-            <div className="text-gray-500">Loading code...</div>
+            <div className="text-gray-500">{t('DynamicCodeRenderer.loading')}</div>
           </div>
         ) : isEditMode ? (
           <div className="h-full">
@@ -125,28 +122,22 @@ const DynamicCodeRenderer: React.FC<DynamicCodeRendererProps> = ({ code: initial
                   scrollBeyondLastLine: false,
                   readOnly: false,
                   automaticLayout: true,
+                  padding: { top: 12, bottom: 12 },
                 }}
+                className="monaco-editor-custom"
               />
             </div>
-            {error && (
-              <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                <h3 className="text-red-600 font-semibold">Error</h3>
-                <pre className="text-red-500 whitespace-pre-wrap font-mono text-sm mt-2">{error}</pre>
-              </div>
-            )}
           </div>
         ) : (
-          <div className="h-full border rounded-lg p-4 overflow-auto">
-            <ErrorBoundary>
-              {renderedComponent}
-            </ErrorBoundary>
-            {error && (
-              <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                <h3 className="text-red-600 font-semibold">Error</h3>
-                <pre className="text-red-500 whitespace-pre-wrap font-mono text-sm mt-2">{error}</pre>
-              </div>
-            )}
-          </div>
+          <iframe 
+            src={previewUrl}
+            className="w-full h-full border rounded-lg"
+            onLoad={handleIframeLoad}
+            title="Preview"
+            style={{ 
+              border: '1px solid #e5e7eb'
+            }}
+          />
         )}
       </div>
     </div>

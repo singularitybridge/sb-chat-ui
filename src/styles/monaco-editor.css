@@ -1,0 +1,26 @@
+/* Force LTR for Monaco Editor regardless of page direction */
+.monaco-editor {
+  direction: ltr !important;
+  padding: 0 12px !important;
+}
+
+.monaco-editor .margin,
+.monaco-editor .monaco-editor-background,
+.monaco-editor .inputarea.ime-input {
+  direction: ltr !important;
+  text-align: left !important;
+}
+
+/* Ensure line numbers are properly aligned */
+.monaco-editor .margin-view-overlays .line-numbers {
+  text-align: left !important;
+  direction: ltr !important;
+}
+
+/* Force cursor and selection to work in LTR mode */
+.monaco-editor .cursor,
+.monaco-editor .selected-text {
+  left: unset;
+  direction: ltr !important;
+}
+

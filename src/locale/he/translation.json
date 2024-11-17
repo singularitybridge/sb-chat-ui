@@ -8,6 +8,13 @@
     "Actions": "פעולות",
     "Home": "בית"
   },
+  "DynamicCodeRenderer": {
+    "title": "בדיקה - עורך קנבס",
+    "preview": "תצוגה מקדימה",
+    "code": "קוד",
+    "loading": "טוען קוד...",
+    "error": "שגיאה"
+  },
   "Onboarding": {
     "welcome": "ברוכים הבאים",
     "welcomeToSingularityBridge": "ברוכים הבאים ל-Singularity Bridge",
