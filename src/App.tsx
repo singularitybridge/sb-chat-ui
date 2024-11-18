@@ -8,7 +8,6 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import { observer } from 'mobx-react-lite';
 import AuthManager from './components/AuthManager';
 import PusherManager from './components/PusherManager';
-import GenerativeUIFrame from './components/GenerativeUIFrame';
 import {
   EVENT_CHAT_SESSION_DELETED,
   EVENT_ERROR,
@@ -42,7 +41,6 @@ const App: React.FC = observer(() => {
           <ToastContainer position="bottom-right" />
           <DialogManager />
           <Outlet />
-          <GenerativeUIFrame />
         </div>
       </AuthManager>
     </GoogleOAuthProvider>

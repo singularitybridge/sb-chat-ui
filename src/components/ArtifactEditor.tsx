@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import Editor from '@monaco-editor/react';
 import { useTranslation } from 'react-i18next';
 import { IconButton } from './admin/IconButton';
 import { UploadCloudIcon } from 'lucide-react';
 import '../styles/monaco-editor.css';
 import { writeFile } from '../services/api/integrationService';
+import { useIframeCommunication } from '../services/iframeCommunicationService';
 
 interface ArtifactEditorProps {
   artifactId?: string;
@@ -18,7 +19,25 @@ const ArtifactEditor: React.FC<ArtifactEditorProps> = ({ artifactId }) => {
   const [error, setError] = React.useState<string | null>(null);
   const [isCodeChanged, setIsCodeChanged] = React.useState(false);
 
-  const previewUrl = `http://localhost:5175/page/${artifactId}`;
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  const targetOrigin =
+    process.env.NODE_ENV === 'development'
+      ? 'http://localhost:5175'
+      : 'https://generative-ui.singularitybridge.com';
+
+  const previewUrl = `${targetOrigin}/page/${artifactId}`;
+
+  const onIframeMessage = (message: any) => {
+    console.log('Received message from iframe:', message);
+    // Handle the message as needed
+  };
+
+  const { sendMessageToIframe, handleIframeLoad } = useIframeCommunication({
+    iframeRef,
+    targetOrigin,
+    onMessage: onIframeMessage,
+  });
 
   React.useEffect(() => {
     const fetchCode = async () => {
@@ -65,6 +84,9 @@ const ArtifactEditor: React.FC<ArtifactEditorProps> = ({ artifactId }) => {
       });
       setIsCodeChanged(false);
       console.log('Code saved successfully:', response);
+
+      // Send a message to the iframe to reload content
+      sendMessageToIframe({ type: 'RELOAD_CONTENT' });
     } catch (e) {
       setError(`Failed to save code: ${e instanceof Error ? e.message : String(e)}`);
       console.error('Error saving code:', e);
@@ -155,12 +177,14 @@ const ArtifactEditor: React.FC<ArtifactEditorProps> = ({ artifactId }) => {
           </div>
         ) : (
           <iframe
+            ref={iframeRef}
             src={previewUrl}
             className="w-full h-full border rounded-lg"
             title="Preview"
             style={{
               border: '1px solid #e5e7eb',
             }}
+            onLoad={handleIframeLoad}
           />
         )}
       </div>
