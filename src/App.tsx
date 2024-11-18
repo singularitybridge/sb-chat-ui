@@ -1,7 +1,5 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
-import { RootStore } from './store/models/RootStore';
-import { RootStoreProvider } from './store/common/RootStoreContext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useEventEmitter } from './services/mittEmitter';
@@ -10,6 +8,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import { observer } from 'mobx-react-lite';
 import AuthManager from './components/AuthManager';
 import PusherManager from './components/PusherManager';
+import GenerativeUIFrame from './components/GenerativeUIFrame';
 import {
   EVENT_CHAT_SESSION_DELETED,
   EVENT_ERROR,
@@ -30,7 +29,7 @@ const App: React.FC = observer(() => {
   useEventEmitter<string>(EVENT_ERROR, toastHandler);
   useEventEmitter<string>(EVENT_SHOW_NOTIFICATION, toastHandler);
 
-  React.useEffect(() => {
+  useEffect(() => {
     document.documentElement.lang = initialLanguage;
     document.documentElement.dir = direction;
   }, [direction]);
@@ -43,6 +42,7 @@ const App: React.FC = observer(() => {
           <ToastContainer position="bottom-right" />
           <DialogManager />
           <Outlet />
+          <GenerativeUIFrame />
         </div>
       </AuthManager>
     </GoogleOAuthProvider>

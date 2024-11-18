@@ -17,6 +17,9 @@ import { textToSpeech, TTSVoice } from '../../services/api/voiceService';
 import i18n from '../../i18n';
 import { changeSessionLanguage } from '../../services/api/sessionService';
 
+// Define the new event name
+const EVENT_ADD_IFRAME_MESSAGE = 'EVENT_ADD_IFRAME_MESSAGE';
+
 interface Metadata {
   message_type: string;
   [key: string]: any;
@@ -237,6 +240,14 @@ const ChatContainer = observer(() => {
   };
 
   useEventEmitter(EVENT_ACTION_EXECUTION, handleActionExecution);
+
+  // Add new event listener for iframe messages
+  useEventEmitter<string>(EVENT_ADD_IFRAME_MESSAGE, (message) => {
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { content: message, role: 'user', createdAt: Date.now() / 1000 },
+    ]);
+  });
 
   return (
     <div className="h-full w-full bg-zinc-50 rounded-2xl pr-2 rtl:pl-2 rtl:pr-0">
