@@ -53,7 +53,7 @@ export const browserRouter = createBrowserRouter([
             element: <AssistantsPage />,
           },
           {
-            path: 'assistants/focus/:documentId',
+            path: 'assistants/workspace/:artifactId',
             element: <FocusSessionPage />,
           },
           {

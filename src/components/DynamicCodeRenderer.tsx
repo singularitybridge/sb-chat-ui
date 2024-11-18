@@ -5,35 +5,20 @@ import { useTranslation } from 'react-i18next';
 import { IconButton } from './admin/IconButton';
 import { UploadCloudIcon } from 'lucide-react';
 import '../styles/monaco-editor.css';
-import { writeFile } from '../services/api/IntegrationService';
+import { writeFile } from '../services/api/integrationService';
 
 interface DynamicCodeRendererProps {
   code?: string;
-  documentId?: string;
+  artifactId?: string;
 }
 
 const sampleCode = `
-function DemoComponent() {
-  const [count, setCount] = React.useState(0);
-  
-  return (
-    <div className="p-4 border rounded-lg">
-      <h2 className="text-xl font-bold mb-4 text-gray-700">Dynamic Component Demo</h2>
-      <p className="mb-4">This component was dynamically rendered!</p>
-      <div className="flex items-center gap-4">
-        <button 
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          onClick={() => setCount(prev => prev + 1)}
-        >
-          Click me
-        </button>
-        <span className="text-lg">Count: {count}</span>
-      </div>
-    </div>
-  );
-}`.trim();
 
-const DynamicCodeRenderer: React.FC<DynamicCodeRendererProps> = ({ code: initialCode, documentId }) => {
+## hello world!
+
+`.trim();
+
+const DynamicCodeRenderer: React.FC<DynamicCodeRendererProps> = ({ code: initialCode, artifactId }) => {
   const { t } = useTranslation();
   const location = useLocation();
   const [isEditMode, setIsEditMode] = React.useState(false);
@@ -44,7 +29,7 @@ const DynamicCodeRenderer: React.FC<DynamicCodeRendererProps> = ({ code: initial
   const [fileId, setFileId] = React.useState<string | null>(null);
 
   const getId = () => {
-    const matches = location.pathname.match(/\/admin\/assistants\/focus\/([^/]+)/);
+    const matches = location.pathname.match(/\/admin\/assistants\/workspace\/([^/]+)/);
     return matches ? matches[1] : '';
   };
 
@@ -53,17 +38,17 @@ const DynamicCodeRenderer: React.FC<DynamicCodeRendererProps> = ({ code: initial
 
   React.useEffect(() => {
     const fetchCode = async () => {
-      if (documentId) {
+      if (artifactId) {
         setIsLoading(true);
         setError(null);
         try {
-          const response = await fetch(`https://storage.googleapis.com/sb-ai-experiments-files/${documentId}`);
+          const response = await fetch(`https://storage.googleapis.com/sb-ai-experiments-files/${artifactId}`);
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
           const text = await response.text();
           setCurrentCode(text);
-          setFileId(documentId);
+          setFileId(artifactId);
         } catch (e) {
           setError(`Failed to fetch file: ${e instanceof Error ? e.message : String(e)}`);
           console.error('Error fetching file:', e);
@@ -74,7 +59,7 @@ const DynamicCodeRenderer: React.FC<DynamicCodeRendererProps> = ({ code: initial
     };
 
     fetchCode();
-  }, [documentId]);
+  }, [artifactId]);
 
   const handleEditorChange = (value: string | undefined) => {
     if (value !== undefined) {

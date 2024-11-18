@@ -6,7 +6,7 @@ import { ChatContainer } from '../../components/chat-container/ChatContainer';
 import DynamicCodeRenderer from '../../components/DynamicCodeRenderer';
 
 const FocusSessionPage: React.FC = observer(() => {
-  const { documentId } = useParams<{ documentId: string }>();
+  const { artifactId } = useParams<{ artifactId: string }>();
 
   return (
     <div className="flex justify-center h-full">
@@ -16,7 +16,7 @@ const FocusSessionPage: React.FC = observer(() => {
         </div>
         <div className="flex-grow max-w-3xl w-full">
           <div className="bg-white rounded-lg h-full p-6 shadow-sm">
-            <DynamicCodeRenderer documentId={documentId} />
+            <DynamicCodeRenderer artifactId={artifactId} />
           </div>
         </div>
       </div>
