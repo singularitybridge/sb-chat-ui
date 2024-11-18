@@ -2,7 +2,10 @@ import React from 'react';
 import Editor from '@monaco-editor/react';
 import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { IconButton } from './admin/IconButton';
+import { UploadCloudIcon } from 'lucide-react';
 import '../styles/monaco-editor.css';
+import { writeFile } from '../services/api/IntegrationService';
 
 interface DynamicCodeRendererProps {
   code?: string;
@@ -36,6 +39,9 @@ const DynamicCodeRenderer: React.FC<DynamicCodeRendererProps> = ({ code: initial
   const [isEditMode, setIsEditMode] = React.useState(false);
   const [currentCode, setCurrentCode] = React.useState(initialCode || sampleCode);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const [isCodeChanged, setIsCodeChanged] = React.useState(false);
+  const [fileId, setFileId] = React.useState<string | null>(null);
 
   const getId = () => {
     const matches = location.pathname.match(/\/admin\/assistants\/focus\/([^/]+)/);
@@ -46,20 +52,34 @@ const DynamicCodeRenderer: React.FC<DynamicCodeRendererProps> = ({ code: initial
   const previewUrl = `http://localhost:5175/page/${id}`;
 
   React.useEffect(() => {
-    if (documentId) {
-      setIsLoading(true);
-      // Here you would typically fetch the code from your backend
-      // For now, we'll just simulate a delay and use the initial code
-      setTimeout(() => {
-        setCurrentCode(initialCode || sampleCode);
-        setIsLoading(false);
-      }, 1000);
-    }
-  }, [documentId, initialCode]);
+    const fetchCode = async () => {
+      if (documentId) {
+        setIsLoading(true);
+        setError(null);
+        try {
+          const response = await fetch(`https://storage.googleapis.com/sb-ai-experiments-files/${documentId}`);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          const text = await response.text();
+          setCurrentCode(text);
+          setFileId(documentId);
+        } catch (e) {
+          setError(`Failed to fetch file: ${e instanceof Error ? e.message : String(e)}`);
+          console.error('Error fetching file:', e);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchCode();
+  }, [documentId]);
 
   const handleEditorChange = (value: string | undefined) => {
     if (value !== undefined) {
       setCurrentCode(value);
+      setIsCodeChanged(true);
     }
   };
 
@@ -67,11 +87,50 @@ const DynamicCodeRenderer: React.FC<DynamicCodeRendererProps> = ({ code: initial
     setIsLoading(false);
   };
 
+  const handleSaveCode = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await writeFile({
+        data: {
+          fileId: fileId || '',
+          title: `Code for ${id}`,
+          description: 'Dynamically rendered code',
+          content: currentCode,
+        },
+      });
+      setFileId(response._id);
+      setIsCodeChanged(false);
+      console.log('Code saved successfully:', response);
+    } catch (e) {
+      setError(`Failed to save code: ${e instanceof Error ? e.message : String(e)}`);
+      console.error('Error saving code:', e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const renderControls = () => (
     <div className="flex justify-between items-center mb-4">
-      <h3 className="text-gray-700 font-medium">
-        {t('DynamicCodeRenderer.title')}
-      </h3>
+      <div className="flex items-center">
+        <h3 className="text-gray-700 font-medium mr-2">
+          {t('DynamicCodeRenderer.title')}
+        </h3>
+        {isEditMode && (
+          <div className='border border-slate-300 px-1 rounded-2xl'>
+          <IconButton
+            icon={<UploadCloudIcon size={16} />}
+            onClick={handleSaveCode}
+            disabled={!isCodeChanged || isLoading}
+            className={`p-1 rounded-full ${
+              isCodeChanged && !isLoading
+                ? ' text-green-600 hover:text-green-400 '
+                : ' text-slate-400'
+            }`}
+          />
+          </div>
+        )}
+      </div>
       <div className="inline-flex rounded-full border overflow-hidden text-sm">
         <button
           onClick={() => setIsEditMode(false)}
@@ -104,6 +163,10 @@ const DynamicCodeRenderer: React.FC<DynamicCodeRendererProps> = ({ code: initial
         {isLoading ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-gray-500">{t('DynamicCodeRenderer.loading')}</div>
+          </div>
+        ) : error ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-red-500">{error}</div>
           </div>
         ) : isEditMode ? (
           <div className="h-full">
