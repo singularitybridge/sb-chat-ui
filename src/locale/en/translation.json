@@ -15,6 +15,12 @@
     "loading": "Loading code...",
     "error": "Error"
   },
+  "ArtifactEditor": {
+    "title": "Artifact Editor",
+    "preview": "Preview",
+    "code": "Code",
+    "loading": "Loading artifact..."
+  },
   "Onboarding": {
     "welcome": "Welcome",
     "welcomeToSingularityBridge": "Welcome to Singularity Bridge",

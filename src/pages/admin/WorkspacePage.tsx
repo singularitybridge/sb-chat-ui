@@ -1,11 +1,10 @@
-// file_path: src/pages/admin/FocusSessionPage.tsx
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { useParams } from 'react-router-dom';
 import { ChatContainer } from '../../components/chat-container/ChatContainer';
-import DynamicCodeRenderer from '../../components/DynamicCodeRenderer';
+import ArtifactEditor from '../../components/ArtifactEditor';
 
-const FocusSessionPage: React.FC = observer(() => {
+const WorkspacePage: React.FC = observer(() => {
   const { artifactId } = useParams<{ artifactId: string }>();
 
   return (
@@ -16,7 +15,7 @@ const FocusSessionPage: React.FC = observer(() => {
         </div>
         <div className="flex-grow max-w-3xl w-full">
           <div className="bg-white rounded-lg h-full p-6 shadow-sm">
-            <DynamicCodeRenderer artifactId={artifactId} />
+            <ArtifactEditor artifactId={artifactId} />
           </div>
         </div>
       </div>
@@ -24,4 +23,4 @@ const FocusSessionPage: React.FC = observer(() => {
   );
 });
 
-export { FocusSessionPage };
+export { WorkspacePage };

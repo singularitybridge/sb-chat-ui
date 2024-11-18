@@ -14,7 +14,7 @@ import { SignupPage } from './pages/SignupPage';
 import { ChatKitTestPage } from './pages/test/ChatKitTestPage';
 import { UIKitTestPage } from './pages/test/UIKitTestPage';
 import JsonViewerTestPage from './pages/test/JsonViewerTestPage';
-import { FocusSessionPage } from './pages/admin/FocusSessionPage';
+import { WorkspacePage } from './pages/admin/WorkspacePage';
 
 export const browserRouter = createBrowserRouter([
   {
@@ -54,7 +54,7 @@ export const browserRouter = createBrowserRouter([
           },
           {
             path: 'assistants/workspace/:artifactId',
-            element: <FocusSessionPage />,
+            element: <WorkspacePage />,
           },
           {
             path: 'assistants/:key',
