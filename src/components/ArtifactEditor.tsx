@@ -28,16 +28,20 @@ const ArtifactEditor: React.FC<ArtifactEditorProps> = ({ artifactId }) => {
 
   const previewUrl = `${targetOrigin}/page/${artifactId}`;
 
-  const onIframeMessage = (message: any) => {
-    console.log('Received message from iframe:', message);
-    // Handle the message as needed
-  };
-
   const { sendMessageToIframe, handleIframeLoad } = useIframeCommunication({
     iframeRef,
     targetOrigin,
     onMessage: onIframeMessage,
   });
+
+  function onIframeMessage(message: any) {
+    console.log('Received message from iframe:', message);
+    // Send a test message back to the iframe
+    sendMessageToIframe({
+      type: 'TEST_RESPONSE',
+      content: 'This is a test response from the parent.',
+    });
+  }
 
   React.useEffect(() => {
     const fetchCode = async () => {
