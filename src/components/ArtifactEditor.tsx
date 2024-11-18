@@ -6,6 +6,8 @@ import { UploadCloudIcon } from 'lucide-react';
 import '../styles/monaco-editor.css';
 import { writeFile } from '../services/api/integrationService';
 import { useIframeCommunication } from '../services/iframeCommunicationService';
+import { EVENT_ADD_IFRAME_MESSAGE } from '../utils/eventNames';
+import { emitter } from '../services/mittEmitter';
 
 interface ArtifactEditorProps {
   artifactId?: string;
@@ -36,11 +38,17 @@ const ArtifactEditor: React.FC<ArtifactEditorProps> = ({ artifactId }) => {
 
   function onIframeMessage(message: any) {
     console.log('Received message from iframe:', message);
-    // Send a test message back to the iframe
-    sendMessageToIframe({
-      type: 'TEST_RESPONSE',
-      content: 'This is a test response from the parent.',
-    });
+    if (message.action === 'agent_request') {
+      const { userInput, board } = message;
+      const agentMessage = `${userInput} (Current board state: ${JSON.stringify(board)})`;
+      emitter.emit(EVENT_ADD_IFRAME_MESSAGE, agentMessage);
+    } else {
+      // Send a test message back to the iframe for other message types
+      sendMessageToIframe({
+        type: 'TEST_RESPONSE',
+        content: 'This is a test response from the parent.',
+      });
+    }
   }
 
   React.useEffect(() => {

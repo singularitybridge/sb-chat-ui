@@ -9,6 +9,7 @@ import {
   EVENT_CHAT_SESSION_DELETED,
   EVENT_SET_ACTIVE_ASSISTANT,
   EVENT_ACTION_EXECUTION,
+  EVENT_ADD_IFRAME_MESSAGE,
 } from '../../utils/eventNames';
 import { emitter, useEventEmitter } from '../../services/mittEmitter';
 import { IAssistant } from '../../store/models/Assistant';
@@ -16,9 +17,6 @@ import { SBChatKitUI } from '../sb-chat-kit-ui/SBChatKitUI';
 import { textToSpeech, TTSVoice } from '../../services/api/voiceService';
 import i18n from '../../i18n';
 import { changeSessionLanguage } from '../../services/api/sessionService';
-
-// Define the new event name
-const EVENT_ADD_IFRAME_MESSAGE = 'EVENT_ADD_IFRAME_MESSAGE';
 
 interface Metadata {
   message_type: string;
@@ -241,12 +239,9 @@ const ChatContainer = observer(() => {
 
   useEventEmitter(EVENT_ACTION_EXECUTION, handleActionExecution);
 
-  // Add new event listener for iframe messages
+  // Updated event listener for iframe messages
   useEventEmitter<string>(EVENT_ADD_IFRAME_MESSAGE, (message) => {
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      { content: message, role: 'user', createdAt: Date.now() / 1000 },
-    ]);
+    handleSubmitMessage(message);
   });
 
   return (
