@@ -2,6 +2,7 @@ import React from 'react';
 import Button from '../../sb-core-ui-kit/Button';
 import { TextComponent } from '../../sb-core-ui-kit/TextComponent';
 import { Avatar, AvatarStyles } from '../../Avatar';
+import { useTranslation } from 'react-i18next';
 
 interface ConversationStarter {
   key: string;
@@ -16,9 +17,12 @@ interface DefaultChatViewProps {
     conversationStarters?: ConversationStarter[];
   };
   onSendMessage?: (message: string) => void;
+  onStartChat: () => void;
 }
 
-const DefaultChatView: React.FC<DefaultChatViewProps> = ({ assistant, onSendMessage }) => {
+const DefaultChatView: React.FC<DefaultChatViewProps> = ({ assistant, onSendMessage, onStartChat }) => {
+  const { t } = useTranslation();
+
   const handleStarterClick = (starter: ConversationStarter) => {
     if (onSendMessage) {
       onSendMessage(starter.value);
@@ -42,7 +46,14 @@ const DefaultChatView: React.FC<DefaultChatViewProps> = ({ assistant, onSendMess
         />
       </div>
 
-      <div className="flex flex-col space-y-2.5 w-full max-w-md">
+      <div className="flex flex-col space-y-4 w-full max-w-md">
+        <Button
+          onClick={onStartChat}
+          variant="primary"
+          additionalClassName="mb-4"
+        >
+          {t('ChatContainer.startChat')}
+        </Button>
         {assistant.conversationStarters?.map((starter, index) => (
           <Button
             key={index}

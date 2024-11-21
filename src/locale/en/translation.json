@@ -224,7 +224,8 @@
         "key": "Ask Question",
         "value": "I have a question I would like to ask."
       }
-    }
+    },
+    "startChat": "Start Chat"
   },
   "Notifications": {    
     "agentCreated": "Agent has been created successfully",

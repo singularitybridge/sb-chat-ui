@@ -62,6 +62,7 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
 }) => {
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const [disabledMessages, setDisabledMessages] = useState<number[]>([]);
+  const [showConversationStarters, setShowConversationStarters] = useState(true);
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -84,6 +85,15 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
     dotWave.register();
   }, []);
 
+  const handleStartChat = () => {
+    setShowConversationStarters(false);
+  };
+
+  const handleClearChat = () => {
+    onClear();
+    setShowConversationStarters(true);
+  };
+
   return (
     <div
       style={{
@@ -92,14 +102,33 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
       className={`p-2 flex flex-col ${className} h-full w-full space-y-2`}
     >
       {messages.length === 0 && assistant ? (
-        <DefaultChatView assistant={assistant} onSendMessage={onSendMessage} />
+        showConversationStarters ? (
+          <DefaultChatView 
+            assistant={assistant} 
+            onSendMessage={onSendMessage} 
+            onStartChat={handleStartChat}
+          />
+        ) : (
+          <>
+            <Header
+              title={assistant.name}
+              description={assistant.description}
+              avatar={assistant.avatar}
+              onClear={handleClearChat}
+              onToggleAudio={onToggleAudio}
+              audioState={audioState}
+            />
+            <div className="flex-grow"></div>
+            <ChatInput onSendMessage={onSendMessage} />
+          </>
+        )
       ) : (
         <>
           <Header
             title={assistant?.name || ''}
             description={assistant?.description || ''}
             avatar={assistant?.avatar || ''}
-            onClear={onClear}
+            onClear={handleClearChat}
             onToggleAudio={onToggleAudio}
             audioState={audioState}
           />
