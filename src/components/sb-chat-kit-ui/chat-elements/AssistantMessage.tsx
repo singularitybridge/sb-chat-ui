@@ -13,7 +13,7 @@ interface AssistantMessageProps {
 
 const AssistantMessage: React.FC<AssistantMessageProps> = ({ text, assistantName, createdAt }) => {
   const PreComponent: React.FC<React.HTMLProps<HTMLPreElement>> = (props) => (
-    <pre className='text-left my-2' dir="ltr" {...props} />
+    <pre className='text-left my-2 overflow-x-auto' dir="ltr" {...props} />
   );
 
   const TableComponent: React.FC<React.HTMLProps<HTMLTableElement>> = (props) => (
@@ -51,7 +51,7 @@ const AssistantMessage: React.FC<AssistantMessageProps> = ({ text, assistantName
   );
 
   const ParagraphComponent: React.FC<React.HTMLProps<HTMLParagraphElement>> = (props) => (
-    <p className="my-2 text-base leading-relaxed" {...props} />
+    <p className="my-2 text-sm leading-relaxed" {...props} />
   );
 
   const CodeComponent: React.FC<{ node?: any; inline?: boolean; className?: string; children?: React.ReactNode }> = ({
@@ -60,16 +60,13 @@ const AssistantMessage: React.FC<AssistantMessageProps> = ({ text, assistantName
     children,
     ...props
   }) => {
-    if (!inline) {
-      return (
-        <pre className={`text-left my-2 ${className}`} dir="ltr" {...props}>
-          <code className={className}>{children}</code>
-        </pre>
-      );
-    }
-
-    return (
-      <code className={className} {...props}>
+    const match = /language-(\w+)/.exec(className || '');
+    return !inline && match ? (
+      <pre className={`text-left my-2 p-4 bg-gray-800 text-white rounded ${className}`} dir="ltr" {...props}>
+        <code className={`language-${match[1]} text-sm`}>{children}</code>
+      </pre>
+    ) : (
+      <code className={`${className} text-sm bg-gray-200 text-gray-800 rounded px-1`} {...props}>
         {children}
       </code>
     );
@@ -83,7 +80,7 @@ const AssistantMessage: React.FC<AssistantMessageProps> = ({ text, assistantName
       role={assistantName}
       dateText={formatRelativeTime(createdAt)}
     >
-      <div className="text-base break-words rtl:text-right ltr:text-left overflow-hidden">
+      <div className="prose prose-sm max-w-none text-sm break-words rtl:text-right ltr:text-left overflow-hidden">
         <ReactMarkdown 
           remarkPlugins={[remarkGfm]}
           components={{
