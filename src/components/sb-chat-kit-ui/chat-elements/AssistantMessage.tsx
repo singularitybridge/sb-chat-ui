@@ -13,7 +13,7 @@ interface AssistantMessageProps {
 
 const AssistantMessage: React.FC<AssistantMessageProps> = ({ text, assistantName, createdAt }) => {
   const PreComponent: React.FC<React.HTMLProps<HTMLPreElement>> = (props) => (
-    <pre className='text-left my-2 overflow-x-auto' dir="ltr" {...props} />
+    <pre className='not-prose text-left my-2 overflow-x-auto bg-gray-900 text-lime-300 p-4 rounded-lg [&>*]:bg-transparent [&>*]:text-lime-300 [&>*]:m-0' dir="ltr" {...props} />
   );
 
   const TableComponent: React.FC<React.HTMLProps<HTMLTableElement>> = (props) => (
@@ -80,7 +80,7 @@ const AssistantMessage: React.FC<AssistantMessageProps> = ({ text, assistantName
       role={assistantName}
       dateText={formatRelativeTime(createdAt)}
     >
-      <div className="prose prose-sm max-w-none text-sm break-words rtl:text-right ltr:text-left overflow-hidden">
+      <div className="prose prose-sm max-w-none text-sm break-words rtl:text-right ltr:text-left overflow-hidden prose-pre:p-0">
         <ReactMarkdown 
           remarkPlugins={[remarkGfm]}
           components={{
