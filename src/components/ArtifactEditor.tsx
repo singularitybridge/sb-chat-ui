@@ -129,8 +129,8 @@ const ArtifactEditor: React.FC<ArtifactEditorProps> = ({ artifactId }) => {
 
   const renderControls = () => (
     <div className="flex justify-between items-center mb-4">
-      <div className="flex items-center">
-        <h3 className="text-gray-700 font-medium mr-2">
+      <div className="flex items-center space-x-2 rtl:space-x-reverse">
+        <h3 className="text-gray-700 font-medium">
           {t('ArtifactEditor.title')}
         </h3>
         {isEditMode && (
