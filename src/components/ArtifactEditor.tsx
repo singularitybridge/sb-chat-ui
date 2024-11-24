@@ -13,6 +13,16 @@ interface ArtifactEditorProps {
   artifactId?: string;
 }
 
+const DUMMY_TEXT = `# Create New Content
+
+You can:
+1. Create new content here
+2. Save it using the cloud icon above
+3. The preview will update automatically
+
+## Example Content
+You can write markdown content here...`;
+
 const ArtifactEditor: React.FC<ArtifactEditorProps> = ({ artifactId }) => {
   const { t } = useTranslation();
   const [isEditMode, setIsEditMode] = React.useState(false);
@@ -20,6 +30,7 @@ const ArtifactEditor: React.FC<ArtifactEditorProps> = ({ artifactId }) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [isCodeChanged, setIsCodeChanged] = React.useState(false);
+  const [isNotFound, setIsNotFound] = React.useState(false);
 
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
@@ -59,12 +70,20 @@ const ArtifactEditor: React.FC<ArtifactEditorProps> = ({ artifactId }) => {
         try {
           const response = await fetch(`https://storage.googleapis.com/sb-ai-experiments-files/${artifactId}`);
           if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            if (response.status === 404) {
+              setCurrentCode(DUMMY_TEXT);
+              setIsNotFound(true);
+              return;
+            }
+            throw new Error(t('ArtifactEditor.error.fetch'));
           }
           const text = await response.text();
           setCurrentCode(text);
+          setIsNotFound(false);
         } catch (e) {
-          setError(`Failed to fetch file: ${e instanceof Error ? e.message : String(e)}`);
+          if (!isNotFound) {
+            setError(`${e instanceof Error ? e.message : String(e)}`);
+          }
           console.error('Error fetching file:', e);
         } finally {
           setIsLoading(false);
@@ -73,7 +92,7 @@ const ArtifactEditor: React.FC<ArtifactEditorProps> = ({ artifactId }) => {
     };
 
     fetchCode();
-  }, [artifactId]);
+  }, [artifactId, t, isNotFound]);
 
   const handleEditorChange = (value: string | undefined) => {
     if (value !== undefined) {
@@ -95,12 +114,13 @@ const ArtifactEditor: React.FC<ArtifactEditorProps> = ({ artifactId }) => {
         },
       });
       setIsCodeChanged(false);
+      setIsNotFound(false);
       console.log('Code saved successfully:', response);
 
       // Send a message to the iframe to reload content
       sendMessageToIframe({ type: 'RELOAD_CONTENT' });
     } catch (e) {
-      setError(`Failed to save code: ${e instanceof Error ? e.message : String(e)}`);
+      setError(t('ArtifactEditor.error.save'));
       console.error('Error saving code:', e);
     } finally {
       setIsLoading(false);
@@ -153,52 +173,65 @@ const ArtifactEditor: React.FC<ArtifactEditorProps> = ({ artifactId }) => {
     </div>
   );
 
+  const renderContent = () => {
+    if (isLoading) {
+      return (
+        <div className="flex items-center justify-center h-full">
+          <div className="text-gray-500">{t('ArtifactEditor.loading')}</div>
+        </div>
+      );
+    }
+
+    if (isEditMode) {
+      return (
+        <div className="h-full">
+          {error && !isNotFound && (
+            <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-600">
+              {error}
+            </div>
+          )}
+          <div className="h-full border rounded-lg overflow-hidden">
+            <Editor
+              height="100%"
+              defaultLanguage="markdown"
+              value={currentCode}
+              onChange={handleEditorChange}
+              theme="vs-dark"
+              options={{
+                minimap: { enabled: false },
+                fontSize: 14,
+                lineNumbers: 'on',
+                scrollBeyondLastLine: false,
+                readOnly: false,
+                automaticLayout: true,
+                padding: { top: 12, bottom: 12 },
+              }}
+              className="monaco-editor-custom"
+            />
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <iframe
+        ref={iframeRef}
+        src={previewUrl}
+        className="w-full h-full border rounded-lg"
+        title="Preview"
+        style={{
+          border: '1px solid #e5e7eb',
+        }}
+        onLoad={handleIframeLoad}
+      />
+    );
+  };
+
   return (
     <div className="h-full flex flex-col">
       {renderControls()}
       <div className="flex-1 min-h-0">
-        {isLoading ? (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-gray-500">{t('ArtifactEditor.loading')}</div>
-          </div>
-        ) : error ? (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-red-500">{error}</div>
-          </div>
-        ) : isEditMode ? (
-          <div className="h-full">
-            <div className="h-full border rounded-lg overflow-hidden">
-              <Editor
-                height="100%"
-                defaultLanguage="markdown"
-                value={currentCode}
-                onChange={handleEditorChange}
-                theme="vs-dark"
-                options={{
-                  minimap: { enabled: false },
-                  fontSize: 14,
-                  lineNumbers: 'on',
-                  scrollBeyondLastLine: false,
-                  readOnly: false,
-                  automaticLayout: true,
-                  padding: { top: 12, bottom: 12 },
-                }}
-                className="monaco-editor-custom"
-              />
-            </div>
-          </div>
-        ) : (
-          <iframe
-            ref={iframeRef}
-            src={previewUrl}
-            className="w-full h-full border rounded-lg"
-            title="Preview"
-            style={{
-              border: '1px solid #e5e7eb',
-            }}
-            onLoad={handleIframeLoad}
-          />
-        )}
+        {renderContent()}
       </div>
     </div>
   );

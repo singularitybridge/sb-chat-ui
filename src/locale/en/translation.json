@@ -16,10 +16,25 @@
     "error": "Error"
   },
   "ArtifactEditor": {
-    "title": "Artifact Editor",
+    "title": "Workspace",
     "preview": "Preview",
-    "code": "Code",
-    "loading": "Loading artifact..."
+    "code": "Editor",
+    "loading": "Loading artifact...",
+    "notFound": {
+      "title": "Artifact Not Found",
+      "description": "This artifact could not be found in storage. You can:",
+      "steps": {
+        "1": "Create new content here",
+        "2": "Save it using the cloud icon above",
+        "3": "The preview will update automatically"
+      },
+      "exampleTitle": "Example Content",
+      "exampleDescription": "You can write markdown content here..."
+    },
+    "error": {
+      "fetch": "Failed to fetch artifact",
+      "save": "Failed to save artifact"
+    }
   },
   "Onboarding": {
     "welcome": "Welcome",
