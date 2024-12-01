@@ -46,7 +46,7 @@ const DefaultChatView: React.FC<DefaultChatViewProps> = ({ assistant, onSendMess
         />
       </div>
 
-      <div className="flex flex-col space-y-4 w-full max-w-md">
+      <div className="flex flex-col space-y-2 w-full max-w-md">
         <Button
           onClick={onStartChat}
           variant="primary"
