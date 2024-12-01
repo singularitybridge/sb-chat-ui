@@ -16,7 +16,7 @@
     "error": "Error"
   },
   "ArtifactEditor": {
-    "title": "Workspace",
+    "title": "Agent Workspace",
     "preview": "Preview",
     "code": "Editor",
     "loading": "Loading artifact...",
