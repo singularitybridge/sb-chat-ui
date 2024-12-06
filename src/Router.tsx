@@ -15,6 +15,8 @@ import { ChatKitTestPage } from './pages/test/ChatKitTestPage';
 import { UIKitTestPage } from './pages/test/UIKitTestPage';
 import JsonViewerTestPage from './pages/test/JsonViewerTestPage';
 import { WorkspacePage } from './pages/admin/WorkspacePage';
+import { WorkspaceJoinPage } from './pages/admin/WorkspaceJoinPage';
+import WorkspaceAuthorizePage from './pages/admin/WorkspaceAuthorizePage';
 
 export const browserRouter = createBrowserRouter([
   {
@@ -51,6 +53,14 @@ export const browserRouter = createBrowserRouter([
           {
             path: 'assistants',
             element: <AssistantsPage />,
+          },
+          {
+            path: 'assistants/workspace/join',
+            element: <WorkspaceJoinPage />,
+          },
+          {
+            path: 'assistants/workspace/authorize-app',
+            element: <WorkspaceAuthorizePage />,
           },
           {
             path: 'assistants/workspace/:artifactId',
