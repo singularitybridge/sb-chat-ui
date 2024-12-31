@@ -67,7 +67,7 @@ const WorkspaceAuthorizePage: React.FC = () => {
                     <div className="bg-blue-100 p-1.5 rounded-full w-6 h-6 flex items-center justify-center">
                       <Lock size={14} />
                     </div>
-                    <span className="text-gray-600">{appData.appId}</span>
+                    <span className="text-gray-600">{appData.appName}</span>
                   </div>
                 </div>
 

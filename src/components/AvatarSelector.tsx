@@ -42,6 +42,11 @@ const avatars: AvatarData[] = [
   { id: 'avatar-_0026_3', name: 'Ava', imageUrl: '/assets/avatars/avatar-_0026_3.png' },
   { id: 'avatar-_0027_2', name: 'Caleb', imageUrl: '/assets/avatars/avatar-_0027_2.png' },
   { id: 'avatar-_0028_1', name: 'Diana', imageUrl: '/assets/avatars/avatar-_0028_1.png' },
+  { id: 'avatar-raccoon', name: 'im a RACOON!', imageUrl: '/assets/avatars/avatar-raccoon.png' },
+
+  
+
+
 ];
 
 const AvatarSelector: React.FC<AvatarSelectorProps> = ({

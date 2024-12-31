@@ -5,6 +5,8 @@ import {
   getSessionMessages,
   handleUserInput,
 } from '../../services/api/assistantService';
+import { addEventHandler, removeEventHandler } from '../../services/PusherService';
+import { ChatMessage as PusherChatMessage } from '../../types/pusher';
 import {
   EVENT_CHAT_SESSION_DELETED,
   EVENT_SET_ACTIVE_ASSISTANT,
@@ -98,7 +100,26 @@ const ChatContainer = observer(() => {
 
   useEffect(() => {
     loadMessages();
-  }, [assistant?._id]);
+    
+    if (activeSession?._id) {
+      const handleChatMessage = (message: PusherChatMessage) => {
+        const newMessage = {
+          content: message.content,
+          role: message.type === 'assistant' ? 'assistant' : 'user',
+          createdAt: new Date(message.timestamp).getTime() / 1000
+        };
+        
+        setMessages(prev => [...prev, newMessage]);
+        setIsLoading(message.type === 'user');
+      };
+
+      addEventHandler('chat_message', handleChatMessage);
+      
+      return () => {
+        removeEventHandler('chat_message', handleChatMessage);
+      };
+    }
+  }, [assistant?._id, activeSession?._id]);
 
   const handleAssistantUpdated = async (assistantId: string) => {
     await rootStore.sessionStore.changeAssistant(assistantId);
