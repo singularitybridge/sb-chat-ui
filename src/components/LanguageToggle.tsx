@@ -10,7 +10,7 @@ const LanguageToggle: React.FC = observer(() => {
     const newLanguage = rootStore.language === 'en' ? 'he' : 'en';
     
     try {
-      // Change the language in the root store
+      // Change the language in the root store and wait for it to complete
       await rootStore.changeLanguage(newLanguage);
 
       // If there's an active session, update its language
@@ -19,8 +19,16 @@ const LanguageToggle: React.FC = observer(() => {
         await changeSessionLanguage(activeSessionId, newLanguage);
       }
 
-      // Reload the application to apply language changes
-      window.location.reload();
+      // Small delay to ensure all language changes are persisted
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Verify language was persisted before reload
+      const storedLang = localStorage.getItem('appLanguage');
+      if (storedLang === newLanguage) {
+        window.location.reload();
+      } else {
+        console.error('Language change not persisted correctly');
+      }
     } catch (error) {
       console.error('Failed to change language:', error);
       // Handle the error (e.g., show an error message to the user)

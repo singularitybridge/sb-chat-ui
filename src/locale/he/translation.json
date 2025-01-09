@@ -8,6 +8,34 @@
     "Actions": "פעולות",
     "Home": "בית"
   },
+  "DynamicCodeRenderer": {
+    "title": "בדיקה - עורך קנבס",
+    "preview": "תצוגה",
+    "code": "עורך",
+    "loading": "טוען קוד...",
+    "error": "שגיאה"
+  },
+  "ArtifactEditor": {
+    "title": "מרחב עבודה",
+    "preview": "תצוגה",
+    "code": "עורך",
+    "loading": "טוען ארטיפקט...",
+    "notFound": {
+      "title": "הארטיפקט לא נמצא",
+      "description": "הארטיפקט לא נמצא באחסון. באפשרותך:",
+      "steps": {
+        "1": "ליצור תוכן חדש כאן",
+        "2": "לשמור אותו באמצעות סמל הענן למעלה",
+        "3": "התצוגה תתעדכן אוטומטית"
+      },
+      "exampleTitle": "תוכן לדוגמה",
+      "exampleDescription": "תוכל לכתוב כאן תוכן בפורמט markdown..."
+    },
+    "error": {
+      "fetch": "שגיאה בטעינת הארטיפקט",
+      "save": "שגיאה בשמירת הארטיפקט"
+    }
+  },
   "Onboarding": {
     "welcome": "ברוכים הבאים",
     "welcomeToSingularityBridge": "ברוכים הבאים ל-Singularity Bridge",
@@ -232,7 +260,8 @@
         "key": "שאל שאלה",
         "value": "יש לי שאלה שאני רוצה לשאול."
       }
-    }
+    },
+    "startChat": "התחל צ'אט"
   },
   "Notifications": {
     "agentCreated": "הסוכן נוצר בהצלחה",

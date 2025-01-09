@@ -11,8 +11,14 @@ export interface ActionNotification {
   error?: string;
 }
 
+export interface ChatMessage {
+  type: 'user' | 'assistant';
+  content: string;
+  timestamp: string;
+}
+
 export interface PusherEvent {
-  message: AssistantData | ActionNotification;
+  message: AssistantData | ActionNotification | ChatMessage;
 }
 
 export type EventHandler<T> = (data: T) => void;
@@ -22,4 +28,5 @@ export type PusherEventMap = {
   setAssistant: EventHandler<PusherEvent>;
   actionNotification: EventHandler<PusherEvent>;
   actionExecution: EventHandler<PusherEvent>;
+  chat_message: EventHandler<ChatMessage>;
 };

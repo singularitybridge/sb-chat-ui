@@ -1,8 +1,6 @@
 // src/i18n.ts
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import HttpBackend from 'i18next-http-backend';
-// import LanguageDetector from 'i18next-browser-languagedetector'; 
 
 import enTranslations from './locale/en/translation.json';
 import heTranslations from './locale/he/translation.json';
@@ -23,11 +21,14 @@ i18n
         translation: heTranslations,
       },
     },
-    lng: getInitialLanguage(), 
+    lng: getInitialLanguage(),
     fallbackLng: 'en',
-    debug: true,
+    debug: process.env.NODE_ENV === 'development',
     interpolation: {
       escapeValue: false,
+    },
+    react: {
+      useSuspense: false
     }
   });
 

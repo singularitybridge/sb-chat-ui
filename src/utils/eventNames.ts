@@ -21,6 +21,9 @@ export const EVENT_CLOSE_MODAL = 'close-modal';
 export const EVENT_ERROR = 'error';
 export const EVENT_ACTION_EXECUTION = 'action_execution_update';
 
+// Iframe events
+export const EVENT_ADD_IFRAME_MESSAGE = 'add-iframe-message';
+
 export type EventType =
   | typeof EVENT_SET_ACTIVE_ASSISTANT
   | typeof EVENT_SET_ASSISTANT_VALUES
@@ -34,4 +37,5 @@ export type EventType =
   | typeof EVENT_SHOW_ONBOARDING_MODAL
   | typeof EVENT_CLOSE_MODAL
   | typeof EVENT_ERROR
-  | typeof EVENT_ACTION_EXECUTION;
+  | typeof EVENT_ACTION_EXECUTION
+  | typeof EVENT_ADD_IFRAME_MESSAGE;

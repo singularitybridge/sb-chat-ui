@@ -8,6 +8,34 @@
     "Actions": "Actions",
     "Home": "Home"
   },
+  "DynamicCodeRenderer": {
+    "title": "Test - Canvas Editor",
+    "preview": "Preview",
+    "code": "Code",
+    "loading": "Loading code...",
+    "error": "Error"
+  },
+  "ArtifactEditor": {
+    "title": "Agent Workspace",
+    "preview": "Preview",
+    "code": "Editor",
+    "loading": "Loading artifact...",
+    "notFound": {
+      "title": "Artifact Not Found",
+      "description": "This artifact could not be found in storage. You can:",
+      "steps": {
+        "1": "Create new content here",
+        "2": "Save it using the cloud icon above",
+        "3": "The preview will update automatically"
+      },
+      "exampleTitle": "Example Content",
+      "exampleDescription": "You can write markdown content here..."
+    },
+    "error": {
+      "fetch": "Failed to fetch artifact",
+      "save": "Failed to save artifact"
+    }
+  },
   "Onboarding": {
     "welcome": "Welcome",
     "welcomeToSingularityBridge": "Welcome to Singularity Bridge",
@@ -211,7 +239,8 @@
         "key": "Ask Question",
         "value": "I have a question I would like to ask."
       }
-    }
+    },
+    "startChat": "Start Chat"
   },
   "Notifications": {    
     "agentCreated": "Agent has been created successfully",

@@ -62,6 +62,7 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
 }) => {
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const [disabledMessages, setDisabledMessages] = useState<number[]>([]);
+  const [chatStarted, setChatStarted] = useState(false);
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -78,11 +79,32 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
 
       setDisabledMessages(previousMessageIndices);
     }
+
+    // If there are messages, set chatStarted to true
+    if (messages.length > 0) {
+      setChatStarted(true);
+    }
   }, [messages]);
 
   useEffect(() => {
     dotWave.register();
   }, []);
+
+  const handleStartChat = () => {
+    setChatStarted(true);
+  };
+
+  const handleClearChat = () => {
+    onClear();
+    setChatStarted(false);
+  };
+
+  const handleSendMessage = (message: string) => {
+    if (!chatStarted) {
+      setChatStarted(true);
+    }
+    onSendMessage(message);
+  };
 
   return (
     <div
@@ -91,15 +113,19 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
       }}
       className={`p-2 flex flex-col ${className} h-full w-full space-y-2`}
     >
-      {messages.length === 0 && assistant ? (
-        <DefaultChatView assistant={assistant} onSendMessage={onSendMessage} />
+      {!chatStarted && assistant ? (
+        <DefaultChatView 
+          assistant={assistant} 
+          onSendMessage={handleSendMessage} 
+          onStartChat={handleStartChat}
+        />
       ) : (
         <>
           <Header
             title={assistant?.name || ''}
             description={assistant?.description || ''}
             avatar={assistant?.avatar || ''}
-            onClear={onClear}
+            onClear={handleClearChat}
             onToggleAudio={onToggleAudio}
             audioState={audioState}
           />
@@ -168,7 +194,7 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
 
             <div ref={messagesEndRef} />
           </div>
-          <ChatInput onSendMessage={onSendMessage} />
+          <ChatInput onSendMessage={handleSendMessage} />
         </>
       )}
     </div>

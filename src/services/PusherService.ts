@@ -1,5 +1,5 @@
 import Pusher from 'pusher-js';
-import { PusherEvent, ActionNotification } from '../types/pusher';
+import { PusherEvent, ChatMessage } from '../types/pusher';
 import { emitter } from './mittEmitter';
 import * as EventNames from '../utils/eventNames';
 
@@ -8,9 +8,11 @@ const PUSHER_CLUSTER = 'eu';
 
 let pusher: Pusher;
 
-type EventHandler = (data: PusherEvent) => void;
+type PusherEventHandler = (data: PusherEvent) => void;
+type ChatMessageHandler = (data: ChatMessage) => void;
+type GenericEventHandler = PusherEventHandler | ChatMessageHandler;
 
-const eventHandlers: Record<string, EventHandler[]> = {};
+const eventHandlers: Record<string, GenericEventHandler[]> = {};
 
 const initializePusher = () => {
   try {
@@ -35,22 +37,26 @@ const initializePusher = () => {
   }
 };
 
-const addEventHandler = (eventName: string, handler: EventHandler) => {
+const addEventHandler = (eventName: string, handler: GenericEventHandler) => {
   if (!eventHandlers[eventName]) {
     eventHandlers[eventName] = [];
   }
   eventHandlers[eventName].push(handler);
 };
 
-const removeEventHandler = (eventName: string, handler: EventHandler) => {
+const removeEventHandler = (eventName: string, handler: GenericEventHandler) => {
   if (eventHandlers[eventName]) {
     eventHandlers[eventName] = eventHandlers[eventName].filter(h => h !== handler);
   }
 };
 
-const handleEvent = (eventName: string, data: PusherEvent) => {
+const handleEvent = (eventName: string, data: PusherEvent | ChatMessage) => {
   if (eventHandlers[eventName]) {
-    eventHandlers[eventName].forEach(handler => handler(data));
+    if (eventName === 'chat_message') {
+      eventHandlers[eventName].forEach(handler => (handler as ChatMessageHandler)(data as ChatMessage));
+    } else {
+      eventHandlers[eventName].forEach(handler => (handler as PusherEventHandler)(data as PusherEvent));
+    }
   }
 };
 
@@ -75,7 +81,11 @@ const subscribeToSessionChannel = (sessionId: string) => {
 
     // Bind all event handlers
     Object.keys(eventHandlers).forEach(eventName => {
-      channel.bind(eventName, (data: PusherEvent) => handleEvent(eventName, data));
+      if (eventName === 'chat_message') {
+        channel.bind(eventName, (data: ChatMessage) => handleEvent(eventName, data));
+      } else {
+        channel.bind(eventName, (data: PusherEvent) => handleEvent(eventName, data));
+      }
     });
 
     return channel;
@@ -100,13 +110,13 @@ const unsubscribeFromChannel = (channelName: string) => {
 };
 
 // Default event handlers
-addEventHandler('createNewAssistant', (data) => {
+addEventHandler('createNewAssistant', (data: PusherEvent) => {
   setTimeout(() => {
     emitter.emit(EventNames.EVENT_SET_ASSISTANT_VALUES, data.message);
   }, 100);
 });
 
-addEventHandler('setAssistant', (data) => {
+addEventHandler('setAssistant', (data: PusherEvent) => {
   console.log('Received setAssistant event. Data:', data);
   if (data && typeof data === 'object' && '_id' in data) {
     const assistantId = data._id as string;
@@ -117,7 +127,7 @@ addEventHandler('setAssistant', (data) => {
   }
 });
 
-addEventHandler('action_execution_update', (data) => {
+addEventHandler('action_execution_update', (data: PusherEvent) => {
   console.log('Received action_execution_update event:', data);
   emitter.emit(EventNames.EVENT_ACTION_EXECUTION, data);
 });
