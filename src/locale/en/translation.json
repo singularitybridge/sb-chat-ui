@@ -1,6 +1,7 @@
 {
   "Menu": {
     "Companies": "Companies",
+    "Teams": "Teams",
     "Assistants": "Assistants",
     "Users": "Users",
     "Sessions": "Sessions",
@@ -77,6 +78,7 @@
   "Navigation": {
     "home": "Home",
     "companies": "Companies",
+    "teams": "Teams",
     "assistants": "Assistants",
     "users": "Users",
     "sessions": "Sessions",
@@ -108,6 +110,28 @@
     "successfullySet":"Company set successfully",
     "companyUpdated":"Company has been updated successfully",
     "addTag": "Add Tag"
+  },
+  "TeamsPage": {
+    "title": "Teams",
+    "addTeam": "Add Team",
+    "noTeams": "No teams found",
+    "createTeamPrompt": "Click the + button to create a team"
+  },
+  "EditTeamPage": {
+    "title": "Edit Team",
+    "name": "Name",
+    "description": "Description",
+    "icon": "Icon",
+    "iconPlaceholder": "Enter an emoji or icon name",
+    "teamAssistants": "Team Assistants",
+    "addAssistant": "Add Assistant",
+    "noAssistants": "No assistants in this team yet"
+  },
+  "AddTeamDialog": {
+    "name": "Name",
+    "description": "Description",
+    "icon": "Icon",
+    "iconPlaceholder": "Enter an emoji or icon name"
   },
   "AssistantsPage": {
     "title": "Your Team",
@@ -256,7 +280,12 @@
     "actionUpdated": "Action has been updated successfully",
     "actionDeleted": "Action has been deleted successfully",
     "sessionCleared": "Session has been cleared successfully",
-    "tokenRefreshed": "Token has been refreshed successfully"
+    "tokenRefreshed": "Token has been refreshed successfully",
+    "teamCreated": "Team created successfully",
+    "teamUpdated": "Team updated successfully",
+    "teamDeleted": "Team deleted successfully",
+    "assistantAssignedToTeam": "Assistant assigned to team successfully",
+    "assistantRemovedFromTeam": "Assistant removed from team successfully"
   },
   "assistantFieldConfigs": {
     "assistantId": "Assistant ID",
@@ -275,11 +304,19 @@
       "description": "Conversation starters are used to initiate a conversation with the assistant"      
     }
   },
+  "teamFieldConfigs": {
+    "name": "Name",
+    "description": "Description",
+    "icon": "Icon",
+    "save": "Create Team"
+  },
   "dialogTitles" : {
     "newAssistant": "Create New Assistant",
     "newCompany": "Create New Company",
     "newAction": "Create New Action",
     "newUser": "Create New User",
+    "newTeam": "Create New Team",
+    "editAssistantActions": "Edit Assistant Actions",
     "onboarding": "Get Started"
   },
   "actionsGallery" : {
@@ -289,6 +326,10 @@
     "actions": "actions",
     "appName": "Agent Portal",
     "pleaseWait": "Please wait...",
-    "save": "Save Changes"
+    "save": "Save Changes",
+    "add": "Add",
+    "cancel": "Cancel",
+    "create": "Create",
+    "back": "Back"
   }
 }

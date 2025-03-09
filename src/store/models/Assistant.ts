@@ -23,6 +23,7 @@ const Assistant = types.model('Assistant', {
   avatarImage: types.optional(types.string, ''),
   allowedActions: types.optional(types.array(types.string), []),
   conversationStarters: types.optional(types.array(Identifier), []),
+  teams: types.optional(types.array(types.string), []), // Array of team IDs
 });
 
 type IAssistant = Instance<typeof Assistant>;

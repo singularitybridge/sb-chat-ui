@@ -1,6 +1,7 @@
 {
   "Menu": {
     "Companies": "חברות",
+    "Teams": "צוותים",
     "Assistants": "סוכנים",
     "Users": "משתמשים",
     "Sessions": "שיחות פעילות",
@@ -77,6 +78,7 @@
   "Navigation": {
     "home": "בית",
     "companies": "חברות",
+    "teams": "צוותים",
     "assistants": "סוכנים",
     "users": "משתמשים",
     "sessions": "שיחות פעילות",
@@ -89,6 +91,28 @@
     "content": "This action cannot be undone",
     "cancel": "Cancel",
     "confirm": "Confirm"
+  },
+  "TeamsPage": {
+    "title": "צוותים",
+    "addTeam": "הוסף צוות",
+    "noTeams": "לא נמצאו צוותים",
+    "createTeamPrompt": "לחץ על כפתור + כדי ליצור צוות"
+  },
+  "EditTeamPage": {
+    "title": "ערוך צוות",
+    "name": "שם",
+    "description": "תיאור",
+    "icon": "אייקון",
+    "iconPlaceholder": "הזן אימוג'י או שם אייקון",
+    "teamAssistants": "סוכנים בצוות",
+    "addAssistant": "הוסף סוכן",
+    "noAssistants": "אין עדיין סוכנים בצוות זה"
+  },
+  "AddTeamDialog": {
+    "name": "שם",
+    "description": "תיאור",
+    "icon": "אייקון",
+    "iconPlaceholder": "הזן אימוג'י או שם אייקון"
   },
   "CompaniesPage": {
     "title": "חברות",
@@ -277,7 +301,12 @@
     "actionUpdated": "הפעולה עודכנה בהצלחה",
     "actionDeleted": "הפעולה נמחקה בהצלחה",
     "sessionCleared": "השיחה נוקתה בהצלחה",
-    "tokenRefreshed": "האסימון רוענן בהצלחה"
+    "tokenRefreshed": "האסימון רוענן בהצלחה",
+    "teamCreated": "הצוות נוצר בהצלחה",
+    "teamUpdated": "הצוות עודכן בהצלחה",
+    "teamDeleted": "הצוות נמחק בהצלחה",
+    "assistantAssignedToTeam": "הסוכן הוקצה לצוות בהצלחה",
+    "assistantRemovedFromTeam": "הסוכן הוסר מהצוות בהצלחה"
   }, 
   "assistantFieldConfigs": {
     "assistantId": "מזהה עוזר",
@@ -300,11 +329,19 @@
       "description": "מתחילי שיחה משמשים להתחלת שיחה עם העוזר"
     }
   }, 
+  "teamFieldConfigs": {
+    "name": "שם",
+    "description": "תיאור",
+    "icon": "אייקון",
+    "save": "צור צוות"
+  },
   "dialogTitles" : {
     "newAssistant": "צור עוזר חדש",
     "newCompany": "צור חברה חדשה",
     "newAction": "צור פעולה חדשה",
     "newUser": "צור משתמש חדש",
+    "newTeam": "צור צוות חדש",
+    "editAssistantActions": "ערוך פעולות מורשות",
     "onboarding": "ברוכים הבאים"
   },
   "actionsGallery" : {
@@ -314,6 +351,10 @@
     "actions": "פעולות",
     "appName": "פורטל הסוכנים",
     "pleaseWait": "אנא המתן...",
-    "save": "שמור שינויים"
+    "save": "שמור שינויים",
+    "add": "הוסף",
+    "cancel": "בטל",
+    "create": "צור",
+    "back": "חזור"
   }
 }
