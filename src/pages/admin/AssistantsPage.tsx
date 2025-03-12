@@ -1,9 +1,9 @@
 // file_path: src/pages/admin/AssistantsPage.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useRootStore } from '../../store/common/RootStoreContext';
 import { IAssistant } from '../../store/models/Assistant';
-import { Plus, Settings, X } from 'lucide-react';
+import { Plus, Settings, X, ChevronRight, ChevronLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { IconButton } from '../../components/admin/IconButton';
 import { emitter } from '../../services/mittEmitter';
@@ -13,7 +13,7 @@ import {
 } from '../../utils/eventNames';
 import { ChatContainer } from '../../components/chat-container/ChatContainer';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Avatar, AvatarStyles } from '../../components/Avatar';
 import Badge from '../../components/Badge';
 import IntegrationIcons from '../../components/IntegrationIcons';
@@ -22,11 +22,46 @@ import { motion, AnimatePresence } from 'framer-motion';
 const AssistantsPage: React.FC = observer(() => {
   const rootStore = useRootStore();
   const navigate = useNavigate();
-  const [hoveredAssistantId, setHoveredAssistantId] = useState<string | null>(
-    null
-  );
+  const { teamId } = useParams<{ teamId: string }>();
+  const [hoveredAssistantId, setHoveredAssistantId] = useState<string | null>(null);
+  const [teamAssistants, setTeamAssistants] = useState<IAssistant[]>([]);
+  const [teamName, setTeamName] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { t } = useTranslation();
+
+  useEffect(() => {
+    if (teamId) {
+      setIsLoading(true);
+      
+      const loadData = async () => {
+        try {
+          // Make sure teams are loaded
+          if (!rootStore.teamsLoaded) {
+            await rootStore.loadTeams();
+          }
+          
+          // Get team name
+          const team = rootStore.getTeamById(teamId);
+          if (team) {
+            setTeamName(team.name);
+          }
+          
+          // Load assistants for this team
+          const assistants = await rootStore.loadAssistantsByTeam(teamId);
+          if (assistants) {
+            setTeamAssistants(assistants);
+          }
+        } catch (error) {
+          console.error('Failed to load data:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      
+      loadData();
+    }
+  }, [teamId, rootStore]);
 
   const handleDelete = (assistant: IAssistant) => {
     rootStore.deleteAssistant(assistant._id);
@@ -53,7 +88,37 @@ const AssistantsPage: React.FC = observer(() => {
       <div className="flex w-full max-w-7xl space-x-7 rtl:space-x-reverse">
         <div className="flex flex-col rounded-lg max-w-sm w-full">
           <div className="flex flex-row justify-between items-center w-full mb-8">
-            <TextComponent text={t('AssistantsPage.title')} size="subtitle" />
+            <div className="flex items-center">
+              {teamId ? (
+                <div className="flex items-center">
+                  <span 
+                    onClick={() => navigate('/admin/teams')}
+                    className="cursor-pointer"
+                  >
+                    <TextComponent 
+                      text={t('Navigation.teams')} 
+                      size="subtitle" 
+                    />
+                  </span>
+                  <span className="mx-2">
+                    {rootStore.language === 'he' ? (
+                      <ChevronLeft className="w-5 h-5 inline-block" />
+                    ) : (
+                      <ChevronRight className="w-5 h-5 inline-block" />
+                    )}
+                  </span>
+                  <TextComponent 
+                    text={teamName} 
+                    size="subtitle" 
+                  />
+                </div>
+              ) : (
+                <TextComponent 
+                  text={t('AssistantsPage.title')} 
+                  size="subtitle" 
+                />
+              )}
+            </div>
             <IconButton
               icon={<Plus className="w-7 h-7 text-gray-600" />}
               onClick={handleAddAssistant}
@@ -61,7 +126,12 @@ const AssistantsPage: React.FC = observer(() => {
           </div>
 
           <ul className="space-y-6 flex-grow overflow-y-auto pr-4 rtl:pl-4 rtl:pr-0">
-            {rootStore.assistants.map((assistant) => {
+            {isLoading ? (
+              <div className="text-center py-8 text-gray-500">
+                <p>{t('common.pleaseWait')}</p>
+              </div>
+            ) : (
+              (teamId ? teamAssistants : rootStore.assistants).map((assistant) => {
               const isActive =
                 rootStore.sessionStore.activeSession?.assistantId ===
                 assistant._id;
@@ -148,7 +218,13 @@ const AssistantsPage: React.FC = observer(() => {
                   </div>
                 </li>
               );
-            })}
+              })
+            )}
+            {!isLoading && (teamId ? teamAssistants.length === 0 : rootStore.assistants.length === 0) && (
+              <div className="text-center py-8 text-gray-500">
+                <p>{teamId ? t('teamAssistants.noAssistants') : t('teamAssistants.noAssistantsFound')}</p>
+              </div>
+            )}
           </ul>
         </div>
         <div className="flex-grow max-w-3xl w-full">

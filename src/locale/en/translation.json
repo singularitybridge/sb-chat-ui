@@ -331,5 +331,12 @@
     "cancel": "Cancel",
     "create": "Create",
     "back": "Back"
+  },
+  "breadcrumbs": {
+    "teamAssistants": "Team Assistants"
+  },
+  "teamAssistants": {
+    "noAssistants": "No assistants in this team",
+    "noAssistantsFound": "No assistants found"
   }
 }

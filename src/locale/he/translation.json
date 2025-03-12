@@ -356,5 +356,12 @@
     "cancel": "בטל",
     "create": "צור",
     "back": "חזור"
+  },
+  "breadcrumbs": {
+    "teamAssistants": "סוכנים בצוות"
+  },
+  "teamAssistants": {
+    "noAssistants": "אין סוכנים בצוות זה",
+    "noAssistantsFound": "לא נמצאו סוכנים"
   }
 }

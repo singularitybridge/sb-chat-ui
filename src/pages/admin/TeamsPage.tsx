@@ -39,6 +39,10 @@ const TeamsPage: React.FC = observer(() => {
     navigate(`/admin/teams/${teamId}`);
   };
 
+  const handleTeamClick = (teamId: string) => {
+    navigate(`/admin/assistants/team/${teamId}`);
+  };
+
   return (
     <div className="flex justify-center h-full">
       <div className="flex w-full max-w-7xl">
@@ -57,7 +61,7 @@ const TeamsPage: React.FC = observer(() => {
                 <li
                   key={team._id}
                   className="group rounded-lg p-4 cursor-pointer hover:bg-blue-200 relative bg-slate-100 bg-opacity-80"
-                  onClick={() => handleEditTeam(team._id)}
+                  onClick={() => handleTeamClick(team._id)}
                   onMouseEnter={() => setHoveredTeamId(team._id)}
                   onMouseLeave={() => setHoveredTeamId(null)}
                 >

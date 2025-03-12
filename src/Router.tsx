@@ -57,6 +57,10 @@ export const browserRouter = createBrowserRouter([
             element: <AssistantsPage />,
           },
           {
+            path: 'assistants/team/:teamId',
+            element: <AssistantsPage />,
+          },
+          {
             path: 'assistants/workspace/join',
             element: <WorkspaceJoinPage />,
           },

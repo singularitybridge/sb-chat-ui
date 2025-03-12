@@ -15,6 +15,7 @@ import {
   deleteTeam,
   assignAssistantToTeam,
   removeAssistantFromTeam,
+  getTeamAssistants,
 } from '../../services/api/teamService';
 import { emitter } from '../../services/mittEmitter';
 import {
@@ -503,6 +504,17 @@ const RootStore = types
       } catch (error) {
         console.error('Failed to remove assistant from team', error);
         emitter.emit(EVENT_ERROR, 'Failed to remove assistant from team: ' + (error as Error).message);
+      }
+    }),
+
+    loadAssistantsByTeam: flow(function* (teamId: string) {
+      try {
+        const assistants: IAssistant[] = yield getTeamAssistants(teamId);
+        return assistants;
+      } catch (error) {
+        console.error('Failed to load team assistants', error);
+        emitter.emit(EVENT_ERROR, 'Failed to load team assistants: ' + (error as Error).message);
+        return [];
       }
     }),
   }));
