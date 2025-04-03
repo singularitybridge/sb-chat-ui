@@ -24,6 +24,9 @@ const llmModelOptions: SelectListOption[] = [
   { value: 'gpt-4o-mini', label: 'GPT-4o Mini' },
   { value: 'gpt-4-turbo', label: 'GPT-4 Turbo' },
   { value: 'chatgpt-4o-latest', label: 'ChatGPT-4o Latest' },
+  { value: 'o3-mini-low', label: 'GPT o3 Mini (low)' },
+  { value: 'o3-mini-medium', label: 'GPT o3 Mini (medium)' },
+  { value: 'o3-mini-high', label: 'GPT o3 Mini (high)' },
 ];
 
 interface ActionParameter {
