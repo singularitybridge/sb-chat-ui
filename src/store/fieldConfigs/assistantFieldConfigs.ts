@@ -27,6 +27,9 @@ const llmModelOptions: SelectListOption[] = [
   { value: 'o3-mini-low', label: 'GPT o3 Mini (low)' },
   { value: 'o3-mini-medium', label: 'GPT o3 Mini (medium)' },
   { value: 'o3-mini-high', label: 'GPT o3 Mini (high)' },
+  { value: 'gpt-4.1', label: 'GPT-4.1' },
+  { value: 'gpt-4.1-mini', label: 'GPT-4.1 Mini' },
+  { value: 'gpt-4.1-nano', label: 'GPT-4.1 Nano' },
 ];
 
 interface ActionParameter {
@@ -63,17 +66,21 @@ const actionOptionsCache: Record<string, ActionOption[]> = {};
 /**
  * Fetches allowed action options from the server for a given language.
  * Uses caching to avoid unnecessary API calls.
- * 
+ *
  * @param language - The language code for which to fetch action options
  * @returns A promise that resolves to an array of ActionOption objects
  */
-export const fetchAllowedActionOptions = async (language: string = 'en'): Promise<ActionOption[]> => {
+export const fetchAllowedActionOptions = async (
+  language: string = 'en'
+): Promise<ActionOption[]> => {
   if (actionOptionsCache[language]) {
     return actionOptionsCache[language];
   }
 
   try {
-    const response = await apiCaller.get<any[]>(`/integrations/discover?language=${language}`);
+    const response = await apiCaller.get<any[]>(
+      `/integrations/discover?language=${language}`
+    );
     const actionOptions = response.data.map((action: any) => ({
       id: action.id,
       name: action.actionTitle,
@@ -84,7 +91,11 @@ export const fetchAllowedActionOptions = async (language: string = 'en'): Promis
       category: action.serviceName,
       value: action.id,
       label: action.actionTitle,
-      parameters: action.parameters || { type: 'object', properties: {}, required: [] }
+      parameters: action.parameters || {
+        type: 'object',
+        properties: {},
+        required: [],
+      },
     }));
 
     actionOptionsCache[language] = actionOptions;
@@ -98,11 +109,13 @@ export const fetchAllowedActionOptions = async (language: string = 'en'): Promis
 /**
  * Asynchronously generates the assistant field configurations.
  * This function fetches the allowed action options from the server based on the specified language.
- * 
+ *
  * @param language - The language code to use for fetching action options (default: 'en')
  * @returns A promise that resolves to an array of FieldConfig objects
  */
-export const getAssistantFieldConfigs = async (language: string = 'en'): Promise<FieldConfig[]> => {
+export const getAssistantFieldConfigs = async (
+  language: string = 'en'
+): Promise<FieldConfig[]> => {
   const allowedActionOptions = await fetchAllowedActionOptions(language);
 
   return [
