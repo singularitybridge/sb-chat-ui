@@ -194,6 +194,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                 title={t(`${formContext}.APIKeys.title`)}
                 description={t(`${formContext}.APIKeys.description`)}
                 initialData={values[field.id] as ApiKey[]}
+                allApiKeysConfig={(field as ApiKeysListFieldConfig).value} // Pass the config for all API keys
                 onVerify={onVerify || (() => Promise.resolve(true))}
                 onDataChange={(newValue) => handleChange(field.id, newValue)}
               />

@@ -11,15 +11,17 @@ export interface ApiKey {
 interface ApiKeyListProps {
   title: string;
   description: string;
-  initialData: ApiKey[];
+  initialData: ApiKey[]; // Data from the backend
+  allApiKeysConfig: ApiKey[]; // All possible API keys from companyFieldConfigs
   onDataChange: (data: ApiKey[]) => void;
-  onVerify: (value: string, key: string) => Promise<boolean>; // Add this line
+  onVerify: (value: string, key: string) => Promise<boolean>;
 }
 
 const ApiKeyList: React.FC<ApiKeyListProps> = ({
   title,
   description,
   initialData,
+  allApiKeysConfig,
   onDataChange,
 }) => {
   const [verificationStatus, setVerificationStatus] = useState<
@@ -32,11 +34,25 @@ const ApiKeyList: React.FC<ApiKeyListProps> = ({
     return isValid;
   };
 
-  const handleValueChange = (newValue: string, index: number) => {
-    const updatedData = [...initialData];
-    updatedData[index].value = newValue;
+  const handleValueChange = (newValue: string, configKey: string) => {
+    // Find if the key already exists in initialData
+    const existingKeyIndex = initialData.findIndex(item => item.key === configKey);
+    let updatedData;
+
+    if (existingKeyIndex !== -1) {
+      // Update existing key
+      updatedData = initialData.map((item, idx) =>
+        idx === existingKeyIndex ? { ...item, value: newValue } : item
+      );
+    } else {
+      // Add new key if it doesn't exist
+      updatedData = [...initialData, { key: configKey, value: newValue }];
+    }
     onDataChange(updatedData);
   };
+
+  // Create a map of initialData for quick lookup
+  const initialDataMap = new Map(initialData.map(item => [item.key, item.value]));
 
   return (
     <div>
@@ -46,19 +62,22 @@ const ApiKeyList: React.FC<ApiKeyListProps> = ({
       </div>
 
       <div className="flex flex-col space-y-3">
-        {initialData.map(({ key, value }, index) => (
-          <VerifiedInputWithLabel
-            apiKey={key}
-            id={`api-key-${key}`}
-            key={key}
-            label={key}
-            type="text"
-            value={value}
-            onChange={(newValue) => handleValueChange(newValue, index)}
-            onVerify={handleVerify}
-            autoFocus={index === 0}
-          />
-        ))}
+        {allApiKeysConfig.map(({ key: configKey, value: defaultValue }, index) => {
+          const currentValue = initialDataMap.get(configKey) ?? defaultValue;
+          return (
+            <VerifiedInputWithLabel
+              apiKey={configKey}
+              id={`api-key-${configKey}`}
+              key={configKey}
+              label={configKey}
+              type="text"
+              value={currentValue}
+              onChange={(newValue) => handleValueChange(newValue, configKey)}
+              onVerify={handleVerify}
+              autoFocus={index === 0}
+            />
+          );
+        })}
       </div>
     </div>
   );

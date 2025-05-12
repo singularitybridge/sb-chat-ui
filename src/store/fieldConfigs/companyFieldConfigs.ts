@@ -74,6 +74,18 @@ export const companyFieldConfigs: FieldConfig[] = [
       {
         key: 'executor_agent_token',
         value: '-',
+      },
+      {
+        key: 'jira_api_token', // Matches apiKeyName in jira.config.json and getApiKey call
+        value: '-',
+      },
+      {
+        key: 'jira_domain',    // Matches getApiKey call
+        value: '-',
+      },
+      {
+        key: 'jira_email',     // Matches getApiKey call
+        value: '-',
       }
     ],
     visibility: { create: true, view: true, update: true },
