@@ -192,8 +192,7 @@
       "description": "מפתחות API משמשים לאימות ולחיבור למקורות חיצוניים",
       "placeholders": {
         "openai_api_key": "הזן כאן את מפתח ה-API של OpenAI",
-        "gcp_key": "הזן כאן את מפתח ה-GCP שלך",
-        "notion_api_key": "הזן כאן את מפתח ה-API של Notion",
+        "gcp_key": "הזן כאן את מפתח ה-GCP שלך",        
         "labs11_api_key": "הזן כאן את מפתח ה-API של 11Labs",
         "jsonbin_api_key" : "הזן כאן את מפתח ה-API של Jsonbin",
         "twilio_account_sid": "הזן כאן את SID של חשבון Twilio שלך",
@@ -241,8 +240,7 @@
       "description": "מפתחות API משמשים לאימות ולחיבור למקורות חיצוניים",
       "placeholders": {
         "openai_api_key": "הזן כאן את מפתח ה-API של OpenAI",
-        "gcp_key": "הזן כאן את מפתח ה-GCP שלך",
-        "notion_api_key": "הזן כאן את מפתח ה-API של Notion",
+        "gcp_key": "הזן כאן את מפתח ה-GCP שלך",        
         "labs11_api_key": "הזן כאן את מפתח ה-API של 11Labs",
         "jsonbin_api_key" : "הזן כאן את מפתח ה-API של Json",
         "twilio_account_sid": "הזן כאן את SID של חשבון Twilio שלך",

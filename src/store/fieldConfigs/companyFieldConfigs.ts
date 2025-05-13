@@ -80,13 +80,13 @@ export const companyFieldConfigs: FieldConfig[] = [
         value: '-',
       },
       {
-        key: 'jira_domain',    // Matches getApiKey call
+        key: 'jira_domain', // Matches getApiKey call
         value: '-',
       },
       {
-        key: 'jira_email',     // Matches getApiKey call
+        key: 'jira_email', // Matches getApiKey call
         value: '-',
-      }
+      },
     ],
     visibility: { create: true, view: true, update: true },
   },
