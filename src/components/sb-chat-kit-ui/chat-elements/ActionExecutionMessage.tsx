@@ -48,13 +48,11 @@ const mapIconName = (iconName: string): keyof typeof LucideIcons => {
 
 const ActionExecutionMessage: React.FC<ActionExecutionMessageProps> = ({
   messageId,
-  status,
-  actionId,
+  status,  
   serviceName,
   actionTitle,
   actionDescription,
-  icon,
-  originalActionId,
+  icon,  
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [fullMessageData, setFullMessageData] = useState<FullMessageData | null>(null);

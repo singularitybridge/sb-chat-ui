@@ -21,6 +21,7 @@ interface Action {
 }
 
 interface ChatMessage {
+  id: string; // Added to match ChatContainer's ChatMessage
   content: string;
   role: string;
   metadata?: Metadata;
@@ -131,58 +132,95 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
           />
 
           <div className="flex-grow overflow-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-300">
-            {messages.map((message, index) => {
-              if (message.metadata?.message_type === 'human-agent-response') {
+            {messages.map((message, index) => { // index is still used for disabledMessages logic
+              const key = message.id; // Use message.id for React key
+
+              if (message.role === 'system') {
+                switch (message.metadata?.message_type) {
+                  case 'action_execution':
+                    return (
+                      <ActionExecutionMessage
+                        key={key}
+                        // Pass all relevant fields from metadata (which is the API's 'data' object + message_type)
+                        messageId={message.id} // Changed from message.metadata.messageId to message.id
+                        status={message.metadata.status as 'started' | 'completed' | 'failed'}
+                        actionId={message.metadata.actionId}
+                        serviceName={message.metadata.serviceName}
+                        actionTitle={message.metadata.actionTitle}
+                        actionDescription={message.metadata.actionDescription}
+                        icon={message.metadata.icon}
+                        originalActionId={message.metadata.originalActionId}
+                        // Any other fields from message.metadata that ActionExecutionMessage might need
+                      />
+                    );
+                  case 'integration_action_update':
+                    // Placeholder rendering for integration_action_update
+                    // TODO: Create a specific component e.g., <IntegrationUpdateMessage key={key} data={message.metadata} />
+                    return (
+                      <NotificationMessage
+                        key={key}
+                        text={`Integration Update: ${message.content} (Details: ${JSON.stringify(message.metadata)})`}
+                      />
+                    );
+                  case 'notification': // Existing explicit handler
+                    return (
+                      <NotificationMessage key={key} text={message.content} />
+                    );
+                  default:
+                    // Fallback for other system message types: display the basic text content
+                    // This uses message.content which should be "System: <message_type>" as per guide
+                    // TODO: Create a specific <SystemTextMessage key={key} text={message.content} /> if distinct styling is needed
+                    return (
+                      <NotificationMessage key={key} text={message.content} />
+                    );
+                }
+              } else if (message.role === 'user') {
                 return (
-                  <HumanAgentResponseMessage
-                    key={index}
+                  <UserMessage
+                    key={key}
                     text={message.content}
-                  />
-                );
-              } else if (message.metadata?.message_type === 'notification') {
-                return (
-                  <NotificationMessage key={index} text={message.content} />
-                );
-              } else if (message.metadata?.message_type === 'action_execution') {
-                return (
-                  <ActionExecutionMessage
-                    key={index}
-                    messageId={message.metadata.messageId}
-                    status={message.metadata.status as 'started' | 'completed' | 'failed'}
-                    actionId={message.metadata.actionId}
-                    serviceName={message.metadata.serviceName}
-                    actionTitle={message.metadata.actionTitle}
-                    actionDescription={message.metadata.actionDescription}
-                    icon={message.metadata.icon}
-                    originalActionId={message.metadata.originalActionId}
-                  />
-                );
-              } else if (message.actions && message.actions.length > 0) {
-                return (
-                  <ActionMessage
-                    key={index}
-                    text={message.content}
-                    actions={message.actions}
-                    role={assistantName}
-                    isDisabled={disabledMessages.includes(index)}
+                    createdAt={message.createdAt}
                   />
                 );
               } else if (message.role === 'assistant') {
+                // Check for assistant messages that might be special types, e.g. with actions
+                // Note: The guide implies action_execution is role: system. If it can be assistant, this logic might need adjustment.
+                if (message.actions && message.actions.length > 0) {
+                  return (
+                    <ActionMessage
+                      key={key}
+                      text={message.content}
+                      actions={message.actions}
+                      role={assistantName} // Display name for the sender of the action message
+                      isDisabled={disabledMessages.includes(index)} // disabledMessages uses array index
+                    />
+                  );
+                }
+                // Standard assistant text message
                 return (
                   <AssistantMessage
-                    key={index}
+                    key={key}
                     text={message.content}
                     assistantName={assistantName}
                     createdAt={message.createdAt}
                   />
                 );
-              } else {
+              } else if (message.metadata?.message_type === 'human-agent-response') {
+                // This type might have a role like 'agent' or 'assistant'.
+                // Keeping its original position in logic for now.
                 return (
-                  <UserMessage
-                    key={index}
+                  <HumanAgentResponseMessage
+                    key={key}
                     text={message.content}
-                    createdAt={message.createdAt}
                   />
+                );
+              } else {
+                // Fallback for any message structure not explicitly handled.
+                // This could be a simple text display or a warning.
+                console.warn('SBChatKitUI: Unhandled message structure', message);
+                // Optionally render a generic message or null
+                return (
+                  <NotificationMessage key={key} text={`Unknown message: ${message.content}`} />
                 );
               }
             })}
