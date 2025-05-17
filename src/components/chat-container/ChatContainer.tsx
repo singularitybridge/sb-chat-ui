@@ -3,7 +3,9 @@ import { observer } from 'mobx-react';
 import { useRootStore } from '../../store/common/RootStoreContext';
 import {
   getSessionMessages,
-  handleUserInput,
+  // handleUserInput, // No longer used directly
+  handleUserInputStream, // Import the new streaming function
+  StreamPayload, // Import the StreamPayload interface
 } from '../../services/api/assistantService';
 import { addEventHandler, removeEventHandler } from '../../services/PusherService';
 import { ChatMessage as PusherChatMessage } from '../../types/pusher';
@@ -54,6 +56,8 @@ interface ChatMessage {
   metadata?: Metadata; // Will store message_type and contents of ApiResponseMessage.data
   assistantName?: string; // Optional, if needed for specific display
   createdAt: number;
+  isStreaming?: boolean; // Added for streaming
+  // partialContent?: string; // Alternative to directly updating content
 }
 
 interface ActionExecutionMessage {
@@ -92,6 +96,7 @@ const ChatContainer = observer(() => {
   const [audioState, setAudioState] = useState<AudioState>('disabled');
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const abortControllerRef = useRef<AbortController | null>(null); // For aborting stream
 
   const { activeSession } = rootStore.sessionStore;
   const assistantId = activeSession?.assistantId;
@@ -188,57 +193,123 @@ const ChatContainer = observer(() => {
   }, [messages]);
 
   const handleSubmitMessage = async (message: string) => {
+    if (isLoading) return; // Prevent multiple submissions while one is in progress
+
+    // Abort previous stream if any
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    abortControllerRef.current = new AbortController();
+
     const userMessageId = `local-user-${Date.now()}-${Math.random().toString(36).substring(7)}`;
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      {
-        id: userMessageId,
-        content: message,
-        role: 'user',
-        createdAt: Date.now() / 1000,
-        metadata: { message_type: 'text' },
-      },
-    ]);
+    const userMessage: ChatMessage = {
+      id: userMessageId,
+      content: message,
+      role: 'user',
+      createdAt: Date.now() / 1000,
+      metadata: { message_type: 'text' },
+    };
+    setMessages((prevMessages) => [...prevMessages, userMessage]);
     setIsLoading(true);
 
-    if (assistant) {
-      try {
-        const responseText = await handleUserInput({
-          userInput: message,
-          sessionId: activeSession?._id || '',
-        });
-        const cleanedResponse = removeRAGCitations(responseText);
-        const assistantMessageId = `local-assistant-${Date.now()}-${Math.random().toString(36).substring(7)}`;
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          {
-            id: assistantMessageId,
-            content: cleanedResponse,
-            role: 'assistant',
-            createdAt: Date.now() / 1000,
-            metadata: { message_type: 'text' },
-          },
-        ]);
+    const assistantMessageId = `streaming-assistant-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+    const initialAssistantMessage: ChatMessage = {
+      id: assistantMessageId,
+      content: '', // Start with empty content
+      role: 'assistant',
+      createdAt: Date.now() / 1000,
+      metadata: { message_type: 'text' }, // Default, can be updated by stream
+      isStreaming: true,
+    };
+    setMessages((prevMessages) => [...prevMessages, initialAssistantMessage]);
 
-        if (audioState === 'enabled') {
-          try {
-            const audioUrl = await textToSpeech(cleanedResponse, assistant.voice as TTSVoice)
-            if (audioRef.current) {
-              audioRef.current.src = audioUrl;
-              console.log('Playing audio response:', audioUrl);
-              audioRef.current.play();
-              setAudioState('playing');
-            }
-          } catch (error) {
-            console.error('Failed to play audio response:', error);
-          }
+    if (assistant && activeSession?._id) {
+      try {
+        await handleUserInputStream(
+          {
+            userInput: message,
+            sessionId: activeSession._id,
+          },
+          (payload: StreamPayload) => {
+            setMessages((prevMessages) =>
+              prevMessages.map((msg) => {
+                if (msg.id === assistantMessageId) {
+                  let newContent = msg.content;
+                  let newMetadata = msg.metadata;
+                  let newIsStreaming = msg.isStreaming;
+
+                  switch (payload.type) {
+                    case 'token':
+                      newContent += payload.value || '';
+                      break;
+                    case 'markdown': // Assuming markdown is appended like tokens
+                      newContent += payload.value || '';
+                      newMetadata = { ...newMetadata, message_type: 'markdown_stream' }; // Or handle as specific type
+                      break;
+                    case 'action':
+                      // This might need more complex handling, e.g., creating a new message
+                      // or updating this one to an action type. For now, log and append.
+                      console.log('Stream: Action payload received', payload.actionDetails);
+                      newContent += `\n[Action: ${payload.actionDetails?.actionTitle || 'Processing Action'}]`;
+                      newMetadata = { ...newMetadata, message_type: 'action_stream', actionDetails: payload.actionDetails };
+                      break;
+                    case 'error':
+                      console.error('Stream: Error payload received', payload.errorDetails);
+                      newContent += `\n[Error: ${payload.errorDetails?.message || 'Streaming error'}]`;
+                      newIsStreaming = false;
+                      setIsLoading(false);
+                      break;
+                    case 'done':
+                      newIsStreaming = false;
+                      setIsLoading(false);
+                      // Final clean up or processing of content if needed
+                      newContent = removeRAGCitations(newContent); // Clean citations at the end
+                      
+                      // TTS for the complete message
+                      if (audioState === 'enabled' && newContent.trim()) {
+                        textToSpeech(newContent, assistant.voice as TTSVoice)
+                          .then(audioUrl => {
+                            if (audioRef.current) {
+                              audioRef.current.src = audioUrl;
+                              audioRef.current.play();
+                              setAudioState('playing');
+                            }
+                          })
+                          .catch(ttsError => console.error('Failed to play audio for streamed response:', ttsError));
+                      }
+                      break;
+                  }
+                  return { ...msg, content: newContent, metadata: newMetadata, isStreaming: newIsStreaming };
+                }
+                return msg;
+              })
+            );
+          },
+          abortControllerRef.current.signal
+        );
+      } catch (error: any) {
+        // Errors from handleUserInputStream (not AbortError or handled by 'error' chunk)
+        if (error.name !== 'AbortError') {
+            console.error('Error getting assistant response stream:', error);
+            setMessages((prevMessages) =>
+              prevMessages.map((msg) =>
+                msg.id === assistantMessageId
+                  ? { ...msg, content: `${msg.content}\n[Error: Failed to get response]`, isStreaming: false }
+                  : msg
+              )
+            );
+            setIsLoading(false);
         }
-      } catch (error) {
-        console.error('Error getting assistant response:', error);
-      } finally {
-        setIsLoading(false);
       }
+      // Note: setIsLoading(false) is now primarily handled by 'done' or 'error' chunks
     } else {
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg.id === assistantMessageId
+            ? { ...msg, content: '[Error: Assistant or session not available]', isStreaming: false }
+            : msg
+        )
+      );
       setIsLoading(false);
     }
   };
@@ -266,6 +337,10 @@ const ChatContainer = observer(() => {
   }, []);
 
   const handleClear = async () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort(); // Abort any ongoing stream
+      abortControllerRef.current = null;
+    }
     if (activeSession && assistant) {
       try {
         await rootStore.sessionStore.endActiveSession();
@@ -283,6 +358,15 @@ const ChatContainer = observer(() => {
       }
     }
   };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
 
   const handleActionExecution = (actionData: ActionExecutionMessage) => {
     setMessages((prevMessages) => {
