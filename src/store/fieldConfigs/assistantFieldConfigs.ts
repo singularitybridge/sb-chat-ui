@@ -27,6 +27,12 @@ const llmModelOptions: SelectListOption[] = [
   { value: 'gpt-4.1-nano', label: 'GPT-4.1 Nano' },
 ];
 
+const llmProviderOptions: SelectListOption[] = [
+  { value: 'openai', label: 'OpenAI' },
+  { value: 'google', label: 'Google' },
+  { value: 'anthropic', label: 'Anthropic' },
+];
+
 interface ActionParameter {
   type: string;
   description: string;
@@ -158,6 +164,15 @@ export const getAssistantFieldConfigs = async (
       visibility: { create: true, view: true, update: true },
     },
     {
+      id: 'llmProvider',
+      key: 'llmProvider',
+      label: 'assistant.llmProvider', // Changed to translation key
+      type: 'dropdown',
+      value: 'openai',
+      options: llmProviderOptions,
+      visibility: { create: true, view: true, update: true },
+    },
+    {
       id: 'llmPrompt',
       key: 'llmPrompt',
       label: 'LLM Prompt',
@@ -235,11 +250,20 @@ export const defaultAssistantFieldConfigs: FieldConfig[] = [
     type: 'dropdown',
     value: 'gpt-4o-mini',
     options: llmModelOptions,
-    visibility: { create: true, view: true, update: true },
-  },
-  {
-    id: 'llmPrompt',
-    key: 'llmPrompt',
+      visibility: { create: true, view: true, update: true },
+    },
+    {
+      id: 'llmProvider',
+      key: 'llmProvider',
+      label: 'assistant.llmProvider', // Changed to translation key
+      type: 'dropdown',
+      value: 'openai',
+      options: llmProviderOptions,
+      visibility: { create: true, view: true, update: true },
+    },
+    {
+      id: 'llmPrompt',
+      key: 'llmPrompt',
     label: 'LLM Prompt',
     type: 'textarea',
     value: 'This is a new assistant.',

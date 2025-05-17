@@ -19,6 +19,7 @@ const Assistant = types.model('Assistant', {
   voice: types.string,
   language: types.string,  
   llmModel: types.optional(types.string, ''),
+  llmProvider: types.optional(types.string, 'openai'),
   llmPrompt: types.optional(types.string, ''),
   avatarImage: types.optional(types.string, ''),
   allowedActions: types.optional(types.array(types.string), []),

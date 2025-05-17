@@ -297,6 +297,7 @@
     "voice": "Voice",
     "language": "Language",
     "llmModel": "LLM Model",
+    "llmProvider": "LLM Provider",
     "llmPrompt": "LLM Prompt",
     "save": "Save Changes",
     "allowedActions": "Allowed Actions",
