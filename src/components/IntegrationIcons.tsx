@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { getLeanIntegrations } from '../services/integrationService';
+import React from 'react';
+import { useIntegrations } from '../contexts/IntegrationsContext';
 import Badge from './Badge';
 import * as LucideIcons from 'lucide-react';
 
@@ -9,28 +9,13 @@ interface IntegrationIconsProps {
   className?: string;
 }
 
-interface IntegrationInfo {
-  id: string;
-  name: string;
-  description: string;
-  icon: string;
-}
-
-const IntegrationIcons: React.FC<IntegrationIconsProps> = ({ integrations, isActive = false, className = '' }) => {
-  const [integrationData, setIntegrationData] = useState<IntegrationInfo[]>([]);
-
-  useEffect(() => {
-    const fetchIntegrationData = async () => {
-      try {
-        const data = await getLeanIntegrations();
-        setIntegrationData(data);
-      } catch (error) {
-        console.error('Error fetching integration data:', error);
-      }
-    };
-
-    fetchIntegrationData();
-  }, []);
+const IntegrationIcons: React.FC<IntegrationIconsProps> = ({
+  integrations,
+  isActive = false,
+  className = ''
+}) => {
+  // Access cached integrations from context/query
+  const { data: integrationData = [] } = useIntegrations();
 
   return (
     <div className={`flex flex-wrap gap-x-1 gap-y-1.5 ${className}`}>

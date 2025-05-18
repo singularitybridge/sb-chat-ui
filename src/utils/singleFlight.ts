@@ -1,36 +1,47 @@
 /**
- * singleFlight — ensures only ONE async operation executes for a given key.
- * Any concurrent callers with the same key will await the first promise.
- * Once the promise resolves or rejects, the key is cleared, so the next call
- * will trigger a fresh execution.
+ * singleFlight — ensures only ONE async operation executes for a given key
+ * within a short TTL window. This collapses bursts of identical HTTP calls
+ * (e.g. during React Strict-Mode double mount) while still allowing manual
+ * refreshes after the window passes.
+ *
+ * Caller MUST construct a stable `key` that includes a hash of query params /
+ * request body so `/users?page=2` and `/users?page=3` do not collide.
  */
-const inFlight: Map<string, Promise<any>> = new Map();
+
+type InFlightEntry<T = unknown> = {
+  started: number;
+  promise: Promise<T>;
+};
+
+const inFlight: Map<string, InFlightEntry> = new Map();
 
 /**
- * Run an async function, ensuring there is at most one in-flight call per key.
- * @param key   Unique identifier for this call (e.g. 'GET /user', 'POST /session')
- * @param fn    Function returning a Promise (the actual async operation)
+ * Run an async function, ensuring there is at most one in-flight call per key
+ * inside the TTL window.
+ *
+ * @param key  Unique identifier for this call
+ *             (e.g. `GET /user?page=2` or hashed body).
+ * @param fn   Function returning a Promise (the async operation).
+ * @param ttl  Time-to-live window in milliseconds. Defaults to 30 000 ms.
  */
-export function singleFlight<T>(key: string, fn: () => Promise<T>): Promise<T> {
-  // If there's already a promise for this key, return it.
-  const existing = inFlight.get(key);
-  if (existing) {
-    return existing as Promise<T>;
+export function singleFlight<T>(
+  key: string,
+  fn: () => Promise<T>,
+  ttl = 30_000
+): Promise<T> {
+  const hit = inFlight.get(key) as InFlightEntry<T> | undefined;
+
+  // If we have a recent entry (still inside TTL), return its promise.
+  if (hit && Date.now() - hit.started < ttl) {
+    return hit.promise;
   }
 
-  // Otherwise execute and store.
-  const p = fn()
-    .catch((err) => {
-      // On error, purge the key so retries are possible.
-      inFlight.delete(key);
-      throw err;
-    })
-    .then((res) => {
-      // Success: also purge key (we don't want stale cache for ever)
-      inFlight.delete(key);
-      return res;
-    });
+  // Otherwise execute the function and cache its promise.
+  const promise = fn().finally(() => {
+    // Clean up once settled so memory doesn't leak and fresh calls can run.
+    inFlight.delete(key);
+  });
 
-  inFlight.set(key, p);
-  return p;
+  inFlight.set(key, { started: Date.now(), promise });
+  return promise;
 }
