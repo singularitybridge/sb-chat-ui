@@ -1,15 +1,11 @@
 import { ISession } from '../../store/models/Session';
 import apiClient from '../AxiosService';
+import { singleFlight } from '../../utils/singleFlight';
 
-export const getActiveSession = async (): Promise<{ data?: ISession; message?: string; keyMissing?: boolean }> => {
-  try {
-    const response = await apiClient.post('session');
-    return response.data;
-  } catch (error: any) {
-    console.error('Failed to fetch active session', error);
-    throw error;
-  }
-};
+export const getActiveSession = (): Promise<{ data?: ISession; message?: string; keyMissing?: boolean }> =>
+  singleFlight('POST /session', () =>
+    apiClient.post('session').then((res) => res.data)
+  );
 
 export const changeSessionAssistant = async (
   sessionId: string,
@@ -29,15 +25,12 @@ export const changeSessionAssistant = async (
   }
 };
 
-export const changeSessionLanguage = async (sessionId: string, language: string): Promise<ISession> => {
-  try {
-    const response = await apiClient.put(`/session/${sessionId}/language`, { language });
-    return response.data;
-  } catch (error) {
-    console.error(`Failed to change language for session ${sessionId}`, error);
-    throw error;
-  }
-};
+export const changeSessionLanguage = (sessionId: string, language: string): Promise<ISession> =>
+  singleFlight(`PUT /session/${sessionId}/language`, () =>
+    apiClient
+      .put(`/session/${sessionId}/language`, { language })
+      .then((res) => res.data)
+  );
 
 export const getSessionById = async (sessionId: string): Promise<ISession> => {
   try {

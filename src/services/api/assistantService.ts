@@ -1,6 +1,7 @@
 import apiClient from '../AxiosService';
 import { IAssistant } from '../../store/models/Assistant';
 import { getToken } from './authService'; // Import getToken for manual auth header
+import { singleFlight } from '../../utils/singleFlight';
 
 // Get apiUrl from environment variables, ensuring consistency with AxiosService
 const apiUrl = import.meta.env.VITE_API_URL || 'https://api.singularitybridge.net/';
@@ -27,15 +28,10 @@ export async function getCompletion(request: CompletionRequest): Promise<string>
   }
 }
 
-export async function getSessionMessages(sessionId: string): Promise<any> {
-  try {
-    const response = await apiClient.get(`session/${sessionId}/messages`);
-    return response.data;
-  } catch (error) {
-    console.error('Failed to get session messages:', error);
-    throw error;
-  }
-}
+export const getSessionMessages = (sessionId: string): Promise<any> =>
+  singleFlight(`GET /session/${sessionId}/messages`, () =>
+    apiClient.get(`session/${sessionId}/messages`).then((res) => res.data)
+  );
 
 interface HandleUserInputBody {
   userInput: string;
@@ -191,15 +187,10 @@ export async function handleUserInputStream(
 }
 
 
-export async function getAssistants(): Promise<IAssistant[]> {
-  try { 
-    const response = await apiClient.get('assistant');
-    return response.data;
-  } catch (error) {
-    console.error('Failed to fetch assistants:', error);
-    throw error;
-  }
-}
+export const getAssistants = (): Promise<IAssistant[]> =>
+  singleFlight('GET /assistant', () =>
+    apiClient.get('assistant').then((res) => res.data)
+  );
 
 export async function deleteAssistant(id: string): Promise<void> {
   try {

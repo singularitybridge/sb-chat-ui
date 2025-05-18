@@ -1,15 +1,11 @@
 import apiClient from '../AxiosService';
 import { IInboxSession } from '../../store/models/Inbox';
+import { singleFlight } from '../../utils/singleFlight';
 
-export const getInboxMessages = async (): Promise<IInboxSession[]> => {
-  try {
-    const response = await apiClient.get(`inbox/`);
-    return response.data;
-  } catch (error) {
-    console.error('Failed to fetch inbox messages', error);
-    throw error;
-  }
-};
+export const getInboxMessages = (): Promise<IInboxSession[]> =>
+  singleFlight('GET /inbox', () =>
+    apiClient.get('inbox').then((res) => res.data)
+  );
 
 export const addInboxMessage = async (sessionId: string, message: string): Promise<IInboxSession> => {
   try {

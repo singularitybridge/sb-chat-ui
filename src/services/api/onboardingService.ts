@@ -1,23 +1,13 @@
-import { OnboardingStatus } from '../../store/models/RootStore';
 import apiClient from '../AxiosService';
+import { singleFlight } from '../../utils/singleFlight';
 
 
-export const getOnboardingStatus = async () => {
-  try {
-    const response = await apiClient.get('/onboarding/status');
-    return response.data;
-  } catch (error) {
-    console.error('Failed to get onboarding status:', error);
-    throw error;
-  }
-};
+export const getOnboardingStatus = () =>
+  singleFlight('GET /onboarding/status', () =>
+    apiClient.get('/onboarding/status').then((res) => res.data)
+  );
 
-export const updateOnboardingStatus = async () => {
-  try {
-    const response = await apiClient.post('/onboarding/status', {});
-    return response.data;
-  } catch (error) {
-    console.error('Failed to update onboarding status:', error);
-    throw error;
-  }
-};
+export const updateOnboardingStatus = () =>
+  singleFlight('POST /onboarding/status', () =>
+    apiClient.post('/onboarding/status', {}).then((res) => res.data)
+  );

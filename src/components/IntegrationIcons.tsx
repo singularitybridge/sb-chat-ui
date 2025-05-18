@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import apiClient from '../services/AxiosService';
+import { getLeanIntegrations } from '../services/integrationService';
 import Badge from './Badge';
 import * as LucideIcons from 'lucide-react';
 
@@ -22,8 +22,8 @@ const IntegrationIcons: React.FC<IntegrationIconsProps> = ({ integrations, isAct
   useEffect(() => {
     const fetchIntegrationData = async () => {
       try {
-        const response = await apiClient.get('/integrations/discover/lean?fields=id,name,description,icon');
-        setIntegrationData(response.data);
+        const data = await getLeanIntegrations();
+        setIntegrationData(data);
       } catch (error) {
         console.error('Error fetching integration data:', error);
       }
@@ -42,7 +42,7 @@ const IntegrationIcons: React.FC<IntegrationIconsProps> = ({ integrations, isAct
         return (
           <div key={integrationInfo?.name || index} title={integrationInfo?.description || ''}>
             <Badge
-              variant={isActive ? "primary" : "secondary"}
+              variant={isActive ? 'primary' : 'secondary'}
               className={`flex items-center space-x-0.5 rtl:space-x-reverse ${isActive ? 'text-gray-500' : ''}`}
             >
               <IconComponent className={`w-3 h-3 mr-1 ${isActive ? 'text-gray-500' : ''}`} />
