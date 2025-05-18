@@ -37,10 +37,11 @@ export function singleFlight<T>(
   }
 
   // Otherwise execute the function and cache its promise.
-  const promise = fn().finally(() => {
-    // Clean up once settled so memory doesn't leak and fresh calls can run.
-    inFlight.delete(key);
-  });
+  const promise = fn()
+    .finally(() => {
+      // Keep the entry for the TTL duration, then evict to allow fresh fetches.
+      setTimeout(() => inFlight.delete(key), ttl);
+    });
 
   inFlight.set(key, { started: Date.now(), promise });
   return promise;

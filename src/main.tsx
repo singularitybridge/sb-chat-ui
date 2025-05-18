@@ -14,7 +14,21 @@ import './index.css';
  * Initialize the TanStack Query client (dedupes & caches requests)
  * and the global RootStore.
  */
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 30_000,               // 30-s default dedupe
+      retry: 2,                        // auto-retry idempotent GETs
+      refetchOnWindowFocus: false
+    }
+  }
+});
+/* Prefetch integrations once so first render never blocks */
+queryClient.prefetchQuery({
+  queryKey: ['integrations'],
+  queryFn: () => import('./services/integrationService').then(m => m.getLeanIntegrations())
+});
+
 const rootStore = RootStore.create({
   language: localStorage.getItem('appLanguage') || 'he'
 });
