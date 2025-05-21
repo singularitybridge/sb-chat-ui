@@ -1,6 +1,6 @@
 import { types, flow, Instance } from 'mobx-state-tree';
 import { Session } from './Session';
-import { getActiveSession, changeSessionAssistant, endSession } from '../../services/api/sessionService';
+import { getActiveSession, changeSessionAssistant, endSession, clearActiveSession as clearActiveSessionService } from '../../services/api/sessionService'; // Added clearActiveSessionService
 
 const SessionStore = types
   .model({
@@ -63,9 +63,25 @@ const SessionStore = types
       }
     }),
 
-    clearActiveSession() {
+    clearActiveSession() { // This one just nullifies locally
       self.activeSession = null;
     },
+
+    clearAndRenewActiveSession: flow(function* () {
+      try {
+        const newSession = yield clearActiveSessionService();
+        if (newSession && newSession._id) {
+          self.activeSession = Session.create(newSession);
+          self.isApiKeyMissing = false; // Assuming a new session means key is fine
+        } else {
+          console.error('Failed to get new session details from clearActiveSessionService');
+          self.activeSession = null; // Or handle error appropriately
+        }
+      } catch (error) {
+        console.error('Failed to clear and renew session', error);
+        self.activeSession = null; // Or handle error appropriately
+      }
+    }),
 
     showDialog(dialogName: string) {
       self.activeDialog = dialogName;

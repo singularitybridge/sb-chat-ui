@@ -1,7 +1,7 @@
 import React from 'react';
 import { observer } from 'mobx-react';
 import { useRootStore } from '../store/common/RootStoreContext';
-import { changeSessionLanguage } from '../services/api/sessionService';
+import { changeActiveSessionLanguage } from '../services/api/sessionService'; // Updated import
 
 const LanguageToggle: React.FC = observer(() => {
   const rootStore = useRootStore();
@@ -14,9 +14,9 @@ const LanguageToggle: React.FC = observer(() => {
       await rootStore.changeLanguage(newLanguage);
 
       // If there's an active session, update its language
-      const activeSessionId = rootStore.sessionStore.activeSessionId;
+      const activeSessionId = rootStore.sessionStore.activeSessionId; // Keep this check to ensure there is an active session context
       if (activeSessionId) {
-        await changeSessionLanguage(activeSessionId, newLanguage);
+        await changeActiveSessionLanguage(newLanguage); // Use new function for active session
       }
 
       // Small delay to ensure all language changes are persisted

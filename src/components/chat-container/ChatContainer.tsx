@@ -2,11 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { useRootStore } from '../../store/common/RootStoreContext';
 import {
-  getSessionMessages,
+  // getSessionMessages, // No longer used from assistantService for active chat
   // handleUserInput, // No longer used directly
   handleUserInputStream, // Import the new streaming function
   StreamPayload, // Import the StreamPayload interface
 } from '../../services/api/assistantService';
+import { getActiveSessionMessages } from '../../services/api/sessionService'; // Import for ID-less message retrieval
 import { addEventHandler, removeEventHandler } from '../../services/PusherService';
 import { ChatMessage as PusherChatMessage } from '../../types/pusher';
 import {
@@ -20,7 +21,7 @@ import { IAssistant } from '../../store/models/Assistant';
 import { SBChatKitUI } from '../sb-chat-kit-ui/SBChatKitUI';
 import { textToSpeech, TTSVoice } from '../../services/api/voiceService';
 import i18n from '../../i18n';
-import { changeSessionLanguage } from '../../services/api/sessionService';
+import { changeActiveSessionLanguage } from '../../services/api/sessionService'; // Removed unused changeSessionLanguage
 
 interface Metadata {
   message_type: string;
@@ -109,20 +110,28 @@ const ChatContainer = observer(() => {
 
   useEffect(() => {
     const setSessionLanguage = async () => {
-      if (activeSession) {
-        await changeSessionLanguage(activeSession._id, rootStore.language);
+      if (activeSession) { // Assuming activeSession means the user's current context
+        await changeActiveSessionLanguage(rootStore.language);
       }
     };
     setSessionLanguage();
   }, [activeSession, rootStore.language]);
 
   const loadMessages = async () => {
-    if (activeSession) {
-      const sessionApiMessages: ApiResponseMessage[] = await getSessionMessages(
-        activeSession?._id || ''
-      );
-      const chatMessages = sessionApiMessages.map(mapToChatMessage);
-      setMessages(chatMessages.reverse());
+    // Use getActiveSessionMessages which doesn't require sessionId
+    // This relies on the backend to determine the active session for messages.
+    // The activeSession check is still good to ensure we *expect* an active session.
+    if (activeSession) { 
+      try {
+        const sessionApiMessages: ApiResponseMessage[] = await getActiveSessionMessages();
+        const chatMessages = sessionApiMessages.map(mapToChatMessage);
+        setMessages(chatMessages.reverse());
+      } catch (error) {
+        console.error('Failed to load messages for active session:', error);
+        setMessages([]); // Clear messages on error or handle appropriately
+      }
+    } else {
+      setMessages([]); // No active session, so no messages
     }
   };
 
@@ -228,7 +237,7 @@ const ChatContainer = observer(() => {
         await handleUserInputStream(
           {
             userInput: message,
-            sessionId: activeSession._id,
+            // sessionId: activeSession._id, // Removed sessionId
           },
           (payload: StreamPayload) => {
             setMessages((prevMessages) =>
@@ -343,16 +352,28 @@ const ChatContainer = observer(() => {
     }
     if (activeSession && assistant) {
       try {
-        await rootStore.sessionStore.endActiveSession();
+        // Replace the old two-step process with the new single store action
+        await rootStore.sessionStore.clearAndRenewActiveSession();
+        
         emitter.emit(
-          EVENT_CHAT_SESSION_DELETED,
-          i18n.t('Notifications.sessionCleared')
+          EVENT_CHAT_SESSION_DELETED, // This event name might still be relevant or could be renamed/repurposed
+          i18n.t('Notifications.sessionClearedAndNewStarted') // Consider a new translation key if meaning changed
         );
+        
+        // clearAndRenewActiveSession should update the activeSession in the store,
+        // so a separate fetchActiveSession might not be needed if the new session is returned and set.
+        // The new session details are now set by clearAndRenewActiveSession.
+        setMessages([]); // Clear messages for the new session
 
-        await rootStore.sessionStore.fetchActiveSession();
-        setMessages([]);
-
-        emitter.emit(EVENT_SET_ACTIVE_ASSISTANT, assistant._id);
+        // If the assistant context needs to be re-established for the new session,
+        // ensure the new session from clearAndRenewActiveSession has assistantId.
+        // The EVENT_SET_ACTIVE_ASSISTANT might still be useful if the assistant context is preserved or needs reset.
+        // Assuming the assistant context remains or is handled by the new session data.
+        if (rootStore.sessionStore.activeSession?.assistantId) {
+           emitter.emit(EVENT_SET_ACTIVE_ASSISTANT, rootStore.sessionStore.activeSession.assistantId);
+        } else if (assistant?._id) { // Fallback to current assistant if new session doesn't specify
+            emitter.emit(EVENT_SET_ACTIVE_ASSISTANT, assistant._id);
+        }
       } catch (error) {
         console.error('Error in handleClear:', error);
       }

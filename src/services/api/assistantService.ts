@@ -30,12 +30,12 @@ export async function getCompletion(request: CompletionRequest): Promise<string>
 
 export const getSessionMessages = (sessionId: string): Promise<any> =>
   singleFlight(`GET /session/${sessionId}/messages`, () =>
-    apiClient.get(`session/${sessionId}/messages`).then((res) => res.data)
+    apiClient.get(`session/${sessionId}/messages`).then((res) => res.data) // This remains as it's for a specific session ID
   );
 
-interface HandleUserInputBody {
+// Body for the API call, sessionId is no longer needed
+interface ApiHandleUserInputBody {
   userInput: string;
-  sessionId: string;
 }
 
 // Interface for the actual API response structure
@@ -44,10 +44,10 @@ interface ApiUserInputResponse {
 }
 
 // The function's public contract returns a string
-export async function handleUserInput(body: HandleUserInputBody): Promise<string> {
+export async function handleUserInput(body: ApiHandleUserInputBody): Promise<string> { // Changed HandleUserInputBody to ApiHandleUserInputBody
   try {
     // Expect the new API response structure
-    const response = await apiClient.post<ApiUserInputResponse>('assistant/user-input', body);
+    const response = await apiClient.post<ApiUserInputResponse>('assistant/user-input', body); // body no longer contains sessionId
     // Extract and return the content string
     return response.data.content;
   } catch (error) {
@@ -96,7 +96,7 @@ async function* createSSELineSplitter(readableStream: ReadableStream<Uint8Array>
 }
 
 export async function handleUserInputStream(
-  body: HandleUserInputBody,
+  body: ApiHandleUserInputBody, // Changed HandleUserInputBody to ApiHandleUserInputBody
   onChunk: (payload: StreamPayload) => void,
   abortSignal?: AbortSignal,
 ): Promise<void> {
