@@ -1,8 +1,8 @@
-import { ISession } from '../../store/models/Session';
+import { ISession } from '../../store/useSessionStore'; // Updated import
 import apiClient from '../AxiosService';
 import { singleFlight } from '../../utils/singleFlight';
 
-export const getActiveSession = (): Promise<{ data?: ISession; message?: string; keyMissing?: boolean }> =>
+export const getActiveSession = (): Promise<ISession | { data?: ISession; message?: string; keyMissing?: boolean }> =>
   singleFlight('POST /session', () => // This seems to be for creating a new session explicitly or getting an active one.
     apiClient.post('session').then((res) => res.data) // The guide implies user-input handles this, but this might be for an initial "ensure session" call.
   );
