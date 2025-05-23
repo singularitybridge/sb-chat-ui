@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from 'react'; // Keep useState for
 import { observer } from 'mobx-react';
 import { useRootStore } from '../../store/common/RootStoreContext'; // Still needed for rootStore.language, rootStore.assistantsLoaded etc.
 import { useChatStore } from '../../store/chatStore'; 
-import { useSessionStore } from '../../store/useSessionStore'; // Import Zustand session store
+import { useSessionStore } from '../../store/useSessionStore';
+import { useAudioStore } from '../../store/useAudioStore';
 import { addEventHandler, removeEventHandler } from '../../services/PusherService';
 import { ChatMessage as PusherChatMessage } from '../../types/pusher'; // Keep for Pusher type
 import {
@@ -51,16 +52,19 @@ const ChatContainer = observer(() => {
   const { 
     messages, 
     isLoading, 
-    audioState, 
     loadMessages: storeLoadMessages,
     addPusherMessage: storeAddPusherMessage,
     handleSubmitMessage: storeHandleSubmitMessage,
     handleClearChat: storeHandleClearChat,
+    updateActionExecutionMessage: storeUpdateActionExecutionMessage,
+  } = useChatStore();
+
+  // Audio store selectors
+  const {
+    audioState,
     toggleAudio: storeToggleAudio,
     setAudioRef: storeSetAudioRef,
-    updateActionExecutionMessage: storeUpdateActionExecutionMessage,
-    // isLoadingMessages is also available if needed for a separate loading indicator
-  } = useChatStore();
+  } = useAudioStore();
 
   const [assistant, setAssistant] = useState<IAssistant | undefined>(); // Keep local state for current assistant object
 
@@ -129,7 +133,7 @@ const ChatContainer = observer(() => {
     storeHandleSubmitMessage(messageText, assistantInfo, activeSession?._id);
   };
 
-  // Toggle audio handler now calls Zustand action
+  // Toggle audio handler now calls audio store action
   const handleToggleAudio = () => {
     storeToggleAudio();
   };
@@ -143,11 +147,10 @@ const ChatContainer = observer(() => {
     const currentAudioRef = localAudioRef.current;
     if (currentAudioRef) {
       const onEndedCallback = () => {
-        // If audio state needs to change on 'ended', Zustand's toggleAudio or a new action can handle it
-        // For now, assuming the store's audio logic handles this if audioRef is playing.
-        // If direct manipulation is needed:
-        if (useChatStore.getState().audioState === 'playing') {
-           useChatStore.getState().toggleAudio(); // Or a more specific 'setAudioEnabled'
+        // Audio state is managed in the audio store
+        const audioStore = useAudioStore.getState();
+        if (audioStore.audioState === 'playing') {
+          audioStore.toggleAudio();
         }
       };
       currentAudioRef.addEventListener('ended', onEndedCallback);

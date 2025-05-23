@@ -2,51 +2,24 @@ import { create } from 'zustand';
 import {
   getActiveSessionMessages,
 } from '../services/api/sessionService';
-import { ISession } from './useSessionStore'; // Updated import
+import { ISession } from './useSessionStore';
 import { 
   handleUserInputStream,
   StreamPayload 
 } from '../services/api/assistantService';
-import { textToSpeech, TTSVoice } from '../services/api/voiceService';
+import { TTSVoice } from '../services/api/voiceService';
 import { emitter } from '../services/mittEmitter';
 import { EVENT_CHAT_SESSION_DELETED, EVENT_SET_ACTIVE_ASSISTANT } from '../utils/eventNames';
-import i18n from '../i18n'; // Assuming i18n is configured for translations
-
-// Interfaces from ChatContainer.tsx (can be moved to a types file)
-interface Metadata {
-  message_type: string;
-  [key: string]: any;
-}
-
-interface ApiResponseMessageContentItemText {
-  value: string;
-}
-
-interface ApiResponseMessageContentItem {
-  type: 'text';
-  text: ApiResponseMessageContentItemText;
-}
-
-interface ApiResponseMessage {
-  id: string;
-  role: 'user' | 'assistant' | 'system';
-  content: ApiResponseMessageContentItem[];
-  created_at: number;
-  assistant_id?: string;
-  thread_id?: string;
-  message_type: string;
-  data?: { [key: string]: any };
-}
-
-export interface ChatMessage {
-  id: string;
-  content: string;
-  role: string;
-  metadata?: Metadata;
-  assistantName?: string;
-  createdAt: number;
-  isStreaming?: boolean;
-}
+import i18n from '../i18n';
+import { 
+  ChatMessage, 
+  ApiResponseMessage, 
+  AssistantInfo,
+  Metadata 
+} from '../types/chat';
+import { useAudioStore } from './useAudioStore';
+import { messageCache } from '../utils/messageCache';
+import { logger } from '../services/LoggingService';
 
 // Helper function (can be moved to utils)
 const removeRAGCitations = (text: string): string => {
@@ -56,33 +29,26 @@ const removeRAGCitations = (text: string): string => {
 interface ChatStoreState {
   messages: ChatMessage[];
   isLoading: boolean;
-  isLoadingMessages: boolean; // For initial load
-  audioState: 'disabled' | 'enabled' | 'playing';
-  audioRef: React.RefObject<HTMLAudioElement> | null; // To control audio playback
+  isLoadingMessages: boolean;
   abortController: AbortController | null;
-
-  setAudioRef: (ref: React.RefObject<HTMLAudioElement>) => void;
-  toggleAudio: () => void;
   
   loadMessages: (activeSessionId: string | null | undefined) => Promise<void>;
-  addPusherMessage: (pusherMessage: any, assistantId?: string) => void; // Define PusherChatMessage type if available
+  addPusherMessage: (pusherMessage: any, assistantId?: string) => void;
   
   handleSubmitMessage: (
     messageText: string, 
-    assistant: { _id: string; voice?: string; name?: string } | undefined, // Simplified assistant type
+    assistant: AssistantInfo | undefined,
     activeSessionId: string | null | undefined
-    // rootStoreLanguage: string // Removed as it's not used
   ) => Promise<void>;
   
   handleClearChat: (
     activeSessionId: string | null | undefined, 
     assistantId: string | null | undefined,
-    clearAndRenewActiveSessionMST: () => Promise<ISession | null> // Changed type to ISession
-    ) => Promise<void>;
+    clearAndRenewActiveSession: () => Promise<ISession | null>
+  ) => Promise<void>;
 
-  updateActionExecutionMessage: (actionData: any) => void; // Define ActionExecutionMessage type
+  updateActionExecutionMessage: (actionData: any) => void;
   
-  // Internal helper, not typically called directly from component
   _mapToChatMessage: (apiMessage: ApiResponseMessage) => ChatMessage;
 }
 
@@ -90,26 +56,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
   messages: [],
   isLoading: false,
   isLoadingMessages: false,
-  audioState: 'disabled',
-  audioRef: null,
   abortController: null,
-
-  setAudioRef: (ref) => set({ audioRef: ref }),
-
-  toggleAudio: () => {
-    const { audioState, audioRef } = get();
-    if (audioState === 'disabled') {
-      set({ audioState: 'enabled' });
-    } else if (audioState === 'enabled') {
-      set({ audioState: 'disabled' });
-    } else if (audioState === 'playing') {
-      if (audioRef?.current) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
-      }
-      set({ audioState: 'enabled' });
-    }
-  },
 
   _mapToChatMessage: (apiMessage: ApiResponseMessage): ChatMessage => {
     const textValue = apiMessage.content?.[0]?.text?.value || 
@@ -135,13 +82,24 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
 
   loadMessages: async (activeSessionId) => {
     if (activeSessionId) {
+      // Check cache first
+      const cachedMessages = messageCache.get(activeSessionId);
+      if (cachedMessages) {
+        set({ messages: cachedMessages, isLoadingMessages: false });
+        return;
+      }
+
       set({ isLoadingMessages: true });
       try {
         const sessionApiMessages: ApiResponseMessage[] = await getActiveSessionMessages();
         const chatMessages = sessionApiMessages.map(get()._mapToChatMessage).reverse();
+        
+        // Cache the messages
+        messageCache.set(activeSessionId, chatMessages);
+        
         set({ messages: chatMessages, isLoadingMessages: false });
-      } catch (error) {
-        console.error('Failed to load messages for active session:', error);
+      } catch (error: any) {
+        logger.error('Failed to load messages for active session', error);
         set({ messages: [], isLoadingMessages: false });
       }
     } else {
@@ -156,11 +114,21 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
       role: pusherMessage.type === 'assistant' ? 'assistant' : 'user',
       createdAt: new Date(pusherMessage.timestamp).getTime() / 1000,
       metadata: { message_type: 'text' },
-      assistantName: pusherMessage.type === 'assistant' && assistantId ? assistantId : undefined // Or fetch assistant name
+      assistantName: pusherMessage.type === 'assistant' && assistantId ? assistantId : undefined
     };
-    set((state) => ({ messages: [...state.messages, newMessage] }));
+    
+    set((state) => {
+      const updatedMessages = [...state.messages, newMessage];
+      // Invalidate cache since we have new messages
+      const activeSessionId = useSessionStore.getState().activeSession?._id;
+      if (activeSessionId) {
+        messageCache.invalidate(activeSessionId);
+      }
+      return { messages: updatedMessages };
+    });
+    
     if (pusherMessage.type === 'user') {
-      set({ isLoading: true }); // Set loading if user message comes via Pusher (e.g. from another client)
+      set({ isLoading: true });
     }
   },
   
@@ -181,7 +149,14 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
       createdAt: Date.now() / 1000,
       metadata: { message_type: 'text' },
     };
-    set((state) => ({ messages: [...state.messages, userMessage], isLoading: true }));
+    set((state) => {
+      const updatedMessages = [...state.messages, userMessage];
+      // Invalidate cache when adding new messages
+      if (activeSessionId) {
+        messageCache.invalidate(activeSessionId);
+      }
+      return { messages: updatedMessages, isLoading: true };
+    });
 
     const assistantMessageId = `streaming-assistant-${Date.now()}-${Math.random().toString(36).substring(7)}`;
     const initialAssistantMessage: ChatMessage = {
@@ -216,12 +191,12 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
                       newMetadata = { ...newMetadata, message_type: 'markdown_stream' };
                       break;
                     case 'action':
-                      console.log('Stream: Action payload received', payload.actionDetails);
+                      logger.debug('Stream: Action payload received', payload.actionDetails);
                       newContent += `\n[Action: ${payload.actionDetails?.actionTitle || 'Processing Action'}]`;
                       newMetadata = { ...newMetadata, message_type: 'action_stream', actionDetails: payload.actionDetails };
                       break;
                     case 'error':
-                      console.error('Stream: Error payload received', payload.errorDetails);
+                      logger.error('Stream: Error payload received', undefined, payload.errorDetails);
                       newContent += `\n[Error: ${payload.errorDetails?.message || 'Streaming error'}]`;
                       newIsStreaming = false;
                       set({ isLoading: false });
@@ -231,17 +206,12 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
                       set({ isLoading: false });
                       newContent = removeRAGCitations(newContent);
                       
-                      if (get().audioState === 'enabled' && newContent.trim() && assistant.voice) {
-                        textToSpeech(newContent, assistant.voice as TTSVoice)
-                          .then(audioUrl => {
-                            const audioRefCurrent = get().audioRef?.current;
-                            if (audioRefCurrent) {
-                              audioRefCurrent.src = audioUrl;
-                              audioRefCurrent.play();
-                              set({ audioState: 'playing' });
-                            }
-                          })
-                          .catch(ttsError => console.error('Failed to play audio for streamed response:', ttsError));
+                      // Play audio if enabled and voice is available
+                      if (newContent.trim() && assistant.voice) {
+                        const audioStore = useAudioStore.getState();
+                        audioStore.playText(newContent, assistant.voice).catch(error => 
+                          logger.error('Failed to play audio for streamed response', error)
+                        );
                       }
                       break;
                   }
@@ -255,7 +225,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
         );
       } catch (error: any) {
         if (error.name !== 'AbortError') {
-          console.error('Error getting assistant response stream:', error);
+          logger.error('Error getting assistant response stream', error);
           set((state) => ({
             messages: state.messages.map((msg) =>
               msg.id === assistantMessageId
@@ -292,7 +262,11 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
           i18n.t('Notifications.sessionClearedAndNewStarted')
         );
         
-        set({ messages: [] }); // Clear messages in Zustand store
+        // Clear messages and invalidate cache
+        if (activeSessionId) {
+          messageCache.invalidate(activeSessionId);
+        }
+        set({ messages: [] });
 
         if (newSession?.assistantId) {
            emitter.emit(EVENT_SET_ACTIVE_ASSISTANT, newSession.assistantId);
@@ -300,8 +274,8 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
             emitter.emit(EVENT_SET_ACTIVE_ASSISTANT, assistantId);
         }
 
-      } catch (error) {
-        console.error('Error in handleClearChat:', error);
+      } catch (error: any) {
+        logger.error('Error in handleClearChat', error);
       }
     }
   },

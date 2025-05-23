@@ -5,6 +5,35 @@ import {
   endSession,
   clearActiveSession as clearActiveSessionService,
 } from '../services/api/sessionService';
+import { logger } from '../services/LoggingService';
+
+// Retry utility for session operations
+const retry = async <T>(
+  operation: () => Promise<T>,
+  maxAttempts: number = 3,
+  delay: number = 1000
+): Promise<T> => {
+  let lastError: Error;
+  
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      return await operation();
+    } catch (error: any) {
+      lastError = error;
+      
+      // Don't retry on client errors (4xx)
+      if (error.response?.status >= 400 && error.response?.status < 500) {
+        throw error;
+      }
+      
+      if (attempt < maxAttempts) {
+        await new Promise(resolve => setTimeout(resolve, delay * attempt));
+      }
+    }
+  }
+  
+  throw lastError!;
+};
 
 // Copied from src/store/models/Session.ts and adapted for plain object
 export interface ISession {
@@ -38,9 +67,7 @@ export const useSessionStore = create<SessionStoreState>((set, get) => ({
   fetchActiveSession: async () => {
     set({ isLoadingSession: true });
     try {
-      const response = await getActiveSession();
-      
-      console.log('fetchActiveSession - response:', response);
+      const response = await retry(() => getActiveSession());
       
       // Type guard to check if response is ISession
       const isSession = (obj: any): obj is ISession => {
@@ -51,81 +78,82 @@ export const useSessionStore = create<SessionStoreState>((set, get) => ({
       
       // Check if the response is the session directly
       if (isSession(response)) {
-        // Direct session response
         const sessionData: ISession = {
           _id: response._id,
           assistantId: response.assistantId,
           language: response.language || 'en', 
         };
-        console.log('fetchActiveSession - setting activeSession (direct):', sessionData);
         set({ activeSession: sessionData, isApiKeyMissing: false, isLoadingSession: false });
       } 
       // Check for wrapped response
       else if (response && response.data && isSession(response.data)) {
-        // Wrapped session response
         const sessionData: ISession = {
           _id: response.data._id,
           assistantId: response.data.assistantId,
           language: response.data.language || 'en', 
         };
-        console.log('fetchActiveSession - setting activeSession (wrapped):', sessionData);
         set({ activeSession: sessionData, isApiKeyMissing: false, isLoadingSession: false });
       } 
       // Check for API key missing
       else if (response && response.keyMissing) { 
         set({ activeSession: null, isApiKeyMissing: true, isLoadingSession: false });
-        console.log(response.message || 'API key is missing');
       } 
       // Unexpected response
       else {
-        console.error('Unexpected response format or missing data from getActiveSession', response);
+        logger.error('Unexpected response format from getActiveSession', undefined, response);
         set({ activeSession: null, isLoadingSession: false });
       }
     } catch (error: any) {
-      console.error('Failed to fetch active session', error);
+      logger.error('Failed to fetch active session', error);
       set({ activeSession: null, isApiKeyMissing: false, isLoadingSession: false });
-      if (error.response && error.response.status >= 400) {
-        console.log(`Error fetching active session: ${error.response.data?.message || error.message}`);
-      }
     }
   },
 
   changeAssistant: async (assistantId: string) => {
     const currentSession = get().activeSession;
-    console.log('changeAssistant - currentSession:', currentSession);
-    console.log('changeAssistant - assistantId:', assistantId);
     
     if (!currentSession) {
-      console.error('No active session to change assistant');
+      logger.warn('No active session to change assistant');
       return;
     }
-    set({ isLoadingSession: true });
+    
+    // Optimistic update
+    const previousAssistantId = currentSession.assistantId;
+    set(state => ({ 
+      activeSession: state.activeSession ? { ...state.activeSession, assistantId } : null,
+      isLoadingSession: true 
+    }));
+    
     try {
       const updatedSessionData = await changeSessionAssistant(currentSession._id, assistantId);
-      console.log('changeAssistant - updatedSessionData:', updatedSessionData);
-      // Assuming updatedSessionData is ISession compatible
       set(state => ({ 
         activeSession: state.activeSession ? { ...state.activeSession, assistantId: updatedSessionData.assistantId } : null,
         isLoadingSession: false 
       }));
-    } catch (error) {
-      console.error('Failed to change assistant', error);
-      set({ isLoadingSession: false });
+    } catch (error: any) {
+      logger.error('Failed to change assistant', error);
+      // Rollback on error
+      set(state => ({ 
+        activeSession: state.activeSession ? { ...state.activeSession, assistantId: previousAssistantId } : null,
+        isLoadingSession: false 
+      }));
+      throw error; // Re-throw to allow UI to handle error
     }
   },
 
   endActiveSession: async () => {
     const currentSession = get().activeSession;
     if (!currentSession) {
-      console.error('No active session to end');
+      logger.warn('No active session to end');
       return;
     }
+    
     set({ isLoadingSession: true });
     try {
       await endSession(currentSession._id);
       set({ activeSession: null, isLoadingSession: false });
-    } catch (error) {
-      console.error('Failed to end session', error);
+    } catch (error: any) {
+      logger.error('Failed to end session', error);
       set({ isLoadingSession: false });
     }
   },
@@ -142,12 +170,12 @@ export const useSessionStore = create<SessionStoreState>((set, get) => ({
         set({ activeSession: newSession as ISession, isApiKeyMissing: false, isLoadingSession: false });
         return newSession as ISession;
       } else {
-        console.error('Failed to get new session details from clearActiveSessionService');
+        logger.error('Failed to get new session details from clearActiveSessionService');
         set({ activeSession: null, isLoadingSession: false });
         return null;
       }
-    } catch (error) {
-      console.error('Failed to clear and renew session', error);
+    } catch (error: any) {
+      logger.error('Failed to clear and renew session', error);
       set({ activeSession: null, isLoadingSession: false });
       return null;
     }
