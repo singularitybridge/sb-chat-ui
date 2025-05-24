@@ -8,7 +8,16 @@ const CHANNEL_PREFIX = 'sb-';
 
 function PusherManager(): React.ReactElement | null { // Changed to function declaration
   // const rootStore = useRootStore(); // Removed
-  const activeSessionId = useSessionStore(state => state.activeSession?._id); // Get activeSessionId from Zustand
+  const activeSession = useSessionStore(state => state.activeSession);
+  const activeSessionId = activeSession?._id;
+  
+  // Debug session state
+  console.log('🔍 [PUSHER_MANAGER] Component render:', {
+    activeSession,
+    activeSessionId,
+    hasSession: !!activeSession,
+    timestamp: new Date().toISOString()
+  });
 
   const getChannelName = useCallback(
     (sessionId: string) => `${CHANNEL_PREFIX}${sessionId}`,
@@ -16,19 +25,30 @@ function PusherManager(): React.ReactElement | null { // Changed to function dec
   );
 
   useEffect(() => {
-    if (!activeSessionId) return;
+    if (!activeSessionId) {
+      console.log('🔍 [PUSHER_MANAGER] No active session ID, not subscribing to pusher');
+      return;
+    }
 
     const channelName = getChannelName(activeSessionId);
-    console.log(`Subscribing to Pusher channel: ${channelName}`);
+    console.log('🔄 [PUSHER_MANAGER] Session changed, subscribing to pusher:', {
+      activeSessionId,
+      channelName,
+      timestamp: new Date().toISOString()
+    });
+    
     const channel = subscribeToSessionChannel(activeSessionId);
 
     if (!channel) {
-      console.error(`Failed to subscribe to channel: ${channelName}`);
+      console.error(`❌ [PUSHER_MANAGER] Failed to subscribe to channel: ${channelName}`);
       return;
     }
 
     return () => {
-      console.log(`Unsubscribing from Pusher channel: ${channelName}`);
+      console.log('🔄 [PUSHER_MANAGER] Unsubscribing from pusher channel:', {
+        channelName,
+        timestamp: new Date().toISOString()
+      });
       unsubscribeFromChannel(channelName);
     };
   }, [activeSessionId, getChannelName]);

@@ -103,8 +103,27 @@ const ChatContainer = observer(() => {
 
   useEffect(() => {
     if (activeSession?._id) {
-      const handlePusherChatMessage = (pusherMessage: PusherChatMessage) => {
-        storeAddPusherMessage(pusherMessage, assistant?._id);
+      const handlePusherChatMessage = (pusherMessage: any) => {
+        // Special handling for action execution messages
+        if (pusherMessage.message_type === 'action_execution' && pusherMessage.data?.status) {
+          console.log('🎯 [CHAT_CONTAINER] Handling action execution message:', {
+            status: pusherMessage.data.status,
+            messageId: pusherMessage.data.messageId,
+            actionId: pusherMessage.data.actionId
+          });
+          
+          // Only add as new message if status is 'started'
+          // Updates for 'completed' and 'failed' are handled by EVENT_ACTION_EXECUTION
+          if (pusherMessage.data.status === 'started') {
+            console.log('📥 [CHAT_CONTAINER] Adding new action execution message (started)');
+            storeAddPusherMessage(pusherMessage, assistant?._id);
+          } else {
+            console.log('⏭️ [CHAT_CONTAINER] Skipping addPusherMessage for action execution update (status: ' + pusherMessage.data.status + ')');
+          }
+        } else {
+          // All other message types get added normally
+          storeAddPusherMessage(pusherMessage, assistant?._id);
+        }
       };
 
       addEventHandler('chat_message', handlePusherChatMessage);
@@ -172,7 +191,22 @@ const ChatContainer = observer(() => {
   
   // Action execution handler now calls Zustand action
   const handleActionExecution = (actionData: ActionExecutionMessage) => {
+    console.log('🎯 [CHAT_CONTAINER] Received action execution data from mitt emitter:', actionData);
+    console.log('📊 [CHAT_CONTAINER] Action execution details:', {
+      timestamp: new Date().toISOString(),
+      messageId: actionData?.messageId || 'NOT_FOUND',
+      actionId: actionData?.actionId || 'NOT_FOUND',
+      serviceName: actionData?.serviceName || 'NOT_FOUND',
+      actionTitle: actionData?.actionTitle || 'NOT_FOUND',
+      status: actionData?.status || 'NOT_FOUND',
+      originalActionId: actionData?.originalActionId || 'NOT_FOUND',
+      actionDataType: typeof actionData,
+      actionDataKeys: actionData ? Object.keys(actionData) : []
+    });
+    
+    console.log('🔗 [CHAT_CONTAINER] Calling storeUpdateActionExecutionMessage...');
     storeUpdateActionExecutionMessage(actionData);
+    console.log('✅ [CHAT_CONTAINER] storeUpdateActionExecutionMessage call completed');
   };
   useEventEmitter<ActionExecutionMessage>(EVENT_ACTION_EXECUTION, handleActionExecution);
 

@@ -68,17 +68,25 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
       ...(apiMessage.data || {})
     };
 
-    if (apiMessage.message_type === 'action_execution' && apiMessage.data?.id) {
-      mappedMetadata.messageId = apiMessage.data.id;
+    if (apiMessage.message_type === 'action_execution' && apiMessage.data?.messageId) {
+      mappedMetadata.messageId = apiMessage.data.messageId;
+      console.log('🎯 [CHAT_STORE] Mapping action_execution message from API:', {
+        apiMessageId: apiMessage.id,
+        dataMessageId: apiMessage.data.messageId,
+        assignedMessageId: mappedMetadata.messageId,
+        fullData: apiMessage.data
+      });
     }
-  
-    return {
+
+    const chatMessage = {
       id: apiMessage.id,
       content: removeRAGCitations(textValue),
       role: apiMessage.role,
       metadata: mappedMetadata,
       createdAt: apiMessage.created_at,
     };
+  
+    return chatMessage;
   },
 
   loadMessages: async (activeSessionId) => {
@@ -109,12 +117,53 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
   },
 
   addPusherMessage: (pusherMessage, assistantId) => {
+    // Handle different content types properly
+    let content = '';
+    if (typeof pusherMessage.content === 'string') {
+      content = removeRAGCitations(pusherMessage.content);
+    } else if (pusherMessage.content && Array.isArray(pusherMessage.content)) {
+      // Handle content array format from API
+      const textContent = pusherMessage.content.find((c: any) => c.type === 'text');
+      content = textContent?.text?.value || '';
+      if (content) {
+        content = removeRAGCitations(content);
+      }
+    } else if (pusherMessage.role === 'system' && pusherMessage.message_type) {
+      // System messages might not have traditional content
+      content = `System: ${pusherMessage.message_type}`;
+    }
+    
+    // Build metadata - ensure messageId is properly set for action_execution messages
+    let metadata: Metadata = { message_type: 'text' };
+    
+    if (pusherMessage.message_type) {
+      metadata.message_type = pusherMessage.message_type;
+      
+      // For action_execution messages, ensure messageId is set from data
+      if (pusherMessage.message_type === 'action_execution' && pusherMessage.data) {
+        metadata = {
+          ...metadata,
+          ...pusherMessage.data,
+          messageId: pusherMessage.data.messageId || pusherMessage.data.id // Ensure messageId is set
+        };
+        
+        console.log('🎯 [CHAT_STORE] Adding action_execution message via pusher:', {
+          messageId: metadata.messageId,
+          actionId: metadata.actionId,
+          status: metadata.status,
+          fullMetadata: metadata
+        });
+      } else if (pusherMessage.data) {
+        metadata = { ...metadata, ...pusherMessage.data };
+      }
+    }
+    
     const newMessage: ChatMessage = {
-      id: `pusher-${Date.now()}-${Math.random().toString(36).substring(7)}`,
-      content: removeRAGCitations(pusherMessage.content),
-      role: pusherMessage.type === 'assistant' ? 'assistant' : 'user',
-      createdAt: new Date(pusherMessage.timestamp).getTime() / 1000,
-      metadata: { message_type: 'text' },
+      id: pusherMessage.id || `pusher-${Date.now()}-${Math.random().toString(36).substring(7)}`,
+      content,
+      role: pusherMessage.role || (pusherMessage.type === 'assistant' ? 'assistant' : 'user'),
+      createdAt: pusherMessage.created_at || new Date(pusherMessage.timestamp).getTime() / 1000,
+      metadata,
       assistantName: pusherMessage.type === 'assistant' && assistantId ? assistantId : undefined
     };
     
@@ -282,9 +331,45 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
   },
 
   updateActionExecutionMessage: (actionData) => {
-    set((state) => ({
-      messages: state.messages.map((msg) => {
+    console.log('🏪 [CHAT_STORE] updateActionExecutionMessage called with:', actionData);
+    console.log('📝 [CHAT_STORE] Action data details:', {
+      timestamp: new Date().toISOString(),
+      actionDataType: typeof actionData,
+      actionDataKeys: actionData ? Object.keys(actionData) : [],
+      messageId: actionData?.messageId || 'NOT_FOUND',
+      actionId: actionData?.actionId || 'NOT_FOUND',
+      status: actionData?.status || 'NOT_FOUND'
+    });
+
+    let messageFound = false;
+    let messagesChecked = 0;
+    let actionExecutionMessagesFound = 0;
+
+    set((state) => {
+      console.log('🔍 [CHAT_STORE] Searching through', state.messages.length, 'messages for action execution update');
+      
+      const updatedMessages = state.messages.map((msg, index) => {
+        messagesChecked++;
+        
+        if (msg.metadata?.message_type === 'action_execution') {
+          actionExecutionMessagesFound++;
+          console.log(`📋 [CHAT_STORE] Found action_execution message #${actionExecutionMessagesFound} at index ${index}:`, {
+            messageId: msg.id,
+            metadataMessageId: msg.metadata?.messageId,
+            targetMessageId: actionData.messageId,
+            isMatch: msg.metadata?.messageId === actionData.messageId
+          });
+        }
+        
         if (msg.metadata?.message_type === 'action_execution' && msg.metadata?.messageId === actionData.messageId) {
+          messageFound = true;
+          console.log('✅ [CHAT_STORE] Found matching action execution message, updating:', {
+            messageIndex: index,
+            messageId: msg.id,
+            oldMetadata: msg.metadata,
+            newActionData: actionData
+          });
+          
           return {
             ...msg,
             metadata: {
@@ -295,12 +380,26 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
           };
         }
         return msg;
-      // If not found, and we need to add it as a new message:
-      // This part depends on whether action_execution always updates an existing placeholder
-      // or can arrive as a new system message. For now, assuming it updates.
-      // If it can be new, an else block similar to addPusherMessage would be needed.
-      }),
-    }));
+      });
+
+      console.log('📊 [CHAT_STORE] Action execution update summary:', {
+        messagesChecked,
+        actionExecutionMessagesFound,
+        messageFound,
+        targetMessageId: actionData?.messageId
+      });
+
+      if (!messageFound) {
+        console.warn('⚠️ [CHAT_STORE] No matching action execution message found for messageId:', actionData?.messageId);
+        console.log('🔍 [CHAT_STORE] Available action execution messages:', 
+          state.messages
+            .filter(m => m.metadata?.message_type === 'action_execution')
+            .map(m => ({ id: m.id, messageId: m.metadata?.messageId, content: m.content?.substring(0, 50) }))
+        );
+      }
+
+      return { messages: updatedMessages };
+    });
   },
 }));
 
