@@ -39,7 +39,7 @@ export interface ActionTagProps {
 
 const ActionTag: React.FC<ActionTagProps> = ({ iconName, title, description, serviceName, onRemove, className }) => {
   return (
-    <div className={clsx("p-3 bg-slate-100 rounded-xl", className)}>
+    <div className={clsx('p-3 bg-slate-100 rounded-xl', className)}>
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2 rtl:space-x-reverse">
           {iconName in dynamicIconImports ? (

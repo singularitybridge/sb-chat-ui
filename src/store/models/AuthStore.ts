@@ -1,7 +1,6 @@
 /// file_path: src/store/models/AuthStore.ts
 import { types, flow } from 'mobx-state-tree';
 import {
-  getToken,
   loginWithGoogle,
   verifyToken,
 } from '../../services/api/authService';
@@ -32,16 +31,16 @@ export const AuthStore = types
       self.userSessionInfo = { ...self.userSessionInfo, ...info };
     },
 
-    checkAuthStatus: flow(function* () {
+    checkAuthStatus() {
       const token = localStorage.getItem('userToken');
       self.isAuthenticated = !!token;
       return self.isAuthenticated;
-    }),
+    },
 
     loadUserSessionInfo: flow(function* () {
       try {
         const response = yield verifyToken();
-        const { user, company, decryptedApiKey } = response;
+        const { user, company } = response;
 
         self.userSessionInfo = {
           userName: user.name,

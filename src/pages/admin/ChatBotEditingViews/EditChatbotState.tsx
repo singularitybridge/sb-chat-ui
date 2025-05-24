@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import InputWithLabel from '../../../components/sb-core-ui-kit/InputWithLabel';
 import Button from '../../../components/sb-core-ui-kit/Button';
-import { TextareaWithLabel } from '../../../components/sb-core-ui-kit/TextareaWithLabel';
 
 interface EditChatbotStateProps {
   state: {

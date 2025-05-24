@@ -2,13 +2,9 @@ import {
   MicrophoneIcon,
   PaperAirplaneIcon,
   XMarkIcon,
-  UserIcon,
   ChatBubbleLeftEllipsisIcon,
-  CloudArrowDownIcon,
-  MinusIcon,
 } from '@heroicons/react/24/outline';
-import React, { useEffect, useRef, useState } from 'react';
-import useSpeechToText from 'react-hook-speech-to-text';
+import React, { useEffect, useState } from 'react';
 import { ChatFooterProps, ChatState, getVoiceMap } from './common';
 import { motion } from 'framer-motion';
 import { useTimer } from '../../services/useTimer';
@@ -24,16 +20,13 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
 }) => {
   const {
     transcript,
-    interimTranscript,
-    // finalTranscript,
     resetTranscript,
     listening,
     browserSupportsSpeechRecognition,
-    isMicrophoneAvailable,
   } = useSpeechRecognition();
 
   const [userInput, setUserInput] = React.useState('');
-  const { timerRunning, startTimer, resetTimer } = useTimer(() => {
+  const { startTimer, resetTimer } = useTimer(() => {
     SpeechRecognition.stopListening();
     handleSendMessage();
   });
@@ -111,9 +104,9 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
     resetTranscript();
   };
 
-  // if (error) return <p>Web Speech API is not available in this browser 🤷‍</p>;
+  // if (error) return <p>Web Speech API is not available in this browser &#x1F937;&#x200D;&#x2642;&#xFE0F;</p>;
   if (!browserSupportsSpeechRecognition) {
-    return <span>Browser doesn't support speech recognition.</span>;
+    return <span>Browser doesn&#39;t support speech recognition.</span>;
   }
 
   const actionButtonStyle = 'h-5 w-5 text-gray-500';

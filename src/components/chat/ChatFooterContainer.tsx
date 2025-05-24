@@ -1,3 +1,5 @@
+import React from 'react';
+
 interface ChatFooterContainerProps {
   children: React.ReactNode;
 }

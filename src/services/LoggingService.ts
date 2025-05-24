@@ -61,7 +61,7 @@ class LoggingService {
     }
 
     // Always log errors to console
-    console.error(`[ERROR]`, message, error, context || '');
+    console.error('[ERROR]', message, error, context || '');
   }
 
   // Get recent logs for error reporting

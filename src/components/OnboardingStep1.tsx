@@ -7,7 +7,6 @@ import { TextareaWithLabel } from './sb-core-ui-kit/TextareaWithLabel';
 import InputWithLabel from './sb-core-ui-kit/InputWithLabel';
 import Button from './sb-core-ui-kit/Button';
 import { updateCompanyInfo } from '../services/api/companyService';
-import { OnboardingStatus } from '../store/models/RootStore';
 
 interface OnboardingStep1Props {
   onStepComplete: (isComplete: boolean) => void;

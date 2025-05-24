@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
-import { emitter } from '../../../services/mittEmitter';
-import { EVENT_SHOW_ADD_USER_MODAL } from '../../../utils/eventNames';
 import { IInboxSession, IMessage } from '../../../store/models/Inbox';
 import { useRootStore } from '../../../store/common/RootStoreContext';
 import { autorun } from 'mobx';
@@ -41,7 +39,7 @@ const InboxPage: React.FC = observer(() => {
 
     try {
       const lastMessageId = selectedSession.messages[selectedSession.messages.length - 1]._id;
-      const response = await addInboxResponse(sessionId, message, lastMessageId);
+      await addInboxResponse(sessionId, message, lastMessageId);
       setMessage('');
       setIsLoading(false);
     } catch (error) {

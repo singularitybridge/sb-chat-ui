@@ -10,7 +10,6 @@ import { PlayIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { IconButton } from '../../components/admin/IconButton';
 import { emitter } from '../../services/mittEmitter';
 import {
-  EVENT_SHOW_ADD_USER_MODAL,
   EVENT_SHOW_NOTIFICATION,
 } from '../../utils/eventNames';
 import AdminPageContainer from '../../components/admin/AdminPageContainer';
@@ -22,11 +21,11 @@ const UsersPage: React.FC = observer(() => {
   const { t } = useTranslation();
 
   const headers: UserKeys[] = ['name', 'nickname', 'email'];
-  const handleDelete = (row: IUser) => {
-    rootStore.deleteUser(row._id);
+  const handleDelete = (_row: IUser) => {
+    rootStore.deleteUser(_row._id);
   };
 
-  const handleSetUser = async (row: IUser) => {
+  const handleSetUser = async (_row: IUser) => {
     emitter.emit(EVENT_SHOW_NOTIFICATION, 'User set successfully');
   };
 

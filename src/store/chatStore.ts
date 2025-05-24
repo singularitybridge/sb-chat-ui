@@ -7,9 +7,10 @@ import {
   handleUserInputStream,
   StreamPayload 
 } from '../services/api/assistantService';
-import { TTSVoice } from '../services/api/voiceService';
 import { emitter } from '../services/mittEmitter';
 import { EVENT_CHAT_SESSION_DELETED, EVENT_SET_ACTIVE_ASSISTANT } from '../utils/eventNames';
+import { TTSVoice } from '../services/api/voiceService';
+import { useSessionStore } from './useSessionStore';
 import i18n from '../i18n';
 import { 
   ChatMessage, 
@@ -206,10 +207,10 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
                       set({ isLoading: false });
                       newContent = removeRAGCitations(newContent);
                       
-                      // Play audio if enabled and voice is available
-                      if (newContent.trim() && assistant.voice) {
+                      // Play audio if enabled and voice is available and valid
+                      if (newContent.trim() && assistant.voice && ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'].includes(assistant.voice as TTSVoice)) {
                         const audioStore = useAudioStore.getState();
-                        audioStore.playText(newContent, assistant.voice).catch(error => 
+                        audioStore.playText(newContent, assistant.voice as TTSVoice).catch(error => 
                           logger.error('Failed to play audio for streamed response', error)
                         );
                       }
