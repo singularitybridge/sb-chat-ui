@@ -51,7 +51,8 @@ const ChatContainer = observer(() => {
   // Zustand store selectors
   const { 
     messages, 
-    isLoading, 
+    isLoading,
+    isClearing,
     loadMessages: storeLoadMessages,
     addPusherMessage: storeAddPusherMessage,
     handleSubmitMessage: storeHandleSubmitMessage,
@@ -97,8 +98,13 @@ const ChatContainer = observer(() => {
   }, [activeSession, rootStore.language]);
 
   useEffect(() => {
-    storeLoadMessages(activeSession?._id); 
-  }, [activeSession?._id, storeLoadMessages]);
+    // Don't load messages if we're in the process of clearing
+    if (!isClearing) {
+      storeLoadMessages(activeSession?._id); 
+    } else {
+      console.log('🚫 [CHAT_CONTAINER] Skipping loadMessages during clear operation');
+    }
+  }, [activeSession?._id, storeLoadMessages, isClearing]);
 
 
   useEffect(() => {

@@ -31,6 +31,9 @@ interface ChatStoreState {
   messages: ChatMessage[];
   isLoading: boolean;
   isLoadingMessages: boolean;
+  isClearing: boolean;
+  clearedSessionId: string | null;
+  newSessionFromClear: string | null;
   abortController: AbortController | null;
   
   loadMessages: (activeSessionId: string | null | undefined) => Promise<void>;
@@ -57,6 +60,9 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
   messages: [],
   isLoading: false,
   isLoadingMessages: false,
+  isClearing: false,
+  clearedSessionId: null,
+  newSessionFromClear: null,
   abortController: null,
 
   _mapToChatMessage: (apiMessage: ApiResponseMessage): ChatMessage => {
@@ -90,6 +96,19 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
   },
 
   loadMessages: async (activeSessionId) => {
+    // Skip loading messages if we're in the process of clearing
+    if (get().isClearing) {
+      console.log('🚫 [CHAT_STORE] Skipping loadMessages during clear operation');
+      return;
+    }
+
+    // Skip loading messages for a session that was just created from a clear operation
+    if (activeSessionId && activeSessionId === get().newSessionFromClear) {
+      console.log('🚫 [CHAT_STORE] Skipping loadMessages for newly cleared session:', activeSessionId);
+      set({ messages: [], isLoadingMessages: false });
+      return;
+    }
+
     if (activeSessionId) {
       // Check cache first
       const cachedMessages = messageCache.get(activeSessionId);
@@ -117,6 +136,13 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
   },
 
   addPusherMessage: (pusherMessage, assistantId) => {
+    // Clear the newSessionFromClear flag when we start receiving messages
+    // This indicates the session is now active and can load messages normally
+    if (get().newSessionFromClear) {
+      console.log('🔄 [CHAT_STORE] Clearing newSessionFromClear flag as messages are being added');
+      set({ newSessionFromClear: null });
+    }
+
     // Handle different content types properly
     let content = '';
     if (typeof pusherMessage.content === 'string') {
@@ -184,6 +210,12 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
   
   handleSubmitMessage: async (messageText, assistant, activeSessionId) => {
     if (get().isLoading) return;
+
+    // Clear the newSessionFromClear flag when user starts sending messages
+    if (get().newSessionFromClear) {
+      console.log('🔄 [CHAT_STORE] Clearing newSessionFromClear flag due to user message');
+      set({ newSessionFromClear: null });
+    }
 
     if (get().abortController) {
       get().abortController?.abort();
@@ -305,6 +337,10 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
     }
     if (activeSessionId && assistantId) {
       try {
+        // Set clearing flag to prevent automatic message loading
+        set({ isClearing: true, clearedSessionId: activeSessionId });
+        console.log('🧹 [CHAT_STORE] Setting isClearing to true and tracking cleared session:', activeSessionId);
+
         const newSession = await clearAndRenewActiveSessionMST(); // Call the MST action
         
         emitter.emit(
@@ -312,11 +348,21 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
           i18n.t('Notifications.sessionClearedAndNewStarted')
         );
         
-        // Clear messages and invalidate cache
+        // Clear messages and invalidate cache for both old and new sessions
         if (activeSessionId) {
           messageCache.invalidate(activeSessionId);
         }
-        set({ messages: [] });
+        if (newSession?._id && newSession._id !== activeSessionId) {
+          messageCache.invalidate(newSession._id);
+        }
+        
+        // Clear messages locally and track the new session
+        set({ 
+          messages: [], 
+          newSessionFromClear: newSession?._id || null,
+          isClearing: false 
+        });
+        console.log('🧹 [CHAT_STORE] Messages cleared locally, tracking new session from clear:', newSession?._id);
 
         if (newSession?.assistantId) {
            emitter.emit(EVENT_SET_ACTIVE_ASSISTANT, newSession.assistantId);
@@ -326,6 +372,8 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
 
       } catch (error: any) {
         logger.error('Error in handleClearChat', error);
+        // Reset clearing flag on error
+        set({ isClearing: false });
       }
     }
   },

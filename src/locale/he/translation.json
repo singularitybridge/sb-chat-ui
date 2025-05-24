@@ -302,6 +302,7 @@
     "actionUpdated": "הפעולה עודכנה בהצלחה",
     "actionDeleted": "הפעולה נמחקה בהצלחה",
     "sessionCleared": "השיחה נוקתה בהצלחה",
+    "sessionClearedAndNewStarted": "השיחה נוקתה ושיחה חדשה החלה בהצלחה",
     "tokenRefreshed": "האסימון רוענן בהצלחה",
     "teamCreated": "הצוות נוצר בהצלחה",
     "teamUpdated": "הצוות עודכן בהצלחה",

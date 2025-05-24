@@ -282,6 +282,7 @@
     "actionUpdated": "Action has been updated successfully",
     "actionDeleted": "Action has been deleted successfully",
     "sessionCleared": "Session has been cleared successfully",
+    "sessionClearedAndNewStarted": "Session cleared and new session started successfully",
     "tokenRefreshed": "Token has been refreshed successfully",
     "teamCreated": "Team created successfully",
     "teamUpdated": "Team updated successfully",
