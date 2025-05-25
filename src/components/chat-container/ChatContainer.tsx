@@ -153,9 +153,9 @@ const ChatContainer = observer(() => {
   }, [messages]); // messages from Zustand store
 
   // Submit message handler now calls Zustand action
-  const handleSubmit = (messageText: string) => {
+  const handleSubmit = (messageText: string, fileMetadata?: import('../../types/chat').FileMetadata) => {
     const assistantInfo = assistant ? { _id: assistant._id, voice: assistant.voice, name: assistant.name } : undefined;
-    storeHandleSubmitMessage(messageText, assistantInfo, activeSession?._id);
+    storeHandleSubmitMessage(messageText, assistantInfo, activeSession?._id, fileMetadata);
   };
 
   // Toggle audio handler now calls audio store action

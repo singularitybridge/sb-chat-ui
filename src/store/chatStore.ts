@@ -42,7 +42,8 @@ interface ChatStoreState {
   handleSubmitMessage: (
     messageText: string, 
     assistant: AssistantInfo | undefined,
-    activeSessionId: string | null | undefined
+    activeSessionId: string | null | undefined,
+    fileMetadata?: import('../types/chat').FileMetadata
   ) => Promise<void>;
   
   handleClearChat: (
@@ -208,7 +209,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
     }
   },
   
-  handleSubmitMessage: async (messageText, assistant, activeSessionId) => {
+  handleSubmitMessage: async (messageText, assistant, activeSessionId, fileMetadata) => {
     if (get().isLoading) return;
 
     // Clear the newSessionFromClear flag when user starts sending messages
@@ -229,7 +230,8 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
       content: messageText,
       role: 'user',
       createdAt: Date.now() / 1000,
-      metadata: { message_type: 'text' },
+      metadata: { message_type: fileMetadata ? 'file' : 'text' },
+      fileMetadata,
     };
     set((state) => {
       const updatedMessages = [...state.messages, userMessage];
@@ -254,8 +256,26 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
 
     if (assistant && activeSessionId) {
       try {
+        // Prepare request body with attachments if fileMetadata is provided
+        const requestBody: any = { userInput: messageText };
+        
+        if (fileMetadata) {
+          requestBody.attachments = [{
+            fileId: fileMetadata.id || '',
+            url: fileMetadata.url,
+            mimeType: fileMetadata.mimeType,
+            fileName: fileMetadata.fileName || 'file'
+          }];
+          console.log('📎 [CHAT_STORE] Sending message with file attachment:', {
+            fileName: fileMetadata.fileName,
+            mimeType: fileMetadata.mimeType,
+            fileId: fileMetadata.id,
+            url: fileMetadata.url
+          });
+        }
+
         await handleUserInputStream(
-          { userInput: messageText /* sessionId removed */ },
+          requestBody,
           (payload: StreamPayload) => {
             set((state) => ({
               messages: state.messages.map((msg) => {

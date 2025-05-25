@@ -24,6 +24,17 @@ export interface ApiResponseMessage {
   data?: { [key: string]: any };
 }
 
+export interface FileMetadata {
+  id?: string;
+  type: 'image' | 'file';
+  url: string;
+  thumbnailUrl?: string;
+  fileName: string;
+  fileSize: number;
+  mimeType: string;
+  gcpStorageUrl?: string;
+}
+
 export interface ChatMessage {
   id: string;
   content: string;
@@ -32,6 +43,7 @@ export interface ChatMessage {
   assistantName?: string;
   createdAt: number;
   isStreaming?: boolean;
+  fileMetadata?: FileMetadata;
 }
 
 export interface AssistantInfo {

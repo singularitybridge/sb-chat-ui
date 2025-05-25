@@ -7,8 +7,11 @@ import { NotificationMessage } from './chat-elements/NotificationMessage';
 import { ActionMessage } from './chat-elements/ActionMessage';
 import { ChatInput } from './chat-elements/ChatInput';
 import { DefaultChatView } from './chat-elements/DefaultChatView';
+import { ImageMessage } from './chat-elements/ImageMessage';
+import { FileMessage } from './chat-elements/FileMessage';
 import { dotWave } from 'ldrs';
 import { ActionExecutionMessage } from './chat-elements/ActionExecutionMessage';
+import { isImageFile } from '../../utils/fileUtils';
 
 interface Metadata {
   message_type: string;
@@ -27,6 +30,7 @@ interface ChatMessage {
   metadata?: Metadata;
   actions?: Action[];
   createdAt: number;
+  fileMetadata?: import('../../types/chat').FileMetadata;
 }
 
 type AudioState = 'disabled' | 'enabled' | 'playing';
@@ -40,7 +44,7 @@ interface SBChatKitUIProps {
     conversationStarters?: Array<{ key: string; value: string }>;
   };
   assistantName: string;
-  onSendMessage: (message: string) => void;
+  onSendMessage: (message: string, fileMetadata?: import('../../types/chat').FileMetadata) => void;
   onClear: () => void;
   className?: string;
   style?: React.CSSProperties;
@@ -100,11 +104,11 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
     setChatStarted(false);
   };
 
-  const handleSendMessage = (message: string) => {
+  const handleSendMessage = (message: string, fileMetadata?: import('../../types/chat').FileMetadata) => {
     if (!chatStarted) {
       setChatStarted(true);
     }
-    onSendMessage(message);
+    onSendMessage(message, fileMetadata);
   };
 
   return (
@@ -175,6 +179,31 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
                     );
                 }
               } else if (message.role === 'user') {
+                // Check if this is a file message
+                if (message.fileMetadata) {
+                  if (isImageFile(message.fileMetadata.mimeType)) {
+                    return (
+                      <ImageMessage
+                        key={key}
+                        fileMetadata={message.fileMetadata}
+                        content={message.content}
+                        role={message.role}
+                        createdAt={message.createdAt}
+                      />
+                    );
+                  } else {
+                    return (
+                      <FileMessage
+                        key={key}
+                        fileMetadata={message.fileMetadata}
+                        content={message.content}
+                        role={message.role}
+                        createdAt={message.createdAt}
+                      />
+                    );
+                  }
+                }
+                // Standard user text message
                 return (
                   <UserMessage
                     key={key}

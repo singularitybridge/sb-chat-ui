@@ -36,6 +36,12 @@ export const getSessionMessages = (sessionId: string): Promise<any> =>
 // Body for the API call, sessionId is no longer needed
 interface ApiHandleUserInputBody {
   userInput: string;
+  attachments?: Array<{
+    fileId: string;
+    url: string;
+    mimeType: string;
+    fileName: string;
+  }>;
 }
 
 // Interface for the actual API response structure
