@@ -139,13 +139,16 @@ export const generateImageThumbnail = (file: File, maxWidth = 300, maxHeight = 3
 
 // Create file metadata from upload response
 export const createFileMetadata = (file: File, uploadResponse: any): FileMetadata => {
+  // uploadResponse is the full response from apiClient, so uploadResponse.data is the actual payload
+  const responseData = uploadResponse.data || uploadResponse; // Handle if uploadResponse is already the data part
   return {
+    id: responseData?._id || undefined, // Assuming the ID is returned as _id
     type: isImageFile(file.type) ? 'image' : 'file',
-    url: uploadResponse.data?.gcpStorageUrl || '',
-    fileName: uploadResponse.data?.filename || file.name,
-    fileSize: uploadResponse.data?.size || file.size,
+    url: responseData?.gcpStorageUrl || '',
+    fileName: responseData?.filename || file.name,
+    fileSize: responseData?.size || file.size,
     mimeType: file.type,
-    gcpStorageUrl: uploadResponse.data?.gcpStorageUrl
+    gcpStorageUrl: responseData?.gcpStorageUrl
   };
 };
 
