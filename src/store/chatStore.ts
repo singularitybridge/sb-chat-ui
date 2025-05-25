@@ -16,7 +16,8 @@ import {
   ChatMessage, 
   ApiResponseMessage, 
   AssistantInfo,
-  Metadata 
+  Metadata,
+  FileMetadata // Added FileMetadata
 } from '../types/chat';
 import { useAudioStore } from './useAudioStore';
 import { messageCache } from '../utils/messageCache';
@@ -85,12 +86,30 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
       });
     }
 
+    // Extract fileMetadata if attachments exist
+    let fileMetadata: FileMetadata | undefined;
+    if (apiMessage.data?.attachments && Array.isArray(apiMessage.data.attachments) && apiMessage.data.attachments.length > 0) {
+      const attachment = apiMessage.data.attachments[0]; // Assuming one primary attachment for now
+      if (attachment.fileName && attachment.mimeType && attachment.url) { // Basic validation
+        fileMetadata = {
+          id: attachment.fileId || undefined, // fileId might be optional from backend
+          type: attachment.mimeType.startsWith('image/') ? 'image' : 'file',
+          url: attachment.url,
+          fileName: attachment.fileName,
+          fileSize: attachment.fileSize || attachment.size || 0, // Accommodate 'size' or 'fileSize'
+          mimeType: attachment.mimeType,
+          // gcpStorageUrl can be added if available and needed
+        };
+      }
+    }
+
     const chatMessage = {
       id: apiMessage.id,
       content: removeRAGCitations(textValue),
       role: apiMessage.role,
       metadata: mappedMetadata,
       createdAt: apiMessage.created_at,
+      fileMetadata, // Add the extracted fileMetadata
     };
   
     return chatMessage;
