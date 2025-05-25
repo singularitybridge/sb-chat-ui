@@ -8,6 +8,7 @@ import { ActionMessage } from './chat-elements/ActionMessage';
 import { ChatInput } from './chat-elements/ChatInput';
 import { DefaultChatView } from './chat-elements/DefaultChatView';
 import { ImageMessage } from './chat-elements/ImageMessage';
+import { PdfMessage } from './chat-elements/PdfMessage';
 import { FileMessage } from './chat-elements/FileMessage';
 import { dotWave } from 'ldrs';
 import { ActionExecutionMessage } from './chat-elements/ActionExecutionMessage';
@@ -184,6 +185,16 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
                   if (isImageFile(message.fileMetadata.mimeType)) {
                     return (
                       <ImageMessage
+                        key={key}
+                        fileMetadata={message.fileMetadata}
+                        content={message.content}
+                        role={message.role}
+                        createdAt={message.createdAt}
+                      />
+                    );
+                  } else if (message.fileMetadata.mimeType === 'application/pdf') {
+                    return (
+                      <PdfMessage
                         key={key}
                         fileMetadata={message.fileMetadata}
                         content={message.content}
