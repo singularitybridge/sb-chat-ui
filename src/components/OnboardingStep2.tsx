@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TextComponent } from './sb-core-ui-kit/TextComponent';
 import InputWithLabel from './sb-core-ui-kit/InputWithLabel';

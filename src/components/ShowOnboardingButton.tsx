@@ -1,9 +1,7 @@
 /// file_path: src/components/ShowOnboardingButton.tsx
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import { useNavigate } from 'react-router-dom';
-import { useRootStore } from '../store/common/RootStoreContext';
-import { BotIcon, HelpCircle, LogOutIcon } from 'lucide-react';
+import { BotIcon } from 'lucide-react';
 import { IconButton } from './admin/IconButton';
 import { emitter } from '../services/mittEmitter';
 import { EVENT_SHOW_ONBOARDING_MODAL } from '../utils/eventNames';

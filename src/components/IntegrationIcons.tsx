@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import apiClient from '../services/AxiosService';
+import React from 'react';
+import { useIntegrations } from '../contexts/IntegrationsContext';
 import Badge from './Badge';
 import * as LucideIcons from 'lucide-react';
 
@@ -9,28 +9,13 @@ interface IntegrationIconsProps {
   className?: string;
 }
 
-interface IntegrationInfo {
-  id: string;
-  name: string;
-  description: string;
-  icon: string;
-}
-
-const IntegrationIcons: React.FC<IntegrationIconsProps> = ({ integrations, isActive = false, className = '' }) => {
-  const [integrationData, setIntegrationData] = useState<IntegrationInfo[]>([]);
-
-  useEffect(() => {
-    const fetchIntegrationData = async () => {
-      try {
-        const response = await apiClient.get('/integrations/discover/lean?fields=id,name,description,icon');
-        setIntegrationData(response.data);
-      } catch (error) {
-        console.error('Error fetching integration data:', error);
-      }
-    };
-
-    fetchIntegrationData();
-  }, []);
+const IntegrationIcons: React.FC<IntegrationIconsProps> = ({
+  integrations,
+  isActive = false,
+  className = ''
+}) => {
+  // Access cached integrations from context/query
+  const { data: integrationData = [] } = useIntegrations();
 
   return (
     <div className={`flex flex-wrap gap-x-1 gap-y-1.5 ${className}`}>
@@ -42,7 +27,7 @@ const IntegrationIcons: React.FC<IntegrationIconsProps> = ({ integrations, isAct
         return (
           <div key={integrationInfo?.name || index} title={integrationInfo?.description || ''}>
             <Badge
-              variant={isActive ? "primary" : "secondary"}
+              variant={isActive ? 'primary' : 'secondary'}
               className={`flex items-center space-x-0.5 rtl:space-x-reverse ${isActive ? 'text-gray-500' : ''}`}
             >
               <IconComponent className={`w-3 h-3 mr-1 ${isActive ? 'text-gray-500' : ''}`} />

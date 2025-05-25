@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { useRootStore } from '../../store/common/RootStoreContext';
-import { OnboardingStatus } from '../../store/models/RootStore';
 import WizardProgress from '../../components/WizardProgress';
 import OnboardingStep1 from '../../components/OnboardingStep1';
 import OnboardingStep2 from '../../components/OnboardingStep2';
@@ -17,8 +16,8 @@ interface OnboardingDialogProps {
   isOpen: boolean;
 }
 
-const OnboardingDialog: React.FC<OnboardingDialogProps> = observer(({ isOpen }) => {
-  const { t } = useTranslation();
+const OnboardingDialog: React.FC<OnboardingDialogProps> = observer(() => {
+  const { t: _t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(1);
   const rootStore = useRootStore();
   const navigate = useNavigate();

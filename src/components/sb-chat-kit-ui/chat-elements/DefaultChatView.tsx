@@ -43,6 +43,7 @@ const DefaultChatView: React.FC<DefaultChatViewProps> = ({ assistant, onSendMess
           text={assistant.description}
           size="medium"
           color="secondary"
+          className="line-clamp-2"
         />
       </div>
 

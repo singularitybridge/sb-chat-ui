@@ -1,7 +1,6 @@
 import React from 'react';
 import { IconButton } from './admin/IconButton';
 import { BeakerIcon, XMarkIcon } from '@heroicons/react/24/solid';
-import { useRootStore } from '../store/common/RootStoreContext';
 
 interface TagInputProps {
   title: string;
@@ -9,10 +8,8 @@ interface TagInputProps {
 }
 
 const TagInput: React.FC<TagInputProps> = ({ title, onRemove }) => {
-  const rootStore = useRootStore();
-  const isHebrew = rootStore.language === 'he';
   return (
-    <span className={`tag inline-flex items-center bg-primary-100  text-slate-700 mr-2.5 px-3 py-2 rounded-2xl`}>
+    <span className={'tag inline-flex items-center bg-primary-100  text-slate-700 mr-2.5 px-3 py-2 rounded-2xl'}>
       {title}
       <IconButton
         icon={<XMarkIcon className="ml-5 w-4 h-4 text-stone-900" />}

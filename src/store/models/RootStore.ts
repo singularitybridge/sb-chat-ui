@@ -39,7 +39,7 @@ import {
   deleteUser,
   getAllUsers,
 } from '../../services/api/userService';
-import { SessionStore } from './SessionStore';
+// import { SessionStore } from './SessionStore'; // Removed SessionStore import
 import { addInboxMessage, addInboxResponse, getInboxMessages } from '../../services/api/inboxService';
 import { IInboxSession, InboxSession } from './Inbox';
 import i18n from '../../i18n';
@@ -67,7 +67,7 @@ const RootStore = types
     companiesLoaded: types.optional(types.boolean, false),
     users: types.array(User),
     assistantsLoaded: types.optional(types.boolean, false),
-    sessionStore: types.optional(SessionStore, {}),
+    // sessionStore: types.optional(SessionStore, {}), // Removed sessionStore property
     aiAssistedConfigStore: types.optional(AIAssistedConfigStore, {}),
     inboxSessions: types.array(InboxSession),
     inboxSessionsLoaded: types.optional(types.boolean, false),

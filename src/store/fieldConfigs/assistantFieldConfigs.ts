@@ -25,6 +25,18 @@ const llmModelOptions: SelectListOption[] = [
   { value: 'gpt-4.1', label: 'GPT-4.1' },
   { value: 'gpt-4.1-mini', label: 'GPT-4.1 Mini' },
   { value: 'gpt-4.1-nano', label: 'GPT-4.1 Nano' },
+  { value: 'gemini-2.5-flash-preview-04-17', label: 'Gemini 2.5 Flash Preview 04-17' },
+  { value: 'gemini-2.5-pro-preview-05-06', label: 'Gemini 2.5 Pro Preview 05-06' },
+  { value: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash' },
+  { value: 'gemini-2.0-flash-lite', label: 'Gemini 2.0 Flash Lite' },
+  { value: 'claude-3-7-sonnet-latest', label: 'Claude 3.7 Sonnet Latest' },
+  { value: 'claude-3-5-haiku-latest', label: 'Claude 3.5 Haiku Latest' },
+];
+
+const llmProviderOptions: SelectListOption[] = [
+  { value: 'openai', label: 'OpenAI' },
+  { value: 'google', label: 'Google' },
+  { value: 'anthropic', label: 'Anthropic' },
 ];
 
 interface ActionParameter {
@@ -149,6 +161,15 @@ export const getAssistantFieldConfigs = async (
       visibility: { create: true, view: true, update: true },
     },
     {
+      id: 'llmProvider',
+      key: 'llmProvider',
+      label: 'assistant.llmProvider', // Changed to translation key
+      type: 'dropdown',
+      value: 'openai',
+      options: llmProviderOptions,
+      visibility: { create: true, view: true, update: true },
+    },
+    {
       id: 'llmModel',
       key: 'llmModel',
       label: 'LLM Model',
@@ -226,20 +247,29 @@ export const defaultAssistantFieldConfigs: FieldConfig[] = [
     type: 'dropdown',
     value: 'en',
     options: languageOptions,
-    visibility: { create: true, view: true, update: true },
-  },
-  {
-    id: 'llmModel',
-    key: 'llmModel',
-    label: 'LLM Model',
-    type: 'dropdown',
-    value: 'gpt-4o-mini',
-    options: llmModelOptions,
-    visibility: { create: true, view: true, update: true },
-  },
-  {
-    id: 'llmPrompt',
-    key: 'llmPrompt',
+      visibility: { create: true, view: true, update: true },
+    },
+    {
+      id: 'llmProvider',
+      key: 'llmProvider',
+      label: 'assistant.llmProvider', // Changed to translation key
+      type: 'dropdown',
+      value: 'openai',
+      options: llmProviderOptions,
+      visibility: { create: true, view: true, update: true },
+    },
+    {
+      id: 'llmModel',
+      key: 'llmModel',
+      label: 'LLM Model',
+      type: 'dropdown',
+      value: 'gpt-4o-mini',
+      options: llmModelOptions,
+      visibility: { create: true, view: true, update: true },
+    },
+    {
+      id: 'llmPrompt',
+      key: 'llmPrompt',
     label: 'LLM Prompt',
     type: 'textarea',
     value: 'This is a new assistant.',

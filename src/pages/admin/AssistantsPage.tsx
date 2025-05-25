@@ -1,7 +1,8 @@
 // file_path: src/pages/admin/AssistantsPage.tsx
 import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
-import { useRootStore } from '../../store/common/RootStoreContext';
+import { useRootStore } from '../../store/common/RootStoreContext'; // Still needed for rootStore.teamsLoaded, etc.
+import { useSessionStore } from '../../store/useSessionStore'; // Import Zustand session store
 import { IAssistant } from '../../store/models/Assistant';
 import { Plus, Settings, X, ChevronRight, ChevronLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -21,6 +22,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const AssistantsPage: React.FC = observer(() => {
   const rootStore = useRootStore();
+  const activeSession = useSessionStore(state => state.activeSession); // Get activeSession from Zustand
   const navigate = useNavigate();
   const { teamId } = useParams<{ teamId: string }>();
   const [hoveredAssistantId, setHoveredAssistantId] = useState<string | null>(null);
@@ -133,7 +135,7 @@ const AssistantsPage: React.FC = observer(() => {
             ) : (
               (teamId ? teamAssistants : rootStore.assistants).map((assistant) => {
               const isActive =
-                rootStore.sessionStore.activeSession?.assistantId ===
+                activeSession?.assistantId === // Use activeSession from Zustand
                 assistant._id;
               const integrationNames = extractIntegrationNames(
                 assistant.allowedActions

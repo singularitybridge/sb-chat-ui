@@ -1,5 +1,4 @@
 import React from 'react';
-import { TextComponent } from './sb-core-ui-kit/TextComponent';
 import { Avatar, AvatarStyles } from './Avatar';
 
 interface AvatarData {
@@ -59,7 +58,7 @@ const AvatarSelector: React.FC<AvatarSelectorProps> = ({
         {avatars.map((avatar) => (
           <div
             key={avatar.id}
-            className={`cursor-pointer flex flex-col items-center`}
+            className={'cursor-pointer flex flex-col items-center'}
             onClick={() => onSelectAvatar(avatar.id)}
           >
               <Avatar

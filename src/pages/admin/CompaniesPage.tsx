@@ -9,7 +9,6 @@ import { PlayIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { IconButton } from '../../components/admin/IconButton';
 import { emitter } from '../../services/mittEmitter';
 import {
-  EVENT_SHOW_ADD_COMPANY_MODAL,
   EVENT_SHOW_NOTIFICATION,
 } from '../../utils/eventNames';
 import { CompanyKeys, ICompany } from '../../store/models/Company';
@@ -23,11 +22,11 @@ const CompaniesPage: React.FC = observer(() => {
   const { t } = useTranslation();
   const headers: CompanyKeys[] = ['name'];
 
-  const handleDelete = (row: ICompany) => {
+  const handleDelete = (_row: ICompany) => {
     // rootStore.deleteCompany(row._id);
   };
 
-  const handleSetCompany = async (row: ICompany) => {
+  const handleSetCompany = async (_row: ICompany) => {
     rootStore.loadAssistants();
     rootStore.loadInboxMessages();
     emitter.emit(EVENT_SHOW_NOTIFICATION, t('CompaniesPage.successfullySet'));

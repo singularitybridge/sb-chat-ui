@@ -87,6 +87,10 @@ export const companyFieldConfigs: FieldConfig[] = [
         key: 'jira_email', // Matches getApiKey call
         value: '-',
       },
+      {
+        key: 'anthropic_api_key',
+        value: '-',
+      },
     ],
     visibility: { create: true, view: true, update: true },
   },

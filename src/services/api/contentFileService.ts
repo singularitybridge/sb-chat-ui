@@ -1,4 +1,4 @@
-import apiClient from "../AxiosService";
+import apiClient from '../AxiosService';
 
 export const uploadContentFile = async (formData: FormData): Promise<any> => {
   try {

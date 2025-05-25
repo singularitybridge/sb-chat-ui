@@ -1,5 +1,4 @@
 // services/apiKeyVerificationService.ts
-import axios from 'axios';
 import apiClient from './AxiosService';
 
 export const verifyApiKey = async (
@@ -7,7 +6,7 @@ export const verifyApiKey = async (
   apiKeyId: string
 ): Promise<boolean> => {  
   try {
-    const response = await apiClient.post(`api/verify-api-key`, {
+    const response = await apiClient.post('api/verify-api-key', {
       apiKey,
       apiKeyId,
     });    

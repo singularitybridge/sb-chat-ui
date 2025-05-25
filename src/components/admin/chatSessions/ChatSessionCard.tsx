@@ -34,6 +34,8 @@
 // };
 
 // export { ChatSessionCard };
+import React from 'react';
+
 export const ChatSessionCard = () => {
   return <div>ChatSessionCard</div>;
 }

@@ -3,10 +3,6 @@ import { useLocation } from 'react-router-dom';
 import { useRootStore } from '../store/common/RootStoreContext';
   import { useTranslation } from 'react-i18next';
 
-const capitalizeFirstLetter = (string: string) => {
-  return string && string.charAt(0).toUpperCase() + string.slice(1);
-};
-
 const BreadCrumbs: React.FC = () => {
   
   const location = useLocation();
