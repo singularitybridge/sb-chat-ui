@@ -7,7 +7,8 @@
     "Sessions": "Sessions",
     "Inbox": "Inbox",
     "Actions": "Actions",
-    "Home": "Home"
+    "Home": "Home",
+    "Memory": "Memory"
   },
   "DynamicCodeRenderer": {
     "title": "Test - Canvas Editor",
@@ -116,6 +117,10 @@
     "addTeam": "Add Team",
     "noTeams": "No teams found",
     "createTeamPrompt": "Click the + button to create a team"
+  },
+  "MemoryPage": {
+    "title": "Memory Journal",
+    "noItems": "No journal entries found"
   },
   "EditTeamPage": {
     "title": "Edit Team",

@@ -13,6 +13,7 @@ export const Menu = observer(() => {
     { name: 'Home', link: '/admin' },
     { name: 'Companies', link: '/admin/companies' },
     { name: 'Teams', link: '/admin/teams' },
+    { name: 'Memory', link: '/admin/memory' }, // Added Memory link
     { name: 'Assistants', link: '/admin/assistants' },
     { name: 'Users', link: '/admin/users' },
     { name: 'Sessions', link: '/admin/sessions', disabled: true },

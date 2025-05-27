@@ -6,7 +6,7 @@ interface SearchInputProps {
   placeholder?: string;
 }
 
-const SearchInput: React.FC<SearchInputProps> = ({ value, onChange, placeholder = 'Search...' }) => {
+export const SearchInput: React.FC<SearchInputProps> = ({ value, onChange, placeholder = 'Search...' }) => { // Changed to named export
   return (
     <input
       type="text"
@@ -18,4 +18,4 @@ const SearchInput: React.FC<SearchInputProps> = ({ value, onChange, placeholder 
   );
 };
 
-export default SearchInput;
+// Removed default export

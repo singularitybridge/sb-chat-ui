@@ -7,7 +7,8 @@
     "Sessions": "שיחות פעילות",
     "Inbox": "תיבת דואר",
     "Actions": "פעולות",
-    "Home": "בית"
+    "Home": "בית",
+    "Memory": "זיכרון"
   },
   "DynamicCodeRenderer": {
     "title": "בדיקה - עורך קנבס",
@@ -97,6 +98,15 @@
     "addTeam": "הוסף צוות",
     "noTeams": "לא נמצאו צוותים",
     "createTeamPrompt": "לחץ על כפתור + כדי ליצור צוות"
+  },
+  "MemoryPage": {
+    "title": "יומן זיכרון",
+    "noItems": "לא נמצאו רשומות ביומן",
+    "searchPlaceholder": "חפש רשומות...",
+    "tryAdjustingFilters": "נסה לשנות את החיפוש או המסננים.",
+    "errorLoading": "שגיאה בטעינת הרשומות",
+    "tryAgain": "נסה שוב",
+    "loading": "טוען רשומות..."
   },
   "EditTeamPage": {
     "title": "ערוך צוות",

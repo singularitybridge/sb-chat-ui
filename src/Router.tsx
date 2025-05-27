@@ -12,6 +12,7 @@ import { InboxPage } from './pages/admin/inbox/InboxPage';
 import { EditCompanyPage } from './pages/admin/EditCompanyPage';
 import { TeamsPage } from './pages/admin/TeamsPage';
 import { EditTeamPage } from './pages/admin/EditTeamPage';
+import { MemoryPage } from './pages/admin/MemoryPage'; // Added import for MemoryPage
 import { SignupPage } from './pages/SignupPage';
 import { ChatKitTestPage } from './pages/test/ChatKitTestPage';
 import { UIKitTestPage } from './pages/test/UIKitTestPage';
@@ -99,6 +100,10 @@ export const browserRouter = createBrowserRouter([
           {
             path: 'teams/:key',
             element: <EditTeamPage />,
+          },
+          {
+            path: 'memory', // Added route for MemoryPage
+            element: <MemoryPage />,
           },
           {
             path: 'inbox',
