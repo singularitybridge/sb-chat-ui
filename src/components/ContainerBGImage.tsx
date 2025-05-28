@@ -1,3 +1,5 @@
+import React from 'react';
+
 interface ContainerBGImageProps {
   bgImage: string;
   children: React.ReactNode;

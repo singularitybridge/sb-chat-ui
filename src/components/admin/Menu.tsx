@@ -4,7 +4,6 @@ import { observer } from 'mobx-react';
 import { SessionView } from './SessionView';
 import { useTranslation } from 'react-i18next';
 import LanguageToggle from '../LanguageToggle';
-import { useRootStore } from '../../store/common/RootStoreContext';
 import { TextComponent } from '../sb-core-ui-kit/TextComponent';
 import LogoutButton from '../LogoutButton';
 import ShowOnboardingButton from '../ShowOnboardingButton';
@@ -13,6 +12,8 @@ export const Menu = observer(() => {
   const menuItems = [
     { name: 'Home', link: '/admin' },
     { name: 'Companies', link: '/admin/companies' },
+    { name: 'Teams', link: '/admin/teams' },
+    { name: 'Memory', link: '/admin/memory' }, // Added Memory link
     { name: 'Assistants', link: '/admin/assistants' },
     { name: 'Users', link: '/admin/users' },
     { name: 'Sessions', link: '/admin/sessions', disabled: true },

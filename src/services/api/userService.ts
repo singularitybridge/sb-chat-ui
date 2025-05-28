@@ -1,16 +1,11 @@
-import axios from 'axios';
 import { IUser } from '../../store/models/User';
 import apiClient from '../AxiosService';
+import { singleFlight } from '../../utils/singleFlight';
 
-export const getAllUsers = async (): Promise<IUser[]> => {
-  try {
-    const response = await apiClient.get(`user`);
-    return response.data;
-  } catch (error) {
-    console.error('Failed to fetch users', error);
-    throw error;
-  }
-};
+export const getAllUsers = (): Promise<IUser[]> =>
+  singleFlight('GET /user', () =>
+    apiClient.get('user').then((res) => res.data)
+  );
 
 export const getUserById = async (userId: string): Promise<IUser> => {
   try {
@@ -24,8 +19,7 @@ export const getUserById = async (userId: string): Promise<IUser> => {
 
 export const addUser = async (userData: IUser): Promise<IUser> => {
   try {
-    const response = await apiClient.post(`user`, userData);
-    debugger
+    const response = await apiClient.post('user', userData);
     return response.data;
   } catch (error) {
     console.error('Failed to create user', error);

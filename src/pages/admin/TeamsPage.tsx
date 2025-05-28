@@ -1,0 +1,171 @@
+// file_path: src/pages/admin/TeamsPage.tsx
+import React, { useState, useEffect } from 'react';
+import { observer } from 'mobx-react-lite';
+import { useRootStore } from '../../store/common/RootStoreContext';
+import { ITeam } from '../../store/models/Team';
+import { Plus, Settings, X } from 'lucide-react';
+import * as LucideIcons from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { IconButton } from '../../components/admin/IconButton';
+import { emitter } from '../../services/mittEmitter';
+import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
+import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+
+import { EVENT_SHOW_ADD_TEAM_MODAL } from '../../utils/eventNames';
+
+const TeamsPage: React.FC = observer(() => {
+  const rootStore = useRootStore();
+  const navigate = useNavigate();
+  const [hoveredTeamId, setHoveredTeamId] = useState<string | null>(null);
+
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    if (!rootStore.teamsLoaded) {
+      rootStore.loadTeams();
+    }
+  }, [rootStore]);
+
+  const handleDelete = (team: ITeam) => {
+    rootStore.deleteTeam(team._id);
+  };
+
+  const handleAddTeam = () => {
+    emitter.emit(EVENT_SHOW_ADD_TEAM_MODAL, t('TeamsPage.addTeam') || 'Add Team');
+  };
+
+  const handleEditTeam = (teamId: string) => {
+    navigate(`/admin/teams/${teamId}`);
+  };
+
+  const handleTeamClick = (teamId: string) => {
+    navigate(`/admin/assistants/team/${teamId}`);
+  };
+
+  return (
+    <div className="flex justify-center h-full">
+      <div className="flex w-full max-w-7xl">
+        <div className="flex flex-col rounded-lg max-w-sm w-full">
+          <div className="flex flex-row justify-between items-center w-full mb-8">
+            <TextComponent text={t('TeamsPage.title') || 'Teams'} size="subtitle" />
+            <IconButton
+              icon={<Plus className="w-7 h-7 text-gray-600" />}
+              onClick={handleAddTeam}
+            />
+          </div>
+
+          <ul className="space-y-6 flex-grow overflow-y-auto pr-4 rtl:pl-4 rtl:pr-0">
+            {rootStore.teams.map((team) => {
+              return (
+                <li
+                  key={team._id}
+                  className="group rounded-lg p-4 cursor-pointer hover:bg-blue-200 relative bg-slate-100 bg-opacity-80"
+                  onClick={() => handleTeamClick(team._id)}
+                  onMouseEnter={() => setHoveredTeamId(team._id)}
+                  onMouseLeave={() => setHoveredTeamId(null)}
+                >
+                  <div className="flex flex-col space-y-2.5">
+                    <div className="flex items-start space-x-4 rtl:space-x-reverse">
+                      <div className="flex-shrink-0">
+                        {team.icon && (
+                          <div className="w-12 h-12 flex items-center justify-center bg-gray-200 rounded-full">
+                            {(() => {
+                              // Try to find a matching icon name in LucideIcons (case-insensitive)
+                              const iconName = team.icon;
+                              const iconKeys = Object.keys(LucideIcons);
+                              
+                              // First try exact match
+                              if (iconName in LucideIcons) {
+                                return React.createElement(
+                                  LucideIcons[iconName as keyof typeof LucideIcons] as React.FC<React.SVGProps<SVGSVGElement>>,
+                                  { className: 'w-6 h-6 text-gray-700' }
+                                );
+                              }
+                              
+                              // Then try case-insensitive match
+                              const matchingKey = iconKeys.find(
+                                key => key.toLowerCase() === iconName.toLowerCase()
+                              );
+                              
+                              if (matchingKey) {
+                                return React.createElement(
+                                  LucideIcons[matchingKey as keyof typeof LucideIcons] as React.FC<React.SVGProps<SVGSVGElement>>,
+                                  { className: 'w-6 h-6 text-gray-700' }
+                                );
+                              }
+                              
+                              // Fallback to text
+                              return <span className="text-xl">{iconName.length === 1 ? iconName : team.name.charAt(0)}</span>;
+                            })()}
+                          </div>
+                        )}
+                        {!team.icon && (
+                          <div className="w-12 h-12 flex items-center justify-center bg-blue-100 rounded-full">
+                            <span className="text-xl">{team.name.charAt(0)}</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-grow min-w-0 flex flex-col space-y-2">
+                        <div className="flex justify-between items-center">
+                          <h4 className="font-bold text-base truncate text-right rtl:text-left">
+                            {team.name}
+                          </h4>
+                          <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                            <AnimatePresence>
+                              {hoveredTeamId === team._id && (
+                                <motion.div
+                                  initial={{ opacity: 0, x: -10 }}
+                                  animate={{ opacity: 1, x: 0 }}
+                                  exit={{ opacity: 0, x: -10 }}
+                                  transition={{ duration: 0.2 }}
+                                  className="flex space-x-2 rtl:space-x-reverse"
+                                >
+                                  <IconButton
+                                    icon={
+                                      <Settings className="w-4 h-4 text-gray-500" />
+                                    }
+                                    className="p-1.5 rounded-full hover:bg-gray-300 bg-white"
+                                    onClick={(event) => {
+                                      event.stopPropagation();
+                                      handleEditTeam(team._id);
+                                    }}
+                                  />
+                                  <IconButton
+                                    icon={<X className="w-4 h-4 text-gray-500" />}
+                                    className="p-1.5 rounded-full hover:bg-gray-300 bg-white"
+                                    onClick={(event) => {
+                                      event.stopPropagation();
+                                      handleDelete(team);
+                                    }}
+                                  />
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-600 line-clamp-2">
+                          {team.description}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
+            {rootStore.teams.length === 0 && (
+              <div className="text-center py-8 text-gray-500">
+                <p>{t('TeamsPage.noTeams') || 'No teams found'}</p>
+                <p className="mt-2 text-sm">
+                  {t('TeamsPage.createTeamPrompt') || 'Click the + button to create a team'}
+                </p>
+              </div>
+            )}
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+export { TeamsPage };

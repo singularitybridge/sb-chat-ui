@@ -2,22 +2,22 @@ import React from 'react';
 import { JsonViewer } from '../../components/sb-core-ui-kit/JsonViewer';
 
 const testData = {
-  shortField: "This is a short field",
-  longField: "This is a very long field that should demonstrate the word-wrapping capability of our updated JsonViewer component. It contains a lot of text that would normally cause horizontal scrolling, but now it should wrap nicely within the component.",
+  shortField: 'This is a short field',
+  longField: 'This is a very long field that should demonstrate the word-wrapping capability of our updated JsonViewer component. It contains a lot of text that would normally cause horizontal scrolling, but now it should wrap nicely within the component.',
   nestedObject: {
-    field1: "Nested short field",
-    field2: "Another long nested field that demonstrates how the JsonViewer handles nested objects with long text content. This should also wrap within the component without causing horizontal scrolling.",
+    field1: 'Nested short field',
+    field2: 'Another long nested field that demonstrates how the JsonViewer handles nested objects with long text content. This should also wrap within the component without causing horizontal scrolling.',
   },
   arrayField: [
-    "Short array item",
-    "Long array item that also demonstrates word-wrapping within array elements. This text should also wrap nicely within the JsonViewer component.",
+    'Short array item',
+    'Long array item that also demonstrates word-wrapping within array elements. This text should also wrap nicely within the JsonViewer component.',
   ],
 };
 
 const JsonViewerTestPage: React.FC = () => {
-  const testMessageId = "test-message-123";
-  const testInput = "Test input for upload/save functionality";
-  const testOutput = "Test output for upload/save functionality";
+  const testMessageId = 'test-message-123';
+  const testInput = 'Test input for upload/save functionality';
+  const testOutput = 'Test output for upload/save functionality';
 
   return (
     <div className="p-4">

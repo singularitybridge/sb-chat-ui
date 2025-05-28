@@ -18,12 +18,25 @@ const languageOptions: SelectListOption[] = [
 ];
 
 const llmModelOptions: SelectListOption[] = [
-  { value: 'o1-preview', label: 'GPT o1 Preview' },
-  { value: 'o1-mini', label: 'GPT o1 Mini' },
-  { value: 'gpt-4o', label: 'GPT-4o' },
   { value: 'gpt-4o-mini', label: 'GPT-4o Mini' },
-  { value: 'gpt-4-turbo', label: 'GPT-4 Turbo' },
-  { value: 'chatgpt-4o-latest', label: 'ChatGPT-4o Latest' },
+  { value: 'o3-mini-low', label: 'GPT o3 Mini (low)' },
+  { value: 'o3-mini-medium', label: 'GPT o3 Mini (medium)' },
+  { value: 'o3-mini-high', label: 'GPT o3 Mini (high)' },
+  { value: 'gpt-4.1', label: 'GPT-4.1' },
+  { value: 'gpt-4.1-mini', label: 'GPT-4.1 Mini' },
+  { value: 'gpt-4.1-nano', label: 'GPT-4.1 Nano' },
+  { value: 'gemini-2.5-flash-preview-04-17', label: 'Gemini 2.5 Flash Preview 04-17' },
+  { value: 'gemini-2.5-pro-preview-05-06', label: 'Gemini 2.5 Pro Preview 05-06' },
+  { value: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash' },
+  { value: 'gemini-2.0-flash-lite', label: 'Gemini 2.0 Flash Lite' },
+  { value: 'claude-3-7-sonnet-latest', label: 'Claude 3.7 Sonnet Latest' },
+  { value: 'claude-3-5-haiku-latest', label: 'Claude 3.5 Haiku Latest' },
+];
+
+const llmProviderOptions: SelectListOption[] = [
+  { value: 'openai', label: 'OpenAI' },
+  { value: 'google', label: 'Google' },
+  { value: 'anthropic', label: 'Anthropic' },
 ];
 
 interface ActionParameter {
@@ -60,17 +73,21 @@ const actionOptionsCache: Record<string, ActionOption[]> = {};
 /**
  * Fetches allowed action options from the server for a given language.
  * Uses caching to avoid unnecessary API calls.
- * 
+ *
  * @param language - The language code for which to fetch action options
  * @returns A promise that resolves to an array of ActionOption objects
  */
-export const fetchAllowedActionOptions = async (language: string = 'en'): Promise<ActionOption[]> => {
+export const fetchAllowedActionOptions = async (
+  language: string = 'en'
+): Promise<ActionOption[]> => {
   if (actionOptionsCache[language]) {
     return actionOptionsCache[language];
   }
 
   try {
-    const response = await apiCaller.get<any[]>(`/integrations/discover?language=${language}`);
+    const response = await apiCaller.get<any[]>(
+      `/integrations/discover?language=${language}`
+    );
     const actionOptions = response.data.map((action: any) => ({
       id: action.id,
       name: action.actionTitle,
@@ -81,7 +98,11 @@ export const fetchAllowedActionOptions = async (language: string = 'en'): Promis
       category: action.serviceName,
       value: action.id,
       label: action.actionTitle,
-      parameters: action.parameters || { type: 'object', properties: {}, required: [] }
+      parameters: action.parameters || {
+        type: 'object',
+        properties: {},
+        required: [],
+      },
     }));
 
     actionOptionsCache[language] = actionOptions;
@@ -95,11 +116,13 @@ export const fetchAllowedActionOptions = async (language: string = 'en'): Promis
 /**
  * Asynchronously generates the assistant field configurations.
  * This function fetches the allowed action options from the server based on the specified language.
- * 
+ *
  * @param language - The language code to use for fetching action options (default: 'en')
  * @returns A promise that resolves to an array of FieldConfig objects
  */
-export const getAssistantFieldConfigs = async (language: string = 'en'): Promise<FieldConfig[]> => {
+export const getAssistantFieldConfigs = async (
+  language: string = 'en'
+): Promise<FieldConfig[]> => {
   const allowedActionOptions = await fetchAllowedActionOptions(language);
 
   return [
@@ -135,6 +158,15 @@ export const getAssistantFieldConfigs = async (language: string = 'en'): Promise
       type: 'dropdown',
       value: language,
       options: languageOptions,
+      visibility: { create: true, view: true, update: true },
+    },
+    {
+      id: 'llmProvider',
+      key: 'llmProvider',
+      label: 'assistant.llmProvider', // Changed to translation key
+      type: 'dropdown',
+      value: 'openai',
+      options: llmProviderOptions,
       visibility: { create: true, view: true, update: true },
     },
     {
@@ -215,20 +247,29 @@ export const defaultAssistantFieldConfigs: FieldConfig[] = [
     type: 'dropdown',
     value: 'en',
     options: languageOptions,
-    visibility: { create: true, view: true, update: true },
-  },
-  {
-    id: 'llmModel',
-    key: 'llmModel',
-    label: 'LLM Model',
-    type: 'dropdown',
-    value: 'gpt-4o-mini',
-    options: llmModelOptions,
-    visibility: { create: true, view: true, update: true },
-  },
-  {
-    id: 'llmPrompt',
-    key: 'llmPrompt',
+      visibility: { create: true, view: true, update: true },
+    },
+    {
+      id: 'llmProvider',
+      key: 'llmProvider',
+      label: 'assistant.llmProvider', // Changed to translation key
+      type: 'dropdown',
+      value: 'openai',
+      options: llmProviderOptions,
+      visibility: { create: true, view: true, update: true },
+    },
+    {
+      id: 'llmModel',
+      key: 'llmModel',
+      label: 'LLM Model',
+      type: 'dropdown',
+      value: 'gpt-4o-mini',
+      options: llmModelOptions,
+      visibility: { create: true, view: true, update: true },
+    },
+    {
+      id: 'llmPrompt',
+      key: 'llmPrompt',
     label: 'LLM Prompt',
     type: 'textarea',
     value: 'This is a new assistant.',

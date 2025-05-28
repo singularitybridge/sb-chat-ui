@@ -7,6 +7,7 @@ import LoadingButton from './core/LoadingButton';
 import { AssistantKeys } from '../store/models/Assistant';
 import { CompanyKeys } from '../store/models/Company';
 import { UserKeys } from '../store/models/User';
+import { TeamKeys } from '../store/models/Team';
 import TokenInput from './admin/TokenInput';
 import { useTranslation } from 'react-i18next';
 import { useRootStore } from '../store/common/RootStoreContext';
@@ -32,7 +33,7 @@ export interface FieldVisibility {
 
 export interface BaseFieldConfig {
   id: string;
-  key: AssistantKeys | CompanyKeys | UserKeys;
+  key: AssistantKeys | CompanyKeys | UserKeys | TeamKeys | string;
   type: FieldType;
   label: string;
   visibility: FieldVisibility;
@@ -193,6 +194,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                 title={t(`${formContext}.APIKeys.title`)}
                 description={t(`${formContext}.APIKeys.description`)}
                 initialData={values[field.id] as ApiKey[]}
+                allApiKeysConfig={(field as ApiKeysListFieldConfig).value} // Pass the config for all API keys
                 onVerify={onVerify || (() => Promise.resolve(true))}
                 onDataChange={(newValue) => handleChange(field.id, newValue)}
               />
@@ -234,7 +236,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                 placeholder={labelKey}
               />
             );
-          case 'tags':
+          case 'tags': {
             const tagsField = field as TagsFieldConfig;
             return (
               <TagsInput
@@ -246,6 +248,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                 onChange={(newValue) => handleChange(field.id, newValue)}
               />
             );
+          }
           default:
             return (
               <InputWithLabel

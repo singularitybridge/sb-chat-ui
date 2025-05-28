@@ -14,6 +14,7 @@ export const EVENT_SHOW_NOTIFICATION = 'show-notification';
 export const EVENT_SHOW_ADD_COMPANY_MODAL = 'show-add-company-modal';
 export const EVENT_SHOW_ADD_USER_MODAL = 'show-add-user-modal';
 export const EVENT_SHOW_ADD_ACTION_MODAL = 'show-add-action-modal';
+export const EVENT_SHOW_ADD_TEAM_MODAL = 'show-add-team-modal';
 export const EVENT_SHOW_ONBOARDING_MODAL = 'show-onboarding-modal';
 export const EVENT_CLOSE_MODAL = 'close-modal';
 
@@ -34,6 +35,7 @@ export type EventType =
   | typeof EVENT_SHOW_ADD_COMPANY_MODAL
   | typeof EVENT_SHOW_ADD_USER_MODAL
   | typeof EVENT_SHOW_ADD_ACTION_MODAL
+  | typeof EVENT_SHOW_ADD_TEAM_MODAL
   | typeof EVENT_SHOW_ONBOARDING_MODAL
   | typeof EVENT_CLOSE_MODAL
   | typeof EVENT_ERROR

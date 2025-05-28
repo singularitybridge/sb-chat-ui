@@ -3,7 +3,7 @@ import { ChevronDownIcon } from '@heroicons/react/24/solid';
 import clsx from 'clsx';
 import { TextComponent } from './sb-core-ui-kit/TextComponent';
 import ActionTag from './ActionTag';
-import SearchInput from './SearchInput';
+import { SearchInput } from './SearchInput'; // Changed to named import
 import ActionOptionsList from './ActionOptionsList';
 
 export interface ActionOption {

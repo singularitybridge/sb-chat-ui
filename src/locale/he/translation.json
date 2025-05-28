@@ -1,12 +1,14 @@
 {
   "Menu": {
     "Companies": "חברות",
+    "Teams": "צוותים",
     "Assistants": "סוכנים",
     "Users": "משתמשים",
     "Sessions": "שיחות פעילות",
     "Inbox": "תיבת דואר",
     "Actions": "פעולות",
-    "Home": "בית"
+    "Home": "בית",
+    "Memory": "זיכרון"
   },
   "DynamicCodeRenderer": {
     "title": "בדיקה - עורך קנבס",
@@ -77,6 +79,7 @@
   "Navigation": {
     "home": "בית",
     "companies": "חברות",
+    "teams": "צוותים",
     "assistants": "סוכנים",
     "users": "משתמשים",
     "sessions": "שיחות פעילות",
@@ -89,6 +92,37 @@
     "content": "This action cannot be undone",
     "cancel": "Cancel",
     "confirm": "Confirm"
+  },
+  "TeamsPage": {
+    "title": "צוותים",
+    "addTeam": "הוסף צוות",
+    "noTeams": "לא נמצאו צוותים",
+    "createTeamPrompt": "לחץ על כפתור + כדי ליצור צוות"
+  },
+  "MemoryPage": {
+    "title": "יומן זיכרון",
+    "noItems": "לא נמצאו רשומות ביומן",
+    "searchPlaceholder": "חפש רשומות...",
+    "tryAdjustingFilters": "נסה לשנות את החיפוש או המסננים.",
+    "errorLoading": "שגיאה בטעינת הרשומות",
+    "tryAgain": "נסה שוב",
+    "loading": "טוען רשומות..."
+  },
+  "EditTeamPage": {
+    "title": "ערוך צוות",
+    "name": "שם",
+    "description": "תיאור",
+    "icon": "אייקון",
+    "iconPlaceholder": "הזן אימוג'י או שם אייקון",
+    "teamAssistants": "סוכנים בצוות",
+    "addAssistant": "הוסף סוכן",
+    "noAssistants": "אין עדיין סוכנים בצוות זה"
+  },
+  "AddTeamDialog": {
+    "name": "שם",
+    "description": "תיאור",
+    "icon": "אייקון",
+    "iconPlaceholder": "הזן אימוג'י או שם אייקון"
   },
   "CompaniesPage": {
     "title": "חברות",
@@ -168,8 +202,7 @@
       "description": "מפתחות API משמשים לאימות ולחיבור למקורות חיצוניים",
       "placeholders": {
         "openai_api_key": "הזן כאן את מפתח ה-API של OpenAI",
-        "gcp_key": "הזן כאן את מפתח ה-GCP שלך",
-        "notion_api_key": "הזן כאן את מפתח ה-API של Notion",
+        "gcp_key": "הזן כאן את מפתח ה-GCP שלך",        
         "labs11_api_key": "הזן כאן את מפתח ה-API של 11Labs",
         "jsonbin_api_key" : "הזן כאן את מפתח ה-API של Jsonbin",
         "twilio_account_sid": "הזן כאן את SID של חשבון Twilio שלך",
@@ -217,12 +250,14 @@
       "description": "מפתחות API משמשים לאימות ולחיבור למקורות חיצוניים",
       "placeholders": {
         "openai_api_key": "הזן כאן את מפתח ה-API של OpenAI",
-        "gcp_key": "הזן כאן את מפתח ה-GCP שלך",
-        "notion_api_key": "הזן כאן את מפתח ה-API של Notion",
+        "gcp_key": "הזן כאן את מפתח ה-GCP שלך",        
         "labs11_api_key": "הזן כאן את מפתח ה-API של 11Labs",
         "jsonbin_api_key" : "הזן כאן את מפתח ה-API של Json",
         "twilio_account_sid": "הזן כאן את SID של חשבון Twilio שלך",
-        "twilio_auth_token": "הזן כאן את אסימון האימות של Twilio שלך"
+        "twilio_auth_token": "הזן כאן את אסימון האימות של Twilio שלך",
+        "jira_api_token": "הזן כאן את Jira API Token",
+        "jira_domain": "הזן כאן את הדומיין/כתובת ה-Jira שלך (לדוגמה: yourcompany.atlassian.net)",
+        "jira_email": "הזן כאן את האימייל/שם המשתמש שלך ב-Jira"
       }
     },
     "identifiers": {
@@ -277,7 +312,13 @@
     "actionUpdated": "הפעולה עודכנה בהצלחה",
     "actionDeleted": "הפעולה נמחקה בהצלחה",
     "sessionCleared": "השיחה נוקתה בהצלחה",
-    "tokenRefreshed": "האסימון רוענן בהצלחה"
+    "sessionClearedAndNewStarted": "השיחה נוקתה ושיחה חדשה החלה בהצלחה",
+    "tokenRefreshed": "האסימון רוענן בהצלחה",
+    "teamCreated": "הצוות נוצר בהצלחה",
+    "teamUpdated": "הצוות עודכן בהצלחה",
+    "teamDeleted": "הצוות נמחק בהצלחה",
+    "assistantAssignedToTeam": "הסוכן הוקצה לצוות בהצלחה",
+    "assistantRemovedFromTeam": "הסוכן הוסר מהצוות בהצלחה"
   }, 
   "assistantFieldConfigs": {
     "assistantId": "מזהה עוזר",
@@ -287,6 +328,7 @@
     "voice": "קול",
     "language": "שפה",
     "llmModel": "מודל LLM",
+    "llmProvider": "ספק LLM",
     "llmPrompt": "פרומפט LLM",
     "newAssistant": "עוזר חדש",
     "newAssistantDescription": "תיאור עוזר חדש",
@@ -300,11 +342,19 @@
       "description": "מתחילי שיחה משמשים להתחלת שיחה עם העוזר"
     }
   }, 
+  "teamFieldConfigs": {
+    "name": "שם",
+    "description": "תיאור",
+    "icon": "אייקון",
+    "save": "צור צוות"
+  },
   "dialogTitles" : {
     "newAssistant": "צור עוזר חדש",
     "newCompany": "צור חברה חדשה",
     "newAction": "צור פעולה חדשה",
     "newUser": "צור משתמש חדש",
+    "newTeam": "צור צוות חדש",
+    "editAssistantActions": "ערוך פעולות מורשות",
     "onboarding": "ברוכים הבאים"
   },
   "actionsGallery" : {
@@ -314,6 +364,17 @@
     "actions": "פעולות",
     "appName": "פורטל הסוכנים",
     "pleaseWait": "אנא המתן...",
-    "save": "שמור שינויים"
+    "save": "שמור שינויים",
+    "add": "הוסף",
+    "cancel": "בטל",
+    "create": "צור",
+    "back": "חזור"
+  },
+  "breadcrumbs": {
+    "teamAssistants": "סוכנים בצוות"
+  },
+  "teamAssistants": {
+    "noAssistants": "אין סוכנים בצוות זה",
+    "noAssistantsFound": "לא נמצאו סוכנים"
   }
 }

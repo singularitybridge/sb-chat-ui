@@ -1,16 +1,12 @@
 import { toJS } from 'mobx';
 import { ICompany } from '../../store/models/Company';
 import apiClient from '../AxiosService';
+import { singleFlight } from '../../utils/singleFlight';
 
-export const getCompany = async (): Promise<ICompany> => {
-  try {
-    const response = await apiClient.get('company');
-    return response.data;
-  } catch (error) {
-    console.error('Failed to fetch company', error);
-    throw error;
-  }
-};
+export const getCompany = (): Promise<ICompany> =>
+  singleFlight('GET /company', () =>
+    apiClient.get('company').then((res) => res.data)
+  );
 
 export const addCompany = async (company: ICompany): Promise<ICompany> => {
   try {

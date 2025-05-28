@@ -1,4 +1,4 @@
-import { ChevronRightIcon, MicrophoneIcon } from '@heroicons/react/24/outline';
+import { ChevronRightIcon } from '@heroicons/react/24/outline';
 import React, { useEffect } from 'react';
 import useSpeechToText from 'react-hook-speech-to-text';
 import { ChatFooterProps, getVoiceMap } from './common';
@@ -10,9 +10,7 @@ const ChatFooterText: React.FC<ChatFooterProps> = ({
   const {
     error,
     interimResult,
-    isRecording,
     results,
-    startSpeechToText,
     stopSpeechToText,
   } = useSpeechToText({
     crossBrowser: true,

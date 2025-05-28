@@ -6,6 +6,7 @@ import {
   EVENT_SHOW_ADD_ASSISTANT_MODAL,
   EVENT_SHOW_ADD_COMPANY_MODAL,
   EVENT_SHOW_ADD_USER_MODAL,
+  EVENT_SHOW_ADD_TEAM_MODAL,
   EVENT_SHOW_ONBOARDING_MODAL,
   EVENT_SHOW_EDIT_ASSISTANT_ACTIONS_MODAL,
   EventType,
@@ -16,10 +17,9 @@ import {
   dialogComponentFactory,
 } from '../../services/DialogFactory';
 import { observer } from 'mobx-react-lite';
-import { useRootStore } from '../../store/common/RootStoreContext';
 
 const DialogManager = observer(() => {
-  const rootStore = useRootStore();
+  
   const [isOpen, setIsOpen] = useState(false);
   const [dialogData, setDialogData] = useState<DialogComponentEventData>({
     component: <div>Hello</div>,
@@ -71,6 +71,13 @@ const DialogManager = observer(() => {
     EVENT_SHOW_EDIT_ASSISTANT_ACTIONS_MODAL,
     (eventData: any) => {
       updateContent(EVENT_SHOW_EDIT_ASSISTANT_ACTIONS_MODAL, eventData);
+    }
+  );
+  
+  useEventEmitter(
+    EVENT_SHOW_ADD_TEAM_MODAL,
+    (eventData: any) => {
+      updateContent(EVENT_SHOW_ADD_TEAM_MODAL, eventData);
     }
   );
 

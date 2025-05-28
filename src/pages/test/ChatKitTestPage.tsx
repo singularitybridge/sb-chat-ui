@@ -2,15 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { SBChatKitUI } from '../../components/sb-chat-kit-ui/SBChatKitUI';
 
 const mockMessages = [
-  { content: 'Hello, how can I help you?', role: 'assistant', createdAt: Date.now() },
-  { content: 'I need assistance with my project.', role: 'user', createdAt: Date.now() + 1000 },
-  { content: 'Sure, what do you need help with?', role: 'assistant', createdAt: Date.now() + 2000 },
+  { id: Date.now().toString() + '-0', content: 'Hello, how can I help you?', role: 'assistant', createdAt: Date.now() },
+  { id: Date.now().toString() + '-1', content: 'I need assistance with my project.', role: 'user', createdAt: Date.now() + 1000 },
+  { id: Date.now().toString() + '-2', content: 'Sure, what do you need help with?', role: 'assistant', createdAt: Date.now() + 2000 },
 ];
 
 const mockMessagesHebrew = [
-  { content: 'שלום, איך אני יכול לעזור לך?', role: 'assistant', createdAt: Date.now() },
-  { content: 'אני צריך עזרה עם הפרויקט שלי.', role: 'user', createdAt: Date.now() + 1000 },
-  { content: 'בטח, במה אתה צריך עזרה?', role: 'assistant', createdAt: Date.now() + 2000 },
+  { id: Date.now().toString() + '-0', content: 'שלום, איך אני יכול לעזור לך?', role: 'assistant', createdAt: Date.now() },
+  { id: Date.now().toString() + '-1', content: 'אני צריך עזרה עם הפרויקט שלי.', role: 'user', createdAt: Date.now() + 1000 },
+  { id: Date.now().toString() + '-2', content: 'בטח, במה אתה צריך עזרה?', role: 'assistant', createdAt: Date.now() + 2000 },
 ];
 
 const mockAssistant = {
@@ -40,18 +40,22 @@ const ChatKitTestPage = () => {
   };
 
   const handleSendMessage = (message: string) => {
+    const userMessageId = Date.now().toString();
+    const assistantMessageId = (Date.now() + 1).toString();
     setMessages((prevMessages) => [
       ...prevMessages,
-      { content: message, role: 'user', createdAt: Date.now() },
-      { content: 'This is a mock response.', role: 'assistant', createdAt: Date.now() + 1000 },
+      { id: userMessageId, content: message, role: 'user', createdAt: Date.now() },
+      { id: assistantMessageId, content: 'This is a mock response.', role: 'assistant', createdAt: Date.now() + 1000 },
     ]);
   };
 
   const handleSendMessageHebrew = (message: string) => {
+    const userMessageId = Date.now().toString();
+    const assistantMessageId = (Date.now() + 1).toString();
     setMessagesHebrew((prevMessages) => [
       ...prevMessages,
-      { content: message, role: 'user', createdAt: Date.now() },
-      { content: 'זו תגובה מדומה.', role: 'assistant', createdAt: Date.now() + 1000 },
+      { id: userMessageId, content: message, role: 'user', createdAt: Date.now() },
+      { id: assistantMessageId, content: 'זו תגובה מדומה.', role: 'assistant', createdAt: Date.now() + 1000 },
     ]);
   };
 
@@ -67,6 +71,7 @@ const ChatKitTestPage = () => {
     setMessages((prevMessages) => [
       ...prevMessages,
       {
+        id: Date.now().toString(),
         content: 'This is a notification message.',
         role: 'system',
         metadata: { message_type: 'notification' },
@@ -77,10 +82,13 @@ const ChatKitTestPage = () => {
 
   const handleAddActionMessage = () => {
     const addUserMessage = (message: string) => {
+      const userMessageId = Date.now().toString();
+      const assistantMessageId = (Date.now() + 1).toString();
       setMessages((prevMessages) => [
         ...prevMessages,
-        { content: message, role: 'user', createdAt: Date.now() },
+        { id: userMessageId, content: message, role: 'user', createdAt: Date.now() },
         {
+          id: assistantMessageId,
           content: `You selected ${message}. Here are some options.`,
           role: 'assistant',
           createdAt: Date.now() + 1000,
@@ -91,6 +99,7 @@ const ChatKitTestPage = () => {
     setMessages((prevMessages) => [
       ...prevMessages,
       {
+        id: Date.now().toString(),
         content: 'Very happy to hear that, what kind of car?',
         role: 'assistant',
         actions: [
@@ -103,16 +112,18 @@ const ChatKitTestPage = () => {
   };
 
   const [wideMessages, setWideMessages] = useState([
-    { content: 'Welcome to the wide mode chat!', role: 'assistant', createdAt: Date.now() },
-    { content: 'This is a test of the wide mode layout.', role: 'user', createdAt: Date.now() + 1000 },
-    { content: 'How does it look?', role: 'assistant', createdAt: Date.now() + 2000 },
+    { id: Date.now().toString() + '-0', content: 'Welcome to the wide mode chat!', role: 'assistant', createdAt: Date.now() },
+    { id: Date.now().toString() + '-1', content: 'This is a test of the wide mode layout.', role: 'user', createdAt: Date.now() + 1000 },
+    { id: Date.now().toString() + '-2', content: 'How does it look?', role: 'assistant', createdAt: Date.now() + 2000 },
   ]);
 
   const handleSendWideMessage = (message: string) => {
+    const userMessageId = Date.now().toString();
+    const assistantMessageId = (Date.now() + 1).toString();
     setWideMessages((prevMessages) => [
       ...prevMessages,
-      { content: message, role: 'user', createdAt: Date.now() },
-      { content: 'This is a mock response in wide mode.', role: 'assistant', createdAt: Date.now() + 1000 },
+      { id: userMessageId, content: message, role: 'user', createdAt: Date.now() },
+      { id: assistantMessageId, content: 'This is a mock response in wide mode.', role: 'assistant', createdAt: Date.now() + 1000 },
     ]);
   };
 

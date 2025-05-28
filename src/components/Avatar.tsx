@@ -1,3 +1,5 @@
+import React from 'react';
+
 export enum AvatarStyles {
   medium = 'w-20 h-20 m-0',
   avatar = 'w-14 h-14 m-0',

@@ -1,12 +1,14 @@
 import { NewAssistantView } from '../pages/NewAssistantView';
 import { NewCompanyView } from '../pages/NewCompanyView';
 import { NewUserView } from '../pages/NewUserView';
+import { NewTeamView } from '../pages/NewTeamView';
 import OnboardingDialog from '../pages/admin/Onboarding';
 import { EditAssistantActionsDialog } from '../components';
 import {
   EVENT_SHOW_ADD_ASSISTANT_MODAL,
   EVENT_SHOW_ADD_COMPANY_MODAL,
   EVENT_SHOW_ADD_USER_MODAL,
+  EVENT_SHOW_ADD_TEAM_MODAL,
   EVENT_SHOW_ONBOARDING_MODAL,
   EVENT_SHOW_EDIT_ASSISTANT_ACTIONS_MODAL,
   EventType,
@@ -62,6 +64,13 @@ const dialogComponentFactory = (
           allowedActions: eventData.allowedActions,
         }),
         width: 'wide',
+      };
+      
+    case EVENT_SHOW_ADD_TEAM_MODAL:
+      return {
+        title: eventData || i18n.t('dialogTitles.newTeam') || 'Add Team',
+        component: React.createElement(NewTeamView),
+        width: 'normal',
       };
 
     default:

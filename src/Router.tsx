@@ -10,6 +10,9 @@ import { SessionsPage } from './pages/admin/SessionsPage';
 import { UsersPage } from './pages/admin/UsersPage';
 import { InboxPage } from './pages/admin/inbox/InboxPage';
 import { EditCompanyPage } from './pages/admin/EditCompanyPage';
+import { TeamsPage } from './pages/admin/TeamsPage';
+import { EditTeamPage } from './pages/admin/EditTeamPage';
+import { MemoryPage } from './pages/admin/MemoryPage'; // Added import for MemoryPage
 import { SignupPage } from './pages/SignupPage';
 import { ChatKitTestPage } from './pages/test/ChatKitTestPage';
 import { UIKitTestPage } from './pages/test/UIKitTestPage';
@@ -55,6 +58,10 @@ export const browserRouter = createBrowserRouter([
             element: <AssistantsPage />,
           },
           {
+            path: 'assistants/team/:teamId',
+            element: <AssistantsPage />,
+          },
+          {
             path: 'assistants/workspace/join',
             element: <WorkspaceJoinPage />,
           },
@@ -85,6 +92,18 @@ export const browserRouter = createBrowserRouter([
           {
             path: 'users',
             element: <UsersPage />,
+          },
+          {
+            path: 'teams',
+            element: <TeamsPage />,
+          },
+          {
+            path: 'teams/:key',
+            element: <EditTeamPage />,
+          },
+          {
+            path: 'memory', // Added route for MemoryPage
+            element: <MemoryPage />,
           },
           {
             path: 'inbox',

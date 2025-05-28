@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useRootStore } from '../store/common/RootStoreContext';
+import { useSessionStore } from '../store/useSessionStore'; // Import Zustand session store
 import { observer } from 'mobx-react-lite';
 import { ClipLoader } from 'react-spinners';
 
@@ -17,7 +18,9 @@ const AuthManager: React.FC<{ children: React.ReactNode }> = observer(({ childre
     await rootStore.loadUsers();
     await rootStore.loadCompanies();
     await rootStore.aiAssistedConfigStore.initialize();
-    await rootStore.sessionStore.fetchActiveSession();
+    console.log('AuthManager - fetching active session...');
+    await useSessionStore.getState().fetchActiveSession(); // Use Zustand store action
+    console.log('AuthManager - active session after fetch:', useSessionStore.getState().activeSession);
     await rootStore.loadInboxMessages();
     await rootStore.setInitialDataLoaded();    
     setLoading(false);

@@ -1,11 +1,22 @@
-import { types, flow, applySnapshot, Instance, getSnapshot } from 'mobx-state-tree';
+import { types, flow, applySnapshot, Instance } from 'mobx-state-tree';
+import { toJS } from 'mobx';
 import { Assistant, IAssistant } from './Assistant';
+import { Team, ITeam } from './Team';
 import {
   addAssistant,
   deleteAssistant,
   getAssistants,
   updateAssistant,
 } from '../../services/api/assistantService';
+import {
+  getTeams,
+  addTeam,
+  updateTeam,
+  deleteTeam,
+  assignAssistantToTeam,
+  removeAssistantFromTeam,
+  getTeamAssistants,
+} from '../../services/api/teamService';
 import { emitter } from '../../services/mittEmitter';
 import {
   EVENT_CLOSE_MODAL,
@@ -13,7 +24,7 @@ import {
   EVENT_SHOW_NOTIFICATION,
   EVENT_SHOW_ONBOARDING_MODAL,
 } from '../../utils/eventNames';
-import { ApiKey, Company, ICompany, Token } from './Company';
+import { Company, ICompany } from './Company';
 import {
   addCompany,
   deleteCompany,
@@ -28,7 +39,7 @@ import {
   deleteUser,
   getAllUsers,
 } from '../../services/api/userService';
-import { SessionStore } from './SessionStore';
+// import { SessionStore } from './SessionStore'; // Removed SessionStore import
 import { addInboxMessage, addInboxResponse, getInboxMessages } from '../../services/api/inboxService';
 import { IInboxSession, InboxSession } from './Inbox';
 import i18n from '../../i18n';
@@ -56,7 +67,7 @@ const RootStore = types
     companiesLoaded: types.optional(types.boolean, false),
     users: types.array(User),
     assistantsLoaded: types.optional(types.boolean, false),
-    sessionStore: types.optional(SessionStore, {}),
+    // sessionStore: types.optional(SessionStore, {}), // Removed sessionStore property
     aiAssistedConfigStore: types.optional(AIAssistedConfigStore, {}),
     inboxSessions: types.array(InboxSession),
     inboxSessionsLoaded: types.optional(types.boolean, false),
@@ -65,6 +76,9 @@ const RootStore = types
     // Add these new properties
     onboardingStatus: types.optional(types.enumeration(Object.values(OnboardingStatus)), OnboardingStatus.CREATED),
     onboardedModules: types.optional(types.array(types.string), []),
+    // Teams properties
+    teams: types.array(Team),
+    teamsLoaded: types.optional(types.boolean, false),
   })
   .views((self) => ({
     get isAdmin() {
@@ -75,6 +89,9 @@ const RootStore = types
     },
     get activeCompany() {
       return self.companies[0];
+    },
+    getTeamById: (id: string) => {
+      return self.teams.find((team) => team._id === id);
     },
   }))
   .actions((self) => ({
@@ -209,13 +226,12 @@ const RootStore = types
     updateCompany: flow(function* (company: Partial<ICompany>) {
       try {
         // Ensure we're sending the full company information
-        const currentCompany = getSnapshot(self.companies[0]);
+        const currentCompany = toJS(self.companies[0]);
         const updatedCompanyData = { ...currentCompany, ...company };
         
         console.log('Updating company with data:', JSON.stringify(updatedCompanyData));
         
-        // @ts-ignore - @TODO - Fix this
-        const updatedCompany = yield updateCompany(updatedCompanyData);
+        const updatedCompany: ICompany = yield updateCompany(updatedCompanyData);
         applySnapshot(self.companies, [updatedCompany]);
         emitter.emit(
           EVENT_SHOW_NOTIFICATION,
@@ -247,21 +263,24 @@ const RootStore = types
           throw new Error('No active company');
         }
         
-        const currentCompany = getSnapshot(self.activeCompany);
-        const updatedApiKeys = currentCompany.api_keys.filter(key => key.key !== 'openai_api_key');
-        updatedApiKeys.push({ key: 'openai_api_key', value: apiKey });
-
-        console.log('Updating company API key:', JSON.stringify(updatedApiKeys));
-    
-
+        // Create a new array of API keys
+        const currentApiKeys = toJS(self.activeCompany.api_keys);
+        const updatedApiKeys = currentApiKeys
+          .filter(key => key.key !== 'openai_api_key')
+          .concat([{ key: 'openai_api_key', value: apiKey }]);
         
-        const updatedCompany = yield updateCompany({
-          ...currentCompany,
-          // @ts-ignore - @TODO - Fix this
+        // Create a minimal update object with just the ID and API keys
+        const updateData = {
+          _id: self.activeCompany._id,
           api_keys: updatedApiKeys
-        });
-    
+        };
+        
+        // Send the update to the server with a type assertion to bypass type checking
+        const updatedCompany: ICompany = yield updateCompany(updateData as any);
+        
+        // Update the local state
         applySnapshot(self.companies, [updatedCompany]);
+        
         return updatedCompany;
       } catch (error) {
         console.error('Failed to update company API key', error);
@@ -289,9 +308,9 @@ const RootStore = types
 
         emitter.emit(EVENT_CLOSE_MODAL);
         return newUser;
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error('Failed to create user', error);
-        emitter.emit(EVENT_ERROR, 'Failed to add user: ' + error.message);
+        emitter.emit(EVENT_ERROR, 'Failed to add user: ' + (error instanceof Error ? error.message : String(error)));
         return null;
       }
     }),
@@ -315,7 +334,10 @@ const RootStore = types
     addCompany: flow(function* (company: ICompany) {
       try {
         const newCompany = yield addCompany(company);
-        newCompany.token = newCompany.token.value;
+        // Handle token properly
+        if (newCompany.token && typeof newCompany.token === 'object' && 'value' in newCompany.token) {
+          newCompany.token = newCompany.token.value;
+        }
         applySnapshot(self.companies, [newCompany]);
         emitter.emit(
           EVENT_SHOW_NOTIFICATION,
@@ -323,9 +345,9 @@ const RootStore = types
         );
         emitter.emit(EVENT_CLOSE_MODAL);
         return newCompany;
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error('Failed to create company', error);
-        emitter.emit(EVENT_ERROR, 'Failed to add company: ' + error.message);
+        emitter.emit(EVENT_ERROR, 'Failed to add company: ' + (error instanceof Error ? error.message : String(error)));
         return null;
       }
     }),
@@ -352,9 +374,9 @@ const RootStore = types
           i18n.t('Notifications.agentCreated')
         );
         emitter.emit(EVENT_CLOSE_MODAL); // Emit the close modal event
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error('Failed to create assistant', error);
-        emitter.emit(EVENT_ERROR, 'Failed to add assistant: ' + error.message);
+        emitter.emit(EVENT_ERROR, 'Failed to add assistant: ' + (error instanceof Error ? error.message : String(error)));
       }
     }),
 
@@ -395,6 +417,106 @@ const RootStore = types
       return self.assistants.find((assistant) => assistant._id === _id);
     },
 
+    // Team-related actions
+    loadTeams: flow(function* () {
+      try {
+        const teams = yield getTeams();
+        applySnapshot(self.teams, teams);
+        self.teamsLoaded = true;
+      } catch (error) {
+        console.error('Failed to load teams', error);
+      }
+    }),
+
+    createTeam: flow(function* (team: ITeam) {
+      try {
+        const newTeam = yield addTeam(team);
+        self.teams.push(newTeam);
+        emitter.emit(
+          EVENT_SHOW_NOTIFICATION,
+          i18n.t('Notifications.teamCreated') || 'Team created successfully'
+        );
+        emitter.emit(EVENT_CLOSE_MODAL);
+        return newTeam;
+      } catch (error: unknown) {
+        console.error('Failed to create team', error);
+        emitter.emit(EVENT_ERROR, 'Failed to add team: ' + (error instanceof Error ? error.message : String(error)));
+        return null;
+      }
+    }),
+
+    updateTeam: flow(function* (id: string, team: ITeam) {
+      try {
+        const updatedTeam = yield updateTeam(id, team);
+        const index = self.teams.findIndex((t) => t._id === id);
+        if (index !== -1) {
+          self.teams[index] = updatedTeam;
+        }
+        emitter.emit(
+          EVENT_SHOW_NOTIFICATION,
+          i18n.t('Notifications.teamUpdated') || 'Team updated successfully'
+        );
+        return updatedTeam;
+      } catch (error) {
+        console.error('Failed to update team', error);
+        emitter.emit(EVENT_ERROR, 'Failed to update team: ' + (error as Error).message);
+        return null;
+      }
+    }),
+
+    deleteTeam: flow(function* (id: string) {
+      try {
+        yield deleteTeam(id);
+        const index = self.teams.findIndex((team) => team._id === id);
+        if (index !== -1) {
+          self.teams.splice(index, 1);
+        }
+        emitter.emit(
+          EVENT_SHOW_NOTIFICATION,
+          i18n.t('Notifications.teamDeleted') || 'Team deleted successfully'
+        );
+      } catch (error) {
+        console.error('Failed to delete team', error);
+        emitter.emit(EVENT_ERROR, 'Failed to delete team: ' + (error as Error).message);
+      }
+    }),
+
+    assignAssistantToTeam: flow(function* (teamId: string, assistantId: string) {
+      try {
+        yield assignAssistantToTeam(teamId, assistantId);
+        emitter.emit(
+          EVENT_SHOW_NOTIFICATION,
+          i18n.t('Notifications.assistantAssignedToTeam') || 'Assistant assigned to team successfully'
+        );
+      } catch (error) {
+        console.error('Failed to assign assistant to team', error);
+        emitter.emit(EVENT_ERROR, 'Failed to assign assistant to team: ' + (error as Error).message);
+      }
+    }),
+
+    removeAssistantFromTeam: flow(function* (teamId: string, assistantId: string) {
+      try {
+        yield removeAssistantFromTeam(teamId, assistantId);
+        emitter.emit(
+          EVENT_SHOW_NOTIFICATION,
+          i18n.t('Notifications.assistantRemovedFromTeam') || 'Assistant removed from team successfully'
+        );
+      } catch (error) {
+        console.error('Failed to remove assistant from team', error);
+        emitter.emit(EVENT_ERROR, 'Failed to remove assistant from team: ' + (error as Error).message);
+      }
+    }),
+
+    loadAssistantsByTeam: flow(function* (teamId: string) {
+      try {
+        const assistants: IAssistant[] = yield getTeamAssistants(teamId);
+        return assistants;
+      } catch (error) {
+        console.error('Failed to load team assistants', error);
+        emitter.emit(EVENT_ERROR, 'Failed to load team assistants: ' + (error as Error).message);
+        return [];
+      }
+    }),
   }));
 
 export interface IRootStore extends Instance<typeof RootStore> { }

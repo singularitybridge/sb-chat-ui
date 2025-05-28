@@ -1,12 +1,14 @@
 {
   "Menu": {
     "Companies": "Companies",
+    "Teams": "Teams",
     "Assistants": "Assistants",
     "Users": "Users",
     "Sessions": "Sessions",
     "Inbox": "Inbox",
     "Actions": "Actions",
-    "Home": "Home"
+    "Home": "Home",
+    "Memory": "Memory"
   },
   "DynamicCodeRenderer": {
     "title": "Test - Canvas Editor",
@@ -77,6 +79,7 @@
   "Navigation": {
     "home": "Home",
     "companies": "Companies",
+    "teams": "Teams",
     "assistants": "Assistants",
     "users": "Users",
     "sessions": "Sessions",
@@ -108,6 +111,32 @@
     "successfullySet":"Company set successfully",
     "companyUpdated":"Company has been updated successfully",
     "addTag": "Add Tag"
+  },
+  "TeamsPage": {
+    "title": "Teams",
+    "addTeam": "Add Team",
+    "noTeams": "No teams found",
+    "createTeamPrompt": "Click the + button to create a team"
+  },
+  "MemoryPage": {
+    "title": "Memory Journal",
+    "noItems": "No journal entries found"
+  },
+  "EditTeamPage": {
+    "title": "Edit Team",
+    "name": "Name",
+    "description": "Description",
+    "icon": "Icon",
+    "iconPlaceholder": "Enter an emoji or icon name",
+    "teamAssistants": "Team Assistants",
+    "addAssistant": "Add Assistant",
+    "noAssistants": "No assistants in this team yet"
+  },
+  "AddTeamDialog": {
+    "name": "Name",
+    "description": "Description",
+    "icon": "Icon",
+    "iconPlaceholder": "Enter an emoji or icon name"
   },
   "AssistantsPage": {
     "title": "Your Team",
@@ -208,12 +237,14 @@
       "description": "Api keys are used to validate and connect to external sources",
       "placeholders": {
         "openai_api_key": "your OpenAI API key here",
-        "gcp_key": "your GCP key here",
-        "notion_api_key": "your Notion API key here",
+        "gcp_key": "your GCP key here",        
         "labs11_api_key": "your 11Labs API key here",
         "jsonbin_api_key" : "your JSON Bin API key here",
         "twilio_account_sid": "your Twilio account SID here",
-        "twilio_auth_token": "your Twilio auth token here"
+        "twilio_auth_token": "your Twilio auth token here",
+        "jira_api_token": "your Jira API Token here",
+        "jira_domain": "your Jira Domain/URL here (e.g., yourcompany.atlassian.net)",
+        "jira_email": "your Jira Email/Username here"
       }
     }    
   },
@@ -256,7 +287,13 @@
     "actionUpdated": "Action has been updated successfully",
     "actionDeleted": "Action has been deleted successfully",
     "sessionCleared": "Session has been cleared successfully",
-    "tokenRefreshed": "Token has been refreshed successfully"
+    "sessionClearedAndNewStarted": "Session cleared and new session started successfully",
+    "tokenRefreshed": "Token has been refreshed successfully",
+    "teamCreated": "Team created successfully",
+    "teamUpdated": "Team updated successfully",
+    "teamDeleted": "Team deleted successfully",
+    "assistantAssignedToTeam": "Assistant assigned to team successfully",
+    "assistantRemovedFromTeam": "Assistant removed from team successfully"
   },
   "assistantFieldConfigs": {
     "assistantId": "Assistant ID",
@@ -266,6 +303,7 @@
     "voice": "Voice",
     "language": "Language",
     "llmModel": "LLM Model",
+    "llmProvider": "LLM Provider",
     "llmPrompt": "LLM Prompt",
     "save": "Save Changes",
     "allowedActions": "Allowed Actions",
@@ -275,11 +313,19 @@
       "description": "Conversation starters are used to initiate a conversation with the assistant"      
     }
   },
+  "teamFieldConfigs": {
+    "name": "Name",
+    "description": "Description",
+    "icon": "Icon",
+    "save": "Create Team"
+  },
   "dialogTitles" : {
     "newAssistant": "Create New Assistant",
     "newCompany": "Create New Company",
     "newAction": "Create New Action",
     "newUser": "Create New User",
+    "newTeam": "Create New Team",
+    "editAssistantActions": "Edit Assistant Actions",
     "onboarding": "Get Started"
   },
   "actionsGallery" : {
@@ -289,6 +335,17 @@
     "actions": "actions",
     "appName": "Agent Portal",
     "pleaseWait": "Please wait...",
-    "save": "Save Changes"
+    "save": "Save Changes",
+    "add": "Add",
+    "cancel": "Cancel",
+    "create": "Create",
+    "back": "Back"
+  },
+  "breadcrumbs": {
+    "teamAssistants": "Team Assistants"
+  },
+  "teamAssistants": {
+    "noAssistants": "No assistants in this team",
+    "noAssistantsFound": "No assistants found"
   }
 }

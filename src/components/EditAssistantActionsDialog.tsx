@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useRootStore } from '../store/common/RootStoreContext';
-import { TextComponent } from './sb-core-ui-kit/TextComponent';
 import Button from './sb-core-ui-kit/Button';
 import { useTranslation } from 'react-i18next';
 import { IAssistant } from '../store/models/Assistant';

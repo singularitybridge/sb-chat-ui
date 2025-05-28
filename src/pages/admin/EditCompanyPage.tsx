@@ -51,15 +51,26 @@ const EditCompanyPage: React.FC = observer(() => {
 
   const formFields: FieldConfig[] = companyFieldConfigs.map((config) => {
     const fieldKeyString = String(config.key);
+    let fieldValue;
+
+    if (config.id === 'api_keys') {
+      const companyApiKeys = company ? toJS(company.api_keys) || [] : [];
+      const companyApiKeysMap = new Map(companyApiKeys.map(k => [k.key, k.value]));
+      
+      // config.value here is the default list of ApiKey objects from companyFieldConfigs
+      fieldValue = (config.value as { key: string; value: string }[]).map(defaultApiKey => ({
+        ...defaultApiKey,
+        value: companyApiKeysMap.get(defaultApiKey.key) || defaultApiKey.value,
+      }));
+    } else {
+      fieldValue = company ? toJS((company as any)[fieldKeyString]) : config.value;
+    }
 
     return {
-      key: config.key,
-      label: config.label,
-      options: [],
-      value: company ? toJS((company as any)[fieldKeyString]) : '',
-      id: config.id,
-      type: config.type,
-      visibility: config.visibility,
+      ...config,
+      value: fieldValue,
+      // Ensure options is always an array, even if not explicitly in config
+      options: (config as any).options || [], 
     } as FieldConfig;
   });
 
@@ -76,7 +87,7 @@ const EditCompanyPage: React.FC = observer(() => {
     setIsLoading(false);
   };
 
-  const handleRefreshToken = async (values: FormValues) => {
+  const handleRefreshToken = async () => { // Removed unused 'values' parameter
     if (!id) {
       return;
     }

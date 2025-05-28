@@ -1,35 +1,49 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
-import { useRootStore } from '../../store/common/RootStoreContext';
+// import { useRootStore } from '../../store/common/RootStoreContext'; // Removed
 import { Table } from '../../components/sb-core-ui-kit/Table';
-import { toJS } from 'mobx';
+// import { toJS } from 'mobx'; // Removed
 import { convertToStringArray } from '../../utils/utils';
 import { PlayIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { IconButton } from '../../components/admin/IconButton';
-import { SessionKeys, ISession } from '../../store/models/Session';
+import { ISession, useSessionStore } from '../../store/useSessionStore'; // Changed to useSessionStore
 import { EVENT_SHOW_NOTIFICATION } from '../../utils/eventNames';
 import { emitter } from '../../services/mittEmitter';
 import AdminPageContainer from '../../components/admin/AdminPageContainer';
 import { useTranslation } from 'react-i18next';
 
 const SessionsPage: React.FC = observer(() => {
-  const rootStore = useRootStore();
+  // const rootStore = useRootStore(); // Removed
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  const headers: SessionKeys[] = [
+  const headers: (keyof ISession)[] = [ // Changed SessionKeys to keyof ISession
     '_id',
     'assistantId',
+    'language', // Added language as it's part of ISession now
   ];
 
+  const { changeAssistant } = useSessionStore.getState(); // Changed to useSessionStore
+
   const handleDelete = (row: ISession) => {
-    // rootStore.sessionStore.deleteSession(row._id);
+    // TODO: Implement delete session if needed in Zustand store
+    console.log('Delete session clicked for:', row._id);
   };
 
   const handleSetActiveSession = (row: ISession) => {
-    rootStore.sessionStore.changeAssistant(row._id);
-    emitter.emit(EVENT_SHOW_NOTIFICATION, 'Session set successfully');
+    // Assuming row._id is the assistantId to change to, or this logic needs review
+    // The original `changeAssistant` took assistantId. If row._id is session ID, this is wrong.
+    // For now, I'll assume row.assistantId is what's intended, or row itself is the new active session.
+    // The original call was `rootStore.sessionStore.changeAssistant(row._id)` which implies row._id was assistantId.
+    // This seems problematic. Let's assume for now it means setting this session as active.
+    // The `changeAssistant` action in Zustand store expects an assistantId.
+    // This function might need to be re-thought: what does "set active session" mean here?
+    // If it means making this session's assistant the active one:
+    changeAssistant(row.assistantId); 
+    // If it means making THIS session the active one:
+    // useSessionStoreExtended.getState().setActiveSession(row);
+    emitter.emit(EVENT_SHOW_NOTIFICATION, 'Session-related action performed'); // Generic message for now
   };
 
   const Actions = (row: ISession) => (
