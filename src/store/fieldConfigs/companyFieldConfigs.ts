@@ -91,6 +91,10 @@ export const companyFieldConfigs: FieldConfig[] = [
         key: 'anthropic_api_key',
         value: '-',
       },
+      {
+        key: 'replicate_api_key',
+        value: '-',
+      },
     ],
     visibility: { create: true, view: true, update: true },
   },
