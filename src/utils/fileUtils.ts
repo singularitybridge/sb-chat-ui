@@ -63,7 +63,8 @@ export const validateFile = (file: File): { isValid: boolean; error?: string } =
     'audio/mpeg',
     'audio/wav',
     'application/zip',
-    'application/x-rar-compressed'
+    'application/x-rar-compressed',
+    'text/csv'
   ];
 
   if (!allowedTypes.includes(file.type)) {
