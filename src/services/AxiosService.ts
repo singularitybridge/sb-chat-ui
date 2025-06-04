@@ -2,7 +2,17 @@
 import axios from 'axios';
 import { setupCache } from 'axios-cache-interceptor';
 import { getToken } from './api/authService';
+import { useEmbedAuth } from '../contexts/EmbedAuthContext'; // Import useEmbedAuth
 const apiUrl = import.meta.env.VITE_API_URL;
+
+// A way to access the EmbedAuthContext outside of a React component.
+// This is a bit of a workaround. A more robust solution might involve
+// a dedicated service or a different way to manage the API key globally for Axios.
+let embedApiKey: string | null = null;
+export const setGlobalEmbedApiKey = (key: string | null) => {
+  embedApiKey = key;
+};
+// We'll also need to update EmbedChatPage to call this.
 
 /**
  * Create an axios instance augmented with axios-cache-interceptor to
@@ -19,12 +29,24 @@ const apiClient = setupCache(
 );
 apiClient.interceptors.request.use(
   async (config) => {
-    const token = getToken();
-
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    // Prioritize embedApiKey if present
+    if (embedApiKey) {
+      // If an embed API key is provided, use it as a Bearer token.
+      // This assumes the "API key" for embedded use is a token expected in the Authorization header.
+      config.headers.Authorization = `Bearer ${embedApiKey}`;
+      // Ensure X-API-Key header is not present if we are using Authorization header
+      delete config.headers['X-API-Key'];
+    } else {
+      // Standard token authentication
+      const token = getToken(); // This is the user's login token from localStorage
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      } else {
+        // If no embedApiKey and no user token, remove any potentially stale auth headers
+        delete config.headers.Authorization;
+        delete config.headers['X-API-Key'];
+      }
     }
-
     return config;
   },
   (error) => {

@@ -28,6 +28,15 @@ const AuthManager: React.FC<{ children: React.ReactNode }> = observer(({ childre
 
   useEffect(() => {
     const checkAuth = async () => {
+      const isEmbedRoute = location.pathname.startsWith('/embed/assistants/');
+      if (isEmbedRoute) {
+        // For embed routes, we might not require full user authentication
+        // but we still need to load essential data if an API key is present or for public assistants
+        // This logic will be expanded when API key handling is added to EmbedChatPage
+        setLoading(false); // Assume loading is done for now for embed, or handle specific embed loading
+        return;
+      }
+
       const isAuthenticated = await rootStore.authStore.checkAuthStatus();
       if (!isAuthenticated && location.pathname !== '/signup') {
         navigate('/signup');
@@ -48,7 +57,8 @@ const AuthManager: React.FC<{ children: React.ReactNode }> = observer(({ childre
   }, [navigate, rootStore, location.pathname]);
 
   useEffect(() => {
-    if (!rootStore.authStore.isAuthenticated && location.pathname !== '/signup') {
+    const isEmbedRoute = location.pathname.startsWith('/embed/assistants/');
+    if (!isEmbedRoute && !rootStore.authStore.isAuthenticated && location.pathname !== '/signup') {
       navigate('/signup');
     }
   }, [rootStore.authStore.isAuthenticated, navigate, location.pathname]);

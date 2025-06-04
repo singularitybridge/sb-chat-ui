@@ -6,13 +6,13 @@ The chat UI can be embedded into any HTML page using an `iframe`. This allows yo
 
 To embed the chat UI, you need to use the following URL structure for the `iframe`'s `src` attribute:
 
-`http://localhost:5173/embed/assistants/:assistantId`
+`http://localhost:5173/embed/assistants/:assistantId?apiKey=YOUR_API_KEY`
 
-Replace `:assistantId` with the actual ID of the assistant you want to display.
+Replace `:assistantId` with the actual ID of the assistant you want to display, and `YOUR_API_KEY` with a valid API key.
 
 ### Example
 
-Here's a basic HTML example of how to embed the chat UI for an assistant with the ID `your-assistant-id-here`:
+Here's a basic HTML example of how to embed the chat UI for an assistant with the ID `your-assistant-id-here` and an API key `your-api-key-here`:
 
 ```html
 <!DOCTYPE html>
@@ -36,10 +36,15 @@ Here's a basic HTML example of how to embed the chat UI for an assistant with th
     </style>
 </head>
 <body>
-    <iframe src="http://localhost:5173/embed/assistants/your-assistant-id-here" title="Chat Assistant"></iframe>
+    <iframe src="http://localhost:5173/embed/assistants/your-assistant-id-here?apiKey=your-api-key-here" title="Chat Assistant"></iframe>
 </body>
 </html>
 ```
+
+### API Key
+
+- **Obtaining an API Key**: API keys can be generated from the admin panel of the application. (You may need to specify where exactly if this functionality exists or needs to be built).
+- **Security**: The API key is passed as a URL query parameter. While this is straightforward to implement, be aware that URLs can be logged by browsers and servers. For production environments with high security needs, consider alternative methods for transmitting sensitive keys if possible.
 
 ### Customization
 
@@ -48,8 +53,12 @@ Here's a basic HTML example of how to embed the chat UI for an assistant with th
 
 ### Important Considerations
 
-- **Assistant ID**: Ensure you are using a valid and accessible assistant ID in the URL.
+- **Assistant ID & API Key**: Ensure you are using a valid and accessible assistant ID and API key in the URL.
 - **Application URL**: If your chat application is hosted on a different domain or port, update the `src` URL in the `iframe` accordingly.
-- **Security**: Be mindful of the security implications of embedding content. Ensure that the page hosting the iframe and the chat application itself are secure.
+- **Security**: 
+    - Passing API keys in URLs can expose them in browser history, server logs, and referrer headers. 
+    - Ensure that the API key has the minimum necessary permissions for the embedded chat functionality.
+    - Consider implementing CORS (Cross-Origin Resource Sharing) policies on your API server to restrict which domains can make requests.
+    - For enhanced security, especially in production, you might explore methods like using short-lived tokens obtained via a secure backend call from the parent page, or using the `postMessage` API to send the API key to the iframe after it loads, though these are more complex to implement.
 
-This guide provides the basic steps to embed your chat UI. You can adapt the example to suit your specific integration needs.
+This guide provides the basic steps to embed your chat UI with API key authentication. You can adapt the example to suit your specific integration needs.

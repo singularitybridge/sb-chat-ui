@@ -8,9 +8,14 @@ import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
 import { IAssistant } from '../../store/models/Assistant';
 import { logger } from '../../services/LoggingService';
 import { changeActiveSessionLanguage } from '../../services/api/sessionService'; // Added import
+import { useEmbedAuth } from '../../contexts/EmbedAuthContext'; // Added import for EmbedAuthContext
+import { useSearchParams } from 'react-router-dom'; // Added import for useSearchParams
+import { setGlobalEmbedApiKey } from '../../services/AxiosService'; // Import the setter
 
 const EmbedChatPage: React.FC = observer(() => {
   const { id: assistantIdFromParams } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams(); // For getting apiKey from URL
+  const { setApiKey: setEmbedApiKey } = useEmbedAuth(); // Context for API key
   const rootStore = useRootStore();
   const {
     activeSession,
@@ -26,6 +31,20 @@ const EmbedChatPage: React.FC = observer(() => {
 
   useEffect(() => {
     const setupSession = async () => {
+      const apiKeyFromUrl = searchParams.get('apiKey');
+      if (apiKeyFromUrl) {
+        setEmbedApiKey(apiKeyFromUrl);
+        setGlobalEmbedApiKey(apiKeyFromUrl); // Set it for Axios
+      } else {
+        // If no API key, proceed with normal session auth (if applicable) or show error
+        // For now, we'll assume API key is required for unauthenticated embed
+        // This can be adjusted based on whether public assistants are allowed without API key
+        setError('API key is missing from URL.');
+        setIsSettingUp(false);
+        setGlobalEmbedApiKey(null); // Clear if not present
+        return;
+      }
+
       if (!assistantIdFromParams) {
         setError('Assistant ID is missing from URL.');
         setIsSettingUp(false);
@@ -41,12 +60,19 @@ const EmbedChatPage: React.FC = observer(() => {
         }
 
         if (!currentSession) {
-          setError('Failed to establish a session.');
+          setError('Failed to establish a session. Please check API key and network.');
           setIsSettingUp(false);
           return;
         }
         
         // Set language for the session
+        // Ensure currentSession._id is valid before proceeding
+        if (!currentSession._id) {
+          setError('Session ID is invalid after fetching session.');
+          setIsSettingUp(false);
+          return;
+        }
+
         if (currentSession.language !== rootStore.language) {
           try {
             const updatedSession = await changeActiveSessionLanguage(rootStore.language);
@@ -60,9 +86,14 @@ const EmbedChatPage: React.FC = observer(() => {
 
 
         // 2. Check if the assistant needs to be changed
-        if (currentSession.assistantId !== assistantIdFromParams) {
+        // Ensure currentSession._id is valid before proceeding
+        if (currentSession._id && currentSession.assistantId !== assistantIdFromParams) {
           await changeAssistant(assistantIdFromParams);
           // activeSession in store will be updated by changeAssistant
+        } else if (!currentSession._id) {
+          setError('Cannot change assistant without a valid session ID.');
+          setIsSettingUp(false);
+          return;
         }
 
         // 3. Fetch assistant details
@@ -102,7 +133,16 @@ const EmbedChatPage: React.FC = observer(() => {
     rootStore,
     activeSession,
     setActiveSession, // Added setActiveSession to dependency array
+    searchParams, // Added searchParams
+    setEmbedApiKey, // Added setEmbedApiKey
   ]);
+
+  // Cleanup global API key when component unmounts
+  useEffect(() => {
+    return () => {
+      setGlobalEmbedApiKey(null);
+    };
+  }, []);
   
   useEffect(() => {
     // Update local assistant state if the assistantId in the session store changes
