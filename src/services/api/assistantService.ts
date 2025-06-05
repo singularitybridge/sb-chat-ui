@@ -1,4 +1,4 @@
-import apiClient from '../AxiosService';
+import apiClient, { getGlobalEmbedApiKey } from '../AxiosService'; // Import getGlobalEmbedApiKey
 import { IAssistant } from '../../store/models/Assistant';
 import { getToken } from './authService'; // Import getToken for manual auth header
 import { singleFlight } from '../../utils/singleFlight';
@@ -113,9 +113,14 @@ export async function handleUserInputStream(
       'Accept': 'text/event-stream',
     };
 
-    const token = getToken();
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+    const currentEmbedApiKey = getGlobalEmbedApiKey();
+    if (currentEmbedApiKey) {
+      headers['Authorization'] = `Bearer ${currentEmbedApiKey}`;
+    } else {
+      const token = getToken();
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
     }
 
     // Construct the full URL, ensuring no double slashes if apiUrl ends with / and endpoint starts with /
