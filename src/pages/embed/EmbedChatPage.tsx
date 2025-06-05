@@ -11,12 +11,14 @@ import { changeActiveSessionLanguage } from '../../services/api/sessionService';
 import { useEmbedAuth } from '../../contexts/EmbedAuthContext'; // Added import for EmbedAuthContext
 import { useSearchParams } from 'react-router-dom'; // Added import for useSearchParams
 import { setGlobalEmbedApiKey } from '../../services/AxiosService'; // Import the setter
+import { useLanguageStore } from '../../store/useLanguageStore'; // Import language store
 
 const EmbedChatPage: React.FC = observer(() => {
   const { id: assistantIdFromParams } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams(); // For getting apiKey from URL
   const { setApiKey: setEmbedApiKey } = useEmbedAuth(); // Context for API key
   const rootStore = useRootStore();
+  const { setLanguage } = useLanguageStore(); // Get setLanguage from language store
   const {
     activeSession, // This is from the store, might be stale during async setup
     fetchActiveSession,
@@ -33,6 +35,12 @@ const EmbedChatPage: React.FC = observer(() => {
     const setupSession = async () => {
       setIsSettingUp(true);
       setError(null);
+
+      // Embedded chats always use English
+      // Set the UI language to English if it's not already
+      if (rootStore.language !== 'en') {
+        await setLanguage('en');
+      }
 
       const apiKeyFromUrl = searchParams.get('apiKey');
       if (apiKeyFromUrl) {
@@ -72,17 +80,17 @@ const EmbedChatPage: React.FC = observer(() => {
         // This ensures PusherManager and other dependents see a valid session ASAP.
         setActiveSession(workingSession);
 
-        // Step 2: Set language for the session if different
-        if (workingSession.language !== rootStore.language) {
+        // Step 2: Set language for the session to English if different
+        if (workingSession.language !== 'en') {
           try {
-            // Call API to change language. We won't directly use its return value
+            // Call API to change language to English. We won't directly use its return value
             // to reconstruct the whole session, to avoid issues if it's incomplete.
-            await changeActiveSessionLanguage(rootStore.language); 
+            await changeActiveSessionLanguage('en'); 
             
             // If API call successful, assume language is updated on backend.
-            // Update our current workingSession's language property locally.
+            // Update our current workingSession's language property locally to English.
             // The _id and assistantId remain from the valid workingSession.
-            workingSession.language = rootStore.language;
+            workingSession.language = 'en';
             
             // Now, set this updated workingSession in the store.
             // setActiveSession will validate it. Since _id and assistantId are from a previously
@@ -171,6 +179,7 @@ const EmbedChatPage: React.FC = observer(() => {
     changeAssistant,
     setActiveSession,
     setEmbedApiKey,
+    setLanguage,
     rootStore.language,
     rootStore.assistantsLoaded, 
     rootStore.getAssistantById,
