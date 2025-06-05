@@ -24,6 +24,8 @@ export const setGlobalEmbedApiKey = (key: string | null) => {
 };
 // We'll also need to update EmbedChatPage to call this.
 
+export const getGlobalEmbedApiKey = (): string | null => embedApiKey;
+
 /**
  * Create an axios instance augmented with axios-cache-interceptor to
  * dedupe concurrent GETs and leverage browser cache (304) responses.
@@ -41,8 +43,7 @@ apiClient.interceptors.request.use(
   async (config) => {
     // Prioritize embedApiKey if present
     if (embedApiKey) {
-      // If an embed API key is provided, use it as a Bearer token.
-      // This assumes the "API key" for embedded use is a token expected in the Authorization header.
+      // The embed API key is a JWT token that should be sent as Authorization Bearer
       config.headers.Authorization = `Bearer ${embedApiKey}`;
       // Ensure X-API-Key header is not present if we are using Authorization header
       delete config.headers['X-API-Key'];
