@@ -20,11 +20,21 @@ import JsonViewerTestPage from './pages/test/JsonViewerTestPage';
 import { WorkspacePage } from './pages/admin/WorkspacePage';
 import { WorkspaceJoinPage } from './pages/admin/WorkspaceJoinPage';
 import WorkspaceAuthorizePage from './pages/admin/WorkspaceAuthorizePage';
+import EmbedChatPage from './pages/embed/EmbedChatPage'; // Added import for EmbedChatPage
+import { EmbedAuthProvider } from './contexts/EmbedAuthContext'; // Added import for EmbedAuthProvider
 
 export const browserRouter = createBrowserRouter([
   {
     element: <App />,
     children: [
+      {
+        path: 'embed/assistants/:id', // Added route for EmbedChatPage
+        element: (
+          <EmbedAuthProvider>
+            <EmbedChatPage />
+          </EmbedAuthProvider>
+        ),
+      },
       {
         path: 'signup',
         element: <SignupPage />,

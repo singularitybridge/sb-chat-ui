@@ -3,7 +3,12 @@ import { FileMetadata } from '../types/chat';
 // File type constants
 export const IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
 export const VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/mov'];
-export const DOCUMENT_TYPES = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+export const DOCUMENT_TYPES = [
+  'application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/json' // Added JSON file type
+];
 export const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 export const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
 
@@ -27,6 +32,7 @@ export const getFileIcon = (mimeType: string): string => {
   if (isImageFile(mimeType)) return '🖼️';
   if (isVideoFile(mimeType)) return '🎥';
   if (isDocumentFile(mimeType)) return '📄';
+  if (mimeType === 'application/json') return '📄'; // Specific icon for JSON
   if (mimeType.includes('audio')) return '🎵';
   if (mimeType.includes('zip') || mimeType.includes('rar')) return '📦';
   if (mimeType.includes('text')) return '📝';
@@ -63,7 +69,8 @@ export const validateFile = (file: File): { isValid: boolean; error?: string } =
     'audio/mpeg',
     'audio/wav',
     'application/zip',
-    'application/x-rar-compressed'
+    'application/x-rar-compressed',
+    'text/csv'
   ];
 
   if (!allowedTypes.includes(file.type)) {
