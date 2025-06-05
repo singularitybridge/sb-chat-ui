@@ -8,9 +8,19 @@ const apiUrl = import.meta.env.VITE_API_URL;
 // A way to access the EmbedAuthContext outside of a React component.
 // This is a bit of a workaround. A more robust solution might involve
 // a dedicated service or a different way to manage the API key globally for Axios.
+import { clearSingleFlightCache } from '../utils/singleFlight'; // Import the cache clearing utility
+
 let embedApiKey: string | null = null;
 export const setGlobalEmbedApiKey = (key: string | null) => {
+  const oldKey = embedApiKey;
   embedApiKey = key;
+  // If the key has changed, and the new key is not null,
+  // clear the cached session creation promise.
+  // This ensures that the next call to getActiveSession will not use a stale promise
+  // that might have been created before the API key was set or with an old key.
+  if (key && key !== oldKey) {
+    clearSingleFlightCache('POST /session');
+  }
 };
 // We'll also need to update EmbedChatPage to call this.
 

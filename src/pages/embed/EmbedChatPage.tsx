@@ -18,11 +18,11 @@ const EmbedChatPage: React.FC = observer(() => {
   const { setApiKey: setEmbedApiKey } = useEmbedAuth(); // Context for API key
   const rootStore = useRootStore();
   const {
-    activeSession,
+    activeSession, // This is from the store, might be stale during async setup
     fetchActiveSession,
     changeAssistant,
     isLoadingSession,
-    setActiveSession, // Added to potentially set session if needed after creation
+    setActiveSession,
   } = useSessionStore();
 
   const [assistant, setAssistant] = useState<IAssistant | undefined>();
@@ -31,17 +31,17 @@ const EmbedChatPage: React.FC = observer(() => {
 
   useEffect(() => {
     const setupSession = async () => {
+      setIsSettingUp(true);
+      setError(null);
+
       const apiKeyFromUrl = searchParams.get('apiKey');
       if (apiKeyFromUrl) {
         setEmbedApiKey(apiKeyFromUrl);
-        setGlobalEmbedApiKey(apiKeyFromUrl); // Set it for Axios
+        setGlobalEmbedApiKey(apiKeyFromUrl);
       } else {
-        // If no API key, proceed with normal session auth (if applicable) or show error
-        // For now, we'll assume API key is required for unauthenticated embed
-        // This can be adjusted based on whether public assistants are allowed without API key
         setError('API key is missing from URL.');
         setIsSettingUp(false);
-        setGlobalEmbedApiKey(null); // Clear if not present
+        setGlobalEmbedApiKey(null);
         return;
       }
 
@@ -52,51 +52,91 @@ const EmbedChatPage: React.FC = observer(() => {
       }
 
       try {
-        // 1. Ensure active session exists or create one
-        let currentSession = activeSession;
-        if (!currentSession) {
-          await fetchActiveSession(); // This will try to get or create a session
-          currentSession = useSessionStore.getState().activeSession; // Re-fetch from store after async op
-        }
+        // Step 1: Fetch or create session.
+        // Directly use the result of fetchActiveSession for the most current data.
+        let workingSession = await fetchActiveSession();
 
-        if (!currentSession) {
-          setError('Failed to establish a session. Please check API key and network.');
+        if (!workingSession || !workingSession._id) {
+          // Check store's isApiKeyMissing flag or other indicators if fetch returns null
+          const isKeyMissing = useSessionStore.getState().isApiKeyMissing;
+          setError(isKeyMissing ? 'API key may be invalid or missing.' : 'Failed to establish a valid session.');
           setIsSettingUp(false);
+          // Ensure activeSession in store is also null if we couldn't get one
+          if (!useSessionStore.getState().activeSession?._id) {
+             setActiveSession(null);
+          }
           return;
         }
         
-        // Set language for the session
-        // Ensure currentSession._id is valid before proceeding
-        if (!currentSession._id) {
-          setError('Session ID is invalid after fetching session.');
-          setIsSettingUp(false);
-          return;
-        }
+        // Session is valid, update the store immediately.
+        // This ensures PusherManager and other dependents see a valid session ASAP.
+        setActiveSession(workingSession);
 
-        if (currentSession.language !== rootStore.language) {
+        // Step 2: Set language for the session if different
+        if (workingSession.language !== rootStore.language) {
           try {
-            const updatedSession = await changeActiveSessionLanguage(rootStore.language);
-            setActiveSession(updatedSession); // Update session store with new language
-            currentSession = updatedSession; // Use updated session for next steps
+            // Call API to change language. We won't directly use its return value
+            // to reconstruct the whole session, to avoid issues if it's incomplete.
+            await changeActiveSessionLanguage(rootStore.language); 
+            
+            // If API call successful, assume language is updated on backend.
+            // Update our current workingSession's language property locally.
+            // The _id and assistantId remain from the valid workingSession.
+            workingSession.language = rootStore.language;
+            
+            // Now, set this updated workingSession in the store.
+            // setActiveSession will validate it. Since _id and assistantId are from a previously
+            // validated session, and language is now explicitly set, it should be valid.
+            setActiveSession(workingSession); 
+
+            // Optionally, re-sync workingSession from store to be absolutely sure,
+            // though setActiveSession should make the store consistent with workingSession.
+            const storeSessionAfterLangUpdate = useSessionStore.getState().activeSession;
+            if (storeSessionAfterLangUpdate && storeSessionAfterLangUpdate._id) {
+                workingSession = storeSessionAfterLangUpdate;
+            } else {
+                // This would be unexpected if setActiveSession(workingSession) above worked.
+                logger.error('Session became null in store after updating language locally and setting.', { localWorkingSession: workingSession });
+                // This state will be caught by the check below.
+            }
+
           } catch (langError) {
-            logger.error('Failed to set session language', langError);
-            // Continue even if language setting fails, but log it
+            logger.error('API call to set session language failed.', langError);
+            // If API call fails, workingSession is not changed, and store's activeSession is also not changed by this block.
+            // No need to re-assign workingSession from store here, as no successful change was made by this block.
           }
         }
 
-
-        // 2. Check if the assistant needs to be changed
-        // Ensure currentSession._id is valid before proceeding
-        if (currentSession._id && currentSession.assistantId !== assistantIdFromParams) {
-          await changeAssistant(assistantIdFromParams);
-          // activeSession in store will be updated by changeAssistant
-        } else if (!currentSession._id) {
-          setError('Cannot change assistant without a valid session ID.');
-          setIsSettingUp(false);
-          return;
+        // Step 3: Change assistant if necessary
+        // Ensure workingSession is still valid after potential language change attempt
+        if (!workingSession || !workingSession._id) {
+            setError('Session became invalid after language update. Please try again.');
+            setIsSettingUp(false);
+            return;
+        }
+        
+        if (workingSession.assistantId !== assistantIdFromParams) {
+          await changeAssistant(assistantIdFromParams); // This updates the session in the store
+          // Refresh workingSession from the store after assistant change
+          const newStoreSession = useSessionStore.getState().activeSession;
+          if (newStoreSession && newStoreSession._id) {
+            workingSession = newStoreSession; // Update working copy to the latest from store
+          } else {
+            // This should ideally not happen if changeAssistant is robust
+            setError('Session became invalid after changing assistant.');
+            setIsSettingUp(false);
+            return;
+          }
+        }
+        
+        // Final check on session consistency before fetching assistant details
+        if (!workingSession || !workingSession._id || workingSession.assistantId !== assistantIdFromParams) {
+            setError('Session state is inconsistent before loading assistant. Please try again.');
+            setIsSettingUp(false);
+            return;
         }
 
-        // 3. Fetch assistant details
+        // Step 4: Fetch assistant details
         if (rootStore.assistantsLoaded) {
           const foundAssistant = rootStore.getAssistantById(assistantIdFromParams);
           if (foundAssistant) {
@@ -105,12 +145,8 @@ const EmbedChatPage: React.FC = observer(() => {
             setError('Assistant not found.');
           }
         } else {
-          // If assistants are not loaded, try to load them or the specific one
-          // This part might need adjustment based on how assistants are loaded globally
-          // For now, assuming they should be loaded by the time this page is accessed or handled by rootStore
-          // Ensure assistants are loaded
-          await rootStore.loadAssistants(); // Load all assistants
-          const loadedAssistant = rootStore.getAssistantById(assistantIdFromParams); // Then get the specific one
+          await rootStore.loadAssistants();
+          const loadedAssistant = rootStore.getAssistantById(assistantIdFromParams);
           if (loadedAssistant) {
             setAssistant(loadedAssistant);
           } else {
@@ -120,6 +156,8 @@ const EmbedChatPage: React.FC = observer(() => {
       } catch (e: any) {
         logger.error('Error setting up embedded chat session:', e);
         setError(`Error setting up session: ${e.message || 'Unknown error'}`);
+        // Ensure store's active session is nulled out on critical failure
+        setActiveSession(null);
       } finally {
         setIsSettingUp(false);
       }
@@ -128,13 +166,15 @@ const EmbedChatPage: React.FC = observer(() => {
     setupSession();
   }, [
     assistantIdFromParams,
+    searchParams,
     fetchActiveSession,
     changeAssistant,
-    rootStore,
-    activeSession,
-    setActiveSession, // Added setActiveSession to dependency array
-    searchParams, // Added searchParams
-    setEmbedApiKey, // Added setEmbedApiKey
+    setActiveSession,
+    setEmbedApiKey,
+    rootStore.language,
+    rootStore.assistantsLoaded, 
+    rootStore.getAssistantById,
+    rootStore.loadAssistants
   ]);
 
   // Cleanup global API key when component unmounts
@@ -144,16 +184,26 @@ const EmbedChatPage: React.FC = observer(() => {
     };
   }, []);
   
+  // This effect synchronizes the local `assistant` state with the one derived from `activeSession`
+  // This is important if `activeSession.assistantId` changes due to external factors or deep store logic
+  // not directly managed by the `setupSession`'s `workingSession` variable.
   useEffect(() => {
-    // Update local assistant state if the assistantId in the session store changes
-    // This covers the case where changeAssistant updates the store, and we need to reflect it locally
-    if (activeSession?.assistantId && rootStore.assistantsLoaded) {
-      const currentAssistantInSession = rootStore.getAssistantById(activeSession.assistantId);
-      if (currentAssistantInSession && currentAssistantInSession._id === assistantIdFromParams) {
-        setAssistant(currentAssistantInSession);
+    const currentStoreSession = useSessionStore.getState().activeSession;
+    if (currentStoreSession?.assistantId && currentStoreSession._id && rootStore.assistantsLoaded) {
+      if (currentStoreSession.assistantId === assistantIdFromParams) {
+        const assistantFromStore = rootStore.getAssistantById(currentStoreSession.assistantId);
+        if (assistantFromStore) {
+          setAssistant(assistantFromStore);
+        } else if (!error && !isSettingUp) { // Only set error if not already in error/setup
+            setError(`Assistant with ID ${currentStoreSession.assistantId} not found in root store.`);
+        }
       }
+      // If assistantId in store does not match params, setupSession effect should handle it.
+    } else if (!currentStoreSession?._id && !error && !isSettingUp) {
+        // If session is gone from store and not in error/setup, reflect this.
+        // setAssistant(undefined); // Or show an error/message
     }
-  }, [activeSession?.assistantId, rootStore, assistantIdFromParams]);
+  }, [activeSession?._id, activeSession?.assistantId, rootStore.assistantsLoaded, assistantIdFromParams, rootStore.getAssistantById, error, isSettingUp]);
 
 
   if (isLoadingSession || isSettingUp) {
@@ -173,9 +223,10 @@ const EmbedChatPage: React.FC = observer(() => {
   }
 
   if (!assistant) {
+    // This state could be reached if setup completes but assistant couldn't be found, and error wasn't set explicitly for it.
     return (
       <div className="flex justify-center items-center h-screen">
-        <TextComponent text="Assistant not available." size="medium" />
+        <TextComponent text="Assistant not available or failed to load." size="medium" />
       </div>
     );
   }

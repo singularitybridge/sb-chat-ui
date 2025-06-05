@@ -46,3 +46,11 @@ export function singleFlight<T>(
   inFlight.set(key, { started: Date.now(), promise });
   return promise;
 }
+
+/**
+ * Clears a specific key from the in-flight cache.
+ * @param key The key to clear.
+ */
+export function clearSingleFlightCache(key: string): void {
+  inFlight.delete(key);
+}
