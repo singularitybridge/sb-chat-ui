@@ -32,16 +32,7 @@ interface ActionExecutionMessage {
 }
 
 
-const getDefaultConversationStarters = () => [
-  {
-    key: i18n.t('ChatContainer.defaultStarters.startChat.key'),
-    value: i18n.t('ChatContainer.defaultStarters.startChat.value')
-  },
-  {
-    key: i18n.t('ChatContainer.defaultStarters.askQuestion.key'),
-    value: i18n.t('ChatContainer.defaultStarters.askQuestion.value')
-  }
-];
+const getDefaultConversationStarters = () => [];
 
 const ChatContainer = observer(() => {
   const rootStore = useRootStore();
