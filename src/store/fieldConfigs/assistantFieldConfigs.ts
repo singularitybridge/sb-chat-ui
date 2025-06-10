@@ -187,6 +187,14 @@ export const getAssistantFieldConfigs = async (
       visibility: { create: true, view: true, update: true },
     },
     {
+      id: 'maxTokens',
+      key: 'maxTokens',
+      label: 'Max Tokens',
+      type: 'number',
+      value: 25000,
+      visibility: { create: true, view: true, update: true },
+    },
+    {
       id: 'allowedActions',
       key: 'allowedActions',
       label: 'Allowed Actions',
@@ -273,6 +281,14 @@ export const defaultAssistantFieldConfigs: FieldConfig[] = [
     label: 'LLM Prompt',
     type: 'textarea',
     value: 'This is a new assistant.',
+    visibility: { create: true, view: true, update: true },
+  },
+  {
+    id: 'maxTokens',
+    key: 'maxTokens',
+    label: 'Max Tokens',
+    type: 'number',
+    value: 25000,
     visibility: { create: true, view: true, update: true },
   },
   {

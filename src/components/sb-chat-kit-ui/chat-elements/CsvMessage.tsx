@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Download, FileSpreadsheet } from 'lucide-react'; // Added FileSpreadsheet from lucide-react
+import { Download, FileSpreadsheet } from 'lucide-react';
 import { FileMetadata } from '../../../types/chat';
-import { formatFileSize } from '../../../utils/fileUtils'; // Removed getFileIcon as we'll use Lucide directly
+import { formatFileSize } from '../../../utils/fileUtils';
 
 interface CsvMessageProps {
   fileMetadata: FileMetadata;
-  content: string; // This might be empty if only metadata is passed
+  content: string; 
   role: string;
   createdAt: number;
 }
@@ -31,7 +31,6 @@ const CsvMessage: React.FC<CsvMessageProps> = ({
       }
       const text = await response.text();
       
-      // Basic CSV parsing (can be improved with a library if needed)
       const allRows = text.split(/\r?\n/).filter(row => row.trim() !== '');
       setRowCount(allRows.length);
 
@@ -46,7 +45,6 @@ const CsvMessage: React.FC<CsvMessageProps> = ({
       }
     } catch (error) {
       console.error('Error fetching or parsing CSV:', error);
-      // Handle error state, e.g., show a message
     } finally {
       setIsLoadingPreview(false);
     }
@@ -55,9 +53,7 @@ const CsvMessage: React.FC<CsvMessageProps> = ({
   useEffect(() => {
     if (fileMetadata.url || fileMetadata.gcpStorageUrl) {
       fetchAndParseCsv(fileMetadata.url || fileMetadata.gcpStorageUrl || '');
-    } else if (content) {
-      // If content is directly provided (though less likely for large CSVs)
-      // This part is simplified and assumes content is the CSV text
+    } else if (content) { // Fallback if content is the CSV text itself
       const allRows = content.split(/\r?\n/).filter(row => row.trim() !== '');
       setRowCount(allRows.length);
       if (allRows.length > 0) {
@@ -91,37 +87,36 @@ const CsvMessage: React.FC<CsvMessageProps> = ({
   };
 
   const isUser = role === 'user';
-  // const fileIcon = getFileIcon(fileMetadata.mimeType); // We will use Lucide icon directly
 
   return (
     <div className={`flex w-full mb-4 ${isUser ? 'justify-end' : 'justify-start'}`}>
       <div
         className={`max-w-md md:max-w-lg lg:max-w-xl rounded-2xl shadow-sm ${
           isUser
-            ? 'bg-white border border-gray-200 text-gray-800 rounded-bl-2xl' // User messages now white with border
-            : 'bg-white border border-gray-200 text-gray-800 rounded-br-2xl' // Assistant messages remain white with border
+            ? 'bg-white border border-gray-200 text-gray-800 rounded-bl-2xl'
+            : 'bg-white border border-gray-200 text-gray-800 rounded-br-2xl'
         }`}
       >
-        <div className="p-4">
-          <div // Removed border-dashed, adjusted padding and background
+        <div className="p-3">
+          <div
             className={`
-            rounded-lg p-4 sm:p-6 transition-colors 
+            rounded-lg p-3 sm:p-4 transition-colors 
             ${isUser ? 'bg-gray-100' : 'bg-green-50'} 
           `}
           >
-            <div className="flex flex-col space-y-3">
+            <div className="flex flex-col space-y-2">
               {/* File Name and Info Row */}
-              <div className="flex items-center justify-between"> {/* Main row for name, info, and download icon */}
+              <div className="flex items-center justify-between">
                 <div className="flex-grow space-y-0.5">
                   <p className={`text-sm font-medium break-all ${
                     isUser ? 'text-gray-800' : 'text-gray-800' 
                   }`}>
                     {fileMetadata.fileName}
                   </p>
-                  <div className="flex items-center space-x-1.5 text-xs"> {/* Reduced space-x */}
+                  <div className="flex items-center space-x-1.5 text-xs">
                     <FileSpreadsheet className={`w-4 h-4 ${isUser ? 'text-gray-500' : 'text-green-500'}`} strokeWidth={1.5} />
                     <span className={`
-                      px-1.5 py-0.5 rounded-full font-medium text-xs  /* Adjusted padding and font size */
+                      px-1.5 py-0.5 rounded-full font-medium text-xs
                       ${isUser ? 'bg-gray-200 text-gray-700' : 'bg-green-100 text-green-700'}
                     `}>
                       csv
@@ -129,18 +124,20 @@ const CsvMessage: React.FC<CsvMessageProps> = ({
                     <span className={isUser ? 'text-gray-500' : 'text-gray-500'}>
                       {formatFileSize(fileMetadata.fileSize)}
                     </span>
-                    {rowCount > 0 && (
+                    {isLoadingPreview && !rowCount && !csvData.length ? (
+                        <span className="text-xs text-gray-400">Loading info...</span>
+                    ) : rowCount > 0 ? (
                        <span className={isUser ? 'text-gray-500' : 'text-gray-500'}>
                          {rowCount} rows
                        </span>
-                    )}
+                    ) : null}
                   </div>
                 </div>
                 <button
                   onClick={handleDownload}
                   title="Download CSV"
                   className={`
-                    p-1.5 rounded-md transition-colors ml-2 flex-shrink-0 /* Added margin-left */
+                    p-1.5 rounded-md transition-colors ml-2 flex-shrink-0
                     ${isUser
                       ? 'text-gray-500 hover:bg-gray-200 hover:text-gray-700' 
                       : 'text-green-500 hover:bg-green-100 hover:text-green-700'
@@ -151,14 +148,15 @@ const CsvMessage: React.FC<CsvMessageProps> = ({
                 </button>
               </div>
 
-              {isLoadingPreview && (
+              {/* CSV Table Preview Restored */}
+              {isLoadingPreview && csvData.length === 0 && (
                 <div className="text-center py-4">
-                  <p className={`${isUser ? 'text-gray-600' : 'text-gray-600'} text-sm`}>Loading preview...</p>
+                  <p className={`${isUser ? 'text-gray-600' : 'text-green-700'} text-sm`}>Loading preview...</p>
                 </div>
               )}
 
               {!isLoadingPreview && csvData.length > 0 && (
-                <div className="overflow-x-auto max-h-48 bg-white rounded-md shadow">
+                <div className="overflow-x-auto max-h-48 bg-white rounded-md shadow mt-2"> {/* Added mt-2 */}
                   <table className="min-w-full text-xs">
                     <thead className="sticky top-0 bg-gray-50 z-10">
                       <tr>
@@ -187,34 +185,26 @@ const CsvMessage: React.FC<CsvMessageProps> = ({
                       ))}
                     </tbody>
                   </table>
-                  {rowCount > PREVIEW_ROW_LIMIT + 1 && (
+                  {rowCount > PREVIEW_ROW_LIMIT + 1 && ( // Ensure headers are not counted in "more rows"
                      <p className="text-center text-xs text-gray-500 py-1 bg-gray-50">
-                       ... and {rowCount - (PREVIEW_ROW_LIMIT +1)} more rows
-                     </p>
+                       ... and {rowCount - (csvData.length + (headers.length > 0 ? 1: 0) )} more rows 
+                     </p> // Adjusted "more rows" calculation
                   )}
                 </div>
               )}
 
-              {!isLoadingPreview && csvData.length === 0 && headers.length === 0 && !fileMetadata.url && !fileMetadata.gcpStorageUrl && (
-                <div className="text-center py-4">
-                  <p className={`${isUser ? 'text-gray-600' : 'text-gray-600'} text-sm`}>No preview available or file is empty.</p>
+              {!isLoadingPreview && csvData.length === 0 && headers.length === 0 && (fileMetadata.url || fileMetadata.gcpStorageUrl) && (
+                <div className="text-center py-2"> {/* Reduced padding */}
+                  <p className={`${isUser ? 'text-gray-500' : 'text-green-600'} text-xs`}>No preview available or file is empty.</p>
                 </div>
               )}
               
-              {/* Removed the full-width download button, it's now an icon button on the top right */}
             </div>
           </div>
         </div>
-
-        {content && content.trim() && (
-          <div className="px-4 pb-3">
-            <p className={`text-sm ${isUser ? 'text-gray-700' : 'text-gray-800'}`}>
-              {content}
-            </p>
-          </div>
-        )}
-
-        <div className={`px-4 py-2 text-xs ${isUser ? 'text-gray-400' : 'text-gray-500'}`}>
+        
+        {/* Content prop is not rendered separately */}
+        <div className={`px-4 pt-0 pb-2 text-xs ${isUser ? 'text-gray-400' : 'text-gray-500'}`}>
           {formatDate(createdAt)}
         </div>
       </div>

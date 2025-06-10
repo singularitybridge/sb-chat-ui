@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { XMarkIcon, ArrowDownTrayIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'; // Added MagnifyingGlassIcon
+import { X, Download as LucideDownload, Search, FileSpreadsheet } from 'lucide-react'; // Added FileSpreadsheet
 import Lightbox from 'yet-another-react-lightbox';
 import 'yet-another-react-lightbox/styles.css';
-import Download from 'yet-another-react-lightbox/plugins/download';
+import DownloadPlugin from 'yet-another-react-lightbox/plugins/download';
 import { 
   formatFileSize, 
   getFileIcon, 
@@ -11,7 +11,7 @@ import {
   createPreviewUrl
 } from '../../../utils/fileUtils';
 
-interface FilePreviewItem {
+interface FilePreviewItemInterface {
   id: string;
   file: File;
   previewUrl?: string;
@@ -19,7 +19,7 @@ interface FilePreviewItem {
 }
 
 interface FilePreviewProps {
-  files: FilePreviewItem[];
+  files: FilePreviewItemInterface[];
   onRemoveFile: (id: string) => void;
   className?: string;
 }
@@ -32,39 +32,28 @@ const FilePreview: React.FC<FilePreviewProps> = ({
   const [thumbnails, setThumbnails] = useState<{[key: string]: string}>({});
 
   useEffect(() => {
-    // Generate thumbnails for image files
     const generateThumbnails = async () => {
       const newThumbnails: {[key: string]: string} = {};
-      
       for (const fileItem of files) {
-        if (isImageFile(fileItem.file.type)) {
+        if (isImageFile(fileItem.file.type) && !thumbnails[fileItem.id]) {
           try {
             const thumbnail = await generateImageThumbnail(fileItem.file);
             newThumbnails[fileItem.id] = thumbnail;
           } catch (error) {
             console.warn('Failed to generate thumbnail for', fileItem.file.name);
-            // Fallback to original file preview
             newThumbnails[fileItem.id] = createPreviewUrl(fileItem.file);
           }
         }
       }
-      
-      setThumbnails(newThumbnails);
+      if (Object.keys(newThumbnails).length > 0) {
+        setThumbnails(prev => ({ ...prev, ...newThumbnails }));
+      }
     };
 
     if (files.length > 0) {
       generateThumbnails();
     }
-
-    // Cleanup function to revoke URLs
-    return () => {
-      Object.values(thumbnails).forEach(url => {
-        if (url.startsWith('blob:')) {
-          URL.revokeObjectURL(url);
-        }
-      });
-    };
-  }, [files]);
+  }, [files]); // Removed thumbnails from dependency array
 
   if (files.length === 0) {
     return null;
@@ -77,7 +66,12 @@ const FilePreview: React.FC<FilePreviewProps> = ({
           {files.length} file{files.length > 1 ? 's' : ''} selected
         </span>
         <button
-          onClick={() => files.forEach(f => onRemoveFile(f.id))}
+          onClick={() => {
+            const urlsToRevoke = files.map(f => thumbnails[f.id]).filter(Boolean);
+            urlsToRevoke.forEach(url => { if (url.startsWith('blob:')) URL.revokeObjectURL(url); });
+            setThumbnails({});
+            files.forEach(f => onRemoveFile(f.id));
+          }}
           className="text-xs text-gray-500 hover:text-gray-700"
         >
           Clear all
@@ -86,11 +80,21 @@ const FilePreview: React.FC<FilePreviewProps> = ({
       
       <div className="space-y-2 max-h-40 overflow-y-auto">
         {files.map((fileItem) => (
-          <FilePreviewItem
+          <FilePreviewItemComponent
             key={fileItem.id}
             fileItem={fileItem}
             thumbnailUrl={thumbnails[fileItem.id]}
-            onRemove={() => onRemoveFile(fileItem.id)}
+            onRemove={() => {
+              if (thumbnails[fileItem.id] && thumbnails[fileItem.id].startsWith('blob:')) {
+                URL.revokeObjectURL(thumbnails[fileItem.id]);
+              }
+              setThumbnails(prev => {
+                const newState = {...prev};
+                delete newState[fileItem.id];
+                return newState;
+              });
+              onRemoveFile(fileItem.id);
+            }}
           />
         ))}
       </div>
@@ -98,13 +102,13 @@ const FilePreview: React.FC<FilePreviewProps> = ({
   );
 };
 
-interface FilePreviewItemProps {
-  fileItem: FilePreviewItem;
+interface FilePreviewItemComponentProps {
+  fileItem: FilePreviewItemInterface;
   thumbnailUrl?: string;
   onRemove: () => void;
 }
 
-const FilePreviewItem: React.FC<FilePreviewItemProps> = ({
+const FilePreviewItemComponent: React.FC<FilePreviewItemComponentProps> = ({
   fileItem,
   thumbnailUrl,
   onRemove
@@ -115,19 +119,26 @@ const FilePreviewItem: React.FC<FilePreviewItemProps> = ({
 
   const handleDirectDownload = () => {
     const link = document.createElement('a');
-    link.href = URL.createObjectURL(file); // Use the original file for download
+    link.href = URL.createObjectURL(file);
     link.download = file.name;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    URL.revokeObjectURL(link.href); // Clean up object URL
+    URL.revokeObjectURL(link.href);
   };
+
+  useEffect(() => {
+    return () => {
+      if (thumbnailUrl && thumbnailUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(thumbnailUrl);
+      }
+    };
+  }, [thumbnailUrl]);
 
   return (
     <>
       <div className="flex items-center space-x-3 p-2 bg-white rounded border hover:bg-gray-50 transition-colors">
-        {/* File preview/icon */}
-        <div className="flex-shrink-0 relative group"> {/* Added relative and group for overlay buttons */}
+        <div className="flex-shrink-0 relative group">
           {isImage && thumbnailUrl ? (
             <img
               src={thumbnailUrl}
@@ -135,75 +146,76 @@ const FilePreviewItem: React.FC<FilePreviewItemProps> = ({
               className="w-10 h-10 object-cover rounded border cursor-pointer"
               onClick={() => setOpenLightbox(true)}
             />
+          ) : file.type === 'text/csv' ? (
+            <div className="w-10 h-10 bg-gray-100 rounded border flex items-center justify-center">
+              <FileSpreadsheet className="w-6 h-6 text-green-600" />
+            </div>
           ) : (
             <div className="w-10 h-10 bg-gray-100 rounded border flex items-center justify-center text-lg">
-            {getFileIcon(file.type)}
-          </div>
-        )}
-      </div>
+              {getFileIcon(file.type)}
+            </div>
+          )}
+        </div>
 
-      {/* File info */}
-      <div className="flex-grow min-w-0">
-        <p className="text-sm font-medium text-gray-900 truncate">
-          {file.name}
-        </p>
-        <p className="text-xs text-gray-500">
-          {formatFileSize(file.size)}
-        </p>
-      </div>
+        <div className="flex-grow min-w-0">
+          <p className="text-sm font-medium text-gray-900 truncate">
+            {file.name}
+          </p>
+          <p className="text-xs text-gray-500">
+            {formatFileSize(file.size)}
+          </p>
+        </div>
 
-      {/* Actions */}
-      <div className="flex items-center space-x-1">
-        {isImage && thumbnailUrl && ( // Show zoom and download only for images with thumbnails
-          <>
-            <button
-              onClick={() => setOpenLightbox(true)}
-              className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
-              title="View image"
-            >
-              <MagnifyingGlassIcon className="h-4 w-4" />
-            </button>
-            <button
-              onClick={handleDirectDownload}
-              className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
-              title="Download image"
-            >
-              <ArrowDownTrayIcon className="h-4 w-4" />
-            </button>
-          </>
-        )}
-        <button
-          onClick={onRemove}
-          className="p-1 text-gray-400 hover:text-red-500 transition-colors"
-          title="Remove file"
-        >
-          <XMarkIcon className="h-4 w-4" />
-        </button>
+        <div className="flex items-center space-x-1">
+          {isImage && thumbnailUrl ? (
+            <>
+              <button
+                onClick={() => setOpenLightbox(true)}
+                className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                title="View image"
+              >
+                <Search className="h-4 w-4" />
+              </button>
+              <button
+                onClick={handleDirectDownload}
+                className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                title="Download image"
+              >
+                <LucideDownload className="h-4 w-4" />
+              </button>
+            </>
+          ) : null } {/* Explicitly returning null if not an image with thumbnail */}
+          <button
+            onClick={onRemove}
+            className="p-1 text-gray-400 hover:text-red-500 transition-colors"
+            title="Remove file"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
       </div>
-    </div>
     
-    {isImage && thumbnailUrl && openLightbox && (
-      <Lightbox
-        open={openLightbox}
-        close={() => setOpenLightbox(false)}
-        slides={[{ 
-          src: thumbnailUrl, // Lightbox shows the thumbnail, could be original file URL if available
-          alt: file.name,
-        }]}
-        plugins={[Download]}
-        download={{ 
-          download: ({ slide, saveAs }) => {
-            // For preview, download the original file, not necessarily the thumbnail src
-            const originalFileUrl = URL.createObjectURL(file);
-            saveAs(originalFileUrl, file.name);
-            URL.revokeObjectURL(originalFileUrl); // Clean up after saveAs initiates download
-          }
-        }}
-      />
-    )}
+      {isImage && thumbnailUrl && openLightbox && (
+        <Lightbox
+          open={openLightbox}
+          close={() => setOpenLightbox(false)}
+          slides={[{ 
+            src: thumbnailUrl,
+            alt: file.name,
+          }]}
+          plugins={[DownloadPlugin]}
+          download={{ 
+            download: ({ saveAs }) => {
+              const originalFileUrl = URL.createObjectURL(file);
+              saveAs(originalFileUrl, file.name);
+              URL.revokeObjectURL(originalFileUrl);
+            }
+          }}
+        />
+      )}
     </>
   );
 };
 
 export { FilePreview };
-export type { FilePreviewItem };
+export type { FilePreviewItemInterface as FilePreviewItem };

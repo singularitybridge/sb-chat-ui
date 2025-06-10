@@ -308,6 +308,7 @@
     "llmModel": "LLM Model",
     "llmProvider": "LLM Provider",
     "llmPrompt": "LLM Prompt",
+    "maxTokens": "Max Tokens",
     "save": "Save Changes",
     "allowedActions": "Allowed Actions",
     "allowedActions_description": "Description of allowed actions",

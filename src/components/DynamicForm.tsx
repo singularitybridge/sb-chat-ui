@@ -23,7 +23,8 @@ export type FieldType =
   | 'api-key-list'
   | 'token-input'
   | 'dropdown'
-  | 'tags';
+  | 'tags'
+  | 'number';
 
 export interface FieldVisibility {
   create: boolean;
@@ -42,6 +43,11 @@ export interface BaseFieldConfig {
 export interface InputFieldConfig extends BaseFieldConfig {
   type: 'input';
   value: string;
+}
+
+export interface NumberFieldConfig extends BaseFieldConfig {
+  type: 'number';
+  value: number;
 }
 
 export interface TextareaFieldConfig extends BaseFieldConfig {
@@ -87,7 +93,8 @@ export type FieldConfig =
   | ApiKeysListFieldConfig
   | TokenInputFieldConfig
   | DropdownFieldConfig
-  | TagsFieldConfig;
+  | TagsFieldConfig
+  | NumberFieldConfig;
 
 export interface FormValues
   extends Record<string, string | number | KeyValue[] | ApiKey[] | string[]> {}
@@ -249,6 +256,17 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
               />
             );
           }
+          case 'number':
+            return (
+              <InputWithLabel
+                key={field.id}
+                type="number"
+                label={t(labelKey)}
+                id={field.id}
+                value={String(values[field.id])} // Ensure value is a string for InputWithLabel
+                onChange={(newValue) => handleChange(field.id, Number(newValue))}
+              />
+            );
           default:
             return (
               <InputWithLabel

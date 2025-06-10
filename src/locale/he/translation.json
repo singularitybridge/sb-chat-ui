@@ -332,6 +332,7 @@
     "llmModel": "מודל LLM",
     "llmProvider": "ספק LLM",
     "llmPrompt": "פרומפט LLM",
+    "maxTokens": "מקסימום טוקנים",
     "newAssistant": "עוזר חדש",
     "newAssistantDescription": "תיאור עוזר חדש",
     "newAssistantIntroMessage": "הודעת פתיחה של עוזר חדש",

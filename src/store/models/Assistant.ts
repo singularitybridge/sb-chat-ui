@@ -21,6 +21,7 @@ const Assistant = types.model('Assistant', {
   llmModel: types.optional(types.string, ''),
   llmProvider: types.optional(types.string, 'openai'),
   llmPrompt: types.optional(types.string, ''),
+  maxTokens: types.optional(types.number, 25000),
   avatarImage: types.optional(types.string, ''),
   allowedActions: types.optional(types.array(types.string), []),
   conversationStarters: types.optional(types.array(Identifier), []),
