@@ -7,7 +7,8 @@ export const DOCUMENT_TYPES = [
   'application/pdf',
   'application/msword',
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  'application/json' // Added JSON file type
+  'application/json', // Added JSON file type
+  'text/csv' // Added CSV file type
 ];
 export const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 export const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -31,6 +32,7 @@ export const isDocumentFile = (mimeType: string): boolean => {
 export const getFileIcon = (mimeType: string): string => {
   if (isImageFile(mimeType)) return '🖼️';
   if (isVideoFile(mimeType)) return '🎥';
+  if (mimeType === 'text/csv') return '📊'; // Specific icon for CSV
   if (isDocumentFile(mimeType)) return '📄';
   if (mimeType === 'application/json') return '📄'; // Specific icon for JSON
   if (mimeType.includes('audio')) return '🎵';

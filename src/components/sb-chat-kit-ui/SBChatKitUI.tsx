@@ -10,6 +10,7 @@ import { DefaultChatView } from './chat-elements/DefaultChatView';
 import { ImageMessage } from './chat-elements/ImageMessage';
 import { PdfMessage } from './chat-elements/PdfMessage';
 import { FileMessage } from './chat-elements/FileMessage';
+import { CsvMessage } from './chat-elements/CsvMessage'; // Added CsvMessage
 import { dotWave } from 'ldrs';
 import { ActionExecutionMessage } from './chat-elements/ActionExecutionMessage';
 import { isImageFile } from '../../utils/fileUtils';
@@ -195,6 +196,16 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
                   } else if (message.fileMetadata.mimeType === 'application/pdf') {
                     return (
                       <PdfMessage
+                        key={key}
+                        fileMetadata={message.fileMetadata}
+                        content={message.content}
+                        role={message.role}
+                        createdAt={message.createdAt}
+                      />
+                    );
+                  } else if (message.fileMetadata.mimeType === 'text/csv') { // Added CSV condition
+                    return (
+                      <CsvMessage
                         key={key}
                         fileMetadata={message.fileMetadata}
                         content={message.content}
