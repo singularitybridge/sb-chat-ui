@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { XMarkIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, ArrowDownTrayIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'; // Added MagnifyingGlassIcon
+import Lightbox from 'yet-another-react-lightbox';
+import 'yet-another-react-lightbox/styles.css';
+import Download from 'yet-another-react-lightbox/plugins/download';
 import { 
   formatFileSize, 
   getFileIcon, 
@@ -108,19 +111,32 @@ const FilePreviewItem: React.FC<FilePreviewItemProps> = ({
 }) => {
   const { file } = fileItem;
   const isImage = isImageFile(file.type);
+  const [openLightbox, setOpenLightbox] = useState(false);
+
+  const handleDirectDownload = () => {
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(file); // Use the original file for download
+    link.download = file.name;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href); // Clean up object URL
+  };
 
   return (
-    <div className="flex items-center space-x-3 p-2 bg-white rounded border hover:bg-gray-50 transition-colors">
-      {/* File preview/icon */}
-      <div className="flex-shrink-0">
-        {isImage && thumbnailUrl ? (
-          <img
-            src={thumbnailUrl}
-            alt={file.name}
-            className="w-10 h-10 object-cover rounded border"
-          />
-        ) : (
-          <div className="w-10 h-10 bg-gray-100 rounded border flex items-center justify-center text-lg">
+    <>
+      <div className="flex items-center space-x-3 p-2 bg-white rounded border hover:bg-gray-50 transition-colors">
+        {/* File preview/icon */}
+        <div className="flex-shrink-0 relative group"> {/* Added relative and group for overlay buttons */}
+          {isImage && thumbnailUrl ? (
+            <img
+              src={thumbnailUrl}
+              alt={file.name}
+              className="w-10 h-10 object-cover rounded border cursor-pointer"
+              onClick={() => setOpenLightbox(true)}
+            />
+          ) : (
+            <div className="w-10 h-10 bg-gray-100 rounded border flex items-center justify-center text-lg">
             {getFileIcon(file.type)}
           </div>
         )}
@@ -138,6 +154,24 @@ const FilePreviewItem: React.FC<FilePreviewItemProps> = ({
 
       {/* Actions */}
       <div className="flex items-center space-x-1">
+        {isImage && thumbnailUrl && ( // Show zoom and download only for images with thumbnails
+          <>
+            <button
+              onClick={() => setOpenLightbox(true)}
+              className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+              title="View image"
+            >
+              <MagnifyingGlassIcon className="h-4 w-4" />
+            </button>
+            <button
+              onClick={handleDirectDownload}
+              className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+              title="Download image"
+            >
+              <ArrowDownTrayIcon className="h-4 w-4" />
+            </button>
+          </>
+        )}
         <button
           onClick={onRemove}
           className="p-1 text-gray-400 hover:text-red-500 transition-colors"
@@ -147,6 +181,27 @@ const FilePreviewItem: React.FC<FilePreviewItemProps> = ({
         </button>
       </div>
     </div>
+    
+    {isImage && thumbnailUrl && openLightbox && (
+      <Lightbox
+        open={openLightbox}
+        close={() => setOpenLightbox(false)}
+        slides={[{ 
+          src: thumbnailUrl, // Lightbox shows the thumbnail, could be original file URL if available
+          alt: file.name,
+        }]}
+        plugins={[Download]}
+        download={{ 
+          download: ({ slide, saveAs }) => {
+            // For preview, download the original file, not necessarily the thumbnail src
+            const originalFileUrl = URL.createObjectURL(file);
+            saveAs(originalFileUrl, file.name);
+            URL.revokeObjectURL(originalFileUrl); // Clean up after saveAs initiates download
+          }
+        }}
+      />
+    )}
+    </>
   );
 };
 

@@ -71,6 +71,7 @@
     "tw-elements": "^1.0.0-beta2",
     "tw-elements-react": "^1.0.0-alpha2",
     "uuid": "^9.0.0",
+    "yet-another-react-lightbox": "^3.23.2",
     "zustand": "^5.0.5"
   },
   "devDependencies": {
