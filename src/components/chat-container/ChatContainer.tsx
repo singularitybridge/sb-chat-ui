@@ -213,7 +213,7 @@ const ChatContainer = observer(() => {
   });
 
   return (
-    <div className="h-full w-full bg-zinc-50 rounded-2xl pr-2 rtl:pl-2 rtl:pr-0">
+    <div className="h-full w-full bg-zinc-50 rounded-2xl">
       <SBChatKitUI
         messages={messages}
         assistant={ // assistant from local state, derived from MST

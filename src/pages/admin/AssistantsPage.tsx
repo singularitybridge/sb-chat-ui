@@ -136,7 +136,7 @@ const AssistantsPage: React.FC = observer(() => {
 
   return (
     <div className="flex justify-center h-full">
-      <div className="flex w-full max-w-7xl space-x-7 rtl:space-x-reverse">
+      <div className="flex w-full space-x-7 rtl:space-x-reverse">
         <div className="flex flex-col rounded-lg max-w-sm w-full">
           <div className="flex flex-row justify-between items-center w-full mb-8">
             <div className="flex items-center">
@@ -176,7 +176,7 @@ const AssistantsPage: React.FC = observer(() => {
             />
           </div>
 
-          <ul className="space-y-6 flex-grow overflow-y-auto pr-4 rtl:pl-4 rtl:pr-0">
+          <ul className="space-y-6 flex-grow overflow-y-auto">
             {isLoading ? (
               <div className="text-center py-8 text-gray-500">
                 <p>{t('common.pleaseWait')}</p>
@@ -280,7 +280,7 @@ const AssistantsPage: React.FC = observer(() => {
             )}
           </ul>
         </div>
-        <div className="flex-grow max-w-3xl w-full">
+        <div className="flex-grow w-full">
           <ChatContainer />
         </div>
       </div>
