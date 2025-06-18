@@ -10,6 +10,7 @@ export const DOCUMENT_TYPES = [
   'application/json', // Added JSON file type
   'text/csv' // Added CSV file type
 ];
+export const AUDIO_TYPES = ['audio/mpeg', 'audio/wav']; // Added MP3 and WAV audio types
 export const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 export const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
 
@@ -29,13 +30,18 @@ export const isDocumentFile = (mimeType: string): boolean => {
 };
 
 // Get file icon based on type
+export const isAudioFile = (mimeType: string): boolean => {
+  return AUDIO_TYPES.includes(mimeType);
+};
+
+// Get file icon based on type
 export const getFileIcon = (mimeType: string): string => {
   if (isImageFile(mimeType)) return '🖼️';
   if (isVideoFile(mimeType)) return '🎥';
+  if (isAudioFile(mimeType)) return '🎵'; // Specific icon for audio
   if (mimeType === 'text/csv') return '📊'; // Specific icon for CSV
   if (isDocumentFile(mimeType)) return '📄';
   if (mimeType === 'application/json') return '📄'; // Specific icon for JSON
-  if (mimeType.includes('audio')) return '🎵';
   if (mimeType.includes('zip') || mimeType.includes('rar')) return '📦';
   if (mimeType.includes('text')) return '📝';
   return '📎';
@@ -66,10 +72,8 @@ export const validateFile = (file: File): { isValid: boolean; error?: string } =
     ...IMAGE_TYPES,
     ...VIDEO_TYPES,
     ...DOCUMENT_TYPES,
+    ...AUDIO_TYPES, // Include audio types
     'text/plain',
-    'application/json',
-    'audio/mpeg',
-    'audio/wav',
     'application/zip',
     'application/x-rar-compressed',
     'text/csv'
@@ -150,9 +154,18 @@ export const generateImageThumbnail = (file: File, maxWidth = 300, maxHeight = 3
 export const createFileMetadata = (file: File, uploadResponse: any): FileMetadata => {
   // uploadResponse is the full response from apiClient, so uploadResponse.data is the actual payload
   const responseData = uploadResponse.data || uploadResponse; // Handle if uploadResponse is already the data part
+  let fileType: 'image' | 'video' | 'audio' | 'file' = 'file';
+  if (isImageFile(file.type)) {
+    fileType = 'image';
+  } else if (isVideoFile(file.type)) {
+    fileType = 'video';
+  } else if (isAudioFile(file.type)) {
+    fileType = 'audio';
+  }
+
   return {
     id: responseData?._id || undefined, // Assuming the ID is returned as _id
-    type: isImageFile(file.type) ? 'image' : 'file',
+    type: fileType,
     url: responseData?.gcpStorageUrl || '',
     fileName: responseData?.filename || file.name,
     fileSize: responseData?.size || file.size,

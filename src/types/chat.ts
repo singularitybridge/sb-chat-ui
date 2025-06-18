@@ -26,7 +26,7 @@ export interface ApiResponseMessage {
 
 export interface FileMetadata {
   id?: string;
-  type: 'image' | 'file';
+  type: 'image' | 'video' | 'audio' | 'file';
   url: string;
   thumbnailUrl?: string;
   fileName: string;

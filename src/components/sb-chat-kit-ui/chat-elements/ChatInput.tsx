@@ -227,7 +227,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
                 onChange={handleFileSelection}
                 className="hidden"
                 multiple
-                accept="image/*,video/*,.pdf,.doc,.docx,.txt,.zip,.rar,.csv,.json"
+                accept="image/*,video/*,.pdf,.doc,.docx,.txt,.zip,.rar,.csv,.json,.mp3"
               />
               <button
                 onClick={() => fileInputRef.current?.click()}
