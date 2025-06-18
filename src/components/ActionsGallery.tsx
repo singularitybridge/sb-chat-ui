@@ -25,6 +25,9 @@ interface ActionOption {
   category: string;
   iconName: string;
   parameters: ActionParameters;
+  name?: string;
+  title?: string;
+  serviceName?: string;
 }
 
 interface ActionsGalleryProps {
@@ -88,6 +91,7 @@ const ActionsGallery: React.FC<ActionsGalleryProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredActions, setFilteredActions] = useState(availableActions);
   const [expandedActionId, setExpandedActionId] = useState<string | null>(null);
+  const [copiedActionId, setCopiedActionId] = useState<string | null>(null);
 
   useEffect(() => {
     const filtered = availableActions.filter(action =>
@@ -106,6 +110,55 @@ const ActionsGallery: React.FC<ActionsGalleryProps> = ({
 
   const handleToggleExtendedInfo = (actionId: string) => {
     setExpandedActionId(prevId => prevId === actionId ? null : actionId);
+  };
+
+  const handleCopyIntegrationDetails = async (action: ActionOption) => {
+    try {
+      const integrationDetails = {
+        id: action.id,
+        name: action.name || action.label,
+        title: action.title || action.label,
+        label: action.label,
+        description: action.description,
+        category: action.category,
+        serviceName: action.serviceName || action.category,
+        iconName: action.iconName,
+        value: action.value,
+        parameters: action.parameters
+      };
+      
+      await navigator.clipboard.writeText(JSON.stringify(integrationDetails, null, 2));
+      
+      // Show visual feedback
+      setCopiedActionId(action.id);
+      setTimeout(() => setCopiedActionId(null), 2000);
+      
+      console.log('Integration details copied to clipboard');
+    } catch (error) {
+      console.error('Failed to copy integration details:', error);
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = JSON.stringify({
+        id: action.id,
+        name: action.name || action.label,
+        title: action.title || action.label,
+        label: action.label,
+        description: action.description,
+        category: action.category,
+        serviceName: action.serviceName || action.category,
+        iconName: action.iconName,
+        value: action.value,
+        parameters: action.parameters
+      }, null, 2);
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      
+      // Show visual feedback for fallback too
+      setCopiedActionId(action.id);
+      setTimeout(() => setCopiedActionId(null), 2000);
+    }
   };
 
   const renderActionButton = (action: ActionOption) => {    
@@ -131,15 +184,34 @@ const ActionsGallery: React.FC<ActionsGalleryProps> = ({
                 <IconComponent className="w-5 h-5 flex-shrink-0" />
                 <span className="font-light text-lg">{action.label}</span>
               </div>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleToggleExtendedInfo(action.id);
-                }}
-                className="p-1 rounded-full hover:bg-gray-400"
-              >
-                <LucideIcons.Info size={16} />
-              </button>
+              <div className="flex items-center space-x-1">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCopyIntegrationDetails(action);
+                  }}
+                  className={`p-1 rounded-full hover:bg-gray-400 transition-colors ${
+                    copiedActionId === action.id ? 'bg-green-200 text-green-700' : ''
+                  }`}
+                  title={copiedActionId === action.id ? 'Copied!' : 'Copy integration details as JSON'}
+                >
+                  {copiedActionId === action.id ? (
+                    <LucideIcons.Check size={16} />
+                  ) : (
+                    <LucideIcons.Copy size={16} />
+                  )}
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleToggleExtendedInfo(action.id);
+                  }}
+                  className="p-1 rounded-full hover:bg-gray-400"
+                  title="Show/hide parameters"
+                >
+                  <LucideIcons.Info size={16} />
+                </button>
+              </div>
             </div>
             <p className="text-xs mt-2 w-full rtl:text-right ltr:text-left">{action.description}</p>
           </div>
