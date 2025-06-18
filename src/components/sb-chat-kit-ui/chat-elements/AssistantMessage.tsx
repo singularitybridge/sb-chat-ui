@@ -1,5 +1,6 @@
 import React, { useState } from 'react'; // Added useState
 import { SparklesIcon } from '@heroicons/react/24/solid';
+import { ExternalLink } from 'lucide-react';
 import ReactMarkdown, { Components } from 'react-markdown';
 import Lightbox from 'yet-another-react-lightbox';
 import 'yet-another-react-lightbox/styles.css';
@@ -27,8 +28,14 @@ const AssistantMessage: React.FC<AssistantMessageProps> = ({ text, assistantName
   };
 
   const markdownComponents: Components = {
+    a: ({node: _node, ...props}) => (
+      <a {...props} target="_blank" rel="noopener noreferrer" className="inline-flex items-center">
+        {props.children}
+        <ExternalLink size={14} className="ml-1 inline-block" />
+      </a>
+    ),
     p: (props) => <p className="my-2 text-sm leading-relaxed" {...props} />,
-    pre: (props) => <pre className='not-prose text-left my-2 overflow-x-auto bg-gray-900 text-lime-300 p-4 rounded-lg [&>*]:bg-transparent [&>*]:text-lime-300 [&>*]:m-0' dir="ltr" {...props} />,
+    pre: (props) => <pre className='not-prose text-left my-2 overflow-x-auto whitespace-pre-wrap bg-gray-900 text-lime-300 p-4 rounded-lg [&>*]:bg-transparent [&>*]:text-lime-300 [&>*]:m-0' dir="ltr" {...props} />,
     table: (props) => <div className="overflow-x-auto my-2"><table className="min-w-full bg-white border border-gray-300 shadow-sm rounded-lg overflow-hidden" {...props} /></div>,
     thead: (props) => <thead className="bg-gray-100" {...props} />,
     th: (props) => <th className="px-4 py-2 rtl:text-right ltr:text-left text-sm font-semibold text-gray-700 uppercase tracking-wider" {...props} />,
@@ -46,7 +53,7 @@ const AssistantMessage: React.FC<AssistantMessageProps> = ({ text, assistantName
       const { inline: _removedInline, node: _removedNode, ...restHtmlProps } = htmlProps as any;
 
       return !isInline && match ? ( 
-        <pre className={`text-left my-2 p-4 bg-gray-800 text-white rounded ${className}`} dir="ltr">
+        <pre className={`text-left my-2 p-4 bg-gray-800 text-white rounded whitespace-pre-wrap ${className}`} dir="ltr">
           <code className={`language-${match[1]} text-sm`}>{children}</code>
         </pre>
       ) : (
