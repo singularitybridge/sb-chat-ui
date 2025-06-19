@@ -76,10 +76,27 @@ const ActionExecutionMessage: React.FC<ActionExecutionMessageProps> = ({
   const IconComponent = (LucideIcons[mappedIconName] || LucideIcons.HelpCircle) as React.ComponentType<React.SVGProps<SVGSVGElement>>;
 
   const handleExpand = async () => {
-    if (!isExpanded && !fullMessageData) {
-      await loadFullMessage();
+    if (!isExpanded) { // Current state is collapsed, user is intending to expand
+      if (!fullMessageData) { // If no data is currently loaded for this message
+        setIsLoading(true);
+        setError(null);
+        try {
+          const data = await getMessageById(messageId);
+          setFullMessageData(data);
+        } catch (err) {
+          setError('Failed to load message details');
+          console.error('Error loading message details:', err);
+          // Consider not expanding if the load fails, or ensure error is shown clearly
+        }
+        setIsLoading(false);
+      }
+      setIsExpanded(true); // Set to expanded
+    } else { // Current state is expanded, user is intending to collapse
+      setIsExpanded(false); // Set to collapsed
+      setFullMessageData(null); // Clear the detailed data to free memory
+      // Optionally, reset error state if it was related to the load
+      // setError(null); 
     }
-    setIsExpanded(!isExpanded);
   };
 
   const loadFullMessage = async () => {
