@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AiOutlineEye, AiOutlineEyeInvisible, AiOutlineReload } from 'react-icons/ai';
+import { Eye, EyeOff, RefreshCcw } from 'lucide-react';
 import InputWithLabel from '../sb-core-ui-kit/InputWithLabel';
 
 interface TokenInputProps {
@@ -50,9 +50,9 @@ const TokenInput: React.FC<TokenInputProps> = ({
           className="p-2 text-neutral-500 hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary rounded"
         >
           {inputType === 'password' ? (
-            <AiOutlineEyeInvisible className="w-4 h-4" />
+            <EyeOff className="w-4 h-4" />
           ) : (
-            <AiOutlineEye className="w-4 h-4" />
+            <Eye className="w-4 h-4" />
           )}
         </button>
         {onRefresh && (
@@ -61,7 +61,7 @@ const TokenInput: React.FC<TokenInputProps> = ({
             onClick={onRefresh}
             className="p-2 text-neutral-500 hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary rounded"
           >
-            <AiOutlineReload className="w-4 h-4" />
+            <RefreshCcw className="w-4 h-4" />
           </button>
         )}
       </div>
