@@ -1,4 +1,5 @@
 import { NotFound } from './pages/NotFound';
+import HealthCheckPage from './pages/HealthCheckPage';
 import { Admin } from './pages/Admin';
 import React from 'react';
 import { Navigate, createBrowserRouter } from 'react-router-dom';
@@ -27,6 +28,10 @@ export const browserRouter = createBrowserRouter([
   {
     element: <App />,
     children: [
+      {
+        path: '/health',
+        element: <HealthCheckPage />,
+      },
       {
         path: 'embed/assistants/:id', // Added route for EmbedChatPage
         element: (
