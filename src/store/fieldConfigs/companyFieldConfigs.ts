@@ -95,6 +95,14 @@ export const companyFieldConfigs: FieldConfig[] = [
         key: 'replicate_api_key',
         value: '-',
       },
+      {
+        key: 'scytale_base_url',
+        value: '-',
+      },
+      {
+        key: 'scytale_auth_token',
+        value: '-',
+      },
     ],
     visibility: { create: true, view: true, update: true },
   },
