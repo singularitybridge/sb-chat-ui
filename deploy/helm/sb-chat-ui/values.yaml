@@ -1,7 +1,7 @@
-replicaCount: 2
+replicaCount: 1
 
 image:
-  repository: sb-chat-ui
+  repository: aviosi479/sb-chat-ui
   tag: latest
   pullPolicy: IfNotPresent
 
@@ -42,11 +42,12 @@ config:
 
 env:
   NODE_ENV: production
+  PORT: 5173
 
 probes:
   readiness:
-    initialDelaySeconds: 5
+    initialDelaySeconds: 50
     periodSeconds: 10
   liveness:
-    initialDelaySeconds: 15
+    initialDelaySeconds: 50
     periodSeconds: 20 

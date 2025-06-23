@@ -20,10 +20,12 @@ spec:
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
         - name: web
-          containerPort: 3000
+          containerPort: 5173
         env:
         - name: NODE_ENV
           value: {{ .Values.env.NODE_ENV | quote }}
+        - name: PORT
+          value: {{ .Values.env.PORT | quote }}
         - name: REACT_APP_API_URL
           valueFrom:
             configMapKeyRef:
@@ -33,13 +35,13 @@ spec:
           {{- toYaml .Values.resources | nindent 12 }}
         readinessProbe:
           httpGet:
-            path: /health
+            path: /
             port: web
           initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds }}
           periodSeconds: {{ .Values.probes.readiness.periodSeconds }}
         livenessProbe:
           httpGet:
-            path: /health
+            path: /
             port: web
           initialDelaySeconds: {{ .Values.probes.liveness.initialDelaySeconds }}
           periodSeconds: {{ .Values.probes.liveness.periodSeconds }} 
