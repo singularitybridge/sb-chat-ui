@@ -289,7 +289,10 @@
     "editAllowedActions": "ערוך פעולות מורשות"
   },
   "ChatContainer": {
-    "input": "הקלד את הודעתך כאן",
+    "input": {
+      "placeholder": "הקלד את הודעתך כאן",
+      "withFiles": "הוסף כיתוב (אופציונלי)..."
+    },
     "defaultStarters": {
       "startChat": {
         "key": "התחל שיחה",

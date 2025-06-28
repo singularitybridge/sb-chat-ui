@@ -3,8 +3,8 @@ import { PusherEvent, ChatMessage } from '../types/pusher';
 import { emitter } from './mittEmitter';
 import * as EventNames from '../utils/eventNames';
 
-const PUSHER_APP_KEY = '7e8897731876adb4652f';
-const PUSHER_CLUSTER = 'eu';
+const PUSHER_APP_KEY = import.meta.env.VITE_PUSHER_APP_KEY;
+const PUSHER_CLUSTER = import.meta.env.VITE_PUSHER_CLUSTER;
 
 let pusher: Pusher;
 
@@ -50,7 +50,6 @@ const initializePusher = () => {
       console.log('❌ [PUSHER] Pusher connection failed');
     });
 
-    console.log('🎯 [PUSHER] Pusher instance created, connection state:', pusher.connection.state);
 
   } catch (error) {
     console.error('❌ [PUSHER] Error initializing Pusher:', error);
@@ -132,11 +131,8 @@ const subscribeToSessionChannel = (sessionId: string) => {
   const channelName = `sb-${sessionId}`;
   
   try {
+    
     const channel = pusher.subscribe(channelName);
-
-    channel.bind('pusher:subscription_succeeded', () => {
-      console.log(`Subscribed to channel: ${channelName}`);
-    });
 
     channel.bind('pusher:subscription_error', (error: any) => {
       console.error(`Error subscribing to channel ${channelName}:`, error);
@@ -144,12 +140,6 @@ const subscribeToSessionChannel = (sessionId: string) => {
 
     // Add general logging for ALL incoming events
     channel.bind_global((eventName: string, data: any) => {
-      console.log('🌐 [PUSHER] Received ANY event:', {
-        timestamp: new Date().toISOString(),
-        channel: channelName,
-        eventName,
-        data: JSON.stringify(data, null, 2)
-      });
       
       // Special logging if it contains action execution data
       if (data && typeof data === 'object') {
@@ -189,8 +179,7 @@ const unsubscribeFromChannel = (channelName: string) => {
   }
 
   try {
-    pusher.unsubscribe(channelName);
-    console.log(`Unsubscribed from channel: ${channelName}`);
+    pusher.unsubscribe(channelName);    
   } catch (error) {
     console.error(`Error unsubscribing from channel ${channelName}:`, error);
   }

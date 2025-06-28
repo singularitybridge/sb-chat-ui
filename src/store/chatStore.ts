@@ -78,12 +78,6 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
 
     if (apiMessage.message_type === 'action_execution' && apiMessage.data?.messageId) {
       mappedMetadata.messageId = apiMessage.data.messageId;
-      console.log('🎯 [CHAT_STORE] Mapping action_execution message from API:', {
-        apiMessageId: apiMessage.id,
-        dataMessageId: apiMessage.data.messageId,
-        assignedMessageId: mappedMetadata.messageId,
-        fullData: apiMessage.data
-      });
     }
 
     // Extract fileMetadata if attachments exist

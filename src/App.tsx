@@ -34,7 +34,7 @@ const App: React.FC = observer(() => {
   }, [direction]);
 
   return (
-    <GoogleOAuthProvider clientId="836003625529-l01g4b1iuhc0s1i7o33ms9qelgmghcmh.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID}>
       <AuthManager>
         <PusherManager />
         <div className="flex flex-col inset-0 font-noto-sans-hebrew">

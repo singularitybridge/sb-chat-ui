@@ -265,7 +265,10 @@
     "editAllowedActions": "Edit Allowed Actions"
   },
   "ChatContainer": {
-    "input": "Type your message",
+    "input": {
+      "placeholder": "Type your message",
+      "withFiles": "Add a caption (optional)..."
+    },
     "defaultStarters": {
       "startChat": {
         "key": "Start Chat",

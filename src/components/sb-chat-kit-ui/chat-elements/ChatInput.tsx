@@ -203,7 +203,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
             placeholder={
               selectedFiles.length > 0 
                 ? t('ChatContainer.input.withFiles', 'Add a caption (optional)...') 
-                : t('ChatContainer.input')
+                : t('ChatContainer.input.placeholder', 'Type your message')
             }
             value={message}
             onChange={(e) => setMessage(e.target.value)}
