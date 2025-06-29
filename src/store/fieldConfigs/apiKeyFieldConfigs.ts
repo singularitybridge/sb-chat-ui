@@ -5,11 +5,9 @@ export const defaultApiKeyFieldConfigs: FieldConfig[] = [
   {
     id: 'name',
     key: 'name',
-    type: 'input',
+    type: 'input' as const,
     label: 'Name',
     value: '',
-    required: true,
-    placeholder: 'Production API Key',
     visibility: {
       create: true,
       view: true,
@@ -19,7 +17,7 @@ export const defaultApiKeyFieldConfigs: FieldConfig[] = [
   {
     id: 'expiresInDays',
     key: 'expiresInDays',
-    type: 'dropdown',
+    type: 'dropdown' as const,
     label: 'Expiration',
     value: '365',
     options: [
@@ -39,13 +37,22 @@ export const defaultApiKeyFieldConfigs: FieldConfig[] = [
 export const getApiKeyFieldConfigs = async (
   language: string = 'en'
 ): Promise<FieldConfig[]> => {
-  return defaultApiKeyFieldConfigs.map((field) => ({
-    ...field,
-    label: i18n.t(`apiKeyFieldConfigs.${String(field.key)}`, { lng: language }) || field.label,
-    placeholder: field.placeholder ? i18n.t(`apiKeyFieldConfigs.${String(field.key)}Placeholder`, { lng: language }) || field.placeholder : undefined,
-    options: field.options?.map(option => ({
-      ...option,
-      label: i18n.t(`apiKeyFieldConfigs.expirationOptions.${option.value}`, { lng: language }) || option.label,
-    })),
-  }));
+  return defaultApiKeyFieldConfigs.map((field) => {
+    const baseField = {
+      ...field,
+      label: i18n.t(`apiKeyFieldConfigs.${String(field.key)}`, { lng: language }) || field.label,
+    };
+
+    if (field.type === 'dropdown' && 'options' in field) {
+      return {
+        ...baseField,
+        options: field.options.map((option) => ({
+          ...option,
+          label: i18n.t(`apiKeyFieldConfigs.expirationOptions.${option.value}`, { lng: language }) || option.label,
+        })),
+      };
+    }
+
+    return baseField;
+  });
 };

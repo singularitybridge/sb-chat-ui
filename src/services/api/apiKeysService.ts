@@ -1,5 +1,5 @@
 import apiClient from '../AxiosService';
-import { singleFlight } from '../../utils/singleFlight';
+import { singleFlight, clearSingleFlightCache } from '../../utils/singleFlight';
 
 interface CreateApiKeyRequest {
   name: string;
@@ -48,7 +48,7 @@ class ApiKeysService {
   async revokeApiKey(keyId: string): Promise<{ message: string }> {
     const response = await apiClient.delete(`${this.basePath}/${keyId}`);
     // Clear the list cache when a key is revoked
-    singleFlight.clear('apiKeys-list');
+    clearSingleFlightCache('apiKeys-list');
     return response.data;
   }
 

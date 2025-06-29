@@ -64,6 +64,13 @@ export const NewApiKeyView: React.FC = observer(() => {
   };
 
   const handleClose = () => {
+    // If we created a key, trigger the success callback to refresh the list
+    if (createdKey) {
+      const eventData = (window as any).__apiKeyModalData;
+      if (eventData?.onSuccess) {
+        eventData.onSuccess();
+      }
+    }
     emitter.emit(EVENT_CLOSE_MODAL);
   };
 

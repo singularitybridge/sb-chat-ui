@@ -3,12 +3,12 @@ import { observer } from 'mobx-react-lite';
 import { useTranslation } from 'react-i18next';
 import { useRootStore } from '../../store/common/RootStoreContext';
 import AdminPageContainer from '../../components/admin/AdminPageContainer';
-import { Table } from '../../components/sb-core-ui-kit/Table';
+import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
 import { IconButton } from '../../components/admin/IconButton';
 import { emitter } from '../../services/mittEmitter';
 import { EVENT_SHOW_ADD_API_KEY_MODAL } from '../../utils/eventNames';
 import { apiKeysService } from '../../services/api/apiKeysService';
-import { Trash2, Copy, AlertCircle } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'react-toastify';
 
@@ -48,7 +48,7 @@ export const ApiKeysPage: React.FC = observer(() => {
       try {
         await apiKeysService.revokeApiKey(apiKey.id);
         toast.success(t('apiKeys.deleteSuccess'));
-        fetchApiKeys();
+        await fetchApiKeys();
       } catch (error) {
         console.error('Failed to delete API key:', error);
         toast.error(t('apiKeys.deleteError'));
@@ -66,35 +66,20 @@ export const ApiKeysPage: React.FC = observer(() => {
     return daysUntilExpiration < 30;
   };
 
-  const headers = ['name', 'createdAt', 'expiresAt'];
-
   const Actions = (row: ApiKey) => {
     return (
       <div className="flex gap-2">
-        {isExpiringSoon(row.expiresAt) && (
-          <div className="text-orange-500" title={t('apiKeys.expiringSoon')}>
-            <AlertCircle size={20} />
-          </div>
-        )}
         <IconButton
           icon={<Trash2 size={20} />}
           onClick={(e) => {
             e.stopPropagation();
             handleDelete(row);
           }}
-          title={t('apiKeys.delete')}
         />
       </div>
     );
   };
 
-  const formatData = (keys: ApiKey[]) => {
-    return keys.map(key => ({
-      ...key,
-      createdAt: format(new Date(key.createdAt), 'MMM dd, yyyy'),
-      expiresAt: format(new Date(key.expiresAt), 'MMM dd, yyyy'),
-    }));
-  };
 
   return (
     <AdminPageContainer>
@@ -120,12 +105,53 @@ export const ApiKeysPage: React.FC = observer(() => {
           <p className="mt-2">{t('apiKeys.getStarted')}</p>
         </div>
       ) : (
-        <Table
-          headers={headers}
-          data={formatData(apiKeys)}
-          Page="ApiKeysPage"
-          Actions={Actions}
-        />
+        <div className="flex flex-col w-full">
+          <div className="overflow-x-auto">
+            <div className="inline-block min-w-full py-2">
+              <div className="overflow-hidden">
+                <table className="min-w-full">
+                  <thead>
+                    <tr>
+                      <th scope="col" className="py-4 max-w-xs truncate rtl:text-right ltr:text-left">
+                        <TextComponent text={t('apiKeys.name')} size="small" color="secondary" />
+                      </th>
+                      <th scope="col" className="py-4 max-w-xs truncate rtl:text-right ltr:text-left">
+                        <TextComponent text={t('apiKeys.createdAt')} size="small" color="secondary" />
+                      </th>
+                      <th scope="col" className="py-4 max-w-xs truncate rtl:text-right ltr:text-left">
+                        <TextComponent text={t('apiKeys.expiresAt')} size="small" color="secondary" />
+                      </th>
+                      <th scope="col" className="py-4 max-w-xs truncate rtl:text-right ltr:text-left">
+                        <TextComponent text={t('common.actions')} size="small" color="secondary" />
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {apiKeys.map((key) => {
+                      const expiring = isExpiringSoon(key.expiresAt);
+                      return (
+                        <tr key={key.id} className="border-b border-zinc-100 hover:bg-neutral-50">
+                          <td className="py-4 truncate max-w-xs">
+                            <TextComponent size='small' color='normal' text={key.name} />
+                          </td>
+                          <td className="py-4 truncate max-w-xs">
+                            <TextComponent size='small' color='normal' text={format(new Date(key.createdAt), 'MMM dd, yyyy')} />
+                          </td>
+                          <td className="py-4 truncate max-w-xs">
+                            <span className={expiring ? 'text-orange-500 font-medium text-sm' : 'text-sm'}>
+                              {format(new Date(key.expiresAt), 'MMM dd, yyyy')}
+                            </span>
+                          </td>
+                          <td className="py-4">{Actions(key)}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </AdminPageContainer>
   );
