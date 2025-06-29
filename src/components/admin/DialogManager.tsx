@@ -7,6 +7,7 @@ import {
   EVENT_SHOW_ADD_COMPANY_MODAL,
   EVENT_SHOW_ADD_USER_MODAL,
   EVENT_SHOW_ADD_TEAM_MODAL,
+  EVENT_SHOW_ADD_API_KEY_MODAL,
   EVENT_SHOW_ONBOARDING_MODAL,
   EVENT_SHOW_EDIT_ASSISTANT_ACTIONS_MODAL,
   EventType,
@@ -78,6 +79,13 @@ const DialogManager = observer(() => {
     EVENT_SHOW_ADD_TEAM_MODAL,
     (eventData: any) => {
       updateContent(EVENT_SHOW_ADD_TEAM_MODAL, eventData);
+    }
+  );
+
+  useEventEmitter(
+    EVENT_SHOW_ADD_API_KEY_MODAL,
+    (eventData: any) => {
+      updateContent(EVENT_SHOW_ADD_API_KEY_MODAL, eventData);
     }
   );
 

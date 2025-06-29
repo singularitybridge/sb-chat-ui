@@ -16,6 +16,7 @@ export const Menu = observer(() => {
     { name: 'Memory', link: '/admin/memory' }, // Added Memory link
     { name: 'Assistants', link: '/admin/assistants' },
     { name: 'Users', link: '/admin/users' },
+    { name: 'ApiKeys', link: '/admin/api-keys' },
     { name: 'Sessions', link: '/admin/sessions', disabled: true },
     { name: 'Inbox', link: '/admin/inbox' },
   ];

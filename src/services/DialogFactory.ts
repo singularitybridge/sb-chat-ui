@@ -2,6 +2,7 @@ import { NewAssistantView } from '../pages/NewAssistantView';
 import { NewCompanyView } from '../pages/NewCompanyView';
 import { NewUserView } from '../pages/NewUserView';
 import { NewTeamView } from '../pages/NewTeamView';
+import { NewApiKeyView } from '../pages/NewApiKeyView';
 import OnboardingDialog from '../pages/admin/Onboarding';
 import { EditAssistantActionsDialog } from '../components';
 import {
@@ -9,6 +10,7 @@ import {
   EVENT_SHOW_ADD_COMPANY_MODAL,
   EVENT_SHOW_ADD_USER_MODAL,
   EVENT_SHOW_ADD_TEAM_MODAL,
+  EVENT_SHOW_ADD_API_KEY_MODAL,
   EVENT_SHOW_ONBOARDING_MODAL,
   EVENT_SHOW_EDIT_ASSISTANT_ACTIONS_MODAL,
   EventType,
@@ -70,6 +72,15 @@ const dialogComponentFactory = (
       return {
         title: eventData || i18n.t('dialogTitles.newTeam') || 'Add Team',
         component: React.createElement(NewTeamView),
+        width: 'normal',
+      };
+
+    case EVENT_SHOW_ADD_API_KEY_MODAL:
+      // Store the event data globally for the component to access
+      (window as any).__apiKeyModalData = eventData;
+      return {
+        title: eventData?.title || i18n.t('dialogTitles.newApiKey') || 'Create API Key',
+        component: React.createElement(NewApiKeyView),
         width: 'normal',
       };
 

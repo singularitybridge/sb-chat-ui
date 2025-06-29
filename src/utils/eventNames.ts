@@ -16,6 +16,7 @@ export const EVENT_SHOW_ADD_USER_MODAL = 'show-add-user-modal';
 export const EVENT_SHOW_ADD_ACTION_MODAL = 'show-add-action-modal';
 export const EVENT_SHOW_ADD_TEAM_MODAL = 'show-add-team-modal';
 export const EVENT_SHOW_ONBOARDING_MODAL = 'show-onboarding-modal';
+export const EVENT_SHOW_ADD_API_KEY_MODAL = 'show-add-api-key-modal';
 export const EVENT_CLOSE_MODAL = 'close-modal';
 
 // Error events
@@ -37,6 +38,7 @@ export type EventType =
   | typeof EVENT_SHOW_ADD_ACTION_MODAL
   | typeof EVENT_SHOW_ADD_TEAM_MODAL
   | typeof EVENT_SHOW_ONBOARDING_MODAL
+  | typeof EVENT_SHOW_ADD_API_KEY_MODAL
   | typeof EVENT_CLOSE_MODAL
   | typeof EVENT_ERROR
   | typeof EVENT_ACTION_EXECUTION

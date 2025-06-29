@@ -8,7 +8,8 @@
     "Inbox": "תיבת דואר",
     "Actions": "פעולות",
     "Home": "בית",
-    "Memory": "זיכרון"
+    "Memory": "זיכרון",
+    "ApiKeys": "מפתחות API"
   },
   "DynamicCodeRenderer": {
     "title": "בדיקה - עורך קנבס",
@@ -362,6 +363,7 @@
     "newAction": "צור פעולה חדשה",
     "newUser": "צור משתמש חדש",
     "newTeam": "צור צוות חדש",
+    "newApiKey": "צור מפתח API",
     "editAssistantActions": "ערוך פעולות מורשות",
     "onboarding": "ברוכים הבאים"
   },
@@ -376,7 +378,8 @@
     "add": "הוסף",
     "cancel": "בטל",
     "create": "צור",
-    "back": "חזור"
+    "back": "חזור",
+    "done": "סיום"
   },
   "breadcrumbs": {
     "teamAssistants": "סוכנים בצוות"
@@ -384,5 +387,48 @@
   "teamAssistants": {
     "noAssistants": "אין סוכנים בצוות זה",
     "noAssistantsFound": "לא נמצאו סוכנים"
+  },
+  "apiKeyFieldConfigs": {
+    "name": "שם",
+    "namePlaceholder": "מפתח API לפרודקשן",
+    "expiresInDays": "תפוגה",
+    "expirationOptions": {
+      "7": "7 ימים",
+      "30": "30 ימים",
+      "90": "90 ימים",
+      "365": "שנה"
+    },
+    "save": "צור מפתח API"
+  },
+  "apiKeys": {
+    "title": "מפתחות API",
+    "description": "נהל את מפתחות ה-API שלך לגישה תכנותית",
+    "createNew": "צור מפתח API",
+    "name": "שם",
+    "createdAt": "נוצר",
+    "expiresAt": "תפוגה",
+    "actions": "פעולות",
+    "noKeys": "לא נמצאו מפתחות API",
+    "getStarted": "צור את מפתח ה-API הראשון שלך כדי להתחיל להשתמש ב-API באופן תכנותי.",
+    "expiringSoon": "המפתח הזה יפוג בקרוב",
+    "delete": "מחק",
+    "confirmDelete": "האם אתה בטוח שברצונך למחוק את מפתח ה-API '{{name}}'? פעולה זו אינה ניתנת לביטול.",
+    "fetchError": "נכשל בטעינת מפתחות API",
+    "createError": "נכשל ביצירת מפתח API",
+    "deleteError": "נכשל במחיקת מפתח API",
+    "copyError": "נכשל בהעתקה ללוח",
+    "createSuccess": "מפתח API נוצר בהצלחה",
+    "deleteSuccess": "מפתח API נמחק בהצלחה",
+    "copiedToClipboard": "הועתק ללוח",
+    "copyToClipboard": "העתק ללוח",
+    "createdSuccessfully": "מפתח API נוצר בהצלחה",
+    "saveKeyWarning": "אנא העתק את מפתח ה-API שלך עכשיו. לא תוכל לראות אותו שוב!"
+  },
+  "ApiKeysPage": {
+    "table": {
+      "name": "שם",
+      "createdAt": "נוצר",
+      "expiresAt": "תפוגה"
+    }
   }
 }

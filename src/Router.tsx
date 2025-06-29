@@ -14,6 +14,7 @@ import { EditCompanyPage } from './pages/admin/EditCompanyPage';
 import { TeamsPage } from './pages/admin/TeamsPage';
 import { EditTeamPage } from './pages/admin/EditTeamPage';
 import { MemoryPage } from './pages/admin/MemoryPage'; // Added import for MemoryPage
+import { ApiKeysPage } from './pages/admin/ApiKeysPage';
 import { SignupPage } from './pages/SignupPage';
 import { ChatKitTestPage } from './pages/test/ChatKitTestPage';
 import { UIKitTestPage } from './pages/test/UIKitTestPage';
@@ -123,6 +124,10 @@ export const browserRouter = createBrowserRouter([
           {
             path: 'inbox',
             element: <InboxPage />,
+          },
+          {
+            path: 'api-keys',
+            element: <ApiKeysPage />,
           },
         ],
       },
