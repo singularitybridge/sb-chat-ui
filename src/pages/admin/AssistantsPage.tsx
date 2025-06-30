@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite';
 import { useRootStore } from '../../store/common/RootStoreContext'; // Still needed for rootStore.teamsLoaded, etc.
 import { useSessionStore } from '../../store/useSessionStore'; // Import Zustand session store
 import { IAssistant } from '../../store/models/Assistant';
-import { Plus, Settings, X, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Plus, Settings, X, ChevronRight, ChevronLeft, Copy } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Icon } from '@iconify/react';
 import { IconButton } from '../../components/admin/IconButton';
@@ -12,6 +12,7 @@ import { emitter } from '../../services/mittEmitter';
 import {
   EVENT_SET_ACTIVE_ASSISTANT,
   EVENT_SHOW_ADD_ASSISTANT_MODAL,
+  EVENT_SHOW_NOTIFICATION,
 } from '../../utils/eventNames';
 import { ChatContainer } from '../../components/chat-container/ChatContainer';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
@@ -94,6 +95,23 @@ const AssistantsPage: React.FC = observer(() => {
 
   const handleEditAssistant = (assistantId: string) => {
     navigate(`/admin/assistants/${assistantId}`);
+  };
+
+  const handleCopyAssistantId = (assistantId: string) => {
+    navigator.clipboard.writeText(assistantId)
+      .then(() => {
+        emitter.emit(EVENT_SHOW_NOTIFICATION, {
+          message: t('AssistantsPage.copySuccess'),
+          type: 'success',
+        });
+      })
+      .catch((err) => {
+        console.error('Failed to copy assistant ID:', err);
+        emitter.emit(EVENT_SHOW_NOTIFICATION, {
+          message: t('AssistantsPage.copyFailed'),
+          type: 'error',
+        });
+      });
   };
 
   const extractIntegrationNames = (allowedActions: string[]): string[] => {
@@ -226,6 +244,16 @@ const AssistantsPage: React.FC = observer(() => {
                                   transition={{ duration: 0.2 }}
                                   className="flex space-x-2 rtl:space-x-reverse"
                                 >
+                                  <IconButton
+                                    icon={
+                                      <Copy className="w-4 h-4 text-gray-500" />
+                                    }
+                                    className="p-1.5 rounded-full hover:bg-gray-300 bg-white"
+                                    onClick={(event) => {
+                                      event.stopPropagation();
+                                      handleCopyAssistantId(assistant._id);
+                                    }}
+                                  />
                                   <IconButton
                                     icon={
                                       <Settings className="w-4 h-4 text-gray-500" />

@@ -143,13 +143,15 @@
   },
   "AssistantsPage": {
     "title": "Your Team",
-    "description": "manage your ai agents here",
-    "table": {
-      "name": "name",
-      "description": "description",
-      "voice": "voice"
-    }
-  },
+      "description": "manage your ai agents here",
+      "table": {
+        "name": "name",
+        "description": "description",
+        "voice": "voice"
+      },
+      "copySuccess": "Assistant ID copied to clipboard!",
+      "copyFailed": "Failed to copy Assistant ID."
+    },
   "UsersPage": {
     "title": "Users",
     "description": "manage your users here",
