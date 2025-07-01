@@ -1,5 +1,5 @@
 # Use an official Node runtime as a parent image
-FROM node:21-slim as build
+FROM node:21-slim
 
 # Set the working directory
 WORKDIR /usr/src/app
@@ -13,13 +13,11 @@ RUN npm install
 # Copy the rest of your app's source code from your host to your image filesystem.
 COPY . .
 
-# Build the project
-RUN npm run build
+# Copy the entrypoint script and make it executable
+COPY entrypoint.sh .
+RUN chmod +x entrypoint.sh
 
-# Use serve to serve the static files
-FROM node:21-slim
-WORKDIR /usr/src/app
-RUN npm install -g serve
-COPY --from=build /usr/src/app/dist /usr/src/app/dist
+# Set the entrypoint to run the script, and the command to serve the app
+ENTRYPOINT ["./entrypoint.sh"]
 CMD ["serve", "-s", "dist", "-l", "5173"]
 EXPOSE 5173
