@@ -251,8 +251,8 @@
         "jira_domain": "your Jira Domain/URL here (e.g., yourcompany.atlassian.net)",
         "jira_email": "your Jira Email/Username here",
         "replicate_api_key": "your Replicate API key here",
-        "scytale_base_url": "your Scytale Base URL here",
-        "scytale_auth_token": "your Scytale Auth Token here"
+        "ai_context_service_base_url": "your AI Context Service Base URL here",
+        "ai_context_service_auth_token": "your AI Context Service Auth Token here"
       }
     }    
   },

@@ -96,11 +96,11 @@ export const companyFieldConfigs: FieldConfig[] = [
         value: '-',
       },
       {
-        key: 'scytale_base_url',
+        key: 'ai_context_service_base_url',
         value: '-',
       },
       {
-        key: 'scytale_auth_token',
+        key: 'ai_context_service_auth_token',
         value: '-',
       },
     ],

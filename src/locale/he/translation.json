@@ -261,8 +261,8 @@
         "jira_domain": "הזן כאן את הדומיין/כתובת ה-Jira שלך (לדוגמה: yourcompany.atlassian.net)",
         "jira_email": "הזן כאן את האימייל/שם המשתמש שלך ב-Jira",
         "replicate_api_key": "הזן כאן את מפתח ה-API של Replicate",
-        "scytale_base_url": "הזן כאן את כתובת ה-URL הבסיסית של Scytale",
-        "scytale_auth_token": "הזן כאן את אסימון האימות של Scytale"
+        "ai_context_service_base_url": "הזן כאן את כתובת ה-URL הבסיסית של שירות הקשר AI",
+        "ai_context_service_auth_token": "הזן כאן את אסימון האימות של שירות הקשר AI"
       }
     },
     "identifiers": {
