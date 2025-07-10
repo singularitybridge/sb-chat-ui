@@ -310,12 +310,16 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
                       newContent += `\n[Action: ${payload.actionDetails?.actionTitle || 'Processing Action'}]`;
                       newMetadata = { ...newMetadata, message_type: 'action_stream', actionDetails: payload.actionDetails };
                       break;
-                    case 'error':
+                    case 'error': {
                       logger.error('Stream: Error payload received', undefined, payload.errorDetails);
-                      newContent += `\n[Error: ${payload.errorDetails?.message || 'Streaming error'}]`;
+                      // Format error message with proper markdown for links
+                      const errorMessage = payload.errorDetails?.message || 'Streaming error';
+                      newContent += `\n\n${errorMessage}`;
+                      newMetadata = { ...newMetadata, message_type: 'error_stream', hasError: true };
                       newIsStreaming = false;
                       set({ isLoading: false });
                       break;
+                    }
                     case 'done':
                       newIsStreaming = false;
                       set({ isLoading: false });

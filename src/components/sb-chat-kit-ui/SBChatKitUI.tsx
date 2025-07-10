@@ -254,6 +254,7 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
                     text={message.content}
                     assistantName={assistantName}
                     createdAt={message.createdAt}
+                    metadata={message.metadata}
                   />
                 );
               } else if (message.metadata?.message_type === 'human-agent-response') {

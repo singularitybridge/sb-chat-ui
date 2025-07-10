@@ -70,7 +70,7 @@ export interface StreamPayload {
   errorDetails?: any; // For error type
 }
 
-async function* createSSELineSplitter(readableStream: ReadableStream<Uint8Array>): AsyncGenerator<string> {
+async function* createSSELineSplitter(readableStream: ReadableStream<Uint8Array>): AsyncGenerator<string[]> {
   const reader = readableStream.getReader();
   let buffer = '';
   const decoder = new TextDecoder();
@@ -80,7 +80,10 @@ async function* createSSELineSplitter(readableStream: ReadableStream<Uint8Array>
       const { value, done } = await reader.read();
       if (done) {
         if (buffer.length > 0) {
-          yield buffer; // Yield any remaining data
+          const lines = buffer.split('\n').filter(line => line.trim().length > 0);
+          if (lines.length > 0) {
+            yield lines; // Yield any remaining data as array of lines
+          }
         }
         break;
       }
@@ -89,10 +92,12 @@ async function* createSSELineSplitter(readableStream: ReadableStream<Uint8Array>
       let eolIndex;
       // SSE events are separated by double newlines
       while ((eolIndex = buffer.indexOf('\n\n')) >= 0) {
-        const line = buffer.substring(0, eolIndex);
+        const eventBlock = buffer.substring(0, eolIndex);
         buffer = buffer.substring(eolIndex + 2);
-        if (line.trim().length > 0) { // Ensure we don't yield empty lines between events
-          yield line;
+        if (eventBlock.trim().length > 0) {
+          // Split the event block into individual lines
+          const lines = eventBlock.split('\n').filter(line => line.trim().length > 0);
+          yield lines; // Yield array of lines for this event
         }
       }
     }
@@ -143,14 +148,41 @@ export async function handleUserInputStream(
     }
 
     const stream = response.body;
-    for await (const line of createSSELineSplitter(stream)) {
-      if (line.startsWith('data:')) {
-        const jsonString = line.substring(5).trim();
+    let doneTimer: any = null;
+    
+    for await (const lines of createSSELineSplitter(stream)) {
+      // Process multi-line SSE events
+      let eventType: string | null = null;
+      let eventData: string | null = null;
+      
+      for (const line of lines) {
+        if (line.startsWith('event:')) {
+          eventType = line.substring(6).trim();
+        } else if (line.startsWith('data:')) {
+          eventData = line.substring(5).trim();
+        } else if (line.startsWith('id:')) {
+          // Optional: handle event IDs
+        } else if (line.startsWith(':')) {
+          // This is a comment, ignore
+        }
+      }
+      
+      // Process the event based on type and data
+      if (eventData) {
+        if (eventData === '[DONE]') {
+          clearTimeout(doneTimer);
+          onChunk({ type: 'done' });
+          return; // Stream finished
+        }
+        
         try {
           let payload: StreamPayload;
-          const parsed = JSON.parse(jsonString);
+          const parsed = JSON.parse(eventData);
 
-          if (parsed.type === undefined && parsed.t !== undefined) {
+          // If we have an explicit event:error, ensure the payload type is set to error
+          if (eventType === 'error' && parsed.type !== 'error') {
+            payload = { type: 'error', errorDetails: parsed.errorDetails || parsed };
+          } else if (parsed.type === undefined && parsed.t !== undefined) {
             // Back-compat shim for current backend
             payload = { type: 'token', value: parsed.t };
           } else {
@@ -169,20 +201,9 @@ export async function handleUserInputStream(
             return; // Stream finished successfully
           }
         } catch (e) {
-          console.error('Failed to parse SSE data chunk:', jsonString, e);
-          onChunk({ type: 'error', errorDetails: { message: 'Failed to parse stream data', data: jsonString } });
+          console.error('Failed to parse SSE data chunk:', eventData, e);
+          onChunk({ type: 'error', errorDetails: { message: 'Failed to parse stream data', data: eventData } });
         }
-      } else if (line.startsWith('event:')) {
-        // Optional: handle custom event types if your server sends them
-        // console.log('SSE Event:', line);
-      } else if (line.startsWith('id:')) {
-        // Optional: handle event IDs
-      } else if (line.startsWith(':')) {
-        // This is a comment, ignore
-      } else if (line.trim() === '') {
-        // Empty line, often used as a separator, already handled by splitter logic
-      } else {
-        // console.warn('Received non-standard SSE line:', line);
       }
     }
   } catch (error: any) {

@@ -263,7 +263,8 @@
         "replicate_api_key": "הזן כאן את מפתח ה-API של Replicate",
         "ai_context_service_base_url": "הזן כאן את כתובת ה-URL הבסיסית של שירות הקשר AI",
         "ai_context_service_auth_token": "הזן כאן את אסימון האימות של שירות הקשר AI"
-      }
+      },
+      "codesandbox_api_key": "הזן כאן את מפתח ה-API של CodeSandbox"
     },
     "identifiers": {
       "title": "מזהים",

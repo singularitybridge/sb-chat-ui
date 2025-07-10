@@ -103,6 +103,10 @@ export const companyFieldConfigs: FieldConfig[] = [
         key: 'ai_context_service_auth_token',
         value: '-',
       },
+      {
+        key: 'codesandbox_api_key',
+        value: '-',
+      },
     ],
     visibility: { create: true, view: true, update: true },
   },

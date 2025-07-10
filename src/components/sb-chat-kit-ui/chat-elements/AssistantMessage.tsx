@@ -1,6 +1,6 @@
 import React, { useState } from 'react'; // Added useState
 import { SparklesIcon } from '@heroicons/react/24/solid';
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, AlertCircle } from 'lucide-react';
 import ReactMarkdown, { Components } from 'react-markdown';
 import Lightbox from 'yet-another-react-lightbox';
 import 'yet-another-react-lightbox/styles.css';
@@ -13,12 +13,17 @@ interface AssistantMessageProps {
   text: string;
   assistantName: string;
   createdAt: number;
+  metadata?: {
+    message_type?: string;
+    hasError?: boolean;
+    [key: string]: any;
+  };
 }
 
 // Regex to find image URLs (png, jpg, jpeg, gif, webp, svg) including optional query strings.
 const imageUrlRegex = /(https?:\/\/[^\s]+?\.(?:png|jpe?g|gif|webp|svg))(\?[^\s]*)?/gi;
 
-const AssistantMessage: React.FC<AssistantMessageProps> = ({ text, assistantName, createdAt }) => {
+const AssistantMessage: React.FC<AssistantMessageProps> = ({ text, assistantName, createdAt, metadata }) => {
   const [openLightbox, setOpenLightbox] = useState(false);
   const [currentLightboxImage, setCurrentLightboxImage] = useState<{src: string; alt: string} | null>(null);
 
@@ -147,16 +152,18 @@ const AssistantMessage: React.FC<AssistantMessageProps> = ({ text, assistantName
     return contentElements;
   };
 
+  const isError = metadata?.hasError || metadata?.message_type === 'error_stream';
+  
   return (
     <>
       <MessageWrapper 
-        icon={<SparklesIcon className="w-5 h-5 text-gray-700" />} 
+        icon={isError ? <AlertCircle className="w-4 h-4 text-amber-600" /> : <SparklesIcon className="w-5 h-5 text-gray-700" />} 
         bgColor="" 
-        borderColor="bg-blue-100" 
+        borderColor={isError ? "bg-amber-100" : "bg-blue-100"} 
         role={assistantName}
         dateText={formatRelativeTime(createdAt)}
       >
-        <div className="prose prose-sm max-w-none text-sm break-words rtl:text-right ltr:text-left overflow-hidden prose-pre:p-0">
+        <div className={`prose prose-sm max-w-none text-sm break-words rtl:text-right ltr:text-left overflow-hidden prose-pre:p-0 ${isError ? 'text-amber-700' : ''}`}>
           {renderContent()}
         </div>
       </MessageWrapper>

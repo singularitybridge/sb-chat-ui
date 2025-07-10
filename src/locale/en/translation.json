@@ -253,7 +253,8 @@
         "replicate_api_key": "your Replicate API key here",
         "ai_context_service_base_url": "your AI Context Service Base URL here",
         "ai_context_service_auth_token": "your AI Context Service Auth Token here"
-      }
+      },
+      "codesandbox_api_key": "your CodeSandbox API Key here"
     }    
   },
   "EditAssistantPage": {
