@@ -34,8 +34,7 @@ resources:
     memory: 256Mi
   limits:
     cpu: 5500m
-    memory:2500Mi
-
+    memory: 2500Mi
 config:
   api:
     url: "http://sb-agent-portal:80"  # Default internal API URL
