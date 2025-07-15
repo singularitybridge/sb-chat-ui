@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    app: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - name: web
+          containerPort: 5173
+        env:
+        - name: VITE_GOOGLE_AUTH_CLIENT_ID
+          value: {{ .Values.env.VITE_GOOGLE_AUTH_CLIENT_ID | quote }}
+        - name: VITE_PUSHER_APP_KEY
+          value: {{ .Values.env.VITE_PUSHER_APP_KEY | quote }}
+        - name: VITE_PUSHER_CLUSTER
+          value: {{ .Values.env.VITE_PUSHER_CLUSTER | quote }}
+        - name: VITE_API_URL
+          value: {{ .Values.env.VITE_API_URL | quote }}
+        - name: NODE_ENV
+          value: {{ .Values.env.NODE_ENV | quote }}
+        - name: PORT
+          value: {{ .Values.env.PORT | quote }}
+        - name: REACT_APP_API_URL
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-config
+              key: api_url
+        resources:
+          {{- toYaml .Values.resources | nindent 12 }}
+        readinessProbe:
+          httpGet:
+            path: /
+            port: web
+          initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.probes.readiness.periodSeconds }}
+        livenessProbe:
+          httpGet:
+            path: /
+            port: web
+          initialDelaySeconds: {{ .Values.probes.liveness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.probes.liveness.periodSeconds }} 
