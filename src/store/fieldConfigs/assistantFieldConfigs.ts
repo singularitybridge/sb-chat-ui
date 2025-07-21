@@ -25,10 +25,8 @@ const llmModelOptions: SelectListOption[] = [
   { value: 'gpt-4.1', label: 'GPT-4.1' },
   { value: 'gpt-4.1-mini', label: 'GPT-4.1 Mini' },
   { value: 'gpt-4.1-nano', label: 'GPT-4.1 Nano' },
-  { value: 'gemini-2.5-flash-preview-04-17', label: 'Gemini 2.5 Flash Preview 04-17' },
-  { value: 'gemini-2.5-pro-preview-05-06', label: 'Gemini 2.5 Pro Preview 05-06' },
-  { value: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash' },
-  { value: 'gemini-2.0-flash-lite', label: 'Gemini 2.0 Flash Lite' },
+  { value: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash' },
+  { value: 'gemini-2.5-pro', label: 'Gemini 2.5 Pro' },
   { value: 'claude-3-7-sonnet-latest', label: 'Claude 3.7 Sonnet Latest' },
   { value: 'claude-3-5-haiku-latest', label: 'Claude 3.5 Haiku Latest' },
 ];
