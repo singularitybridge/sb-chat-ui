@@ -3,6 +3,11 @@ FROM node:21-slim
 
 # Set the working directory
 WORKDIR /usr/src/app
+ENV VITE_API_URL=%VITE_API_URL%
+ENV VITE_GOOGLE_AUTH_CLIENT_ID=%VITE_GOOGLE_AUTH_CLIENT_ID%
+ENV VITE_PUSHER_APP_KEY=%VITE_PUSHER_APP_KEY%
+ENV VITE_PUSHER_CLUSTER=%VITE_PUSHER_CLUSTER%
+ENV PORT=5173
 
 # Copy package.json and package-lock.json
 COPY package.json package-lock.json ./
@@ -17,7 +22,10 @@ COPY . .
 COPY entrypoint.sh .
 RUN chmod +x entrypoint.sh
 
+# Build the application with placeholder values
+RUN npm run build
+
 # Set the entrypoint to run the script, and the command to serve the app
 ENTRYPOINT ["./entrypoint.sh"]
-CMD ["serve", "-s", "dist", "-l", "5173"]
+CMD ["npx", "serve", "-s", "dist", "-l", "5173"]
 EXPOSE 5173
