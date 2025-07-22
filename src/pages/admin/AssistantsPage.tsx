@@ -308,7 +308,7 @@ const AssistantsPage: React.FC = observer(() => {
             )}
           </ul>
         </div>
-        <div className="flex-grow w-full">
+        <div className="flex-grow min-w-0">
           <ChatContainer />
         </div>
       </div>

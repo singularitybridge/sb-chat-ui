@@ -92,3 +92,11 @@ Consistent form implementation using:
 - **Logging Service**: Replaced console.log with proper logging service
 - **Error Boundaries**: Enhanced with retry functionality and error IDs
 - **Optimistic Updates**: Implemented for assistant changes with rollback
+
+### Layout & Overflow Handling
+When dealing with flexbox overflow issues where content gets cut off:
+- **Root Cause**: Flex items have an implicit `min-width: auto` which prevents them from shrinking below their content size
+- **Solution**: Add `min-w-0` to flex containers that need to shrink to prevent overflow
+- **Example**: In `AssistantsPage.tsx`, the chat container wrapper uses `flex-grow min-w-0` to properly contain long text
+- **Avoid**: Adding multiple overflow classes or max-width constraints when the issue is flex shrinking
+- **Key Pattern**: Let flexbox handle sizing naturally - just ensure containers can shrink with `min-w-0`
