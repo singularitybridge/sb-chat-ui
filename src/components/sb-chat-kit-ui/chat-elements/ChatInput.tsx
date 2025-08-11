@@ -20,9 +20,12 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
   const [selectedFiles, setSelectedFiles] = useState<FilePreviewItem[]>([]);
   const [uploadProgress, setUploadProgress] = useState<{[key: string]: number}>({});
   const [uploadErrors, setUploadErrors] = useState<{[key: string]: string}>({});
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragCounter, setDragCounter] = useState(0);
   const { t } = useTranslation();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const handleSubmitMessage = async (messageText: string) => {
     if (!messageText.trim() && selectedFiles.length === 0) return;
@@ -100,6 +103,16 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
 
   const handleFileSelection = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
+    addFiles(files);
+    
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const addFiles = (files: File[]) => {
+    const newFileItems: FilePreviewItem[] = [];
     
     files.forEach(file => {
       const validation = validateFile(file);
@@ -113,12 +126,11 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
         file
       };
       
-      setSelectedFiles(prev => [...prev, fileItem]);
+      newFileItems.push(fileItem);
     });
-
-    // Reset file input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+    
+    if (newFileItems.length > 0) {
+      setSelectedFiles(prev => [...prev, ...newFileItems]);
     }
   };
 
@@ -153,6 +165,72 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
     setUploadProgress({});
   };
 
+  // Handle drag events
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Check if dragging files
+    if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
+      const hasFiles = Array.from(e.dataTransfer.items).some(item => item.kind === 'file');
+      if (hasFiles) {
+        setDragCounter(prev => prev + 1);
+        setIsDragging(true);
+      }
+    }
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    setDragCounter(prev => {
+      const newCounter = prev - 1;
+      if (newCounter === 0) {
+        setIsDragging(false);
+      }
+      return newCounter;
+    });
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    setIsDragging(false);
+    setDragCounter(0);
+    
+    const files = Array.from(e.dataTransfer.files);
+    if (files.length > 0) {
+      addFiles(files);
+    }
+  };
+
+  // Handle paste events
+  const handlePaste = (e: React.ClipboardEvent) => {
+    const items = Array.from(e.clipboardData.items);
+    const files: File[] = [];
+    
+    items.forEach(item => {
+      if (item.kind === 'file') {
+        const file = item.getAsFile();
+        if (file) {
+          files.push(file);
+        }
+      }
+    });
+    
+    if (files.length > 0) {
+      e.preventDefault();
+      addFiles(files);
+    }
+  };
+
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
@@ -170,7 +248,28 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
   const hasContent = message.trim() || selectedFiles.length > 0;
 
   return (
-    <div className="flex flex-col w-full space-y-2">
+    <div 
+      ref={containerRef}
+      className="flex flex-col w-full space-y-2 relative"
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+    >
+      {/* Drag overlay */}
+      {isDragging && (
+        <div className="absolute inset-0 z-50 pointer-events-none">
+          <div className="absolute inset-0 bg-blue-500 bg-opacity-10 border-2 border-dashed border-blue-500 rounded-2xl flex items-center justify-center">
+            <div className="bg-white rounded-lg shadow-lg px-6 py-4">
+              <div className="flex flex-col items-center space-y-2">
+                <PaperClipIcon className="h-10 w-10 text-blue-500 animate-pulse" />
+                <p className="text-lg font-medium text-gray-800">Drop files here</p>
+                <p className="text-sm text-gray-500">Release to add files to your message</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       {/* File preview area */}
       {selectedFiles.length > 0 && (
         <FilePreview
@@ -213,6 +312,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
                 e.preventDefault();
               }
             }}
+            onPaste={handlePaste}
             rows={1}
             disabled={isUploading}
           />
