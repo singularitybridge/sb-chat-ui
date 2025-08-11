@@ -8,7 +8,10 @@ import { useRootStore } from '../store/common/RootStoreContext';
 import { observer } from 'mobx-react-lite';
 import { useTranslation } from 'react-i18next';
 import { SBChatKitUI } from '../components/sb-chat-kit-ui/SBChatKitUI';
-import MDXRenderer from '../components/sb-core-ui-kit/MDXRenderer';
+import LiveCodeRenderer from '../components/sb-core-ui-kit/LiveCodeRenderer';
+import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
+import Badge from '../components/Badge';
+import { CheckSquare, Users, Target, Brain, TrendingUp, Calendar } from 'lucide-react';
 import { cn } from '../utils/cn';
 import { useAudioStore } from '../store/useAudioStore';
 import DynamicBackground, { setDynamicBackground } from '../components/DynamicBackground';
@@ -109,38 +112,215 @@ const ScreenShareWorkspace: React.FC = observer(() => {
     }
   }, [stream]);
   
-  // Generate mock MDX content based on workspace
+  // Generate visionary daily planner content using React components
   useEffect(() => {
-    const mockMDX = `
-# ${workspace === 'home' ? '🏠 Home Workspace' : `📁 ${workspace}`}
+    const now = new Date();
+    const timeOfDay = now.getHours() < 12 ? 'Morning' : now.getHours() < 17 ? 'Afternoon' : 'Evening';
+    const dayName = now.toLocaleDateString('en-US', { weekday: 'long' });
+    const dateStr = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    
+    // React JSX code as string that will be compiled by LiveCodeRenderer
+    const reactCode = `
+<>
+  {/* Header */}
+  <div className="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white p-8 rounded-xl mb-6 shadow-xl">
+    <h1 className="text-4xl font-light mb-2">Good ${timeOfDay}, Visionary</h1>
+    <p className="opacity-90 text-lg">${dayName}, ${dateStr}</p>
+  </div>
 
-## Session Overview
-**Active Assistant**: ${currentAssistant?.name || 'No assistant selected'}  
-**Session ID**: \`${activeSession?._id?.slice(-8) || 'No session'}\`  
-**Screen Status**: ${isScreenSharing ? '🟢 Recording' : '⚪ Inactive'}
+  {/* Today's North Star */}
+  <Card className="mb-6 shadow-lg">
+    <CardHeader>
+      <CardTitle className="flex items-center gap-2">
+        <Target className="h-5 w-5 text-yellow-500" />
+        Today's North Star
+      </CardTitle>
+    </CardHeader>
+    <CardContent>
+      <blockquote className="border-l-4 border-indigo-500 pl-4 italic text-gray-600">
+        "The future belongs to those who believe in the beauty of their dreams."
+        <footer className="text-sm text-gray-500 mt-2">— Eleanor Roosevelt</footer>
+      </blockquote>
+    </CardContent>
+  </Card>
 
-## Features
-### 📸 Screen Capture
-Screenshots are automatically attached when you send a message while screen sharing is active.
+  {/* Strategic Focus Areas */}
+  <div className="space-y-4 mb-6">
+    <h2 className="text-2xl font-semibold flex items-center gap-2 mb-4">
+      <Brain className="h-6 w-6 text-purple-500" />
+      Strategic Focus Areas
+    </h2>
+    
+    {/* Deep Work Block */}
+    <Card className="border-l-4 border-blue-500">
+      <CardHeader>
+        <CardTitle className="text-lg flex items-center gap-2">
+          🚀 Deep Work Block (9:00 - 12:00)
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p className="font-semibold mb-2">Priority Initiative: Product Vision 2025</p>
+        <div className="space-y-2">
+          <label className="flex items-center gap-2">
+            <input type="checkbox" className="rounded" />
+            <span>Review quarterly OKRs alignment</span>
+          </label>
+          <label className="flex items-center gap-2">
+            <input type="checkbox" className="rounded" />
+            <span>Strategic partnership proposal review</span>
+          </label>
+          <label className="flex items-center gap-2">
+            <input type="checkbox" className="rounded" />
+            <span>Innovation pipeline assessment</span>
+          </label>
+        </div>
+        <div className="mt-3 p-3 bg-blue-50 rounded-lg">
+          <p className="text-sm text-blue-700">💡 Insight: Your most creative hours. Guard this time zealously.</p>
+        </div>
+      </CardContent>
+    </Card>
+    
+    {/* Collaboration Window */}
+    <Card className="border-l-4 border-green-500">
+      <CardHeader>
+        <CardTitle className="text-lg flex items-center gap-2">
+          <Users className="h-5 w-5 text-green-600" />
+          Collaboration Window (1:00 - 3:00)
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p className="font-semibold mb-2">Key Stakeholder Touchpoints</p>
+        <div className="space-y-2">
+          <label className="flex items-center gap-2">
+            <input type="checkbox" className="rounded" />
+            <span>Executive sync with leadership team</span>
+          </label>
+          <label className="flex items-center gap-2">
+            <input type="checkbox" className="rounded" />
+            <span>Mentor session with emerging leaders</span>
+          </label>
+          <label className="flex items-center gap-2">
+            <input type="checkbox" className="rounded" />
+            <span>Cross-functional innovation workshop</span>
+          </label>
+        </div>
+        <div className="mt-3 p-3 bg-green-50 rounded-lg">
+          <p className="text-sm text-green-700">🌟 Remember: Great leaders create more leaders, not followers.</p>
+        </div>
+      </CardContent>
+    </Card>
+    
+    {/* Reflection & Strategy */}
+    <Card className="border-l-4 border-yellow-500">
+      <CardHeader>
+        <CardTitle className="text-lg flex items-center gap-2">
+          🧘 Reflection & Strategy (4:00 - 5:00)
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p className="font-semibold mb-2">Strategic Thinking Time</p>
+        <div className="space-y-2">
+          <label className="flex items-center gap-2">
+            <input type="checkbox" className="rounded" />
+            <span>Market trends analysis</span>
+          </label>
+          <label className="flex items-center gap-2">
+            <input type="checkbox" className="rounded" />
+            <span>Competitive landscape review</span>
+          </label>
+          <label className="flex items-center gap-2">
+            <input type="checkbox" className="rounded" />
+            <span>Tomorrow's priorities setting</span>
+          </label>
+        </div>
+        <div className="mt-3 p-3 bg-yellow-50 rounded-lg">
+          <p className="text-sm text-yellow-700">🔮 Vision: Where do we want to be in 5 years?</p>
+        </div>
+      </CardContent>
+    </Card>
+  </div>
 
-### 💬 Conversation
-Continue your conversation with ${currentAssistant?.name || 'the assistant'}. All messages are preserved.
+  {/* High-Impact Decisions */}
+  <Card className="mb-6">
+    <CardHeader>
+      <CardTitle className="flex items-center gap-2">
+        💎 High-Impact Decisions Queue
+      </CardTitle>
+    </CardHeader>
+    <CardContent>
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead>
+            <tr className="border-b">
+              <th className="text-left py-2">Priority</th>
+              <th className="text-left py-2">Decision</th>
+              <th className="text-left py-2">Impact</th>
+              <th className="text-left py-2">Deadline</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr className="border-b">
+              <td className="py-2"><Badge className="bg-red-500 text-white">High</Badge></td>
+              <td className="py-2">Product roadmap Q2</td>
+              <td className="py-2">Company-wide</td>
+              <td className="py-2">Today</td>
+            </tr>
+            <tr className="border-b">
+              <td className="py-2"><Badge className="bg-yellow-500 text-white">Medium</Badge></td>
+              <td className="py-2">Team expansion strategy</td>
+              <td className="py-2">Department</td>
+              <td className="py-2">This week</td>
+            </tr>
+            <tr>
+              <td className="py-2"><Badge className="bg-green-500 text-white">Low</Badge></td>
+              <td className="py-2">Office redesign proposal</td>
+              <td className="py-2">Culture</td>
+              <td className="py-2">This month</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </CardContent>
+  </Card>
 
-### 🔄 Session Management
-Use the clear button to start fresh while maintaining your workspace.
+  {/* Performance Metrics */}
+  <div className="grid grid-cols-3 gap-4 mb-6">
+    <div className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white p-6 rounded-xl text-center">
+      <div className="text-3xl font-bold">${messages.length}</div>
+      <div className="opacity-90 mt-1">Insights Shared</div>
+    </div>
+    <div className="bg-gradient-to-br from-pink-500 to-red-500 text-white p-6 rounded-xl text-center">
+      <div className="text-3xl font-bold">87%</div>
+      <div className="opacity-90 mt-1">Goals Progress</div>
+    </div>
+    <div className="bg-gradient-to-br from-cyan-400 to-blue-500 text-white p-6 rounded-xl text-center">
+      <div className="text-3xl font-bold">∞</div>
+      <div className="opacity-90 mt-1">Potential Unlocked</div>
+    </div>
+  </div>
 
-## Assistant Info
-${currentAssistant?.description || 'Select an assistant to begin.'}
+  {/* Footer Quote */}
+  <Card className="bg-gray-50">
+    <CardContent className="py-6">
+      <p className="italic text-gray-600 text-center">
+        "Leadership is not about being in charge. It's about taking care of those in your charge."
+      </p>
+      <p className="text-gray-500 text-sm text-center mt-2">— Simon Sinek</p>
+    </CardContent>
+  </Card>
 
-### Statistics
-- **Messages**: ${messages.length} total
-- **Session Started**: ${activeSession ? new Date(activeSession.createdAt).toLocaleString() : 'Not started'}
-- **Screen Captures**: ${isScreenSharing ? 'Enabled' : 'Disabled'}
-
----
-*Powered by Screen Share AI Workspace*
+  {/* Status Footer */}
+  <div className="text-center mt-6 pt-6 border-t border-gray-200">
+    <p className="text-gray-500 text-sm">
+      ${isScreenSharing ? '🔴 Screen Sharing Active' : '⚪ Screen Sharing Inactive'} | 
+      Assistant: ${currentAssistant?.name || 'Not Selected'} | 
+      Powered by Visionary AI
+    </p>
+  </div>
+</>
     `;
-    setAgentContent(mockMDX);
+    
+    setAgentContent(reactCode);
   }, [workspace, currentAssistant, activeSession, isScreenSharing, messages.length]);
 
   const startScreenShare = async () => {
@@ -399,7 +579,7 @@ ${currentAssistant?.description || 'Select an assistant to begin.'}
                   ? currentAssistant.conversationStarters.map(cs => ({ ...cs }))
                   : []
               } : undefined}
-              assistantName={currentAssistant?.name || "AI Assistant"}
+              assistantName={currentAssistant?.name || 'AI Assistant'}
               onSendMessage={handleSendMessage}
               onClear={handleClear}
               onToggleAudio={handleToggleAudio}
@@ -468,15 +648,34 @@ ${currentAssistant?.description || 'Select an assistant to begin.'}
             </h3>
           </div>
           <div className="flex-1 overflow-y-auto p-6 bg-white">
-            <div className="prose prose-sm max-w-none">
-              {agentContent ? (
-                <MDXRenderer content={agentContent} />
-              ) : (
-                <div className="text-center text-gray-400 mt-8">
-                  <p className="text-sm">Loading workspace content...</p>
-                </div>
-              )}
-            </div>
+            {agentContent ? (
+              <LiveCodeRenderer 
+                code={agentContent}
+                scope={{
+                  Card,
+                  CardHeader,
+                  CardTitle,
+                  CardContent,
+                  Badge,
+                  CheckSquare,
+                  Users,
+                  Target,
+                  Brain,
+                  TrendingUp,
+                  Calendar,
+                  cn,
+                  messages,
+                  isScreenSharing,
+                  currentAssistant
+                }}
+                className="w-full"
+                showErrorsInline
+              />
+            ) : (
+              <div className="text-center text-gray-400 mt-8">
+                <p className="text-sm">Loading workspace content...</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
