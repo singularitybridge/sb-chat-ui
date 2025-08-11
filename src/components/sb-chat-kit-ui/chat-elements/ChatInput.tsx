@@ -4,6 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { AudioRecorder } from '../../sb-core-ui-kit/AudioRecorder';
 import { uploadContentFile } from '../../../services/api/contentFileService';
 import { FilePreview, FilePreviewItem } from './FilePreview';
+import { ScreenShare } from './ScreenShare';
+import { ScreenShareSession } from './ScreenShareSession';
+import { useScreenShareStore } from '../../../store/useScreenShareStore';
 import { 
   validateFile, 
   createFileMetadata, 
@@ -26,12 +29,61 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Get screen share state
+  const { isActive: isScreenSharing, captureScreenshot } = useScreenShareStore();
 
   const handleSubmitMessage = async (messageText: string) => {
-    if (!messageText.trim() && selectedFiles.length === 0) return;
+    if (!messageText.trim() && selectedFiles.length === 0 && !isScreenSharing) return;
 
-    // If there are files, upload them first
-    if (selectedFiles.length > 0) {
+    // If screen sharing is active, capture and attach current screenshot
+    if (isScreenSharing && selectedFiles.length === 0) {
+      console.log('Screen sharing active, capturing screenshot...');
+      
+      try {
+        const screenshot = await captureScreenshot();
+        if (screenshot) {
+          // Create a file from the screenshot blob
+          const screenshotFile = new File(
+            [screenshot], 
+            `screen-${Date.now()}.png`, 
+            { type: 'image/png' }
+          );
+          
+          // Add screenshot to selected files
+          const fileItem: FilePreviewItem = {
+            id: `screen-auto-${Date.now()}`,
+            file: screenshotFile
+          };
+          
+          // Upload the screenshot with the message
+          setIsUploading(true);
+          try {
+            const formData = new FormData();
+            formData.append('file', screenshotFile);
+            formData.append('title', screenshotFile.name);
+            
+            const response = await uploadContentFile(formData);
+            
+            if (response && response.data) {
+              const fileMetadata = createFileMetadata(screenshotFile, response);
+              setMessage('');
+              onSendMessage(messageText || 'Sharing my screen', fileMetadata);
+            }
+          } catch (error) {
+            console.error('Error uploading screenshot:', error);
+          } finally {
+            setIsUploading(false);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to capture screenshot:', error);
+        // Still send the message even if screenshot fails
+        setMessage('');
+        onSendMessage(messageText);
+      }
+    } else if (selectedFiles.length > 0) {
+      // If there are manually selected files, upload them
       await handleFilesUpload(messageText);
     } else {
       // Send text message only
@@ -131,6 +183,39 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
     
     if (newFileItems.length > 0) {
       setSelectedFiles(prev => [...prev, ...newFileItems]);
+    }
+  };
+
+  const handleScreenCapture = async (blob: Blob, metadata?: any) => {
+    // Create a File from the Blob
+    const file = new File([blob], `screenshot-${Date.now()}.png`, { type: 'image/png' });
+    console.log('handleScreenCapture called:', file.name, metadata);
+    
+    // Auto-send screen captures immediately
+    setIsUploading(true);
+    
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('title', file.name);
+      
+      console.log('Uploading screen capture...');
+      const response = await uploadContentFile(formData);
+      
+      if (response && response.data) {
+        // Create file metadata and send as message
+        const fileMetadata = createFileMetadata(file, response);
+        const message = `Screen capture #${metadata?.captureNumber || 1} at ${new Date().toLocaleTimeString()}`;
+        
+        console.log('Sending screen capture message');
+        onSendMessage(message, fileMetadata);
+      } else {
+        console.error('Failed to upload screen capture');
+      }
+    } catch (error) {
+      console.error('Error uploading screen capture:', error);
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -270,6 +355,17 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
           </div>
         </div>
       )}
+      
+      {/* Screen sharing indicator */}
+      {isScreenSharing && (
+        <div className="mx-1 px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg flex items-center space-x-2 rtl:space-x-reverse">
+          <div className="animate-pulse h-2 w-2 bg-red-500 rounded-full"></div>
+          <span className="text-sm text-blue-700">
+            {t('ChatContainer.screenShare.active', 'Screen sharing active - Current screen will be attached to your message')}
+          </span>
+        </div>
+      )}
+      
       {/* File preview area */}
       {selectedFiles.length > 0 && (
         <FilePreview
@@ -320,6 +416,15 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
             <div className="flex space-x-2">
               <AudioRecorder
                 onTranscriptionComplete={handleTranscriptionComplete}
+              />
+              {/* Basic screen share - sends screenshots immediately */}
+              {/* <ScreenShare
+                onScreenCapture={handleScreenCapture}
+              /> */}
+              
+              {/* Advanced screen share with AI analysis and session management */}
+              <ScreenShareSession
+                onScreenCapture={handleScreenCapture}
               />
               <input
                 type="file"

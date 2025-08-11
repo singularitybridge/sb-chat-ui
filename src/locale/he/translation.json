@@ -295,6 +295,9 @@
       "placeholder": "הקלד את הודעתך כאן",
       "withFiles": "הוסף כיתוב (אופציונלי)..."
     },
+    "screenShare": {
+      "active": "שיתוף מסך פעיל - המסך הנוכחי יצורף להודעה שלך"
+    },
     "defaultStarters": {
       "startChat": {
         "key": "התחל שיחה",

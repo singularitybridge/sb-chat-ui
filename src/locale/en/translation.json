@@ -273,6 +273,9 @@
       "placeholder": "Type your message",
       "withFiles": "Add a caption (optional)..."
     },
+    "screenShare": {
+      "active": "Screen sharing active - Current screen will be attached to your message"
+    },
     "defaultStarters": {
       "startChat": {
         "key": "Start Chat",
