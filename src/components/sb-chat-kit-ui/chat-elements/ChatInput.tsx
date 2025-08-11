@@ -4,8 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { AudioRecorder } from '../../sb-core-ui-kit/AudioRecorder';
 import { uploadContentFile } from '../../../services/api/contentFileService';
 import { FilePreview, FilePreviewItem } from './FilePreview';
-import { ScreenShare } from './ScreenShare';
-import { ScreenShareSession } from './ScreenShareSession';
 import { useScreenShareStore } from '../../../store/useScreenShareStore';
 import { 
   validateFile, 
@@ -31,7 +29,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   
   // Get screen share state
-  const { isActive: isScreenSharing, captureScreenshot } = useScreenShareStore();
+  const { isActive: isScreenSharing, captureScreenshot, sessionId: screenShareSessionId } = useScreenShareStore();
 
   const handleSubmitMessage = async (messageText: string) => {
     if (!messageText.trim() && selectedFiles.length === 0 && !isScreenSharing) return;
@@ -43,10 +41,14 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
       try {
         const screenshot = await captureScreenshot();
         if (screenshot) {
-          // Create a file from the screenshot blob
+          // Create a file from the screenshot blob with session ID
+          const fileName = screenShareSessionId 
+            ? `${screenShareSessionId}-screenshare.png`
+            : `screen-${Date.now()}.png`;
+          
           const screenshotFile = new File(
             [screenshot], 
-            `screen-${Date.now()}.png`, 
+            fileName, 
             { type: 'image/png' }
           );
           
@@ -187,8 +189,12 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
   };
 
   const handleScreenCapture = async (blob: Blob, metadata?: any) => {
-    // Create a File from the Blob
-    const file = new File([blob], `screenshot-${Date.now()}.png`, { type: 'image/png' });
+    // Create a File from the Blob with session ID
+    const fileName = screenShareSessionId 
+      ? `${screenShareSessionId}-screenshare.png`
+      : `screenshot-${Date.now()}.png`;
+    
+    const file = new File([blob], fileName, { type: 'image/png' });
     console.log('handleScreenCapture called:', file.name, metadata);
     
     // Auto-send screen captures immediately
@@ -358,11 +364,13 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
       
       {/* Screen sharing indicator */}
       {isScreenSharing && (
-        <div className="mx-1 px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg flex items-center space-x-2 rtl:space-x-reverse">
-          <div className="animate-pulse h-2 w-2 bg-red-500 rounded-full"></div>
-          <span className="text-sm text-blue-700">
-            {t('ChatContainer.screenShare.active', 'Screen sharing active - Current screen will be attached to your message')}
-          </span>
+        <div className="mx-1 px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="flex items-center space-x-2 rtl:space-x-reverse">
+            <div className="animate-pulse h-2 w-2 bg-red-500 rounded-full"></div>
+            <span className="text-sm text-blue-700">
+              {t('ChatContainer.screenShare.active', 'Screen sharing active - Current screen will be attached to your message')}
+            </span>
+          </div>
         </div>
       )}
       
@@ -422,10 +430,6 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
                 onScreenCapture={handleScreenCapture}
               /> */}
               
-              {/* Advanced screen share with AI analysis and session management */}
-              <ScreenShareSession
-                onScreenCapture={handleScreenCapture}
-              />
               <input
                 type="file"
                 ref={fileInputRef}

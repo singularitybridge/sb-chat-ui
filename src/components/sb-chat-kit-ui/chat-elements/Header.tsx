@@ -1,7 +1,9 @@
 /// file_path: src/components/sb-chat-kit-ui/chat-elements/Header.tsx
 import React, { useState } from 'react';
-import { CircleFadingPlus, Pause, Volume2, VolumeX } from 'lucide-react';
+import { CircleFadingPlus, Pause, Volume2, VolumeX, Monitor } from 'lucide-react';
 import { Avatar, AvatarStyles } from '../../Avatar';
+import { useNavigate } from 'react-router-dom';
+import { useSessionStore } from '../../../store/useSessionStore';
 
 type AudioState = 'disabled' | 'enabled' | 'playing';
 
@@ -23,9 +25,16 @@ const Header: React.FC<HeaderProps> = ({
   audioState,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const navigate = useNavigate();
+  const { activeSession } = useSessionStore();
 
   const toggleDescription = () => {
     setIsExpanded(!isExpanded);
+  };
+
+  const handleScreenShare = () => {
+    // Navigate to home workspace - can be expanded to support different workspaces
+    navigate(`/screenshare/home`);
   };
 
   const renderDescription = () => {
@@ -80,6 +89,14 @@ const Header: React.FC<HeaderProps> = ({
       </div>
 
       <div className="flex items-center space-x-1 rtl:space-x-reverse">
+        <button
+          onClick={handleScreenShare}
+          className="p-1 rounded-full transition-colors hover:bg-gray-100"
+          aria-label="Share screen"
+          title="Share screen"
+        >
+          <Monitor className="w-6 h-6 text-gray-500 hover:text-primary-600" />
+        </button>
         <button
           onClick={onToggleAudio}
           className="p-1 rounded-full transition-colors hover:bg-gray-100"

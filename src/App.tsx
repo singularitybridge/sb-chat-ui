@@ -37,10 +37,12 @@ const App: React.FC = observer(() => {
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID}>
       <AuthManager>
         <PusherManager />
-        <div className="flex flex-col inset-0 font-noto-sans-hebrew">
+        <div className="h-screen flex flex-col font-noto-sans-hebrew">
           <ToastContainer position="bottom-right" />
           <DialogManager />
-          <Outlet />
+          <div className="flex-1 min-h-0">
+            <Outlet />
+          </div>
         </div>
       </AuthManager>
     </GoogleOAuthProvider>

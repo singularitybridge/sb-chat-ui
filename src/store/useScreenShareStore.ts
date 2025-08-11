@@ -95,6 +95,13 @@ export const useScreenShareStore = create<ScreenShareState>()(
       startSession: async (options = {}) => {
         const { captureMode = 'manual', analysisMode = 'stateless', captureInterval = 5000 } = options;
         
+        // Prevent duplicate calls
+        const currentState = get();
+        if (currentState.isActive || currentState.status === 'capturing') {
+          console.log('Screen sharing already active or in progress, skipping...');
+          return;
+        }
+        
         try {
           set({ status: 'capturing' });
           

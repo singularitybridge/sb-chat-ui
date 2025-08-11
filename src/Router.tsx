@@ -24,6 +24,7 @@ import { WorkspaceJoinPage } from './pages/admin/WorkspaceJoinPage';
 import WorkspaceAuthorizePage from './pages/admin/WorkspaceAuthorizePage';
 import EmbedChatPage from './pages/embed/EmbedChatPage'; // Added import for EmbedChatPage
 import { EmbedAuthProvider } from './contexts/EmbedAuthContext'; // Added import for EmbedAuthProvider
+import ScreenShareWorkspace from './pages/ScreenShareWorkspace';
 
 export const browserRouter = createBrowserRouter([
   {
@@ -60,6 +61,10 @@ export const browserRouter = createBrowserRouter([
       {
         path: 'test/json-viewer',
         element: <JsonViewerTestPage />,
+      },
+      {
+        path: 'screenshare/:workspace',
+        element: <ScreenShareWorkspace />,
       },
       {
         path: '/admin',
