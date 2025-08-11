@@ -12,6 +12,7 @@ import MDXRenderer from '../components/sb-core-ui-kit/MDXRenderer';
 import { cn } from '../utils/cn';
 import { useAudioStore } from '../store/useAudioStore';
 import DynamicBackground, { setDynamicBackground } from '../components/DynamicBackground';
+import { createFileMetadata } from '../utils/fileUtils';
 
 const ScreenShareWorkspace: React.FC = observer(() => {
   const { workspace } = useParams<{ workspace: string }>();
@@ -76,10 +77,13 @@ const ScreenShareWorkspace: React.FC = observer(() => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const workspaceRef = useRef<HTMLDivElement>(null);
   
-  // Load messages on mount
+  // Load messages on mount and ensure we have a session
   useEffect(() => {
     if (activeSession?._id) {
       loadMessages(activeSession._id);
+    } else {
+      // If no active session, we need to select an assistant first
+      console.log('No active session in workspace. Please select an assistant first.');
     }
   }, [activeSession?._id, loadMessages]);
   
@@ -157,44 +161,114 @@ ${currentAssistant?.description || 'Select an assistant to begin.'}
   };
 
   const handleSendMessage = async (messageText: string, fileMetadata?: any) => {
+    console.log('🚀 [ScreenShareWorkspace] handleSendMessage called', {
+      messageText,
+      hasFileMetadata: !!fileMetadata,
+      activeSessionId: activeSession?._id,
+      currentAssistantId: currentAssistant?._id,
+      isScreenSharing
+    });
+    
+    // Check if we have an active session
+    if (!activeSession?._id) {
+      console.error('No active session. Please select an assistant from the assistants page first.');
+      return;
+    }
+    
     // Capture and attach screenshot if screen sharing
     if (isScreenSharing) {
+      console.log('📸 [ScreenShareWorkspace] Capturing screenshot...');
       const screenshot = await captureScreenshot();
       if (screenshot) {
         const fileName = screenShareSessionId 
           ? `${screenShareSessionId}-screenshare.png`
-          : `screen-${Date.now()}.png`;
+          : `screen-${Date.now()}-screenshare.png`;
         
-        // Create file metadata for the screenshot
-        const screenshotMetadata = {
-          type: 'image',
-          url: URL.createObjectURL(screenshot),
-          fileName: fileName,
-          fileSize: screenshot.size,
-          mimeType: 'image/png'
-        };
+        console.log('📤 [ScreenShareWorkspace] Uploading screenshot:', fileName);
         
-        // Send message with screenshot
-        const assistantInfo = currentAssistant ? { 
-          _id: currentAssistant._id, 
-          voice: currentAssistant.voice, 
-          name: currentAssistant.name 
-        } : undefined;
-        
-        await handleSubmitMessage(
-          messageText,
-          assistantInfo,
-          activeSession?._id,
-          screenshotMetadata
-        );
+        try {
+          // Upload the screenshot to get gcpStorageUrl
+          const formData = new FormData();
+          const file = new File([screenshot], fileName, { type: 'image/png' });
+          formData.append('file', file);
+          formData.append('title', fileName); // Add title field
+          
+          const uploadResponse = await fetch(`${import.meta.env.VITE_API_URL}/content-file/upload`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+            },
+            body: formData
+          });
+          
+          if (!uploadResponse.ok) {
+            throw new Error('Failed to upload screenshot');
+          }
+          
+          const uploadResult = await uploadResponse.json();
+          console.log('✅ [ScreenShareWorkspace] Upload successful:', uploadResult);
+          
+          if (uploadResult.success && uploadResult.data) {
+            // Use createFileMetadata utility for consistency
+            const screenshotMetadata = createFileMetadata(file, uploadResult);
+            console.log('📎 [ScreenShareWorkspace] Created file metadata:', screenshotMetadata);
+            
+            // Send message with screenshot
+            const assistantInfo = currentAssistant ? { 
+              _id: currentAssistant._id, 
+              voice: currentAssistant.voice, 
+              name: currentAssistant.name 
+            } : undefined;
+            
+            console.log('💬 [ScreenShareWorkspace] Calling handleSubmitMessage with:', {
+              messageText,
+              assistantInfo,
+              sessionId: activeSession?._id,
+              fileMetadata: screenshotMetadata
+            });
+            
+            await handleSubmitMessage(
+              messageText,
+              assistantInfo,
+              activeSession?._id,
+              screenshotMetadata
+            );
+            
+            console.log('✅ [ScreenShareWorkspace] Message sent successfully');
+          }
+        } catch (error) {
+          console.error('Failed to upload screenshot:', error);
+          // Send message without screenshot on error
+          const assistantInfo = currentAssistant ? { 
+            _id: currentAssistant._id, 
+            voice: currentAssistant.voice, 
+            name: currentAssistant.name 
+          } : undefined;
+          
+          await handleSubmitMessage(
+            messageText,
+            assistantInfo,
+            activeSession?._id,
+            undefined
+          );
+        }
       }
     } else {
       // Send without screenshot
+      console.log('📨 [ScreenShareWorkspace] Sending message without screenshot');
+      
       const assistantInfo = currentAssistant ? { 
         _id: currentAssistant._id, 
         voice: currentAssistant.voice, 
         name: currentAssistant.name 
       } : undefined;
+      
+      console.log('💬 [ScreenShareWorkspace] Calling handleSubmitMessage (no screenshot) with:', {
+        messageText,
+        assistantInfo,
+        sessionId: activeSession?._id,
+        fileMetadata
+      });
       
       await handleSubmitMessage(
         messageText,
@@ -202,6 +276,8 @@ ${currentAssistant?.description || 'Select an assistant to begin.'}
         activeSession?._id,
         fileMetadata
       );
+      
+      console.log('✅ [ScreenShareWorkspace] Message sent successfully (no screenshot)');
     }
   };
   
@@ -295,8 +371,46 @@ ${currentAssistant?.description || 'Select an assistant to begin.'}
       
       {/* Main Content Area */}
       <div className="flex-1 flex gap-4 p-4 min-h-0">
-        {/* Left Panel - Screen Preview */}
-        <div className="w-[380px] flex flex-col rounded-2xl bg-white/80 backdrop-blur-sm shadow-lg overflow-hidden">
+        {/* Left Panel - Chat (1/3) */}
+        <div className="flex-1 flex flex-col rounded-2xl bg-white/90 backdrop-blur-sm shadow-lg overflow-hidden">
+          {!activeSession ? (
+            <div className="flex-1 flex items-center justify-center p-8">
+              <div className="text-center">
+                <h3 className="text-lg font-semibold text-gray-700 mb-2">No Active Session</h3>
+                <p className="text-sm text-gray-500 mb-4">
+                  Please select an assistant from the assistants page first.
+                </p>
+                <button
+                  onClick={() => navigate('/admin/assistants')}
+                  className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium transition-colors shadow-sm"
+                >
+                  Go to Assistants
+                </button>
+              </div>
+            </div>
+          ) : (
+            <SBChatKitUI
+              messages={messages}
+              assistant={currentAssistant ? {
+                name: currentAssistant.name,
+                description: currentAssistant.description,
+                avatar: currentAssistant.avatarImage,
+                conversationStarters: currentAssistant.conversationStarters?.length
+                  ? currentAssistant.conversationStarters.map(cs => ({ ...cs }))
+                  : []
+              } : undefined}
+              assistantName={currentAssistant?.name || "AI Assistant"}
+              onSendMessage={handleSendMessage}
+              onClear={handleClear}
+              onToggleAudio={handleToggleAudio}
+              audioState={audioState}
+              isLoading={isStreaming}
+            />
+          )}
+        </div>
+        
+        {/* Middle Panel - Screen Preview (1/3) */}
+        <div className="flex-1 flex flex-col rounded-2xl bg-white/80 backdrop-blur-sm shadow-lg overflow-hidden">
           <div className="px-4 py-3">
             <h3 className="text-sm font-semibold text-gray-700 flex items-center">
               <Monitor className="h-4 w-4 mr-2" />
@@ -346,29 +460,8 @@ ${currentAssistant?.description || 'Select an assistant to begin.'}
           </div>
         </div>
         
-        {/* Center Panel - Chat */}
-        <div className="flex-1 flex flex-col rounded-2xl bg-white/90 backdrop-blur-sm shadow-lg overflow-hidden min-w-0">
-          <SBChatKitUI
-            messages={messages}
-            assistant={currentAssistant ? {
-              name: currentAssistant.name,
-              description: currentAssistant.description,
-              avatar: currentAssistant.avatarImage,
-              conversationStarters: currentAssistant.conversationStarters?.length
-                ? currentAssistant.conversationStarters.map(cs => ({ ...cs }))
-                : []
-            } : undefined}
-            assistantName={currentAssistant?.name || "AI Assistant"}
-            onSendMessage={handleSendMessage}
-            onClear={handleClear}
-            onToggleAudio={handleToggleAudio}
-            audioState={audioState}
-            isLoading={isStreaming}
-          />
-        </div>
-        
-        {/* Right Panel - Workspace Content */}
-        <div className="w-[380px] flex flex-col rounded-2xl bg-white/80 backdrop-blur-sm shadow-lg overflow-hidden">
+        {/* Right Panel - Agent Workspace (1/3) */}
+        <div className="flex-1 flex flex-col rounded-2xl bg-white/80 backdrop-blur-sm shadow-lg overflow-hidden">
           <div className="px-4 py-3">
             <h3 className="text-sm font-semibold text-gray-700">
               Workspace: {workspace}

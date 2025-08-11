@@ -34,8 +34,11 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
   const handleSubmitMessage = async (messageText: string) => {
     if (!messageText.trim() && selectedFiles.length === 0 && !isScreenSharing) return;
 
-    // If screen sharing is active, capture and attach current screenshot
-    if (isScreenSharing && selectedFiles.length === 0) {
+    // Skip automatic screenshot in workspace - it handles its own screenshots
+    const isInWorkspace = window.location.pathname.includes('/screenshare/');
+    
+    // If screen sharing is active, capture and attach current screenshot (but not in workspace)
+    if (isScreenSharing && selectedFiles.length === 0 && !isInWorkspace) {
       console.log('Screen sharing active, capturing screenshot...');
       
       try {
