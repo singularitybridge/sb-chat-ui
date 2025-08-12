@@ -100,3 +100,62 @@ When dealing with flexbox overflow issues where content gets cut off:
 - **Example**: In `AssistantsPage.tsx`, the chat container wrapper uses `flex-grow min-w-0` to properly contain long text
 - **Avoid**: Adding multiple overflow classes or max-width constraints when the issue is flex shrinking
 - **Key Pattern**: Let flexbox handle sizing naturally - just ensure containers can shrink with `min-w-0`
+
+## Screen Sharing & File Upload Features
+
+### Drag & Drop File Upload
+- **Location**: `ChatInput.tsx` component
+- **Features**: Visual drag overlay, file validation, multiple file support
+- **File Types**: Images, videos, PDFs, documents, CSV, JSON, audio files
+- **Preview**: Uses `FilePreview` component with file type icons
+
+### Screen Share Workspace
+- **Route**: `/screenshare/:workspace` (e.g., `/screenshare/home`)
+- **Component**: `src/pages/ScreenShareWorkspace.tsx`
+- **Layout**: Three equal columns - Chat | Screen Preview | Agent Workspace
+- **Features**:
+  - Automatic screenshot capture when sending messages
+  - Live screen preview with video element
+  - Full chat history with SBChatKitUI component
+  - MDX-rendered workspace content
+  - Session-independent workspace URLs
+
+### Screen Sharing Implementation
+- **Store**: `useScreenShareStore` (Zustand)
+- **Screenshot Naming**: `{sessionId}-screenshare.png`
+- **Upload Flow**:
+  1. Capture screenshot via `getDisplayMedia` API
+  2. Upload to `/content-file/upload` with `title` field (required)
+  3. Get `gcpStorageUrl` from response
+  4. Send to assistant via `/assistant/user-input` with attachment metadata
+- **Important**: ChatInput skips auto-capture in workspace (checks `window.location.pathname.includes('/screenshare/')`)
+
+### File Upload Service
+- **Endpoint**: `/content-file/upload`
+- **Required Fields**: `file` (FormData), `title` (string)
+- **Response**: Contains `gcpStorageUrl` for file access
+- **Utility**: Use `createFileMetadata()` from `fileUtils.ts` for consistency
+
+### Visual Design Patterns
+- **App Background**: Uses `DynamicBackground` component with Midjourney image
+- **Floating Containers**: `rounded-2xl bg-white/80 backdrop-blur-sm shadow-lg`
+- **No Borders**: Use shadows and backgrounds for separation
+- **Color Scheme**: Gradients, translucent overlays, dark background pattern
+- **Typography**: Consistent sizing, proper hierarchy
+
+### Session Management for Workspace
+- **Requirement**: Active session needed for screen share workspace
+- **Check**: Workspace shows "No Active Session" message if no assistant selected
+- **Navigation**: Must select assistant from `/admin/assistants` first
+- **State**: Uses `activeSession` from `useSessionStore`
+
+### API Integration Notes
+- **Authorization**: Use `Bearer ${localStorage.getItem('userToken')}`
+- **Base URL**: Use `import.meta.env.VITE_API_URL` (not hardcoded localhost)
+- **Error Handling**: Always provide fallback for failed uploads
+
+### MDX Content Rendering
+- **Component**: `MDXRenderer` from `sb-core-ui-kit`
+- **Styling**: Wrap in div with `prose` class for proper markdown styling
+- **HTML in MDX**: Use JSX syntax, not HTML strings (MDX parser handles JSX)
+- **Dynamic Content**: Can include session data, metrics, and real-time info

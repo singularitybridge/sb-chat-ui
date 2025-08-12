@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Monitor, StopCircle, Maximize2, Minimize2, X, CircleFadingPlus } from 'lucide-react';
+import { Monitor, StopCircle, Maximize2, Minimize2, X, CircleFadingPlus, Phone, PhoneOff } from 'lucide-react';
 import { useScreenShareStore } from '../store/useScreenShareStore';
 import { useChatStore } from '../store/chatStore';
 import { useSessionStore } from '../store/useSessionStore';
@@ -16,6 +16,8 @@ import { cn } from '../utils/cn';
 import { useAudioStore } from '../store/useAudioStore';
 import DynamicBackground, { setDynamicBackground } from '../components/DynamicBackground';
 import { createFileMetadata } from '../utils/fileUtils';
+import VoiceChat from '../components/VoiceChat/VoiceChat';
+import useVapiStore from '../store/useVapiStore';
 
 const ScreenShareWorkspace: React.FC = observer(() => {
   const { workspace } = useParams<{ workspace: string }>();
@@ -67,6 +69,8 @@ const ScreenShareWorkspace: React.FC = observer(() => {
     toggleAudio: handleToggleAudio
   } = useAudioStore();
   
+  const { isCallActive: isVoiceActive } = useVapiStore();
+  
   // Get current assistant from session
   const currentAssistant = activeSession?.assistantId 
     ? rootStore.getAssistantById(activeSession.assistantId)
@@ -75,6 +79,7 @@ const ScreenShareWorkspace: React.FC = observer(() => {
   // Local state
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [agentContent, setAgentContent] = useState<string>('');
+  const [showVoiceChat, setShowVoiceChat] = useState(false);
   
   // Refs
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -520,6 +525,30 @@ const ScreenShareWorkspace: React.FC = observer(() => {
         </div>
         
         <div className="flex items-center space-x-2">
+          {/* Voice Mode Toggle */}
+          <button
+            onClick={() => setShowVoiceChat(!showVoiceChat)}
+            className={cn(
+              "px-4 py-2 rounded-lg text-sm font-medium transition-all shadow-sm flex items-center gap-2",
+              showVoiceChat 
+                ? "bg-green-500 hover:bg-green-600 text-white" 
+                : "bg-gray-200/80 hover:bg-gray-300/80 text-gray-700"
+            )}
+            title={showVoiceChat ? 'Hide voice chat' : 'Show voice chat'}
+          >
+            {isVoiceActive ? (
+              <>
+                <PhoneOff className="h-4 w-4" />
+                Voice Active
+              </>
+            ) : (
+              <>
+                <Phone className="h-4 w-4" />
+                Voice Mode
+              </>
+            )}
+          </button>
+          
           <button
             onClick={toggleFullscreen}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -548,6 +577,13 @@ const ScreenShareWorkspace: React.FC = observer(() => {
           </button>
         </div>
       </div>
+      
+      {/* Voice Chat Overlay */}
+      {showVoiceChat && (
+        <div className="absolute top-20 right-4 z-20 w-96">
+          <VoiceChat className="animate-in fade-in slide-in-from-top-2 duration-300" />
+        </div>
+      )}
       
       {/* Main Content Area */}
       <div className="flex-1 flex gap-4 p-4 min-h-0">
