@@ -1,19 +1,15 @@
 /// file_path: src/components/sb-chat-kit-ui/chat-elements/Header.tsx
 import React, { useState } from 'react';
-import { CircleFadingPlus, Pause, Volume2, VolumeX, Monitor } from 'lucide-react';
+import { CircleFadingPlus, Monitor } from 'lucide-react';
 import { Avatar, AvatarStyles } from '../../Avatar';
 import { useNavigate } from 'react-router-dom';
 import { useSessionStore } from '../../../store/useSessionStore';
-
-type AudioState = 'disabled' | 'enabled' | 'playing';
 
 interface HeaderProps {
   title: string;
   description: string;
   avatar: string;
   onClear: () => void;
-  onToggleAudio: () => void;
-  audioState: AudioState;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -21,8 +17,6 @@ const Header: React.FC<HeaderProps> = ({
   description,
   avatar,
   onClear,
-  onToggleAudio,
-  audioState,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const navigate = useNavigate();
@@ -58,23 +52,6 @@ const Header: React.FC<HeaderProps> = ({
     );
   };
 
-  const renderAudioButton = () => {
-    switch (audioState) {
-      case 'disabled':
-        return (
-          <VolumeX className="w-6 h-6 text-gray-500 hover:text-primary-600" />
-        );
-      case 'enabled':
-        return (
-          <Volume2 className="w-6 h-6 text-lime-500 hover:text-primary-600" />
-        );
-      case 'playing':
-        return (
-          <Pause className="w-6 h-6 text-lime-500 hover:text-primary-600" />
-        );
-    }
-  };
-
   return (
     <div className="flex justify-between items-start space-x-4 rtl:space-x-reverse mb-4 p-3 border-b border-b-gray-200">
       <Avatar
@@ -96,15 +73,6 @@ const Header: React.FC<HeaderProps> = ({
           title="Share screen"
         >
           <Monitor className="w-6 h-6 text-gray-500 hover:text-primary-600" />
-        </button>
-        <button
-          onClick={onToggleAudio}
-          className="p-1 rounded-full transition-colors hover:bg-gray-100"
-          aria-label={
-            audioState === 'disabled' ? 'Enable audio' : 'Disable audio'
-          }
-        >
-          {renderAudioButton()}
         </button>
         <button
           onClick={onClear}

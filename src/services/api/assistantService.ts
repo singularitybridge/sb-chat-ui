@@ -37,8 +37,9 @@ export const getSessionMessages = (sessionId: string): Promise<any> =>
 interface ApiHandleUserInputBody {
   userInput: string;
   attachments?: Array<{
-    fileId: string;
-    url: string;
+    data?: string;  // Base64 string (no data URL prefix) - new direct upload
+    fileId?: string;  // Optional for backward compatibility
+    url?: string;  // Optional for backward compatibility
     mimeType: string;
     fileName: string;
   }>;

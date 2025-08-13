@@ -13,9 +13,10 @@ import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card'
 import Badge from '../components/Badge';
 import { CheckSquare, Users, Target, Brain, TrendingUp, Calendar } from 'lucide-react';
 import { cn } from '../utils/cn';
-import { useAudioStore } from '../store/useAudioStore';
 import DynamicBackground, { setDynamicBackground } from '../components/DynamicBackground';
-import { createFileMetadata } from '../utils/fileUtils';
+import { fileToBase64Attachment, Base64Attachment } from '../utils/base64Utils';
+import { uploadContentFile } from '../services/api/contentFileService';
+import { useUploadPreferencesStore } from '../store/useUploadPreferencesStore';
 import VoiceChat from '../components/VoiceChat/VoiceChat';
 import useVapiStore from '../store/useVapiStore';
 
@@ -51,6 +52,8 @@ const ScreenShareWorkspace: React.FC = observer(() => {
     sessionId: screenShareSessionId
   } = useScreenShareStore();
   
+  const { saveToCloud } = useUploadPreferencesStore();
+  
   const { 
     messages, 
     handleSubmitMessage, 
@@ -64,10 +67,8 @@ const ScreenShareWorkspace: React.FC = observer(() => {
     clearAndRenewActiveSession 
   } = useSessionStore();
   
-  const {
-    audioState,
-    toggleAudio: handleToggleAudio
-  } = useAudioStore();
+  // Audio store not needed after removing audio toggle from UI
+  // const { audioState, toggleAudio: handleToggleAudio } = useAudioStore();
   
   const { isCallActive: isVoiceActive } = useVapiStore();
   
@@ -345,10 +346,10 @@ const ScreenShareWorkspace: React.FC = observer(() => {
     }
   };
 
-  const handleSendMessage = async (messageText: string, fileMetadata?: any) => {
+  const handleSendMessage = async (messageText: string, attachments?: Base64Attachment[]) => {
     console.log('🚀 [ScreenShareWorkspace] handleSendMessage called', {
       messageText,
-      hasFileMetadata: !!fileMetadata,
+      hasAttachments: !!attachments,
       activeSessionId: activeSession?._id,
       currentAssistantId: currentAssistant?._id,
       isScreenSharing
@@ -372,31 +373,33 @@ const ScreenShareWorkspace: React.FC = observer(() => {
         console.log('📤 [ScreenShareWorkspace] Uploading screenshot:', fileName);
         
         try {
-          // Upload the screenshot to get gcpStorageUrl
-          const formData = new FormData();
+          // Convert screenshot to base64 attachment
           const file = new File([screenshot], fileName, { type: 'image/png' });
-          formData.append('file', file);
-          formData.append('title', fileName); // Add title field
+          const screenshotAttachment = await fileToBase64Attachment(file);
           
-          const uploadResponse = await fetch(`${import.meta.env.VITE_API_URL}/content-file/upload`, {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${localStorage.getItem('userToken')}`
-            },
-            body: formData
-          });
-          
-          if (!uploadResponse.ok) {
-            throw new Error('Failed to upload screenshot');
+          // If saveToCloud is enabled, also upload to cloud storage
+          if (saveToCloud) {
+            try {
+              const formData = new FormData();
+              formData.append('file', file);
+              formData.append('title', fileName);
+              
+              const uploadResponse = await uploadContentFile(formData);
+              
+              if (uploadResponse?.data?.gcpStorageUrl) {
+                screenshotAttachment.cloudUrl = uploadResponse.data.gcpStorageUrl;
+                console.log('📤 Screenshot uploaded to cloud:', uploadResponse.data.gcpStorageUrl);
+              }
+            } catch (uploadError) {
+              console.error('Cloud upload failed (continuing with base64):', uploadError);
+            }
           }
           
-          const uploadResult = await uploadResponse.json();
-          console.log('✅ [ScreenShareWorkspace] Upload successful:', uploadResult);
-          
-          if (uploadResult.success && uploadResult.data) {
-            // Use createFileMetadata utility for consistency
-            const screenshotMetadata = createFileMetadata(file, uploadResult);
-            console.log('📎 [ScreenShareWorkspace] Created file metadata:', screenshotMetadata);
+          console.log('📎 [ScreenShareWorkspace] Created attachment:', {
+            fileName: screenshotAttachment.fileName,
+            mimeType: screenshotAttachment.mimeType,
+            hasCloudUrl: !!screenshotAttachment.cloudUrl
+          });
             
             // Send message with screenshot
             const assistantInfo = currentAssistant ? { 
@@ -409,20 +412,19 @@ const ScreenShareWorkspace: React.FC = observer(() => {
               messageText,
               assistantInfo,
               sessionId: activeSession?._id,
-              fileMetadata: screenshotMetadata
+              attachmentCount: 1
             });
             
             await handleSubmitMessage(
               messageText,
               assistantInfo,
               activeSession?._id,
-              screenshotMetadata
+              [screenshotAttachment]
             );
             
             console.log('✅ [ScreenShareWorkspace] Message sent successfully');
-          }
         } catch (error) {
-          console.error('Failed to upload screenshot:', error);
+          console.error('Failed to process screenshot:', error);
           // Send message without screenshot on error
           const assistantInfo = currentAssistant ? { 
             _id: currentAssistant._id, 
@@ -452,14 +454,14 @@ const ScreenShareWorkspace: React.FC = observer(() => {
         messageText,
         assistantInfo,
         sessionId: activeSession?._id,
-        fileMetadata
+        attachments
       });
       
       await handleSubmitMessage(
         messageText,
         assistantInfo,
         activeSession?._id,
-        fileMetadata
+        attachments
       );
       
       console.log('✅ [ScreenShareWorkspace] Message sent successfully (no screenshot)');
@@ -618,8 +620,6 @@ const ScreenShareWorkspace: React.FC = observer(() => {
               assistantName={currentAssistant?.name || 'AI Assistant'}
               onSendMessage={handleSendMessage}
               onClear={handleClear}
-              onToggleAudio={handleToggleAudio}
-              audioState={audioState}
               isLoading={isStreaming}
             />
           )}

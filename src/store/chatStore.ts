@@ -22,6 +22,7 @@ import {
 import { useAudioStore } from './useAudioStore';
 import { messageCache } from '../utils/messageCache';
 import { logger } from '../services/LoggingService';
+import { Base64Attachment } from '../utils/base64Utils';
 
 // Helper function (can be moved to utils)
 const removeRAGCitations = (text: string): string => {
@@ -44,7 +45,7 @@ interface ChatStoreState {
     messageText: string, 
     assistant: AssistantInfo | undefined,
     activeSessionId: string | null | undefined,
-    fileMetadata?: import('../types/chat').FileMetadata
+    attachments?: Base64Attachment[]
   ) => Promise<void>;
   
   handleClearChat: (
@@ -222,7 +223,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
     }
   },
   
-  handleSubmitMessage: async (messageText, assistant, activeSessionId, fileMetadata) => {
+  handleSubmitMessage: async (messageText, assistant, activeSessionId, attachments) => {
     if (get().isLoading) return;
 
     // Clear the newSessionFromClear flag when user starts sending messages
@@ -243,8 +244,19 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
       content: messageText,
       role: 'user',
       createdAt: Date.now() / 1000,
-      metadata: { message_type: fileMetadata ? 'file' : 'text' },
-      fileMetadata,
+      metadata: { message_type: attachments && attachments.length > 0 ? 'file' : 'text' },
+      // Store attachment info for display purposes
+      fileMetadata: attachments && attachments.length > 0 ? {
+        type: attachments[0].mimeType.startsWith('image/') ? 'image' : 
+              attachments[0].mimeType.startsWith('video/') ? 'video' :
+              attachments[0].mimeType.startsWith('audio/') ? 'audio' : 'file',
+        fileName: attachments[0].fileName,
+        mimeType: attachments[0].mimeType,
+        // Use cloud URL if available, otherwise use data URL
+        url: attachments[0].cloudUrl || `data:${attachments[0].mimeType};base64,${attachments[0].data}`,
+        fileSize: Math.round(attachments[0].data.length * 0.75), // Approximate size from base64
+        gcpStorageUrl: attachments[0].cloudUrl // Store cloud URL separately if available
+      } : undefined,
     };
     set((state) => {
       const updatedMessages = [...state.messages, userMessage];
@@ -269,21 +281,26 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
 
     if (assistant && activeSessionId) {
       try {
-        // Prepare request body with attachments if fileMetadata is provided
+        // Prepare request body with base64 attachments
         const requestBody: any = { userInput: messageText };
         
-        if (fileMetadata) {
-          requestBody.attachments = [{
-            fileId: fileMetadata.id || '',
-            url: fileMetadata.url,
-            mimeType: fileMetadata.mimeType,
-            fileName: fileMetadata.fileName || 'file'
-          }];
-          console.log('📎 [CHAT_STORE] Sending message with file attachment:', {
-            fileName: fileMetadata.fileName,
-            mimeType: fileMetadata.mimeType,
-            fileId: fileMetadata.id,
-            url: fileMetadata.url
+        if (attachments && attachments.length > 0) {
+          // If cloud URL is available, send it as url field (backward compatible)
+          // Otherwise, send base64 data
+          requestBody.attachments = attachments.map(a => ({
+            data: a.cloudUrl ? undefined : a.data, // Only send base64 if no cloud URL
+            url: a.cloudUrl, // Send cloud URL if available
+            mimeType: a.mimeType,
+            fileName: a.fileName
+          }));
+          logger.debug('[CHAT_STORE] Sending message with attachments', {
+            count: attachments.length,
+            files: attachments.map(a => ({ 
+              fileName: a.fileName, 
+              mimeType: a.mimeType,
+              hasCloudUrl: !!a.cloudUrl,
+              hasBase64: !a.cloudUrl
+            }))
           });
         }
 

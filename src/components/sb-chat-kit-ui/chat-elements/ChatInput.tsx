@@ -2,17 +2,19 @@ import React, { useState, useRef, useEffect } from 'react';
 import { PaperAirplaneIcon, PaperClipIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { AudioRecorder } from '../../sb-core-ui-kit/AudioRecorder';
-import { uploadContentFile } from '../../../services/api/contentFileService';
 import { FilePreview, FilePreviewItem } from './FilePreview';
 import { useScreenShareStore } from '../../../store/useScreenShareStore';
 import { 
   validateFile, 
-  createFileMetadata, 
   cleanupPreviewUrls 
 } from '../../../utils/fileUtils';
+import { fileToBase64Attachment, Base64Attachment } from '../../../utils/base64Utils';
+import { uploadContentFile } from '../../../services/api/contentFileService';
+import { useUploadPreferencesStore } from '../../../store/useUploadPreferencesStore';
+import { CloudArrowUpIcon } from '@heroicons/react/24/outline';
 
 interface ChatInputProps {
-  onSendMessage: (message: string, fileMetadata?: import('../../../types/chat').FileMetadata) => void;
+  onSendMessage: (message: string, attachments?: Base64Attachment[]) => void;
 }
 
 const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
@@ -30,6 +32,9 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
   
   // Get screen share state
   const { isActive: isScreenSharing, captureScreenshot, sessionId: screenShareSessionId } = useScreenShareStore();
+  
+  // Get upload preferences
+  const { saveToCloud, setSaveToCloud } = useUploadPreferencesStore();
 
   const handleSubmitMessage = async (messageText: string) => {
     if (!messageText.trim() && selectedFiles.length === 0 && !isScreenSharing) return;
@@ -39,7 +44,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
     
     // If screen sharing is active, capture and attach current screenshot (but not in workspace)
     if (isScreenSharing && selectedFiles.length === 0 && !isInWorkspace) {
-      console.log('Screen sharing active, capturing screenshot...');
+      // Screen sharing active, capturing screenshot
       
       try {
         const screenshot = await captureScreenshot();
@@ -55,28 +60,33 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
             { type: 'image/png' }
           );
           
-          // Add screenshot to selected files
-          const fileItem: FilePreviewItem = {
-            id: `screen-auto-${Date.now()}`,
-            file: screenshotFile
-          };
-          
-          // Upload the screenshot with the message
+          // Process screenshot
           setIsUploading(true);
           try {
-            const formData = new FormData();
-            formData.append('file', screenshotFile);
-            formData.append('title', screenshotFile.name);
+            const attachment = await fileToBase64Attachment(screenshotFile);
             
-            const response = await uploadContentFile(formData);
-            
-            if (response && response.data) {
-              const fileMetadata = createFileMetadata(screenshotFile, response);
-              setMessage('');
-              onSendMessage(messageText || 'Sharing my screen', fileMetadata);
+            // If saveToCloud is enabled, also upload to cloud storage
+            if (saveToCloud) {
+              try {
+                const formData = new FormData();
+                formData.append('file', screenshotFile);
+                formData.append('title', screenshotFile.name);
+                
+                const uploadResponse = await uploadContentFile(formData);
+                
+                if (uploadResponse?.data?.gcpStorageUrl) {
+                  (attachment as any).cloudUrl = uploadResponse.data.gcpStorageUrl;
+                  // Screenshot uploaded to cloud
+                }
+              } catch (uploadError) {
+                console.error('Cloud upload failed (continuing with base64):', uploadError);
+              }
             }
+            
+            setMessage('');
+            onSendMessage(messageText || 'Sharing my screen', [attachment]);
           } catch (error) {
-            console.error('Error uploading screenshot:', error);
+            console.error('Error processing screenshot:', error);
           } finally {
             setIsUploading(false);
           }
@@ -88,7 +98,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
         onSendMessage(messageText);
       }
     } else if (selectedFiles.length > 0) {
-      // If there are manually selected files, upload them
+      // If there are manually selected files, convert them to base64
       await handleFilesUpload(messageText);
     } else {
       // Send text message only
@@ -101,52 +111,68 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
     setIsUploading(true);
     
     try {
-      // Upload files sequentially to avoid overwhelming the server
+      const attachments: Base64Attachment[] = [];
+      
+      // Process all files
       for (const fileItem of selectedFiles) {
         try {
           setUploadProgress(prev => ({ ...prev, [fileItem.id]: 0 }));
           
-          // Validate file before upload
+          // Validate file before processing
           const validation = validateFile(fileItem.file);
           if (!validation.isValid) {
             setUploadErrors(prev => ({ ...prev, [fileItem.id]: validation.error || 'Invalid file' }));
             continue;
           }
 
-          const formData = new FormData();
-          formData.append('file', fileItem.file);
-          formData.append('title', fileItem.file.name);
-
-          setUploadProgress(prev => ({ ...prev, [fileItem.id]: 50 }));
+          setUploadProgress(prev => ({ ...prev, [fileItem.id]: 30 }));
           
-          const response = await uploadContentFile(formData);
+          // Convert file to base64 attachment
+          const attachment = await fileToBase64Attachment(fileItem.file);
           
-          setUploadProgress(prev => ({ ...prev, [fileItem.id]: 100 }));
-          
-          if (response && response.data) {
-            // Create file metadata and send as message
-            const fileMetadata = createFileMetadata(fileItem.file, response);
-            onSendMessage(messageText || `Shared ${fileItem.file.name}`, fileMetadata);
-          } else {
-            setUploadErrors(prev => ({ 
-              ...prev, 
-              [fileItem.id]: 'Upload succeeded but received unexpected response' 
-            }));
+          // If saveToCloud is enabled, also upload to cloud storage
+          if (saveToCloud) {
+            try {
+              setUploadProgress(prev => ({ ...prev, [fileItem.id]: 60 }));
+              
+              const formData = new FormData();
+              formData.append('file', fileItem.file);
+              formData.append('title', fileItem.file.name);
+              
+              const uploadResponse = await uploadContentFile(formData);
+              
+              if (uploadResponse?.data?.gcpStorageUrl) {
+                // Add the cloud URL to the attachment for reference
+                (attachment as any).cloudUrl = uploadResponse.data.gcpStorageUrl;
+                  // File uploaded to cloud
+              }
+            } catch (uploadError) {
+              console.error('Cloud upload failed (continuing with base64):', uploadError);
+              // Continue with base64 even if cloud upload fails
+            }
           }
+          
+          attachments.push(attachment);
+          setUploadProgress(prev => ({ ...prev, [fileItem.id]: 100 }));
         } catch (error) {
-          console.error('Error uploading file:', fileItem.file.name, error);
+          console.error('Error processing file:', fileItem.file.name, error);
           setUploadErrors(prev => ({ 
             ...prev, 
-            [fileItem.id]: 'Failed to upload file. Please try again.' 
+            [fileItem.id]: 'Failed to process file. Please try again.' 
           }));
         }
       }
       
-      // Clear the form after successful uploads
+      // Send message with all attachments at once
+      if (attachments.length > 0) {
+        onSendMessage(messageText || `Shared ${attachments.length} file(s)`, attachments);
+      }
+      
+      // Clear the form after successful processing
       setMessage('');
       clearSelectedFiles();
     } catch (error) {
-      console.error('Error in file upload process:', error);
+      console.error('Error in file processing:', error);
     } finally {
       setIsUploading(false);
       setUploadProgress({});
@@ -198,31 +224,39 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
       : `screenshot-${Date.now()}.png`;
     
     const file = new File([blob], fileName, { type: 'image/png' });
-    console.log('handleScreenCapture called:', file.name, metadata);
+    // Handle screen capture
     
     // Auto-send screen captures immediately
     setIsUploading(true);
     
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('title', file.name);
+      // Convert file to base64 attachment
+      const attachment = await fileToBase64Attachment(file);
       
-      console.log('Uploading screen capture...');
-      const response = await uploadContentFile(formData);
-      
-      if (response && response.data) {
-        // Create file metadata and send as message
-        const fileMetadata = createFileMetadata(file, response);
-        const message = `Screen capture #${metadata?.captureNumber || 1} at ${new Date().toLocaleTimeString()}`;
-        
-        console.log('Sending screen capture message');
-        onSendMessage(message, fileMetadata);
-      } else {
-        console.error('Failed to upload screen capture');
+      // If saveToCloud is enabled, also upload to cloud storage
+      if (saveToCloud) {
+        try {
+          const formData = new FormData();
+          formData.append('file', file);
+          formData.append('title', file.name);
+          
+          const uploadResponse = await uploadContentFile(formData);
+          
+          if (uploadResponse?.data?.gcpStorageUrl) {
+            (attachment as any).cloudUrl = uploadResponse.data.gcpStorageUrl;
+            // Screen capture uploaded to cloud
+          }
+        } catch (uploadError) {
+          console.error('Cloud upload failed (continuing with base64):', uploadError);
+        }
       }
+      
+      const message = `Screen capture #${metadata?.captureNumber || 1} at ${new Date().toLocaleTimeString()}`;
+      
+      // Sending screen capture message with attachment
+      onSendMessage(message, [attachment]);
     } catch (error) {
-      console.error('Error uploading screen capture:', error);
+      console.error('Error processing screen capture:', error);
     } finally {
       setIsUploading(false);
     }
@@ -379,11 +413,37 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
       
       {/* File preview area */}
       {selectedFiles.length > 0 && (
-        <FilePreview
-          files={selectedFiles}
-          onRemoveFile={handleRemoveFile}
-          className="mx-1"
-        />
+        <div className="mx-1 space-y-2">
+          <FilePreview
+            files={selectedFiles}
+            onRemoveFile={handleRemoveFile}
+          />
+          <div className="flex items-center justify-between px-2">
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-gray-600">
+                {selectedFiles.length} {selectedFiles.length === 1 ? 'file' : 'files'} selected
+              </span>
+              <button
+                onClick={clearSelectedFiles}
+                className="text-sm text-red-600 hover:text-red-700"
+              >
+                Clear all
+              </button>
+            </div>
+            <button
+              onClick={() => setSaveToCloud(!saveToCloud)}
+              className={`flex items-center space-x-1 px-3 py-1 rounded-lg text-sm transition-colors ${
+                saveToCloud 
+                  ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' 
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+              title={saveToCloud ? 'Files will be saved to cloud' : 'Files will be sent directly'}
+            >
+              <CloudArrowUpIcon className="h-4 w-4" />
+              <span>{saveToCloud ? 'Cloud: ON' : 'Cloud: OFF'}</span>
+            </button>
+          </div>
+        </div>
       )}
 
       {/* Upload errors */}

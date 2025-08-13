@@ -15,6 +15,7 @@ import {
 import { useEventEmitter } from '../../services/mittEmitter'; // emitter removed
 import { IAssistant } from '../../store/models/Assistant';
 import { SBChatKitUI } from '../sb-chat-kit-ui/SBChatKitUI';
+import { Base64Attachment } from '../../utils/base64Utils';
 // import { textToSpeech, TTSVoice } from '../../services/api/voiceService'; // Moved to Zustand store
 import i18n from '../../i18n';
 import { changeActiveSessionLanguage } from '../../services/api/sessionService';
@@ -51,10 +52,8 @@ const ChatContainer = observer(() => {
     updateActionExecutionMessage: storeUpdateActionExecutionMessage,
   } = useChatStore();
 
-  // Audio store selectors
+  // Audio store selectors (keeping for potential future use)
   const {
-    audioState,
-    toggleAudio: storeToggleAudio,
     setAudioRef: storeSetAudioRef,
   } = useAudioStore();
 
@@ -144,14 +143,9 @@ const ChatContainer = observer(() => {
   }, [messages]); // messages from Zustand store
 
   // Submit message handler now calls Zustand action
-  const handleSubmit = (messageText: string, fileMetadata?: import('../../types/chat').FileMetadata) => {
+  const handleSubmit = (messageText: string, attachments?: Base64Attachment[]) => {
     const assistantInfo = assistant ? { _id: assistant._id, voice: assistant.voice, name: assistant.name } : undefined;
-    storeHandleSubmitMessage(messageText, assistantInfo, activeSession?._id, fileMetadata);
-  };
-
-  // Toggle audio handler now calls audio store action
-  const handleToggleAudio = () => {
-    storeToggleAudio();
+    storeHandleSubmitMessage(messageText, assistantInfo, activeSession?._id, attachments);
   };
 
   // Set audio ref in Zustand store
@@ -231,8 +225,6 @@ const ChatContainer = observer(() => {
         assistantName="AI Assistant" // This could also come from assistant.name if preferred
         onSendMessage={handleSubmit} // Use new handleSubmit
         onClear={handleClear} // Use new handleClear
-        onToggleAudio={handleToggleAudio} // Use new handleToggleAudio
-        audioState={audioState}
         isLoading={isLoading}
       />
       <audio ref={localAudioRef} style={{ display: 'none' }} /> {/* Use localAudioRef */}

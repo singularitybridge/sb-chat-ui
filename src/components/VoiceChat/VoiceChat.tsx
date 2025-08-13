@@ -17,6 +17,7 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ className = '', compact = false }
     isMuted,
     isSpeaking,
     isListening,
+    isProcessing,
     currentTranscript,
     currentResponse,
     messages,
@@ -33,10 +34,12 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ className = '', compact = false }
   
   // Initialize VAPI on mount
   useEffect(() => {
+    console.log('🎙️ VoiceChat component mounted - initializing VAPI');
     initializeVapi();
     
     return () => {
       // Cleanup on unmount
+      console.log('🎙️ VoiceChat component unmounting');
       if (isCallActive) {
         endCall();
       }
@@ -54,6 +57,7 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ className = '', compact = false }
   const getStatusText = () => {
     if (isConnecting) return 'Connecting...';
     if (!isCallActive) return 'Voice Chat Inactive';
+    if (isProcessing) return 'Processing...';
     if (isSpeaking) return 'Assistant Speaking...';
     if (isListening) return 'Listening...';
     return 'Ready';
@@ -61,6 +65,7 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ className = '', compact = false }
   
   const getStatusColor = () => {
     if (!isCallActive) return 'bg-gray-500';
+    if (isProcessing) return 'bg-purple-500';
     if (isSpeaking) return 'bg-blue-500';
     if (isListening) return 'bg-green-500';
     return 'bg-yellow-500';
@@ -132,7 +137,9 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ className = '', compact = false }
                 <motion.div
                   key={i}
                   className={`w-1 bg-gradient-to-t ${
-                    isSpeaking 
+                    isProcessing
+                      ? 'from-purple-400 to-purple-600'
+                      : isSpeaking 
                       ? 'from-blue-400 to-blue-600' 
                       : isListening 
                       ? 'from-green-400 to-green-600'
@@ -144,7 +151,7 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ className = '', compact = false }
                       : 10
                   }}
                   transition={{
-                    duration: 0.5,
+                    duration: isProcessing ? 0.3 : 0.5,
                     repeat: Infinity,
                     delay: i * 0.05
                   }}
@@ -210,6 +217,12 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ className = '', compact = false }
           >
             <p className="text-sm font-medium text-green-800 mb-1">You said:</p>
             <p className="text-gray-700">{currentTranscript}</p>
+            {isProcessing && (
+              <div className="flex items-center gap-2 mt-2">
+                <Loader2 className="w-4 h-4 animate-spin text-purple-600" />
+                <span className="text-sm text-purple-600">Processing with AI agent...</span>
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

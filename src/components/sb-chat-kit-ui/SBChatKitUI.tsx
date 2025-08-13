@@ -14,6 +14,7 @@ import { CsvMessage } from './chat-elements/CsvMessage'; // Added CsvMessage
 import { dotWave } from 'ldrs';
 import { ActionExecutionMessage } from './chat-elements/ActionExecutionMessage';
 import { isImageFile } from '../../utils/fileUtils';
+import { Base64Attachment } from '../../utils/base64Utils';
 
 interface Metadata {
   message_type: string;
@@ -35,8 +36,6 @@ interface ChatMessage {
   fileMetadata?: import('../../types/chat').FileMetadata;
 }
 
-type AudioState = 'disabled' | 'enabled' | 'playing';
-
 interface SBChatKitUIProps {
   messages: ChatMessage[];
   assistant?: {
@@ -46,12 +45,10 @@ interface SBChatKitUIProps {
     conversationStarters?: Array<{ key: string; value: string }>;
   };
   assistantName: string;
-  onSendMessage: (message: string, fileMetadata?: import('../../types/chat').FileMetadata) => void;
+  onSendMessage: (message: string, attachments?: Base64Attachment[]) => void;
   onClear: () => void;
   className?: string;
   style?: React.CSSProperties;
-  onToggleAudio: () => void;
-  audioState: AudioState;
   isLoading: boolean;
 }
 
@@ -61,8 +58,6 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
   assistantName,
   onSendMessage,
   onClear,
-  onToggleAudio,
-  audioState,
   className = '',
   style = {},  
   isLoading,
@@ -106,11 +101,11 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
     setChatStarted(false);
   };
 
-  const handleSendMessage = (message: string, fileMetadata?: import('../../types/chat').FileMetadata) => {
+  const handleSendMessage = (message: string, attachments?: Base64Attachment[]) => {
     if (!chatStarted) {
       setChatStarted(true);
     }
-    onSendMessage(message, fileMetadata);
+    onSendMessage(message, attachments);
   };
 
   return (
@@ -133,8 +128,6 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
             description={assistant?.description || ''}
             avatar={assistant?.avatar || ''}
             onClear={handleClearChat}
-            onToggleAudio={onToggleAudio}
-            audioState={audioState}
           />
 
           <div className="flex-grow overflow-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-300">

@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import Vapi from '@vapi-ai/web';
 import { vapiConfig } from '../config/vapi.config';
+import { useChatStore } from './chatStore';
 
 interface VapiMessage {
   type: 'user' | 'assistant' | 'system';
@@ -28,6 +29,7 @@ interface VapiStore {
   // Voice activity
   isSpeaking: boolean;
   isListening: boolean;
+  isProcessing: boolean;
   
   // Messages and transcripts
   messages: VapiMessage[];
@@ -44,7 +46,7 @@ interface VapiStore {
   endCall: () => void;
   toggleMute: () => void;
   sendMessage: (message: string) => void;
-  processAIResponse: (query: string, sessionId: string, assistantId: string) => Promise<void>;
+  processAIResponse: (query: string, sessionId: string, assistantId: string) => Promise<any>;
   
   // Internal actions
   addMessage: (message: VapiMessage) => void;
@@ -55,6 +57,29 @@ interface VapiStore {
   cleanup: () => void;
 }
 
+// Helper function to make responses more conversational
+const makeConversational = (response: string): string => {
+  // Remove markdown formatting for voice
+  let conversational = response
+    .replace(/#{1,6}\s/g, '') // Remove headers
+    .replace(/\*\*/g, '') // Remove bold
+    .replace(/\*/g, '') // Remove italics
+    .replace(/```[\s\S]*?```/g, 'I\'ve shown you some code.') // Replace code blocks
+    .replace(/`/g, '') // Remove inline code
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Convert links to text
+    .replace(/\n{2,}/g, '. ') // Replace multiple newlines with periods
+    .replace(/\n/g, ' '); // Replace single newlines with spaces
+  
+  // Shorten if too long (more than 2-3 sentences for voice)
+  const sentences = conversational.split(/[.!?]+/).filter(s => s.trim());
+  if (sentences.length > 3) {
+    // Take first 2-3 sentences and add a summary indicator
+    conversational = sentences.slice(0, 3).join('. ') + '. I\'ve displayed more details in the chat.';
+  }
+  
+  return conversational;
+};
+
 const useVapiStore = create<VapiStore>((set, get) => ({
   // Initial state
   vapi: null,
@@ -63,6 +88,7 @@ const useVapiStore = create<VapiStore>((set, get) => ({
   isMuted: false,
   isSpeaking: false,
   isListening: false,
+  isProcessing: false,
   messages: [],
   currentTranscript: '',
   currentResponse: null,
@@ -79,7 +105,7 @@ const useVapiStore = create<VapiStore>((set, get) => ({
       
       // Set up event listeners
       vapiInstance.on('call-start', () => {
-        console.log('VAPI call started');
+        console.log('✅ VAPI call started - listening for speech...');
         set({ 
           isCallActive: true, 
           isConnecting: false,
@@ -99,11 +125,22 @@ const useVapiStore = create<VapiStore>((set, get) => ({
       });
       
       vapiInstance.on('speech-start', () => {
+        console.log('🔊 Assistant started speaking');
         set({ isSpeaking: true, isListening: false });
       });
       
       vapiInstance.on('speech-end', () => {
+        console.log('🔇 Assistant stopped speaking');
         set({ isSpeaking: false });
+      });
+      
+      // Add more event listeners for debugging
+      vapiInstance.on('transcript' as any, (transcript: any) => {
+        console.log('📜 Direct transcript event:', transcript);
+      });
+      
+      vapiInstance.on('conversation-update' as any, (update: any) => {
+        console.log('💬 Conversation update:', update);
       });
       
       vapiInstance.on('volume-level', (level: number) => {
@@ -117,36 +154,111 @@ const useVapiStore = create<VapiStore>((set, get) => ({
       });
       
       // Handle messages
-      vapiInstance.on('message', (message: any) => {
-        console.debug('VAPI message received:', message);
+      vapiInstance.on('message', async (message: any) => {
+        console.log('🎤 VAPI message received:', message.type, message);
         
+        // Handle all transcript types
         if (message.type === 'transcript') {
-          const { transcript } = message;
-          const vapiMessage: VapiMessage = {
-            type: transcript.role === 'user' ? 'user' : 'assistant',
-            content: transcript.text,
+          const { role, transcript, transcriptType } = message;
+          console.log(`📝 Transcript - Role: ${role}, Type: ${transcriptType}, Text: "${transcript}"`);
+          
+          // Process user transcripts (both partial and final)
+          if (role === 'user' && transcript && transcript.trim()) {
+            console.log('🗣️ User said:', transcript);
+            
+            // Only process final transcripts to avoid multiple calls
+            if (transcriptType === 'final') {
+              set({ isListening: true, currentTranscript: transcript, isProcessing: true });
+            
+              // Add user message to local history
+              const userMessage: VapiMessage = {
+                type: 'user',
+                content: transcript,
+                timestamp: new Date(),
+                metadata: message
+              };
+              get().addMessage(userMessage);
+              
+              // IMMEDIATELY process through our AI backend
+              try {
+                const sessionId = localStorage.getItem('activeSessionId');
+                const assistantId = localStorage.getItem('activeAssistantId');
+                
+                console.log('🤖 Processing with AI agent...');
+                // Process through our AI backend
+                const response = await get().processAIResponse(
+                  transcript,
+                  sessionId || '',
+                  assistantId || ''
+                );
+                
+                console.log('✅ AI Response received:', response);
+                
+                // Tell VAPI to speak the response
+                if (response && vapiInstance) {
+                  // Interrupt any current speech and say our response
+                  vapiInstance.say(response.shortResponse);
+                  console.log('🔊 Told VAPI to speak:', response.shortResponse);
+                }
+                
+                set({ isProcessing: false, currentTranscript: '' });
+              } catch (error) {
+                console.error('Error processing user message:', error);
+                set({ isProcessing: false });
+                
+                // Tell VAPI about the error
+                if (vapiInstance) {
+                  vapiInstance.say("I'm having trouble processing that request. Please try again.");
+                }
+              }
+            }
+          }
+        }
+        
+        // Also handle voice-input events (user speech detection)
+        if (message.type === 'voice-input' && message.input) {
+          console.log('🎙️ Voice input detected:', message.input);
+          
+          set({ isListening: true, currentTranscript: message.input, isProcessing: true });
+          
+          // Add user message to local history
+          const userMessage: VapiMessage = {
+            type: 'user',
+            content: message.input,
             timestamp: new Date(),
             metadata: message
           };
+          get().addMessage(userMessage);
           
-          get().addMessage(vapiMessage);
-          
-          // Process user input through our AI backend
-          if (transcript.role === 'user') {
-            set({ isListening: true, currentTranscript: transcript.text });
-            
-            // Get session info from the chat store
+          // Process through our AI backend
+          try {
             const sessionId = localStorage.getItem('activeSessionId');
             const assistantId = localStorage.getItem('activeAssistantId');
             
-            if (sessionId && assistantId) {
-              get().processAIResponse(transcript.text, sessionId, assistantId);
+            console.log('🤖 Processing voice input with AI agent...');
+            const response = await get().processAIResponse(
+              message.input,
+              sessionId || '',
+              assistantId || ''
+            );
+            
+            console.log('✅ AI Response for voice input:', response);
+            
+            // Tell VAPI to speak the response
+            if (response && vapiInstance) {
+              // Interrupt and speak our response immediately
+              vapiInstance.say(response.shortResponse, false);
+              console.log('🔊 Speaking AI response:', response.shortResponse);
             }
-          } else if (transcript.role === 'assistant') {
-            set({ 
-              currentTranscript: '',
-              isListening: false 
-            });
+            
+            set({ isProcessing: false, currentTranscript: '' });
+          } catch (error) {
+            console.error('Error processing voice input:', error);
+            set({ isProcessing: false });
+            
+            if (vapiInstance) {
+              vapiInstance.say("I'm having trouble processing that request. Please try again.");
+            }
           }
         }
         
@@ -154,18 +266,23 @@ const useVapiStore = create<VapiStore>((set, get) => ({
           // Handle conversation updates
           console.debug('Conversation update:', message);
         }
-        
-        if (message.type === 'function-call') {
-          // Handle function calls if needed
-          console.debug('Function call:', message);
-        }
       });
       
+      // Catch ALL events for debugging
+      const originalEmit = (vapiInstance as any).emit;
+      (vapiInstance as any).emit = function(event: string, ...args: any[]) {
+        if (!['volume-level'].includes(event)) { // Skip noisy events
+          console.log(`🔵 VAPI Event: ${event}`, args);
+        }
+        return originalEmit.apply(vapiInstance, [event as any, ...args]);
+      };
+      
       vapiInstance.on('error', (error: any) => {
-        console.error('VAPI error:', error);
+        console.error('❌ VAPI error:', error);
         set({ 
           isCallActive: false,
-          isConnecting: false
+          isConnecting: false,
+          isProcessing: false
         });
       });
       
@@ -189,17 +306,13 @@ const useVapiStore = create<VapiStore>((set, get) => ({
       if (sessionId) localStorage.setItem('activeSessionId', sessionId);
       if (assistantId) localStorage.setItem('activeAssistantId', assistantId);
       
-      // Start with custom assistant config or use default from config
+      // Start with the configured assistant ID
       if (vapiConfig.assistantId) {
-        // Use pre-configured assistant
-        await vapi.start(vapiConfig.assistantId, {
-          variableValues: {
-            sessionId: sessionId || 'default',
-            assistantId: assistantId || 'default'
-          }
-        });
+        console.log('🚀 Starting VAPI with assistant ID:', vapiConfig.assistantId);
+        await vapi.start(vapiConfig.assistantId);
+        console.log('✅ VAPI started with pre-configured assistant');
       } else {
-        // Use inline assistant configuration
+        // Fallback to inline configuration
         await vapi.start({
           model: {
             provider: 'openai' as const,
@@ -208,11 +321,7 @@ const useVapiStore = create<VapiStore>((set, get) => ({
             messages: [
               {
                 role: 'system' as const,
-                content: `You are a helpful AI assistant integrated with the screen sharing workspace. 
-                Keep your spoken responses concise (1-2 sentences) for voice interactions.
-                When asked complex questions, provide brief verbal summaries.
-                Current session ID: ${sessionId || 'default'}
-                Current assistant ID: ${assistantId || 'default'}`
+                content: vapiConfig.assistant.model.messages[0].content
               }
             ]
           },
@@ -220,7 +329,7 @@ const useVapiStore = create<VapiStore>((set, get) => ({
             provider: '11labs' as const,
             voiceId: 'EXAVITQu4vr4xnSDxMaL'
           },
-          firstMessage: 'Hello! I can see your screen. How can I help you today?'
+          firstMessage: vapiConfig.assistant.firstMessage
         } as any);
       }
       
@@ -275,46 +384,97 @@ const useVapiStore = create<VapiStore>((set, get) => ({
     });
   },
   
-  // Process AI response through our backend
+  // Process AI response through our backend and sync with chat
   processAIResponse: async (query: string, sessionId: string, assistantId: string) => {
     try {
-      // Import the assistant service
+      // Import services
       const { handleUserInput } = await import('../services/api/assistantService');
+      const chatStore = useChatStore.getState();
       
-      // Call our backend API for AI processing
-      const response = await handleUserInput({
-        userInput: query,
-        // Add metadata to indicate this is from voice
-        attachments: []
-      });
-      
-      // Create response object
-      const vapiResponse: VapiResponse = {
-        query,
-        shortResponse: response.substring(0, 150) + (response.length > 150 ? '...' : ''),
-        fullResponse: response,
-        timestamp: new Date()
-      };
-      
-      set({ currentResponse: vapiResponse });
-      
-      // Send the response to VAPI to speak
-      const { vapi } = get();
-      if (vapi && response) {
-        // Use the short response for voice
-        vapi.say(vapiResponse.shortResponse);
+      // First, add the user message to the chat UI
+      if (sessionId && assistantId) {
+        // Add user message to chat
+        await chatStore.handleSubmitMessage(
+          query,
+          { _id: assistantId, voice: undefined, name: 'AI Assistant' },
+          sessionId,
+          undefined
+        );
+      } else {
+        // If no session, just process the query
+        const response = await handleUserInput({
+          userInput: query,
+          attachments: []
+        });
+        
+        // Create response object
+        const vapiResponse: VapiResponse = {
+          query,
+          shortResponse: makeConversational(response),
+          fullResponse: response,
+          timestamp: new Date()
+        };
+        
+        set({ currentResponse: vapiResponse });
+        
+        // Add assistant message to local history
+        get().addMessage({
+          type: 'assistant',
+          content: response,
+          timestamp: new Date()
+        });
+        
+        return vapiResponse;
       }
       
-      console.debug('AI response processed:', vapiResponse);
+      // The chat store will handle the streaming response
+      // We'll wait a bit for the response to start streaming
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Get the latest message from chat store
+      const messages = chatStore.messages;
+      const lastAssistantMessage = [...messages].reverse().find(m => m.role === 'assistant');
+      
+      if (lastAssistantMessage) {
+        const vapiResponse: VapiResponse = {
+          query,
+          shortResponse: makeConversational(lastAssistantMessage.content),
+          fullResponse: lastAssistantMessage.content,
+          timestamp: new Date()
+        };
+        
+        set({ currentResponse: vapiResponse });
+        
+        // Add to local voice chat history
+        get().addMessage({
+          type: 'assistant',
+          content: lastAssistantMessage.content,
+          timestamp: new Date()
+        });
+        
+        return vapiResponse;
+      }
+      
+      // Fallback if no response found
+      return {
+        query,
+        shortResponse: "I'm processing your request.",
+        fullResponse: "Processing...",
+        timestamp: new Date()
+      };
       
     } catch (error) {
       console.error('Failed to process AI response:', error);
       
-      // Fallback response
-      const { vapi } = get();
-      if (vapi) {
-        vapi.say("I'm having trouble processing that request. Please try again.");
-      }
+      const errorResponse = {
+        query,
+        shortResponse: "I'm having trouble processing that request.",
+        fullResponse: "Error: Failed to process your request. Please try again.",
+        timestamp: new Date()
+      };
+      
+      set({ currentResponse: errorResponse });
+      return errorResponse;
     }
   },
   
@@ -362,6 +522,7 @@ const useVapiStore = create<VapiStore>((set, get) => ({
       isMuted: false,
       isSpeaking: false,
       isListening: false,
+      isProcessing: false,
       messages: [],
       currentTranscript: '',
       currentResponse: null,
