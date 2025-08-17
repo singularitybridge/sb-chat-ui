@@ -55,8 +55,25 @@ export async function handleUserInput(body: ApiHandleUserInputBody): Promise<str
   try {
     // Expect the new API response structure
     const response = await apiClient.post<ApiUserInputResponse>('assistant/user-input', body); // body no longer contains sessionId
+    
+    // Log the actual response structure for debugging
+    console.log('API Response structure:', response.data);
+    
     // Extract and return the content string
-    return response.data.content;
+    // Handle different possible response structures
+    if (typeof response.data === 'string') {
+      return response.data;
+    } else if (response.data?.content) {
+      return response.data.content;
+    } else if ((response.data as any)?.text) {
+      return (response.data as any).text;
+    } else if ((response.data as any)?.message) {
+      return (response.data as any).message;
+    } else {
+      // Fallback - convert to string
+      console.warn('Unexpected response structure:', response.data);
+      return JSON.stringify(response.data);
+    }
   } catch (error) {
     console.error('Failed to handle user input:', error);
     throw error;

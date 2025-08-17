@@ -1,9 +1,12 @@
 /// file_path: src/components/sb-chat-kit-ui/chat-elements/Header.tsx
 import React, { useState } from 'react';
-import { CircleFadingPlus, Monitor } from 'lucide-react';
+import { CircleFadingPlus, Monitor, Settings, Copy } from 'lucide-react';
 import { Avatar, AvatarStyles } from '../../Avatar';
 import { useNavigate } from 'react-router-dom';
 import { useSessionStore } from '../../../store/useSessionStore';
+import { emitter } from '../../../services/mittEmitter';
+import { EVENT_SHOW_NOTIFICATION } from '../../../utils/eventNames';
+import { useTranslation } from 'react-i18next';
 
 interface HeaderProps {
   title: string;
@@ -21,6 +24,7 @@ const Header: React.FC<HeaderProps> = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const navigate = useNavigate();
   const { activeSession } = useSessionStore();
+  const { t } = useTranslation();
 
   const toggleDescription = () => {
     setIsExpanded(!isExpanded);
@@ -28,7 +32,32 @@ const Header: React.FC<HeaderProps> = ({
 
   const handleScreenShare = () => {
     // Navigate to home workspace - can be expanded to support different workspaces
-    navigate(`/screenshare/home`);
+    navigate('/screenshare/home');
+  };
+
+  const handleEditAssistant = () => {
+    if (activeSession?.assistantId) {
+      navigate(`/admin/assistants/${activeSession.assistantId}`);
+    }
+  };
+
+  const handleCopyAssistantId = () => {
+    if (activeSession?.assistantId) {
+      navigator.clipboard.writeText(activeSession.assistantId)
+        .then(() => {
+          emitter.emit(EVENT_SHOW_NOTIFICATION, {
+            message: t('AssistantsPage.copySuccess'),
+            type: 'success',
+          });
+        })
+        .catch((err) => {
+          console.error('Failed to copy assistant ID:', err);
+          emitter.emit(EVENT_SHOW_NOTIFICATION, {
+            message: t('AssistantsPage.copyFailed'),
+            type: 'error',
+          });
+        });
+    }
   };
 
   const renderDescription = () => {
@@ -66,6 +95,24 @@ const Header: React.FC<HeaderProps> = ({
       </div>
 
       <div className="flex items-center space-x-1 rtl:space-x-reverse">
+        <button
+          onClick={handleCopyAssistantId}
+          className="p-1 rounded-full transition-colors hover:bg-gray-100"
+          aria-label="Copy assistant ID"
+          title="Copy assistant ID"
+          disabled={!activeSession?.assistantId}
+        >
+          <Copy className="w-6 h-6 text-gray-500 hover:text-primary-600" />
+        </button>
+        <button
+          onClick={handleEditAssistant}
+          className="p-1 rounded-full transition-colors hover:bg-gray-100"
+          aria-label="Edit assistant"
+          title="Edit assistant"
+          disabled={!activeSession?.assistantId}
+        >
+          <Settings className="w-6 h-6 text-gray-500 hover:text-primary-600" />
+        </button>
         <button
           onClick={handleScreenShare}
           className="p-1 rounded-full transition-colors hover:bg-gray-100"

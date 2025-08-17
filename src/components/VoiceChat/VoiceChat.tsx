@@ -17,12 +17,8 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ className = '', compact = false }
     isMuted,
     isSpeaking,
     isListening,
-    isProcessing,
     currentTranscript,
-    currentResponse,
     messages,
-    userAudioLevel,
-    assistantAudioLevel,
     initializeVapi,
     startCall,
     endCall,
@@ -57,15 +53,15 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ className = '', compact = false }
   const getStatusText = () => {
     if (isConnecting) return 'Connecting...';
     if (!isCallActive) return 'Voice Chat Inactive';
-    if (isProcessing) return 'Processing...';
     if (isSpeaking) return 'Assistant Speaking...';
     if (isListening) return 'Listening...';
+    if (currentTranscript) return 'Processing...';
     return 'Ready';
   };
   
   const getStatusColor = () => {
     if (!isCallActive) return 'bg-gray-500';
-    if (isProcessing) return 'bg-purple-500';
+    if (currentTranscript) return 'bg-purple-500';
     if (isSpeaking) return 'bg-blue-500';
     if (isListening) return 'bg-green-500';
     return 'bg-yellow-500';
@@ -137,7 +133,7 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ className = '', compact = false }
                 <motion.div
                   key={i}
                   className={`w-1 bg-gradient-to-t ${
-                    isProcessing
+                    currentTranscript
                       ? 'from-purple-400 to-purple-600'
                       : isSpeaking 
                       ? 'from-blue-400 to-blue-600' 
@@ -151,7 +147,7 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ className = '', compact = false }
                       : 10
                   }}
                   transition={{
-                    duration: isProcessing ? 0.3 : 0.5,
+                    duration: currentTranscript ? 0.3 : 0.5,
                     repeat: Infinity,
                     delay: i * 0.05
                   }}
@@ -215,40 +211,16 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ className = '', compact = false }
             exit={{ opacity: 0, y: -10 }}
             className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg"
           >
-            <p className="text-sm font-medium text-green-800 mb-1">You said:</p>
+            <p className="text-sm font-medium text-green-800 mb-1">You're saying:</p>
             <p className="text-gray-700">{currentTranscript}</p>
-            {isProcessing && (
-              <div className="flex items-center gap-2 mt-2">
-                <Loader2 className="w-4 h-4 animate-spin text-purple-600" />
-                <span className="text-sm text-purple-600">Processing with AI agent...</span>
-              </div>
-            )}
+            <div className="flex items-center gap-2 mt-2">
+              <Loader2 className="w-4 h-4 animate-spin text-purple-600" />
+              <span className="text-sm text-purple-600">Processing with AI agent...</span>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
       
-      {/* Current Response */}
-      <AnimatePresence>
-        {currentResponse && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="mb-4"
-          >
-            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg mb-2">
-              <p className="text-sm font-medium text-blue-800 mb-1">Speaking:</p>
-              <p className="text-gray-700">{currentResponse.shortResponse}</p>
-            </div>
-            {showTranscript && currentResponse.fullResponse !== currentResponse.shortResponse && (
-              <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
-                <p className="text-sm font-medium text-gray-600 mb-1">Full Response:</p>
-                <p className="text-gray-700 text-sm">{currentResponse.fullResponse}</p>
-              </div>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
       
       {/* Message History */}
       {messages.length > 0 && (
@@ -293,6 +265,9 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ className = '', compact = false }
           <code className="block mt-2 text-xs bg-yellow-100 p-2 rounded">
             VITE_VAPI_PUBLIC_KEY=your-key-here
           </code>
+          <p className="text-xs text-yellow-700 mt-2">
+            Note: Without VITE_VAPI_ASSISTANT_ID, VAPI will use custom LLM routing to your backend.
+          </p>
         </div>
       )}
     </div>
