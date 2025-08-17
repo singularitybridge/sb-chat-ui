@@ -7,7 +7,7 @@ import App from './App';
 import { AssistantsPage } from './pages/admin/AssistantsPage';
 import { EditAssistantPage } from './pages/admin/EditAssistantPage';
 import { CompaniesPage } from './pages/admin/CompaniesPage';
-import { SessionsPage } from './pages/admin/SessionsPage';
+import { CostsPage } from './pages/admin/CostsPage';
 import { UsersPage } from './pages/admin/UsersPage';
 import { InboxPage } from './pages/admin/inbox/InboxPage';
 import { EditCompanyPage } from './pages/admin/EditCompanyPage';
@@ -72,7 +72,7 @@ export const browserRouter = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <CompaniesPage />,
+            element: <Navigate to="/admin/assistants" replace />,
           },
           {
             path: 'assistants',
@@ -107,8 +107,8 @@ export const browserRouter = createBrowserRouter([
             element: <EditCompanyPage />,
           },
           {
-            path: 'sessions',
-            element: <SessionsPage />,
+            path: 'costs',
+            element: <CostsPage />,
           },
           {
             path: 'users',

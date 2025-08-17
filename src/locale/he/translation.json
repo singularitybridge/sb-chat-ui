@@ -2,9 +2,11 @@
   "Menu": {
     "Companies": "חברות",
     "Teams": "צוותים",
+    "Agents": "סוכנים",
     "Assistants": "סוכנים",
     "Users": "משתמשים",
     "Sessions": "שיחות פעילות",
+    "Costs": "עלויות AI",
     "Inbox": "תיבת דואר",
     "Actions": "פעולות",
     "Home": "בית",

@@ -10,15 +10,10 @@ import ShowOnboardingButton from '../ShowOnboardingButton';
 
 export const Menu = observer(() => {
   const menuItems = [
-    { name: 'Home', link: '/admin' },
-    { name: 'Companies', link: '/admin/companies' },
+    { name: 'Agents', link: '/admin/assistants' },
     { name: 'Teams', link: '/admin/teams' },
-    { name: 'Memory', link: '/admin/memory' }, // Added Memory link
-    { name: 'Assistants', link: '/admin/assistants' },
-    { name: 'Users', link: '/admin/users' },
     { name: 'ApiKeys', link: '/admin/api-keys' },
-    { name: 'Sessions', link: '/admin/sessions', disabled: true },
-    { name: 'Inbox', link: '/admin/inbox' },
+    { name: 'Costs', link: '/admin/costs' },
   ];
 
   const { t } = useTranslation();

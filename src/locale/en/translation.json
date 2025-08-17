@@ -2,9 +2,11 @@
   "Menu": {
     "Companies": "Companies",
     "Teams": "Teams",
+    "Agents": "Agents",
     "Assistants": "Assistants",
     "Users": "Users",
     "Sessions": "Sessions",
+    "Costs": "AI Costs",
     "Inbox": "Inbox",
     "Actions": "Actions",
     "Home": "Home",

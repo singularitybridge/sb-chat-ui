@@ -6,8 +6,8 @@ import { useSessionStore } from '../../store/useSessionStore'; // Import Zustand
 import { IAssistant } from '../../store/models/Assistant';
 import { Plus, Settings, X, ChevronRight, ChevronLeft, Copy } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { Icon } from '@iconify/react';
 import { IconButton } from '../../components/admin/IconButton';
+import { ModelIndicator } from '../../components/ModelIndicator';
 import { emitter } from '../../services/mittEmitter';
 import {
   EVENT_SET_ACTIVE_ASSISTANT,
@@ -18,23 +18,9 @@ import { ChatContainer } from '../../components/chat-container/ChatContainer';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Avatar, AvatarStyles } from '../../components/Avatar';
-import Badge from '../../components/Badge';
 import IntegrationIcons from '../../components/IntegrationIcons';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const ProviderIcon = ({ provider, size = 16 }: { provider: string, size?: number }) => {
-  const iconMap: { [key: string]: string } = {
-    openai: 'logos:openai-icon',
-    gemini: 'ri:gemini-fill',
-    anthropic: 'logos:anthropic-icon',
-  };
-
-  const icon = iconMap[provider];
-
-  if (!icon) return null;
-
-  return <Icon icon={icon} width={size} height={size} className="inline-block" />;
-};
 
 const AssistantsPage: React.FC = observer(() => {
   const rootStore = useRootStore();
@@ -118,40 +104,6 @@ const AssistantsPage: React.FC = observer(() => {
     return [...new Set(allowedActions.map((action) => action.split('.')[0]))];
   };
 
-  const getModelInfo = (modelName: string): { name: string, provider: string } => {
-    if (!modelName) return { name: '', provider: '' };
-    const lowerCaseModel = modelName.toLowerCase();
-
-    let provider = '';
-    let shortenedName = modelName;
-
-    if (lowerCaseModel.includes('claude')) {
-      provider = 'anthropic';
-      const claudeMatch = lowerCaseModel.match(/claude-([\d.-]+)-(\w+)/);
-      if (claudeMatch) {
-        const version = claudeMatch[1].replace(/-/g, '.');
-        const model = claudeMatch[2];
-        if (model === 'haiku' || model === 'sonnet' || model === 'opus') {
-            shortenedName = `${version}-${model}`;
-        }
-      }
-    } else if (lowerCaseModel.startsWith('gpt-')) {
-      provider = 'openai';
-      shortenedName = modelName.substring(4);
-    } else if (lowerCaseModel.startsWith('gemini-')) {
-      provider = 'gemini';
-      const parts = modelName.split('-');
-      if (parts.length >= 3) {
-        shortenedName = `${parts[1]}-${parts[2]}`;
-      }
-    } else if (lowerCaseModel.includes('o3-mini')) {
-        provider = 'openai';
-        shortenedName = 'o3-mini';
-    }
-
-    return { name: shortenedName, provider };
-  };
-
   return (
     <div className="flex justify-center h-full">
       <div className="flex w-full space-x-7 rtl:space-x-reverse">
@@ -207,7 +159,6 @@ const AssistantsPage: React.FC = observer(() => {
               const integrationNames = extractIntegrationNames(
                 assistant.allowedActions
               );
-              const modelInfo = getModelInfo(assistant.llmModel);
               return (
                 <li
                   key={assistant._id}
@@ -275,13 +226,7 @@ const AssistantsPage: React.FC = observer(() => {
                                 </motion.div>
                               )}
                             </AnimatePresence>
-                            <Badge
-                              variant="success"
-                              className="text-base whitespace-nowrap flex items-center space-x-2 rtl:space-x-reverse"
-                            >
-                              <ProviderIcon provider={modelInfo.provider} />
-                              <span>{modelInfo.name}</span>
-                            </Badge>
+                            <ModelIndicator modelName={assistant.llmModel} size="medium" />
                           </div>
                         </div>
                         <p className="text-sm text-gray-600 line-clamp-2">

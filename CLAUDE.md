@@ -142,6 +142,13 @@ When dealing with flexbox overflow issues where content gets cut off:
 - **No Borders**: Use shadows and backgrounds for separation
 - **Color Scheme**: Gradients, translucent overlays, dark background pattern
 - **Typography**: Consistent sizing, proper hierarchy
+- **Model Indicator**: Reusable `ModelIndicator` component shows LLM provider icon and model name
+  - Located in `src/components/ModelIndicator.tsx`
+  - Supports sizes: small, medium, large
+  - Can display with or without badge styling
+  - Automatically shortens model names and detects providers (OpenAI, Anthropic, Gemini)
+- **Chat Header Icons**: Use `w-5 h-5` size for action buttons (copy, settings, screen share, clear)
+- **Integration Display**: Show integration icons below assistant description in chat header
 
 ### Session Management for Workspace
 - **Requirement**: Active session needed for screen share workspace
@@ -159,3 +166,52 @@ When dealing with flexbox overflow issues where content gets cut off:
 - **Styling**: Wrap in div with `prose` class for proper markdown styling
 - **HTML in MDX**: Use JSX syntax, not HTML strings (MDX parser handles JSX)
 - **Dynamic Content**: Can include session data, metrics, and real-time info
+
+## AI Cost Tracking Feature
+
+### Overview
+Comprehensive cost analytics dashboard replacing the sessions menu, providing real-time visibility into AI usage costs.
+
+### Architecture
+- **Location**: `/admin/costs` (replaced `/admin/sessions`)
+- **Main Component**: `CostTrackingDashboard` in `src/components/cost-tracking/`
+- **Data Layer**: TypeScript interfaces in `src/types/costTracking.ts`
+- **API Service**: `src/services/api/costTrackingService.ts` with singleFlight caching
+- **Custom Hooks**: `src/hooks/useCostData.ts` for data fetching
+
+### Core Components
+1. **MetricsCards**: Overview stats (total cost, requests, tokens, avg response time)
+2. **UsageChart**: Interactive Recharts visualizations (area, line, bar charts)
+3. **CostTable**: Sortable/filterable table with pagination using @tanstack/react-table
+4. **AssistantCostGrid**: Grid view of per-assistant costs and metrics
+5. **ModelComparison**: Model performance analytics with pie/bar charts
+
+### Features
+- **Real-time Updates**: Auto-refresh every 30 seconds
+- **Filtering**: Date range, provider (OpenAI/Anthropic/Google), model, assistant
+- **Export**: CSV download of cost records
+- **Responsive**: Mobile-optimized layouts
+- **Tabs**: Overview, Assistants, Models, Details views
+
+### API Endpoints (Backend)
+- `GET /api/costs/summary` - Aggregated cost data
+- `GET /api/costs` - Detailed cost records with filtering
+- `GET /api/costs/daily` - Daily cost trends
+- `GET /api/costs/by-assistant/:id` - Assistant-specific costs
+- `GET /api/costs/by-model/:model` - Model-specific costs
+
+### Recharts Integration
+- Fixed TypeScript issues with type assertions (`as any`)
+- Components: ResponsiveContainer, LineChart, BarChart, AreaChart, PieChart
+- Custom tooltips with cost formatting
+- Gradient fills for visual appeal
+
+### State Management
+- Uses Zustand hooks for session data
+- Local component state for filters and UI
+- singleFlight for request deduplication
+
+### Navigation Update
+- Menu item: "AI Costs" (was "Sessions")
+- Translations: English "AI Costs", Hebrew "עלויות AI"
+- Route: `/admin/costs` (was `/admin/sessions`)

@@ -19,6 +19,8 @@ const languageOptions: SelectListOption[] = [
 
 const llmModelOptions: SelectListOption[] = [
   { value: 'gpt-4o-mini', label: 'GPT-4o Mini' },
+  { value: 'o3', label: 'GPT o3' },
+  { value: 'o4-mini', label: 'GPT o4 Mini' },
   { value: 'o3-mini-low', label: 'GPT o3 Mini (low)' },
   { value: 'o3-mini-medium', label: 'GPT o3 Mini (medium)' },
   { value: 'o3-mini-high', label: 'GPT o3 Mini (high)' },
@@ -27,8 +29,8 @@ const llmModelOptions: SelectListOption[] = [
   { value: 'gpt-4.1-nano', label: 'GPT-4.1 Nano' },
   { value: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash' },
   { value: 'gemini-2.5-pro', label: 'Gemini 2.5 Pro' },
-  { value: 'claude-3-7-sonnet-latest', label: 'Claude 3.7 Sonnet Latest' },
-  { value: 'claude-3-5-haiku-latest', label: 'Claude 3.5 Haiku Latest' },
+  { value: 'claude-opus-4-1', label: 'Claude Opus 4.1' },
+  { value: 'claude-sonnet-4-0', label: 'Claude Sonnet 4.0' },
 ];
 
 const llmProviderOptions: SelectListOption[] = [

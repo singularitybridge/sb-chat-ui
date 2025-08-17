@@ -9,6 +9,7 @@ const UserSessionInfo = types.model('UserSessionInfo', {
   userName: types.optional(types.string, ''),
   userRole: types.optional(types.string, ''),
   companyName: types.optional(types.string, ''),
+  companyId: types.optional(types.string, ''),
 });
 
 export const AuthStore = types
@@ -46,6 +47,7 @@ export const AuthStore = types
           userName: user.name,
           userRole: user.role,
           companyName: company.name,
+          companyId: company._id || company.id || '',
         };
 
         self.isUserDataLoaded = true;
@@ -78,6 +80,7 @@ export const AuthStore = types
         userName: '',
         userRole: '',
         companyName: '',
+        companyId: '',
       };
       return true; // Indicate successful logout
     },
