@@ -1,6 +1,6 @@
 /// file_path: src/components/sb-chat-kit-ui/chat-elements/Header.tsx
 import React, { useState, useEffect } from 'react';
-import { CircleFadingPlus, Monitor, Settings, Copy } from 'lucide-react';
+import { CircleFadingPlus, Monitor, Settings, Copy, Code2 } from 'lucide-react';
 import { Avatar, AvatarStyles } from '../../Avatar';
 import { useNavigate } from 'react-router-dom';
 import { useSessionStore } from '../../../store/useSessionStore';
@@ -10,6 +10,7 @@ import { EVENT_SHOW_NOTIFICATION } from '../../../utils/eventNames';
 import { useTranslation } from 'react-i18next';
 import { ModelIndicator } from '../../ModelIndicator';
 import IntegrationIcons from '../../IntegrationIcons';
+import CodeSampleDialog from '../../CodeSampleDialog';
 
 interface HeaderProps {
   title: string;
@@ -27,6 +28,7 @@ const Header: React.FC<HeaderProps> = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const [modelName, setModelName] = useState<string>('');
   const [integrations, setIntegrations] = useState<string[]>([]);
+  const [showCodeSample, setShowCodeSample] = useState(false);
   const navigate = useNavigate();
   const { activeSession } = useSessionStore();
   const { getAssistantById, loadAssistants, assistantsLoaded } = useAssistantStore();
@@ -108,68 +110,84 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <div className="flex justify-between items-start space-x-4 rtl:space-x-reverse mb-4 p-3 border-b border-b-gray-200">
-      <Avatar
-        avatarStyle={AvatarStyles.medium}
-        imageUrl={`/assets/avatars/${avatar}.png`}
-        active={true}
-      />
+    <>
+      <div className="flex justify-between items-start space-x-4 rtl:space-x-reverse mb-4 p-3 border-b border-b-gray-200">
+        <Avatar
+          avatarStyle={AvatarStyles.medium}
+          imageUrl={`/assets/avatars/${avatar}.png`}
+          active={true}
+        />
 
-      <div className="flex-1">
-        <h2 className="font-semibold text-lg tracking-tight">{title}</h2>
-        <div className="flex items-start pb-2">{renderDescription()}</div>
-        {integrations.length > 0 && (
-          <div className="pb-3">
-            <IntegrationIcons 
-              integrations={integrations} 
-              isActive={false}
-              className="opacity-70"
-            />
+        <div className="flex-1">
+          <h2 className="font-semibold text-lg tracking-tight">{title}</h2>
+          <div className="flex items-start pb-2">{renderDescription()}</div>
+          {integrations.length > 0 && (
+            <div className="pb-3">
+              <IntegrationIcons 
+                integrations={integrations} 
+                isActive={false}
+                className="opacity-70"
+              />
+            </div>
+          )}
+        </div>
+
+        <div className="flex items-center space-x-2 rtl:space-x-reverse">
+          {modelName && (
+            <ModelIndicator modelName={modelName} size="small" />
+          )}
+          <div className="flex items-center space-x-1 rtl:space-x-reverse">
+            <button
+              onClick={handleCopyAssistantId}
+              className="p-1 rounded-full transition-colors hover:bg-gray-100"
+              aria-label="Copy assistant ID"
+              title="Copy assistant ID"
+              disabled={!activeSession?.assistantId}
+            >
+              <Copy className="w-5 h-5 text-gray-500 hover:text-primary-600" />
+            </button>
+            <button
+              onClick={() => setShowCodeSample(true)}
+              className="p-1 rounded-full transition-colors hover:bg-gray-100"
+              aria-label="Show API code sample"
+              title="Show API code sample"
+              disabled={!activeSession?.assistantId}
+            >
+              <Code2 className="w-5 h-5 text-gray-500 hover:text-primary-600" />
+            </button>
+            <button
+              onClick={handleEditAssistant}
+              className="p-1 rounded-full transition-colors hover:bg-gray-100"
+              aria-label="Edit assistant"
+              title="Edit assistant"
+              disabled={!activeSession?.assistantId}
+            >
+              <Settings className="w-5 h-5 text-gray-500 hover:text-primary-600" />
+            </button>
+            <button
+              onClick={handleScreenShare}
+              className="p-1 rounded-full transition-colors hover:bg-gray-100"
+              aria-label="Share screen"
+              title="Share screen"
+            >
+              <Monitor className="w-5 h-5 text-gray-500 hover:text-primary-600" />
+            </button>
+            <button
+              onClick={onClear}
+              className="p-1 rounded-full transition-colors hover:bg-gray-100"
+              aria-label="Clear chat"
+            >
+              <CircleFadingPlus className="w-5 h-5 text-gray-500 hover:text-primary-600" />
+            </button>
           </div>
-        )}
-      </div>
-
-      <div className="flex items-center space-x-2 rtl:space-x-reverse">
-        {modelName && (
-          <ModelIndicator modelName={modelName} size="small" />
-        )}
-        <div className="flex items-center space-x-1 rtl:space-x-reverse">
-          <button
-            onClick={handleCopyAssistantId}
-            className="p-1 rounded-full transition-colors hover:bg-gray-100"
-            aria-label="Copy assistant ID"
-            title="Copy assistant ID"
-            disabled={!activeSession?.assistantId}
-          >
-            <Copy className="w-5 h-5 text-gray-500 hover:text-primary-600" />
-          </button>
-          <button
-            onClick={handleEditAssistant}
-            className="p-1 rounded-full transition-colors hover:bg-gray-100"
-            aria-label="Edit assistant"
-            title="Edit assistant"
-            disabled={!activeSession?.assistantId}
-          >
-            <Settings className="w-5 h-5 text-gray-500 hover:text-primary-600" />
-          </button>
-          <button
-            onClick={handleScreenShare}
-            className="p-1 rounded-full transition-colors hover:bg-gray-100"
-            aria-label="Share screen"
-            title="Share screen"
-          >
-            <Monitor className="w-5 h-5 text-gray-500 hover:text-primary-600" />
-          </button>
-          <button
-            onClick={onClear}
-            className="p-1 rounded-full transition-colors hover:bg-gray-100"
-            aria-label="Clear chat"
-          >
-            <CircleFadingPlus className="w-5 h-5 text-gray-500 hover:text-primary-600" />
-          </button>
         </div>
       </div>
-    </div>
+      
+      <CodeSampleDialog 
+        isOpen={showCodeSample}
+        onClose={() => setShowCodeSample(false)}
+      />
+    </>
   );
 };
 

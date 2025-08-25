@@ -215,3 +215,52 @@ Comprehensive cost analytics dashboard replacing the sessions menu, providing re
 - Menu item: "AI Costs" (was "Sessions")
 - Translations: English "AI Costs", Hebrew "עלויות AI"
 - Route: `/admin/costs` (was `/admin/sessions`)
+## Code Sample Dialog Feature
+
+### Overview
+A comprehensive code sample generator dialog accessible via a button in the chat header (between Copy and Settings buttons). Provides code samples for integrating with the assistant's stateless execute API endpoint.
+
+### Location
+- **Component**: `src/components/CodeSampleDialog.tsx`
+- **Integration**: Added to `src/components/sb-chat-kit-ui/chat-elements/Header.tsx`
+
+### Features
+
+#### Language Support
+- **JavaScript**: Modern async/await fetch implementation
+- **Python**: Using requests library
+- **cURL**: Command-line examples
+- Uses Simple Icons from `react-icons/si` for professional language logos
+
+#### API Endpoint
+- **Route**: `/assistant/:assistantId/execute` (singular 'assistant', not 'assistants')
+- **Type**: Stateless execution without session management
+- **Auth**: Bearer token authentication
+
+#### Options
+- **File Upload**: Example with base64 encoded data
+- **URL Attachment**: Example with external URL
+- **Prompt Override**: Custom system prompt support
+
+#### Test Feature
+- **Live Testing**: Built-in API test functionality
+- **Custom Input**: Users can enter test messages
+- **Real-time Results**: Shows API response in split view
+- **Error Handling**: Displays errors if API call fails
+
+### UI Design
+- **Minimal Design**: Ultra-clean interface with icon-only controls
+- **Brand Colors**: Purple (#7C3AED) for active states (agent portal color)
+- **Segmented Controls**: iOS-style language selector
+- **Compact Layout**: Smaller dialog (max-w-2xl) with tight spacing
+
+### Code Generation
+- Generates working code samples based on selected language and options
+- Properly formats API URLs and authentication headers
+- Includes appropriate error handling for each language
+- No streaming support (simplified implementation)
+
+### Important Notes
+- Always use singular `/assistant/` in the route, not `/assistants/`
+- Test feature excludes file attachments for simplicity
+- Code samples are for stateless execute endpoint only (no session management)

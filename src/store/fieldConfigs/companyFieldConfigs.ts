@@ -107,6 +107,22 @@ export const companyFieldConfigs: FieldConfig[] = [
         key: 'codesandbox_api_key',
         value: '-',
       },
+      {
+        key: 'aws_access_key_id',
+        value: '-',
+      },
+      {
+        key: 'aws_secret_access_key',
+        value: '-',
+      },
+      {
+        key: 'aws_bedrock_kb_id',
+        value: '-',
+      },
+      {
+        key: 'aws_region',
+        value: '-',
+      },
     ],
     visibility: { create: true, view: true, update: true },
   },
