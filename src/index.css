@@ -16,6 +16,11 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes cursor-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
 .noto-sans-hebrew {
   font-family: "Noto Sans Hebrew", sans-serif;
   font-optical-sizing: auto;

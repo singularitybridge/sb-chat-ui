@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Copy, Check, FileCode, Link, FileText, Play, Loader2 } from 'lucide-react';
+import { X, Copy, Check, FileCode, Link, FileText, Play, Loader2, Zap } from 'lucide-react';
 import { SiJavascript, SiPython, SiCurl } from 'react-icons/si';
 import { useSessionStore } from '../store/useSessionStore';
 import { useAssistantStore } from '../store/useAssistantStore';
@@ -15,7 +15,7 @@ interface CodeSampleDialogProps {
 }
 
 type CodeLanguage = 'javascript' | 'python' | 'curl';
-type CodeFeature = 'file' | 'url' | 'prompt';
+type CodeFeature = 'file' | 'url' | 'prompt' | 'streaming';
 
 const CodeSampleDialog: React.FC<CodeSampleDialogProps> = ({ isOpen, onClose }) => {
   const [selectedLanguage, setSelectedLanguage] = useState<CodeLanguage>('javascript');
@@ -102,7 +102,79 @@ const CodeSampleDialog: React.FC<CodeSampleDialogProps> = ({ isOpen, onClose }) 
     const promptOverride = enabledFeatures.has('prompt') ? `,
     promptOverride: 'You are a helpful assistant specialized in...'` : '';
 
-    const baseCode = `// Stateless API - Assistant: ${assistant.name}
+    if (enabledFeatures.has('streaming')) {
+      // Streaming version
+      const streamingCode = `// Streaming API - Assistant: ${assistant.name}
+const apiUrl = '${url}';
+const apiKey = '${token}';
+
+async function sendMessageWithStreaming(userInput) {
+  const payload = {
+    userInput: userInput${attachments}${promptOverride}
+  };
+
+  const response = await fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': \`Bearer \${apiKey}\`,
+      'Accept': 'text/event-stream'
+    },
+    body: JSON.stringify(payload)
+  });
+
+  if (!response.ok) {
+    throw new Error(\`HTTP error! status: \${response.status}\`);
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let fullMessage = '';
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      
+      const chunk = decoder.decode(value, { stream: true });
+      const lines = chunk.split('\\n');
+      
+      for (const line of lines) {
+        if (line.startsWith('data:')) {
+          try {
+            const data = JSON.parse(line.slice(5));
+            if (data.type === 'token') {
+              fullMessage += data.value;
+              // Real-time output - you can update UI here
+              console.log(data.value);
+              // Example: updateUI(data.value);
+            } else if (data.type === 'done') {
+              console.log('\\nStream completed');
+              break;
+            }
+          } catch (e) {
+            // Skip invalid JSON lines
+            continue;
+          }
+        }
+      }
+    }
+  } finally {
+    reader.releaseLock();
+  }
+  
+  return fullMessage;
+}
+
+// Usage
+sendMessageWithStreaming('Hello, how can you help me today?')
+  .then(response => console.log('\\nFull Assistant Response:', response))
+  .catch(console.error);`;
+
+      return streamingCode;
+    } else {
+      // Non-streaming version
+      const baseCode = `// Stateless API - Assistant: ${assistant.name}
 const apiUrl = '${url}';
 const apiKey = '${token}';
 
@@ -133,7 +205,8 @@ sendMessage('Hello, how can you help me today?')
   .then(response => console.log('Assistant:', response))
   .catch(console.error);`;
 
-    return baseCode;
+      return baseCode;
+    }
   };
 
   const generatePythonCode = (url: string, token: string, assistant: any) => {
@@ -162,7 +235,62 @@ sendMessage('Hello, how can you help me today?')
     const promptOverride = enabledFeatures.has('prompt') ? `,
         'promptOverride': 'You are a helpful assistant specialized in...'` : '';
 
-    const baseCode = `# Stateless API - Assistant: ${assistant.name}
+    if (enabledFeatures.has('streaming')) {
+      // Streaming version
+      const streamingCode = `# Streaming API - Assistant: ${assistant.name}
+import requests
+import json
+
+api_url = '${url}'
+api_key = '${token}'
+
+def send_message_with_streaming(user_input):
+    payload = {
+        'userInput': user_input${attachments}${promptOverride}
+    }
+    
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': f'Bearer {api_key}',
+        'Accept': 'text/event-stream'
+    }
+    
+    response = requests.post(api_url, json=payload, headers=headers, stream=True)
+    
+    if response.status_code != 200:
+        raise Exception(f'HTTP error! status: {response.status_code}')
+    
+    full_message = ''
+    
+    try:
+        for line in response.iter_lines(decode_unicode=True):
+            if line and line.startswith('data:'):
+                try:
+                    data = json.loads(line[5:])  # Remove 'data:' prefix
+                    if data.get('type') == 'token':
+                        token_value = data.get('value', '')
+                        full_message += token_value
+                        # Real-time output - you can update UI here
+                        print(token_value, end='', flush=True)
+                    elif data.get('type') == 'done':
+                        print('\\nStream completed')
+                        break
+                except json.JSONDecodeError:
+                    # Skip invalid JSON lines
+                    continue
+    finally:
+        response.close()
+    
+    return full_message
+
+# Usage
+response = send_message_with_streaming('Hello, how can you help me today?')
+print('\\nFull Assistant Response:', response)`;
+
+      return streamingCode;
+    } else {
+      // Non-streaming version
+      const baseCode = `# Stateless API - Assistant: ${assistant.name}
 import requests
 import json
 
@@ -191,14 +319,11 @@ def send_message(user_input):
 response = send_message('Hello, how can you help me today?')
 print('Assistant:', response)`;
 
-    return baseCode;
+      return baseCode;
+    }
   };
 
   const generateCurlCode = (url: string, token: string, assistant: any) => {
-    let curlCommand = `# Stateless API - Assistant: ${assistant.name}\ncurl -X POST '${url}' \\\\\n`;
-    curlCommand += `  -H 'Content-Type: application/json' \\\\\n`;
-    curlCommand += `  -H 'Authorization: Bearer ${token}' \\\\\n`;
-    
     let payload: any = {
       userInput: 'Hello, how can you help me today?'
     };
@@ -226,9 +351,45 @@ print('Assistant:', response)`;
       payload.promptOverride = 'You are a helpful assistant specialized in...';
     }
 
-    curlCommand += `  -d '${JSON.stringify(payload, null, 2).replace(/'/g, "\\'")}'`;
+    if (enabledFeatures.has('streaming')) {
+      // Streaming version
+      let curlCommand = `# Streaming API - Assistant: ${assistant.name}\ncurl -X POST '${url}' \\\\\n`;
+      curlCommand += `  -H 'Content-Type: application/json' \\\\\n`;
+      curlCommand += `  -H 'Authorization: Bearer ${token}' \\\\\n`;
+      curlCommand += `  -H 'Accept: text/event-stream' \\\\\n`;
+      curlCommand += `  -d '${JSON.stringify(payload, null, 2).replace(/'/g, "\\'")}' \\\\\n`;
+      curlCommand += `  --no-buffer`;
+      
+      curlCommand += `
 
-    return curlCommand;
+# Expected output format:
+# data:{"type":"token","value":"Hello"}
+# data:{"type":"token","value":" there"}
+# data:{"type":"done"}
+
+# To process streaming in bash:
+curl -X POST '${url}' \\\\
+  -H 'Content-Type: application/json' \\\\
+  -H 'Authorization: Bearer ${token}' \\\\
+  -H 'Accept: text/event-stream' \\\\
+  -d '${JSON.stringify(payload, null, 2).replace(/'/g, "\\'")}' \\\\
+  --no-buffer | while IFS= read -r line; do
+  if [[ \$line == data:* ]]; then
+    json_data="\${line:5}"  # Remove "data:" prefix
+    echo "\$json_data" | jq -r 'select(.type == "token") | .value' 2>/dev/null | tr -d '\\n'
+  fi
+done`;
+
+      return curlCommand;
+    } else {
+      // Non-streaming version
+      let curlCommand = `# Stateless API - Assistant: ${assistant.name}\ncurl -X POST '${url}' \\\\\n`;
+      curlCommand += `  -H 'Content-Type: application/json' \\\\\n`;
+      curlCommand += `  -H 'Authorization: Bearer ${token}' \\\\\n`;
+      curlCommand += `  -d '${JSON.stringify(payload, null, 2).replace(/'/g, "\\'")}'`;
+
+      return curlCommand;
+    }
   };
 
   useEffect(() => {
@@ -275,12 +436,19 @@ print('Assistant:', response)`;
         payload.promptOverride = 'You are a helpful assistant specialized in providing concise responses.';
       }
 
+      const headers: any = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authToken}`
+      };
+
+      // Add streaming header if streaming mode is enabled
+      if (enabledFeatures.has('streaming')) {
+        headers['Accept'] = 'text/event-stream';
+      }
+
       const response = await fetch(fullUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`
-        },
+        headers,
         body: JSON.stringify(payload)
       });
 
@@ -288,28 +456,116 @@ print('Assistant:', response)`;
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json();
-      
-      // Extract the actual content from the response
-      let resultText = '';
-      if (typeof data === 'string') {
-        resultText = data;
-      } else if (data?.content) {
-        if (Array.isArray(data.content) && data.content[0]?.text?.value) {
-          resultText = data.content[0].text.value;
-        } else if (typeof data.content === 'string') {
-          resultText = data.content;
-        } else {
-          resultText = JSON.stringify(data.content);
+      if (enabledFeatures.has('streaming')) {
+        // Handle streaming response
+        const reader = response.body?.getReader();
+        if (!reader) {
+          throw new Error('Failed to get response reader');
+        }
+
+        const decoder = new TextDecoder();
+        let fullMessage = '';
+        let buffer = '';
+        
+        // Show streaming indicator
+        setTestResult('● Streaming...\n\n');
+
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            
+            const chunk = decoder.decode(value, { stream: true });
+            buffer += chunk;
+            const lines = buffer.split('\n');
+            
+            // Keep the last incomplete line in the buffer
+            buffer = lines.pop() || '';
+            
+            for (const line of lines) {
+              if (line.trim().startsWith('data:')) {
+                try {
+                  const jsonStr = line.replace(/^data:\s*/, '');
+                  if (jsonStr === '[DONE]') {
+                    setTestResult(prev => prev.replace('● Streaming...\n\n', '✓ Stream completed\n\n'));
+                    break;
+                  }
+                  
+                  const data = JSON.parse(jsonStr);
+                  if (data.type === 'token' && data.value) {
+                    fullMessage += data.value;
+                    // Update result progressively with visible streaming effect
+                    setTestResult(prev => {
+                      const baseText = prev.includes('● Streaming...') 
+                        ? prev.replace('● Streaming...\n\n', '● Streaming...\n\n')
+                        : prev;
+                      return baseText.replace(/● Streaming\.\.\.\n\n.*$/, `● Streaming...\n\n${fullMessage}`);
+                    });
+                    
+                    // Small delay to make streaming visible
+                    await new Promise(resolve => setTimeout(resolve, 10));
+                  } else if (data.type === 'done') {
+                    setTestResult(`✓ Stream completed\n\n${fullMessage}`);
+                    break;
+                  } else if (data.type === 'error') {
+                    setTestResult(`✗ Stream error: ${data.message || 'Unknown error'}\n\n${fullMessage}`);
+                    break;
+                  }
+                } catch (e) {
+                  // Skip invalid JSON lines
+                  console.debug('Skipping invalid SSE line:', line);
+                  continue;
+                }
+              }
+            }
+          }
+          
+          // Process any remaining buffer
+          if (buffer && buffer.trim().startsWith('data:')) {
+            try {
+              const jsonStr = buffer.replace(/^data:\s*/, '');
+              const data = JSON.parse(jsonStr);
+              if (data.type === 'token' && data.value) {
+                fullMessage += data.value;
+                setTestResult(`✓ Stream completed\n\n${fullMessage}`);
+              }
+            } catch (e) {
+              // Ignore
+            }
+          }
+          
+          // If we didn't get a done signal, still mark as complete
+          if (!testResult.includes('✓ Stream completed') && !testResult.includes('✗ Stream error')) {
+            setTestResult(`✓ Stream completed\n\n${fullMessage}`);
+          }
+        } finally {
+          reader.releaseLock();
         }
       } else {
-        resultText = JSON.stringify(data, null, 2);
-      }
+        // Handle regular JSON response
+        const data = await response.json();
+        
+        // Extract the actual content from the response
+        let resultText = '';
+        if (typeof data === 'string') {
+          resultText = data;
+        } else if (data?.content) {
+          if (Array.isArray(data.content) && data.content[0]?.text?.value) {
+            resultText = data.content[0].text.value;
+          } else if (typeof data.content === 'string') {
+            resultText = data.content;
+          } else {
+            resultText = JSON.stringify(data.content);
+          }
+        } else {
+          resultText = JSON.stringify(data, null, 2);
+        }
 
-      setTestResult(resultText);
+        setTestResult(resultText);
+      }
     } catch (error: any) {
       console.error('Test failed:', error);
-      setTestResult(`Error: ${error.message}`);
+      setTestResult(`✗ Error: ${error.message}`);
       emitter.emit(EVENT_SHOW_NOTIFICATION, {
         message: 'Test failed: ' + error.message,
         type: 'error',
@@ -342,7 +598,8 @@ print('Assistant:', response)`;
   const featureIcons = {
     file: { icon: <FileText className="w-4 h-4" />, label: 'File Upload' },
     url: { icon: <Link className="w-4 h-4" />, label: 'URL Attachment' },
-    prompt: { icon: <FileCode className="w-4 h-4" />, label: 'Prompt Override' }
+    prompt: { icon: <FileCode className="w-4 h-4" />, label: 'Prompt Override' },
+    streaming: { icon: <Zap className="w-4 h-4" />, label: 'Streaming Mode' }
   };
 
   return (
@@ -485,13 +742,28 @@ print('Assistant:', response)`;
                 </button>
               </div>
               <div className="p-4 overflow-auto" style={{ maxHeight: '160px' }}>
-                {isTesting ? (
+                {isTesting && !testResult ? (
                   <div className="flex items-center gap-2 text-gray-400">
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    <span className="text-xs">Running test...</span>
+                    <span className="text-xs">Connecting to API...</span>
                   </div>
                 ) : testResult ? (
-                  <pre className="text-xs text-gray-300 whitespace-pre-wrap font-mono">{testResult}</pre>
+                  <pre className={`text-xs whitespace-pre-wrap font-mono ${
+                    testResult.startsWith('● Streaming') 
+                      ? 'text-purple-400' 
+                      : testResult.startsWith('✓') 
+                      ? 'text-green-400' 
+                      : testResult.startsWith('✗') 
+                      ? 'text-red-400' 
+                      : 'text-gray-300'
+                  }`}>
+                    {testResult.startsWith('● Streaming') && (
+                      <span className="inline-block animate-pulse">{testResult.split('\n')[0]}</span>
+                    )}
+                    {testResult.startsWith('● Streaming') 
+                      ? '\n\n' + testResult.split('\n\n').slice(1).join('\n\n')
+                      : testResult}
+                  </pre>
                 ) : (
                   <span className="text-xs text-gray-500">No result yet</span>
                 )}
