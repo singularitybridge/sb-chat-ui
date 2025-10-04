@@ -1,6 +1,6 @@
 // src/pages/admin/EditAssistantPage.tsx
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { useRootStore } from '../../store/common/RootStoreContext';
 import { IAssistant } from '../../store/models/Assistant';
@@ -27,6 +27,7 @@ import AvatarSelector from '../../components/AvatarSelector';
 import { emitter } from '../../services/mittEmitter';
 import { EVENT_SHOW_EDIT_ASSISTANT_ACTIONS_MODAL } from '../../utils/eventNames';
 import AdminPageContainer from '../../components/admin/AdminPageContainer';
+import { getAssistantUrl } from '../../utils/assistantUrlUtils';
 
 interface UploadedFile {
   fileId: string;
@@ -37,6 +38,7 @@ interface UploadedFile {
 const EditAssistantPage: React.FC = observer(() => {
   const { t, i18n } = useTranslation();
   const { key } = useParams<{ key: string }>();
+  const navigate = useNavigate();
   const rootStore = useRootStore();
   const assistant = key ? rootStore.getAssistantById(key) : null;
   const [isLoading, setIsLoading] = useState(false);
@@ -60,7 +62,8 @@ const EditAssistantPage: React.FC = observer(() => {
 
     fetchFieldConfigs();
 
-    if (key) {
+    // Use assistant._id for file operations, not the route key
+    if (assistant && assistant._id) {
       fetchAssistantFiles();
     }
     if (assistant) {
@@ -69,9 +72,10 @@ const EditAssistantPage: React.FC = observer(() => {
   }, [key, assistant, i18n.language]);
 
   const fetchAssistantFiles = async () => {
-    if (key) {
+    // Use the actual assistant._id, not the route key
+    if (assistant && assistant._id) {
       try {
-        const files = await listAssistantFiles(key);
+        const files = await listAssistantFiles(assistant._id);
         setUploadedFiles(files);
       } catch (error) {
         console.error('Failed to fetch assistant files', error);
@@ -123,7 +127,7 @@ const EditAssistantPage: React.FC = observer(() => {
   }).filter(Boolean) as FieldConfig[]; // Filter out null values and cast to FieldConfig[]
 
   const handleSubmit = async (values: FormValues) => {
-    if (!key) {
+    if (!key || !assistant) {
       return;
     }
     setIsLoading(true);
@@ -131,16 +135,39 @@ const EditAssistantPage: React.FC = observer(() => {
       ...values,
       avatarImage: selectedAvatarId,
     };
+    
+    // Debug logging
+    console.log('Form values submitted:', values);
+    console.log('Updated values being sent:', updatedValues);
+    
+    // Check if name has changed (which affects the URL)
+    const oldName = assistant.name;
+    const newName = values.name as string;
+    
+    console.log('Name - Old:', oldName, 'New:', newName);
+    
     await rootStore.updateAssistant(key, updatedValues as IAssistant);
+    
+    // If name has changed, navigate to the new URL
+    if (newName && newName !== oldName) {
+      const updatedAssistant = rootStore.getAssistantById(key);
+      console.log('Updated assistant after save:', updatedAssistant);
+      if (updatedAssistant) {
+        const newUrl = getAssistantUrl(updatedAssistant);
+        console.log('Navigating to new URL:', newUrl);
+        navigate(newUrl, { replace: true });
+      }
+    }
+    
     setIsLoading(false);
   };
 
   const handleFileUpload = async (file: File) => {
-    if (!key) return;
+    if (!assistant || !assistant._id) return;
 
     setIsUploading(true);
     try {
-      const response = await uploadFile(key, file);
+      const response = await uploadFile(assistant._id, file);
       const newFile: UploadedFile = {
         fileId: response.fileId,
         openaiFileId: response.openaiFileId,
@@ -155,10 +182,10 @@ const EditAssistantPage: React.FC = observer(() => {
   };
 
   const handleFileDelete = async (fileId: string) => {
-    if (!key) return;
+    if (!assistant || !assistant._id) return;
 
     try {
-      await deleteFile(key, fileId);
+      await deleteFile(assistant._id, fileId);
       setUploadedFiles(uploadedFiles.filter((file) => file.fileId !== fileId));
     } catch (error) {
       console.error('Error deleting file:', error);

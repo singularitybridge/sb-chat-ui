@@ -314,7 +314,9 @@
   },
   "assistantFieldConfigs": {
     "assistantId": "Assistant ID",
-    "name": "Name",
+    "name": "Name (URL-safe)",
+    "namePlaceholder": "e.g., csv-agent, data-analyst",
+    "nameValidation": "Only letters, numbers, hyphens (-), and underscores (_) allowed. No spaces. 2-50 characters.",
     "description": "Description",
     "introMessage": "Intro Message",
     "voice": "Voice",

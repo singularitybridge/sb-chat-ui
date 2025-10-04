@@ -336,7 +336,9 @@
   }, 
   "assistantFieldConfigs": {
     "assistantId": "מזהה עוזר",
-    "name": "שם",
+    "name": "שם (בטוח ל-URL)",
+    "namePlaceholder": "לדוגמה: csv-agent, data-analyst",
+    "nameValidation": "רק אותיות, מספרים, מקפים (-) וקווים תחתונים (_) מותרים. ללא רווחים. 2-50 תווים.",
     "description": "תיאור",
     "introMessage": "הודעת פתיחה",
     "voice": "קול",

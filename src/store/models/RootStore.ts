@@ -413,8 +413,25 @@ const RootStore = types
       }
     }),
 
-    getAssistantById: (_id: string) => {
-      return self.assistants.find((assistant) => assistant._id === _id);
+    getAssistantById: (identifier: string) => {
+      console.log('getAssistantById called with:', identifier);
+      console.log('Available assistants:', self.assistants.map(a => ({ _id: a._id, name: a.name })));
+      
+      // First try to find by name if the identifier doesn't look like an ObjectID
+      const isObjectId = /^[a-f\d]{24}$/i.test(identifier);
+      console.log('Is ObjectID format:', isObjectId);
+      
+      if (!isObjectId) {
+        // Try to find by name first (for URL routing)
+        const byName = self.assistants.find((assistant) => assistant.name === identifier);
+        console.log('Found by name:', byName);
+        if (byName) return byName;
+      }
+      
+      // Fallback to finding by _id (works for both ObjectIDs and as a fallback)
+      const byId = self.assistants.find((assistant) => assistant._id === identifier);
+      console.log('Found by _id:', byId);
+      return byId;
     },
 
     // Team-related actions

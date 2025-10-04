@@ -13,7 +13,7 @@ const Identifier = types.model('Identifier', {
 
 const Assistant = types.model('Assistant', {
   _id: types.identifier,  
-  name: types.string,
+  name: types.string, // Used for both display and URL routing (must be URL-safe)
   description: types.string,
   companyId: types.string,
   voice: types.string,

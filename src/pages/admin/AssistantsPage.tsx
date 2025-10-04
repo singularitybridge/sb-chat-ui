@@ -20,6 +20,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Avatar, AvatarStyles } from '../../components/Avatar';
 import IntegrationIcons from '../../components/IntegrationIcons';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getAssistantUrl } from '../../utils/assistantUrlUtils';
 
 
 const AssistantsPage: React.FC = observer(() => {
@@ -79,8 +80,8 @@ const AssistantsPage: React.FC = observer(() => {
     emitter.emit(EVENT_SHOW_ADD_ASSISTANT_MODAL, 'Add Assistant');
   };
 
-  const handleEditAssistant = (assistantId: string) => {
-    navigate(`/admin/assistants/${assistantId}`);
+  const handleEditAssistant = (assistant: IAssistant) => {
+    navigate(getAssistantUrl(assistant));
   };
 
   const handleCopyAssistantId = (assistantId: string) => {
@@ -212,7 +213,7 @@ const AssistantsPage: React.FC = observer(() => {
                                     className="p-1.5 rounded-full hover:bg-gray-300 bg-white"
                                     onClick={(event) => {
                                       event.stopPropagation();
-                                      handleEditAssistant(assistant._id);
+                                      handleEditAssistant(assistant);
                                     }}
                                   />
                                   <IconButton

@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { ModelIndicator } from '../../ModelIndicator';
 import IntegrationIcons from '../../IntegrationIcons';
 import CodeSampleDialog from '../../CodeSampleDialog';
+import { getAssistantUrl } from '../../../utils/assistantUrlUtils';
 
 interface HeaderProps {
   title: string;
@@ -65,7 +66,13 @@ const Header: React.FC<HeaderProps> = ({
 
   const handleEditAssistant = () => {
     if (activeSession?.assistantId) {
-      navigate(`/admin/assistants/${activeSession.assistantId}`);
+      const assistant = getAssistantById(activeSession.assistantId);
+      if (assistant) {
+        navigate(getAssistantUrl(assistant));
+      } else {
+        // Fallback to ID if assistant not found in store
+        navigate(`/admin/assistants/${activeSession.assistantId}`);
+      }
     }
   };
 

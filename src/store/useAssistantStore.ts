@@ -125,8 +125,18 @@ export const useAssistantStore = create<AssistantStoreState>((set, get) => ({
     }
   },
   
-  getAssistantById: (id) => {
-    return get().assistants.find(a => a._id === id);
+  getAssistantById: (identifier) => {
+    // First try to find by name if the identifier doesn't look like an ObjectID
+    const isObjectId = /^[a-f\d]{24}$/i.test(identifier);
+    
+    if (!isObjectId) {
+      // Try to find by name first (for URL routing)
+      const byName = get().assistants.find(a => a.name === identifier);
+      if (byName) return byName;
+    }
+    
+    // Fallback to finding by _id (works for both ObjectIDs and as a fallback)
+    return get().assistants.find(a => a._id === identifier);
   },
   
   getAssistantsByTeam: (teamId) => {

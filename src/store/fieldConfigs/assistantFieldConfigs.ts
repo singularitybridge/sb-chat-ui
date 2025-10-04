@@ -128,10 +128,10 @@ export const getAssistantFieldConfigs = async (
   return [
     {
       id: 'name',
-      label: 'Name',
+      label: 'assistantFieldConfigs.name',
       key: 'name',
       type: 'input',
-      value: 'New Assistant',
+      value: 'new-assistant',
       visibility: { create: true, view: true, update: true },
     },
     {
@@ -225,10 +225,10 @@ export const getAssistantFieldConfigs = async (
 export const defaultAssistantFieldConfigs: FieldConfig[] = [
   {
     id: 'name',
-    label: 'Name',
+    label: 'assistantFieldConfigs.name',
     key: 'name',
     type: 'input',
-    value: 'New Assistant',
+    value: 'new-assistant',
     visibility: { create: true, view: true, update: true },
   },
   {
