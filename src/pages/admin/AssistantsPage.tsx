@@ -4,11 +4,12 @@ import { observer } from 'mobx-react-lite';
 import { useRootStore } from '../../store/common/RootStoreContext'; // Still needed for rootStore.teamsLoaded, etc.
 import { useSessionStore } from '../../store/useSessionStore'; // Import Zustand session store
 import { IAssistant } from '../../store/models/Assistant';
-import { Plus, Settings, X, ChevronRight, ChevronLeft, Copy } from 'lucide-react';
+import { Plus, Settings, X, ChevronRight, ChevronLeft, Copy, Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { IconButton } from '../../components/admin/IconButton';
 import { ModelIndicator } from '../../components/ModelIndicator';
 import { emitter } from '../../services/mittEmitter';
+import { useCommandPalette } from '../../contexts/CommandPaletteContext';
 import {
   EVENT_SET_ACTIVE_ASSISTANT,
   EVENT_SHOW_ADD_ASSISTANT_MODAL,
@@ -32,6 +33,7 @@ const AssistantsPage: React.FC = observer(() => {
   const [teamAssistants, setTeamAssistants] = useState<IAssistant[]>([]);
   const [teamName, setTeamName] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { setOpen: setCommandPaletteOpen } = useCommandPalette();
 
   const { t } = useTranslation();
 
@@ -141,10 +143,16 @@ const AssistantsPage: React.FC = observer(() => {
                 />
               )}
             </div>
-            <IconButton
-              icon={<Plus className="w-7 h-7 text-gray-600" />}
-              onClick={handleAddAssistant}
-            />
+            <div className="flex items-center gap-2">
+              <IconButton
+                icon={<Search className="w-6 h-6 text-gray-600" />}
+                onClick={() => setCommandPaletteOpen(true)}
+              />
+              <IconButton
+                icon={<Plus className="w-7 h-7 text-gray-600" />}
+                onClick={handleAddAssistant}
+              />
+            </div>
           </div>
 
           <ul className="space-y-6 flex-grow overflow-y-auto">

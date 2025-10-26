@@ -412,5 +412,16 @@
       "createdAt": "Created",
       "expiresAt": "Expires"
     }
+  },
+  "CommandPalette": {
+    "searchPlaceholder": "Search assistants, teams, workspace...",
+    "noResults": "No results found.",
+    "loading": "Loading workspace items...",
+    "hint": "Press",
+    "hintToOpen": "to open",
+    "navigate": "to navigate",
+    "assistants": "Assistants",
+    "teams": "Teams",
+    "workspace": "Workspace"
   }
 }

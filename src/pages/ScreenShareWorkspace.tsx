@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Monitor, StopCircle, Maximize2, Minimize2, X, Sparkles, Phone, PhoneOff, Laptop, Bot } from 'lucide-react';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { User, Laptop, Bot, RefreshCw, FileText, Trash2, PanelLeftClose, PanelLeft, Share2, FolderOpen, FolderClosed, Database, Sparkles, Monitor } from 'lucide-react';
 import { useScreenShareStore } from '../store/useScreenShareStore';
 import { useChatStore } from '../store/chatStore';
 import { useSessionStore } from '../store/useSessionStore';
@@ -8,25 +8,45 @@ import { useRootStore } from '../store/common/RootStoreContext';
 import { observer } from 'mobx-react-lite';
 import { useTranslation } from 'react-i18next';
 import { SBChatKitUI } from '../components/sb-chat-kit-ui/SBChatKitUI';
-import LiveCodeRenderer from '../components/sb-core-ui-kit/LiveCodeRenderer';
-import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
-import Badge from '../components/Badge';
-import { CheckSquare, Users, Target, Brain, TrendingUp, Calendar } from 'lucide-react';
 import { cn } from '../utils/cn';
 import DynamicBackground, { setDynamicBackground } from '../components/DynamicBackground';
 import { fileToBase64Attachment, Base64Attachment } from '../utils/base64Utils';
 import { uploadContentFile } from '../services/api/contentFileService';
 import { useUploadPreferencesStore } from '../store/useUploadPreferencesStore';
-import VoiceChat from '../components/VoiceChat/VoiceChat';
-import useVapiStore from '../store/useVapiStore';
-import { ToggleSwitch } from '../components/ui/toggle-switch';
+import { initializeWebSocket, disconnectWebSocket } from '../utils/websocket';
+import { ContentPanel } from '../components/ui/content-panel';
+import { findDefaultEntryFile, getWorkspaceRawContent, deleteWorkspaceItem, getWorkspaceItem } from '../services/api/workspaceService';
+import { MarkdownRenderer } from '../components/workspace/MarkdownRenderer';
+import { WorkspaceFileExplorer } from '../components/workspace/WorkspaceFileExplorer';
+import { JSONViewer } from '../components/workspace/JSONViewer';
+import { workspaceApiScript, workspaceReactiveApiScript } from '../utils/workspace-api';
+import WorkspaceEmbedDialog from '../components/WorkspaceEmbedDialog';
+import { MemoryPreviewDialog } from '../components/workspace/MemoryPreviewDialog';
+import { useWorkspaceLayout } from '../hooks/useWorkspaceLayout';
+import { useWorkspaceKeyboard } from '../hooks/useWorkspaceKeyboard';
+import { useWorkspaceDataStore } from '../store/useWorkspaceDataStore';
+import { useUiContextStore } from '../store/useUiContextStore';
 
 const ScreenShareWorkspace: React.FC = observer(() => {
-  const { workspace } = useParams<{ workspace: string }>();
+  const { assistantName } = useParams<{ assistantName: string }>();
+  const location = useLocation();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const rootStore = useRootStore();
-  
+
+  // Parse file path from URL (everything after /workspace/)
+  const getFilePathFromUrl = (): string | null => {
+    const workspaceIndex = location.pathname.indexOf('/workspace/');
+    if (workspaceIndex === -1) return null;
+    const filePath = location.pathname.slice(workspaceIndex + '/workspace'.length);
+    // Return null if empty or just a slash
+    if (!filePath || filePath === '/') return null;
+    return filePath;
+  };
+
+  // Find assistant by name (getAssistantById supports both ID and name)
+  const assistantByName = assistantName ? rootStore.getAssistantById(assistantName) : null;
+
   // Background configuration - same as Admin pages
   const backgroundProps = setDynamicBackground(
     'https://cdn.midjourney.com/41d91483-76a4-41f1-add2-638ff6f552e8/0_0.png',
@@ -42,7 +62,7 @@ const ScreenShareWorkspace: React.FC = observer(() => {
     ],
     'multiply'
   );
-  
+
   // Store hooks
   const {
     isActive: isScreenSharing,
@@ -52,42 +72,95 @@ const ScreenShareWorkspace: React.FC = observer(() => {
     captureScreenshot,
     sessionId: screenShareSessionId
   } = useScreenShareStore();
-  
+
   const { saveToCloud } = useUploadPreferencesStore();
-  
-  const { 
-    messages, 
-    handleSubmitMessage, 
-    isLoading: isStreaming, 
+
+  const {
+    messages,
+    handleSubmitMessage,
+    isLoading: isStreaming,
     handleClearChat,
-    loadMessages 
+    loadMessages
   } = useChatStore();
-  
-  const { 
-    activeSession, 
-    clearAndRenewActiveSession 
+
+  const {
+    activeSession,
+    clearAndRenewActiveSession
   } = useSessionStore();
-  
-  // Audio store not needed after removing audio toggle from UI
-  // const { audioState, toggleAudio: handleToggleAudio } = useAudioStore();
-  
-  const { isCallActive: isVoiceActive } = useVapiStore();
-  
-  // Get current assistant from session
-  const currentAssistant = activeSession?.assistantId 
+
+  // Workspace reactive data store
+  const {
+    setData: setWorkspaceData,
+    getData: getWorkspaceData,
+    setLoading: setWorkspaceLoading,
+    setError: setWorkspaceError,
+    subscribe: subscribeToWorkspaceData,
+    setContext: setWorkspaceContext,
+    getContext: getWorkspaceContext
+  } = useWorkspaceDataStore();
+
+  // UI context tracking
+  const { setWorkspaceFile } = useUiContextStore();
+
+  // Get current assistant from session or URL parameter
+  const currentAssistant = activeSession?.assistantId
     ? rootStore.getAssistantById(activeSession.assistantId)
-    : null;
-  
+    : assistantByName;
+
+  // Workspace layout hooks
+  const { panels, togglePanel } = useWorkspaceLayout();
+
+  // Keyboard shortcuts
+  useWorkspaceKeyboard(
+    () => togglePanel('chatPanel'),
+    () => togglePanel('fileListPanel')
+  );
+
   // Local state
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [agentContent, setAgentContent] = useState<string>('');
-  const [showVoiceChat, setShowVoiceChat] = useState(false);
-  const [showAIWorkspace, setShowAIWorkspace] = useState(false); // false = User Screen, true = AI Workspace
-  
+  const [showAIWorkspace, setShowAIWorkspace] = useState(true); // true = AI Workspace (default), false = User Screen
+  const [selectedFilePath, setSelectedFilePath] = useState<string | null>(null);
+  const [selectedFileContent, setSelectedFileContent] = useState<string | null>(null);
+  const [selectedFileType, setSelectedFileType] = useState<string | null>(null);
+  const [markdownViewMode, setMarkdownViewMode] = useState<'rendered' | 'raw'>('rendered'); // Toggle for MD/MDX files
+  const [fileExplorerKey, setFileExplorerKey] = useState(0); // Key to force re-render of file explorer
+  const [isReloadingFile, setIsReloadingFile] = useState(false); // Loading state for file reload
+  const [showEmbedDialog, setShowEmbedDialog] = useState(false); // Toggle for embed dialog
+  const [isHomePageMissing, setIsHomePageMissing] = useState(false); // True when on home page with no file
+  const [isCreatingHomePage, setIsCreatingHomePage] = useState(false); // Loading state for home page creation
+  const [showMemoryDialog, setShowMemoryDialog] = useState(false); // Toggle for memory preview dialog
+
   // Refs
   const videoRef = useRef<HTMLVideoElement>(null);
   const workspaceRef = useRef<HTMLDivElement>(null);
-  
+
+  /**
+   * Inject workspace API script into HTML content
+   * This allows HTML pages to use workspace.ask() and reactive data binding
+   */
+  const injectWorkspaceAPIToHTML = (html: string): string => {
+    // Find the </head> tag or <body> tag to inject script
+    const headCloseIndex = html.toLowerCase().indexOf('</head>');
+    const bodyOpenIndex = html.toLowerCase().indexOf('<body');
+
+    // Use reactive API for full capabilities
+    const scriptTag = `<script id="workspace-api">${workspaceReactiveApiScript}</script>`;
+
+    if (headCloseIndex !== -1) {
+      // Inject before </head>
+      return html.slice(0, headCloseIndex) + scriptTag + html.slice(headCloseIndex);
+    } else if (bodyOpenIndex !== -1) {
+      // Find the end of <body...> tag
+      const bodyOpenEnd = html.indexOf('>', bodyOpenIndex);
+      if (bodyOpenEnd !== -1) {
+        // Inject after <body>
+        return html.slice(0, bodyOpenEnd + 1) + scriptTag + html.slice(bodyOpenEnd + 1);
+      }
+    }
+
+    // Fallback: prepend to entire content
+    return scriptTag + html;
+  };
+
   // Load messages on mount and ensure we have a session
   useEffect(() => {
     if (activeSession?._id) {
@@ -97,14 +170,28 @@ const ScreenShareWorkspace: React.FC = observer(() => {
       console.log('No active session in workspace. Please select an assistant first.');
     }
   }, [activeSession?._id, loadMessages]);
-  
-  // Start screen sharing on mount
+
+  // Initialize WebSocket connection
   useEffect(() => {
-    // Only start if not already sharing
-    if (!isScreenSharing) {
-      startScreenShare();
+    const token = localStorage.getItem('userToken');
+    console.log('🔐 ScreenShareWorkspace - Auth token check:', {
+      hasToken: !!token,
+      isAuthenticated: rootStore.authStore?.isAuthenticated
+    });
+
+    if (token) {
+      initializeWebSocket(token);
+    } else {
+      console.warn('⚠️ No auth token available - WebSocket will not connect');
     }
-    
+
+    return () => {
+      disconnectWebSocket();
+    };
+  }, [rootStore.authStore?.isAuthenticated]);
+
+  // Cleanup screen sharing on unmount
+  useEffect(() => {
     return () => {
       // Cleanup on unmount
       if (isScreenSharing) {
@@ -112,67 +199,711 @@ const ScreenShareWorkspace: React.FC = observer(() => {
       }
     };
   }, []); // Empty dependency array - only run on mount/unmount
-  
+
   // Set up video stream
   useEffect(() => {
     if (stream && videoRef.current) {
       videoRef.current.srcObject = stream;
     }
   }, [stream]);
-  
-  // Generate AI insights placeholder content using React components
+
+  // Auto-load file from URL path or default entry file
   useEffect(() => {
-    // React JSX code as string that will be compiled by LiveCodeRenderer
-    const reactCode = `
-<>
-  <div className="min-h-full bg-gradient-to-br from-gray-50 via-white to-blue-50 p-8 flex flex-col items-center justify-center">
-    
-    {/* Central Icon and Title */}
-    <div className="mb-8 text-center">
-      <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl mb-6 shadow-2xl">
-        <Brain className="h-10 w-10 text-white" />
-      </div>
-      <h1 className="text-3xl font-light text-gray-800 mb-3">AI Workspace</h1>
-      <p className="text-gray-600 max-w-md mx-auto">
-        Your AI assistant will display insights, action items, and analysis here
-      </p>
-    </div>
+    const loadFile = async () => {
+      if (!currentAssistant?._id) return;
 
-    {/* Status Indicator */}
-    <div className="flex items-center gap-3 mb-8 px-6 py-3 bg-white rounded-full shadow-lg">
-      <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
-      <span className="text-sm font-medium text-gray-700">
-        ${isScreenSharing ? 'Analyzing your screen' : 'Ready to analyze'}
-      </span>
-    </div>
+      try {
+        // Get file path from URL
+        const urlFilePath = getFilePathFromUrl();
 
-    {/* Coming Soon Features */}
-    <Card className="max-w-lg border-0 shadow-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
-      <CardContent className="p-6">
-        <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-          <Sparkles className="h-5 w-5" />
-          What's Coming
-        </h3>
-        <div className="space-y-2 text-sm opacity-95">
-          <p>📋 Smart action items from your conversations</p>
-          <p>🎯 Real-time insights and recommendations</p>
-          <p>📊 Interactive dashboards and visualizations</p>
-        </div>
-      </CardContent>
-    </Card>
+        // If no URL path, find default entry file
+        const finalPath = urlFilePath || await findDefaultEntryFile(currentAssistant._id, activeSession?._id);
 
-    {/* Footer */}
-    <div className="mt-8 text-center">
-      <p className="text-xs text-gray-500">
-        ${messages.length} messages analyzed • ${currentAssistant?.name || 'No assistant selected'}
-      </p>
-    </div>
-  </div>
-</>
-    `;
-    
-    setAgentContent(reactCode);
-  }, [workspace, currentAssistant, activeSession, isScreenSharing, messages.length]);
+        if (finalPath) {
+          // Load the file
+          const response = await getWorkspaceItem(finalPath, 'agent', currentAssistant._id, activeSession?._id);
+
+          if (response.found && response.content) {
+            let content: string;
+            if (response.isBinary) {
+              content = response.content;
+            } else {
+              content = typeof response.content === 'string'
+                ? response.content
+                : JSON.stringify(response.content, null, 2);
+            }
+
+            const parts = finalPath.split('.');
+            const extension = parts.length > 1 ? parts[parts.length - 1].toLowerCase() : 'text';
+
+            setSelectedFilePath(finalPath);
+            setSelectedFileContent(content);
+            setSelectedFileType(extension);
+            setIsHomePageMissing(false); // File was found
+          }
+        } else if (!urlFilePath) {
+          // No URL path and no default entry file - show welcome message
+          setSelectedFilePath(null);
+          setSelectedFileContent(null);
+          setSelectedFileType(null);
+          setIsHomePageMissing(true);
+        } else {
+          // URL path specified but file not found
+          setIsHomePageMissing(false);
+        }
+      } catch (error) {
+        console.error('Failed to load file:', error);
+        setIsHomePageMissing(false);
+      }
+    };
+
+    loadFile();
+  }, [currentAssistant?._id, activeSession?._id, location.pathname]); // Load when assistant, session, or URL changes
+
+  // Update UI context when workspace file changes
+  useEffect(() => {
+    if (selectedFilePath && selectedFileContent && currentAssistant?._id) {
+      setWorkspaceFile({
+        path: selectedFilePath,
+        content: selectedFileContent,
+        assistantId: currentAssistant._id,
+      });
+    } else {
+      setWorkspaceFile(null);
+    }
+  }, [selectedFilePath, selectedFileContent, currentAssistant?._id, setWorkspaceFile]);
+
+  // Initialize workspace API for MDX files (rendered directly, not in iframe)
+  // Instead of using postMessage, connect directly to Zustand store
+  useEffect(() => {
+    (window as any).workspace = {
+      // Direct store access for MDX components (no postMessage)
+      // Always get current state to avoid stale references
+      setData: async (key: string, value: any, source?: string) => {
+        useWorkspaceDataStore.getState().setData(key, value, source);
+      },
+      getData: async (key: string) => {
+        return useWorkspaceDataStore.getState().getData(key);
+      },
+      subscribe: (key: string, callback: (data: any) => void) => {
+        return useWorkspaceDataStore.getState().subscribe(key, callback);
+      },
+      executeAgent: async (agentName: string, query: string, options?: any) => {
+        if (!currentAssistant?._id) {
+          throw new Error('No active assistant');
+        }
+
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        let targetAgentId = currentAssistant._id;
+
+        // Support agent name lookup
+        if (agentName && agentName !== currentAssistant.name) {
+          const foundAgent = rootStore.getAssistantById(agentName);
+          if (foundAgent) {
+            targetAgentId = foundAgent._id;
+          }
+        }
+
+        const response = await fetch(`${API_URL}/assistant/${targetAgentId}/workspace-execute`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('userToken')}`,
+            'x-workspace-session': options?.sessionId || activeSession?._id || 'workspace-session'
+          },
+          body: JSON.stringify({ query })
+        });
+
+        if (!response.ok) {
+          throw new Error(`Agent execution failed: ${response.statusText}`);
+        }
+
+        let data = await response.json();
+
+        // Handle { success, response } format from backend
+        if (data.response) {
+          // If response is a string (could be stringified JSON), try to parse it
+          if (typeof data.response === 'string') {
+            try {
+              const parsed = JSON.parse(data.response);
+              data = parsed; // Replace data with parsed object
+            } catch (e) {
+              // If parse fails, it's a plain text response
+              return data.response;
+            }
+          } else {
+            // Response is already an object
+            data = data.response;
+          }
+        }
+
+        // Handle message format from backend (used by data.message)
+        if (data.message) {
+          if (typeof data.message === 'string') {
+            try {
+              const parsed = JSON.parse(data.message);
+              data = parsed;
+            } catch (e) {
+              return data.message;
+            }
+          } else {
+            data = data.message;
+          }
+        }
+
+        // Extract text from message object format (with content array)
+        if (data.content && Array.isArray(data.content) && data.content.length > 0) {
+          const textContent = data.content.find((c: any) => c.type === 'text');
+          if (textContent && textContent.text && textContent.text.value) {
+            return textContent.text.value;
+          }
+        }
+
+        return typeof data === 'object' ? JSON.stringify(data) : data;
+      },
+      executeAgentStream: async (agentName: string, query: string, onChunk?: (chunk: string, fullText: string) => void, options?: any) => {
+        if (!currentAssistant?._id) {
+          throw new Error('No active assistant');
+        }
+
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        let targetAgentId = currentAssistant._id;
+
+        if (agentName && agentName !== currentAssistant.name) {
+          const foundAgent = rootStore.getAssistantById(agentName);
+          if (foundAgent) {
+            targetAgentId = foundAgent._id;
+          }
+        }
+
+        const response = await fetch(`${API_URL}/assistant/${targetAgentId}/workspace-execute`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'text/event-stream',
+            'Authorization': `Bearer ${localStorage.getItem('userToken')}`,
+            'x-workspace-session': options?.sessionId || activeSession?._id || 'workspace-session'
+          },
+          body: JSON.stringify({ query })
+        });
+
+        if (!response.ok) {
+          throw new Error(`Agent execution failed: ${response.statusText}`);
+        }
+
+        // Read SSE stream
+        const reader = response.body?.getReader();
+        const decoder = new TextDecoder();
+        let fullText = '';
+
+        if (!reader) {
+          throw new Error('No response body');
+        }
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value);
+          const lines = chunk.split('\n');
+
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const data = line.slice(6);
+              if (data) {
+                try {
+                  const streamEvent = JSON.parse(data);
+                  if (streamEvent.type === 'content' && streamEvent.text) {
+                    fullText += streamEvent.text;
+                    onChunk?.(streamEvent.text, fullText);
+                  }
+                } catch (parseError) {
+                  console.error('Failed to parse SSE event:', parseError);
+                }
+              }
+            }
+          }
+        }
+
+        return fullText;
+      }
+    };
+
+    return () => {
+      // Cleanup: remove workspace API on unmount
+      if ((window as any).workspace) {
+        delete (window as any).workspace;
+      }
+    };
+  }, [currentAssistant, activeSession, rootStore]); // Re-initialize if assistant or session changes
+
+  // Listen for PostMessage events from workspace iframe
+  useEffect(() => {
+    const handleWorkspaceMessage = async (event: MessageEvent) => {
+      // Handle workspace action messages
+      if (event.data.type === 'WORKSPACE_ACTION' && event.data.action === 'sendMessage') {
+        handleSendMessage(event.data.message);
+      }
+
+      // Handle workspace search requests
+      if (event.data.type === 'workspace-search') {
+        const { query, assistantId, sessionId, requestId } = event.data.payload;
+
+        if (!currentAssistant?._id) {
+          console.error('❌ No current assistant for workspace search');
+          return;
+        }
+
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        const targetAssistantId = assistantId || currentAssistant._id;
+
+        try {
+          console.log('🔍 [ScreenShareWorkspace] Starting workspace search:', query);
+
+          const response = await fetch(
+            `${API_URL}/assistant/${targetAssistantId}/workspace-execute`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'text/event-stream',
+                'Authorization': `Bearer ${localStorage.getItem('userToken')}`,
+                'x-workspace-session': sessionId || activeSession?._id || 'workspace-session'
+              },
+              body: JSON.stringify({
+                query,
+                searchContext: {
+                  currentPage: selectedFilePath || 'workspace'
+                }
+              })
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error(`Search failed: ${response.statusText}`);
+          }
+
+          // Read SSE stream
+          const reader = response.body?.getReader();
+          const decoder = new TextDecoder();
+
+          if (!reader) {
+            throw new Error('No response body');
+          }
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            const chunk = decoder.decode(value);
+            const lines = chunk.split('\n');
+
+            for (const line of lines) {
+              if (line.startsWith('data: ')) {
+                const data = line.slice(6);
+                if (data) {
+                  try {
+                    const streamEvent = JSON.parse(data);
+
+                    // Send event to iframe (event.source is the iframe window)
+                    // Include requestId so iframe can match response to request
+                    if (event.source) {
+                      (event.source as Window).postMessage({
+                        type: 'workspace-search-response',
+                        payload: {
+                          ...streamEvent,
+                          requestId: requestId // Add requestId to response
+                        }
+                      }, '*');
+                    }
+                  } catch (parseError) {
+                    console.error('Failed to parse SSE event:', parseError);
+                  }
+                }
+              }
+            }
+          }
+        } catch (error: any) {
+          console.error('❌ [ScreenShareWorkspace] Search error:', error);
+
+          // Send error to iframe with requestId
+          if (event.source) {
+            (event.source as Window).postMessage({
+              type: 'workspace-search-response',
+              payload: {
+                type: 'error',
+                error: error.message || 'Search failed',
+                timestamp: Date.now(),
+                requestId: requestId // Include requestId in error response
+              }
+            }, '*');
+          }
+        }
+      }
+
+      // ========== REACTIVE DATA HANDLERS ==========
+
+      // Handle workspace-set-data
+      if (event.data.type === 'workspace-set-data') {
+        const { key, value, source } = event.data.payload;
+        const requestId = event.data.requestId;
+
+        try {
+          setWorkspaceData(key, value, source);
+
+          if (event.source) {
+            (event.source as Window).postMessage({
+              type: 'workspace-set-data-response',
+              requestId,
+              success: true
+            }, '*');
+          }
+        } catch (error: any) {
+          if (event.source) {
+            (event.source as Window).postMessage({
+              type: 'workspace-set-data-response',
+              requestId,
+              success: false,
+              error: error.message
+            }, '*');
+          }
+        }
+      }
+
+      // Handle workspace-get-data
+      if (event.data.type === 'workspace-get-data') {
+        const { key } = event.data.payload;
+        const requestId = event.data.requestId;
+
+        const dataState = getWorkspaceData(key);
+
+        if (event.source) {
+          (event.source as Window).postMessage({
+            type: 'workspace-get-data-response',
+            requestId,
+            found: !!dataState,
+            data: dataState
+          }, '*');
+        }
+      }
+
+      // Handle workspace-subscribe
+      if (event.data.type === 'workspace-subscribe') {
+        const { key } = event.data.payload;
+
+        // Subscribe to data changes and forward to iframe
+        const unsubscribe = subscribeToWorkspaceData(key, (dataState) => {
+          if (event.source) {
+            (event.source as Window).postMessage({
+              type: 'workspace-data-changed',
+              key,
+              dataState
+            }, '*');
+          }
+        });
+      }
+
+      // Handle workspace-execute-agent
+      if (event.data.type === 'workspace-execute-agent') {
+        const { agentName, query, sessionId, requestId } = event.data.payload;
+
+        if (!currentAssistant?._id) {
+          console.error('❌ No current assistant for agent execution');
+          return;
+        }
+
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+        // Resolve agent name to ID (support both name and ID)
+        let targetAgentId = agentName === 'current' ? currentAssistant._id : agentName;
+
+        // Try to find agent by name if not an ID format
+        if (!targetAgentId.match(/^[a-f0-9]{24}$/i)) {
+          const foundAgent = rootStore.getAssistantById(targetAgentId); // This supports name lookup
+          if (foundAgent) {
+            targetAgentId = foundAgent._id;
+          }
+        }
+
+        try {
+          const response = await fetch(
+            `${API_URL}/assistant/${targetAgentId}/workspace-execute`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'text/event-stream',
+                'Authorization': `Bearer ${localStorage.getItem('userToken')}`,
+                'x-workspace-session': sessionId || activeSession?._id || 'workspace-session'
+              },
+              body: JSON.stringify({
+                query,
+                searchContext: {
+                  currentPage: selectedFilePath || 'workspace'
+                }
+              })
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error(`Agent execution failed: ${response.statusText}`);
+          }
+
+          // Read SSE stream
+          const reader = response.body?.getReader();
+          const decoder = new TextDecoder();
+
+          if (!reader) {
+            throw new Error('No response body');
+          }
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            const chunk = decoder.decode(value);
+            const lines = chunk.split('\n');
+
+            for (const line of lines) {
+              if (line.startsWith('data: ')) {
+                const data = line.slice(6);
+                if (data) {
+                  try {
+                    const streamEvent = JSON.parse(data);
+
+                    if (event.source) {
+                      (event.source as Window).postMessage({
+                        type: 'workspace-execute-agent-response',
+                        requestId,
+                        payload: streamEvent
+                      }, '*');
+                    }
+                  } catch (parseError) {
+                    console.error('Failed to parse SSE event:', parseError);
+                  }
+                }
+              }
+            }
+          }
+        } catch (error: any) {
+          console.error('❌ [ScreenShareWorkspace] Agent execution error:', error);
+
+          if (event.source) {
+            (event.source as Window).postMessage({
+              type: 'workspace-execute-agent-response',
+              requestId,
+              payload: {
+                type: 'error',
+                error: error.message || 'Agent execution failed',
+                timestamp: Date.now()
+              }
+            }, '*');
+          }
+        }
+      }
+
+      // Handle workspace-load-file (Fix Gap 1)
+      if (event.data.type === 'workspace-load-file') {
+        const { path } = event.data.payload;
+        const requestId = event.data.requestId;
+
+        if (!currentAssistant?._id) {
+          if (event.source) {
+            (event.source as Window).postMessage({
+              type: 'workspace-load-file-response',
+              requestId,
+              error: 'No active assistant'
+            }, '*');
+          }
+          return;
+        }
+
+        try {
+          const response = await getWorkspaceItem(path, 'agent', currentAssistant._id, activeSession?._id);
+
+          if (response.found && response.content) {
+            let content: string;
+            if (response.isBinary) {
+              content = response.content;
+            } else {
+              content = typeof response.content === 'string'
+                ? response.content
+                : JSON.stringify(response.content, null, 2);
+            }
+
+            if (event.source) {
+              (event.source as Window).postMessage({
+                type: 'workspace-load-file-response',
+                requestId,
+                content
+              }, '*');
+            }
+
+            console.log(`📂 [ScreenShareWorkspace] File loaded: ${path}`);
+          } else {
+            if (event.source) {
+              (event.source as Window).postMessage({
+                type: 'workspace-load-file-response',
+                requestId,
+                error: 'File not found'
+              }, '*');
+            }
+          }
+        } catch (error: any) {
+          if (event.source) {
+            (event.source as Window).postMessage({
+              type: 'workspace-load-file-response',
+              requestId,
+              error: error.message || 'Failed to load file'
+            }, '*');
+          }
+        }
+      }
+
+      // Handle workspace-navigate
+      if (event.data.type === 'workspace-navigate') {
+        const { path } = event.data.payload;
+
+        if (assistantName) {
+          console.log(`🧭 [ScreenShareWorkspace] Navigating to: ${path}`);
+          navigate(`/admin/assistants/${assistantName}/workspace${path}`);
+        }
+      }
+
+      // Handle workspace-get-context
+      if (event.data.type === 'workspace-get-context') {
+        const requestId = event.data.requestId;
+
+        const context = {
+          currentFile: selectedFilePath,
+          agentId: currentAssistant?._id || null,
+          agentName: currentAssistant?.name || null,
+          sessionId: activeSession?._id || null,
+          userId: rootStore.currentUser?._id || null,
+          userName: rootStore.currentUser?.name || null
+        };
+
+        if (event.source) {
+          (event.source as Window).postMessage({
+            type: 'workspace-get-context-response',
+            requestId,
+            context
+          }, '*');
+        }
+
+        console.log('🌐 [ScreenShareWorkspace] Context retrieved:', context);
+      }
+    };
+
+    window.addEventListener('message', handleWorkspaceMessage);
+    return () => window.removeEventListener('message', handleWorkspaceMessage);
+  }, [currentAssistant?._id, activeSession?._id, selectedFilePath]); // Add dependencies
+
+  // Expose global function for MDX/HTML buttons to trigger messages
+  useEffect(() => {
+    // @ts-ignore - adding global function
+    window.sendWorkspaceMessage = (message: string) => {
+      console.log('📨 [ScreenShareWorkspace] Sending message from workspace button:', message);
+      handleSendMessage(message);
+    };
+
+    return () => {
+      // @ts-ignore - cleanup
+      delete window.sendWorkspaceMessage;
+    };
+  }, []); // Empty deps - handleSendMessage is stable enough
+
+  // Expose global function for MDX links to load workspace files
+  useEffect(() => {
+    // @ts-ignore - adding global function
+    window.loadWorkspaceFile = (path: string) => {
+      if (!assistantName) return;
+
+      console.log('📂 [ScreenShareWorkspace] Loading workspace file:', path);
+      // Navigate to file path - useEffect will handle loading
+      navigate(`/admin/assistants/${assistantName}/workspace${path}`);
+    };
+
+    return () => {
+      // @ts-ignore - cleanup
+      delete window.loadWorkspaceFile;
+    };
+  }, [assistantName, navigate]);
+
+  // Handle file selection from explorer
+  const handleFileSelect = (path: string, content: string, type: string) => {
+    // Update URL to include file path
+    if (assistantName) {
+      navigate(`/admin/assistants/${assistantName}/workspace${path}`);
+    }
+    // State will be updated by the useEffect that watches location.pathname
+  };
+
+  // Handle file deletion
+  const handleDeleteFile = async () => {
+    if (!selectedFilePath || !currentAssistant?._id) return;
+
+    const confirmDelete = window.confirm(`Are you sure you want to delete "${selectedFilePath.split('/').pop()}"?`);
+    if (!confirmDelete) return;
+
+    try {
+      await deleteWorkspaceItem(
+        selectedFilePath,
+        'agent',
+        currentAssistant._id,
+        activeSession?._id
+      );
+
+      // Navigate back to workspace root (no file selected)
+      if (assistantName) {
+        navigate(`/admin/assistants/${assistantName}/workspace`);
+      }
+
+      // Clear selection
+      setSelectedFilePath(null);
+      setSelectedFileContent(null);
+      setSelectedFileType(null);
+
+      // Trigger file explorer refresh
+      setFileExplorerKey(prev => prev + 1);
+    } catch (error) {
+      console.error('Failed to delete file:', error);
+      alert('Failed to delete file. Please try again.');
+    }
+  };
+
+  // Handle file deleted callback from explorer
+  const handleFileDeleted = () => {
+    setFileExplorerKey(prev => prev + 1);
+  };
+
+  // Handle file reload
+  const handleReloadFile = async () => {
+    if (!selectedFilePath || !currentAssistant?._id) return;
+
+    try {
+      setIsReloadingFile(true);
+      const response = await getWorkspaceItem(selectedFilePath, 'agent', currentAssistant._id, activeSession?._id);
+
+      if (response.found && response.content) {
+        let content: string;
+        if (response.isBinary) {
+          content = response.content;
+        } else {
+          content = typeof response.content === 'string'
+            ? response.content
+            : JSON.stringify(response.content, null, 2);
+        }
+
+        setSelectedFileContent(content);
+      }
+    } catch (error) {
+      console.error('Failed to reload file:', error);
+      alert('Failed to reload file. Please try again.');
+    } finally {
+      setIsReloadingFile(false);
+    }
+  };
 
   const startScreenShare = async () => {
     // Prevent multiple simultaneous calls
@@ -180,7 +911,7 @@ const ScreenShareWorkspace: React.FC = observer(() => {
       console.log('Screen sharing already active, skipping...');
       return;
     }
-    
+
     try {
       await startSession({
         captureMode: 'manual',
@@ -199,38 +930,38 @@ const ScreenShareWorkspace: React.FC = observer(() => {
       currentAssistantId: currentAssistant?._id,
       isScreenSharing
     });
-    
+
     // Check if we have an active session
     if (!activeSession?._id) {
       console.error('No active session. Please select an assistant from the assistants page first.');
       return;
     }
-    
+
     // Capture and attach screenshot if screen sharing
     if (isScreenSharing) {
       console.log('📸 [ScreenShareWorkspace] Capturing screenshot...');
       const screenshot = await captureScreenshot();
       if (screenshot) {
-        const fileName = screenShareSessionId 
+        const fileName = screenShareSessionId
           ? `${screenShareSessionId}-screenshare.png`
           : `screen-${Date.now()}-screenshare.png`;
-        
+
         console.log('📤 [ScreenShareWorkspace] Uploading screenshot:', fileName);
-        
+
         try {
           // Convert screenshot to base64 attachment
           const file = new File([screenshot], fileName, { type: 'image/png' });
           const screenshotAttachment = await fileToBase64Attachment(file);
-          
+
           // If saveToCloud is enabled, also upload to cloud storage
           if (saveToCloud) {
             try {
               const formData = new FormData();
               formData.append('file', file);
               formData.append('title', fileName);
-              
+
               const uploadResponse = await uploadContentFile(formData);
-              
+
               if (uploadResponse?.data?.gcpStorageUrl) {
                 screenshotAttachment.cloudUrl = uploadResponse.data.gcpStorageUrl;
                 console.log('📤 Screenshot uploaded to cloud:', uploadResponse.data.gcpStorageUrl);
@@ -239,44 +970,44 @@ const ScreenShareWorkspace: React.FC = observer(() => {
               console.error('Cloud upload failed (continuing with base64):', uploadError);
             }
           }
-          
+
           console.log('📎 [ScreenShareWorkspace] Created attachment:', {
             fileName: screenshotAttachment.fileName,
             mimeType: screenshotAttachment.mimeType,
             hasCloudUrl: !!screenshotAttachment.cloudUrl
           });
-            
+
             // Send message with screenshot
-            const assistantInfo = currentAssistant ? { 
-              _id: currentAssistant._id, 
-              voice: currentAssistant.voice, 
-              name: currentAssistant.name 
+            const assistantInfo = currentAssistant ? {
+              _id: currentAssistant._id,
+              voice: currentAssistant.voice,
+              name: currentAssistant.name
             } : undefined;
-            
+
             console.log('💬 [ScreenShareWorkspace] Calling handleSubmitMessage with:', {
               messageText,
               assistantInfo,
               sessionId: activeSession?._id,
               attachmentCount: 1
             });
-            
+
             await handleSubmitMessage(
               messageText,
               assistantInfo,
               activeSession?._id,
               [screenshotAttachment]
             );
-            
+
             console.log('✅ [ScreenShareWorkspace] Message sent successfully');
         } catch (error) {
           console.error('Failed to process screenshot:', error);
           // Send message without screenshot on error
-          const assistantInfo = currentAssistant ? { 
-            _id: currentAssistant._id, 
-            voice: currentAssistant.voice, 
-            name: currentAssistant.name 
+          const assistantInfo = currentAssistant ? {
+            _id: currentAssistant._id,
+            voice: currentAssistant.voice,
+            name: currentAssistant.name
           } : undefined;
-          
+
           await handleSubmitMessage(
             messageText,
             assistantInfo,
@@ -288,52 +1019,29 @@ const ScreenShareWorkspace: React.FC = observer(() => {
     } else {
       // Send without screenshot
       console.log('📨 [ScreenShareWorkspace] Sending message without screenshot');
-      
-      const assistantInfo = currentAssistant ? { 
-        _id: currentAssistant._id, 
-        voice: currentAssistant.voice, 
-        name: currentAssistant.name 
+
+      const assistantInfo = currentAssistant ? {
+        _id: currentAssistant._id,
+        voice: currentAssistant.voice,
+        name: currentAssistant.name
       } : undefined;
-      
+
       console.log('💬 [ScreenShareWorkspace] Calling handleSubmitMessage (no screenshot) with:', {
         messageText,
         assistantInfo,
         sessionId: activeSession?._id,
         attachments
       });
-      
+
       await handleSubmitMessage(
         messageText,
         assistantInfo,
         activeSession?._id,
         attachments
       );
-      
+
       console.log('✅ [ScreenShareWorkspace] Message sent successfully (no screenshot)');
     }
-  };
-  
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      workspaceRef.current?.requestFullscreen();
-      setIsFullscreen(true);
-    } else {
-      document.exitFullscreen();
-      setIsFullscreen(false);
-    }
-  };
-  
-  const handleStopSharing = () => {
-    stopSession();
-    // Don't navigate away, just stop the screen sharing
-  };
-
-  const handleExit = () => {
-    // Stop session if still active
-    if (isScreenSharing) {
-      stopSession();
-    }
-    navigate(-1); // Go back to previous page
   };
 
   const handleClear = async () => {
@@ -345,239 +1053,432 @@ const ScreenShareWorkspace: React.FC = observer(() => {
       );
     }
   };
-  
+
+  const handleCreateHomePage = async () => {
+    if (!currentAssistant?._id) return;
+
+    setIsCreatingHomePage(true);
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+      // Default home page content
+      const defaultContent = `---
+title: ${currentAssistant.name} Workspace
+description: Welcome to your AI workspace
+---
+
+# Welcome to ${currentAssistant.name} Workspace
+
+This is your workspace home page. You can use this space to organize your work, create documentation, and interact with your AI assistant.
+
+## Getting Started
+
+- Use the file explorer on the left to create and organize files
+- Create markdown files (.md/.mdx) for documentation
+- Create HTML files for interactive dashboards
+- All files are private to this assistant
+
+## Quick Actions
+
+Feel free to customize this page or create new files using the workspace!
+`;
+
+      // Create the home page file
+      const response = await fetch(`${API_URL}/api/workspace/add`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('userToken')}`,
+        },
+        body: JSON.stringify({
+          itemPath: '/README.mdx',
+          content: defaultContent,
+          scope: 'agent',
+          scopeId: currentAssistant._id,
+          metadata: {
+            title: `${currentAssistant.name} Workspace`,
+            description: 'Workspace home page',
+            contentType: 'text/mdx',
+          }
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create home page');
+      }
+
+      // Refresh file explorer and load the new file
+      setFileExplorerKey(prev => prev + 1);
+
+      // Reload the current location to load the new home page
+      window.location.reload();
+    } catch (error) {
+      console.error('Failed to create home page:', error);
+      alert('Failed to create home page. Please try again.');
+    } finally {
+      setIsCreatingHomePage(false);
+    }
+  };
+
   return (
-    <div 
+    <div
       ref={workspaceRef}
-      className="h-screen w-full overflow-hidden flex flex-col relative"
+      className="h-full w-full overflow-hidden flex relative"
     >
       <DynamicBackground {...backgroundProps} />
-      <div className="relative z-10 flex flex-col h-full">
-        {/* Header Bar - Floating */}
-        <div className="h-16 flex items-center justify-between px-6 flex-shrink-0">
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            {isScreenSharing && (
-              <div className="animate-pulse h-2 w-2 bg-red-500 rounded-full"></div>
-            )}
-            <span className="text-lg font-semibold text-gray-700">
-              Screen Share Workspace
-            </span>
-          </div>
-          {currentAssistant && (
-            <span className="text-sm text-gray-600">
-              with {currentAssistant.name}
-            </span>
-          )}
-        </div>
-        
-        <div className="flex items-center space-x-2">
-          {/* Voice Mode Toggle */}
-          <button
-            onClick={() => setShowVoiceChat(!showVoiceChat)}
+      <div className="relative z-10 flex w-full justify-center h-full">
+        <div className="flex w-full gap-7 rtl:gap-7">
+          {/* Left Panel - Chat (with smooth animation) */}
+          <ContentPanel
             className={cn(
-              "px-4 py-2 rounded-lg text-sm font-medium transition-all shadow-sm flex items-center gap-2",
-              showVoiceChat 
-                ? "bg-green-500 hover:bg-green-600 text-white" 
-                : "bg-gray-200/80 hover:bg-gray-300/80 text-gray-700"
+              "flex flex-col max-w-sm w-full h-full transition-all duration-300 ease-in-out",
+              panels.chatPanel ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0 pointer-events-none absolute"
             )}
-            title={showVoiceChat ? 'Hide voice chat' : 'Show voice chat'}
           >
-            {isVoiceActive ? (
-              <>
-                <PhoneOff className="h-4 w-4" />
-                Voice Active
-              </>
-            ) : (
-              <>
-                <Phone className="h-4 w-4" />
-                Voice Mode
-              </>
-            )}
-          </button>
-          
-          <button
-            onClick={toggleFullscreen}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            title={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
-          >
-            {isFullscreen ? <Minimize2 className="h-5 w-5 text-gray-600" /> : <Maximize2 className="h-5 w-5 text-gray-600" />}
-          </button>
-          
-          {isScreenSharing && (
-            <button
-              onClick={handleStopSharing}
-              className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-medium transition-colors shadow-sm"
-            >
-              <StopCircle className="h-4 w-4 inline mr-2" />
-              Stop Sharing
-            </button>
-          )}
-          
-          <button
-            onClick={handleExit}
-            className="px-4 py-2 bg-gray-200/80 hover:bg-gray-300/80 text-gray-700 rounded-lg text-sm font-medium transition-colors"
-            title="Exit workspace"
-          >
-            <X className="h-4 w-4 inline mr-2" />
-            Exit
-          </button>
-        </div>
-      </div>
-      
-      {/* Voice Chat Overlay */}
-      {showVoiceChat && (
-        <div className="absolute top-20 right-4 z-20 w-96">
-          <VoiceChat className="animate-in fade-in slide-in-from-top-2 duration-300" />
-        </div>
-      )}
-      
-      {/* Main Content Area */}
-      <div className="flex-1 flex gap-4 p-4 min-h-0">
-        {/* Left Panel - Chat (1/3) */}
-        <div className="flex-1 flex flex-col rounded-2xl bg-white/90 backdrop-blur-sm shadow-lg overflow-hidden">
-          {!activeSession ? (
-            <div className="flex-1 flex items-center justify-center p-8">
-              <div className="text-center">
-                <h3 className="text-lg font-semibold text-gray-700 mb-2">No Active Session</h3>
-                <p className="text-sm text-gray-500 mb-4">
-                  Please select an assistant from the assistants page first.
-                </p>
+              {!activeSession ? (
+                <div className="flex-1 flex items-center justify-center p-8">
+                  <div className="text-center">
+                    <h3 className="text-lg font-semibold text-gray-700 mb-2">No Active Session</h3>
+                    <p className="text-sm text-gray-500 mb-4">
+                      Please select an assistant from the assistants page first.
+                    </p>
+                    <button
+                      onClick={() => navigate('/admin/assistants')}
+                      className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium transition-colors shadow-sm"
+                    >
+                      Go to Assistants
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <SBChatKitUI
+                  messages={messages}
+                  assistant={currentAssistant ? {
+                    name: currentAssistant.name,
+                    description: currentAssistant.description,
+                    avatar: currentAssistant.avatarImage,
+                    conversationStarters: currentAssistant.conversationStarters?.length
+                      ? currentAssistant.conversationStarters.map(cs => ({ ...cs }))
+                      : []
+                  } : undefined}
+                  assistantName={currentAssistant?.name || 'AI Assistant'}
+                  onSendMessage={handleSendMessage}
+                  onClear={handleClear}
+                  isLoading={isStreaming}
+                  compact={true}
+                />
+              )}
+          </ContentPanel>
+
+          {/* Right Panel - Workspace View Area */}
+          <ContentPanel className="flex-1 min-w-0 flex flex-col h-full">
+            {/* Toolbar */}
+            <div className="px-4 py-3 flex items-center justify-between border-b border-gray-100">
+              {/* Left: Workspace Title + Icon Switcher */}
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm font-semibold text-gray-700">
+                  {currentAssistant?.name || 'AI'} Workspace
+                </h3>
+
+                {/* Icon Workspace Switcher */}
+                <div className="inline-flex items-center rounded-lg bg-purple-100/50 px-2 py-0.5 gap-1.5">
+                  <span className="text-xs font-medium text-purple-700">View:</span>
+                  <button
+                    onClick={() => setShowAIWorkspace(false)}
+                    className={cn(
+                      "p-1 rounded transition-all",
+                      !showAIWorkspace
+                        ? "text-purple-900 opacity-100"
+                        : "text-purple-600 opacity-40 hover:opacity-60"
+                    )}
+                    title="User Screen"
+                  >
+                    <User className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => setShowAIWorkspace(true)}
+                    className={cn(
+                      "p-1 rounded transition-all",
+                      showAIWorkspace
+                        ? "text-purple-900 opacity-100"
+                        : "text-purple-600 opacity-40 hover:opacity-60"
+                    )}
+                    title="AI Workspace"
+                  >
+                    <Bot className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Right: Toggle Buttons */}
+              <div className="flex items-center gap-1">
                 <button
-                  onClick={() => navigate('/admin/assistants')}
-                  className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium transition-colors shadow-sm"
+                  onClick={() => setShowMemoryDialog(true)}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  title="View workspace memory"
                 >
-                  Go to Assistants
+                  <Database className="h-5 w-5 text-gray-600" />
+                </button>
+                <button
+                  onClick={() => togglePanel('chatPanel')}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  title={panels.chatPanel ? 'Hide chat panel (⌘⇧C)' : 'Show chat panel (⌘⇧C)'}
+                >
+                  {panels.chatPanel ? <PanelLeftClose className="h-5 w-5 text-gray-600" /> : <PanelLeft className="h-5 w-5 text-gray-600" />}
+                </button>
+                <button
+                  onClick={() => togglePanel('fileListPanel')}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  title={panels.fileListPanel ? 'Hide file list (⌘⇧E)' : 'Show file list (⌘⇧E)'}
+                >
+                  {panels.fileListPanel ? <FolderClosed className="h-5 w-5 text-gray-600" /> : <FolderOpen className="h-5 w-5 text-gray-600" />}
                 </button>
               </div>
             </div>
-          ) : (
-            <SBChatKitUI
-              messages={messages}
-              assistant={currentAssistant ? {
-                name: currentAssistant.name,
-                description: currentAssistant.description,
-                avatar: currentAssistant.avatarImage,
-                conversationStarters: currentAssistant.conversationStarters?.length
-                  ? currentAssistant.conversationStarters.map(cs => ({ ...cs }))
-                  : []
-              } : undefined}
-              assistantName={currentAssistant?.name || 'AI Assistant'}
-              onSendMessage={handleSendMessage}
-              onClear={handleClear}
-              isLoading={isStreaming}
-            />
-          )}
-        </div>
-        
-        {/* Middle & Right Panel - Combined View Area (2/3) */}
-        <div className="flex-[2] flex flex-col rounded-2xl bg-white/80 backdrop-blur-sm shadow-lg overflow-hidden">
-          <div className="px-4 py-3 flex items-center justify-between border-b border-gray-100">
-            <h3 className="text-sm font-semibold text-gray-700 flex items-center">
-              {showAIWorkspace ? (
-                <>
-                  <Bot className="h-4 w-4 mr-2" />
-                  AI Workspace: {workspace}
-                </>
-              ) : (
-                <>
-                  <Monitor className="h-4 w-4 mr-2" />
-                  Screen Preview
-                </>
-              )}
-            </h3>
-            <ToggleSwitch
-              checked={showAIWorkspace}
-              onChange={setShowAIWorkspace}
-              leftIcon={<Laptop className="h-4 w-4" />}
-              rightIcon={<Bot className="h-4 w-4" />}
-              leftLabel="User Screen"
-              rightLabel="AI Workspace"
-            />
-          </div>
-          {/* Dynamic Content Area - Shows either Screen Preview or AI Workspace */}
-          {showAIWorkspace ? (
-            // AI Workspace View
-            <div className="flex-1 overflow-y-auto p-6 bg-white">
-              {agentContent ? (
-                <LiveCodeRenderer 
-                  code={agentContent}
-                  scope={{
-                    Card,
-                    CardHeader,
-                    CardTitle,
-                    CardContent,
-                    Badge,
-                    CheckSquare,
-                    Users,
-                    Target,
-                    Brain,
-                    TrendingUp,
-                    Calendar,
-                    Sparkles,
-                    cn,
-                    messages,
-                    isScreenSharing,
-                    currentAssistant
-                  }}
-                  className="w-full"
-                  showErrorsInline
-                />
-              ) : (
-                <div className="text-center text-gray-400 mt-8">
-                  <p className="text-sm">Loading workspace content...</p>
-                </div>
-              )}
-            </div>
-          ) : (
-            // User Screen Preview
-            <>
-              <div className="flex-1 bg-gray-900 p-4 flex items-center justify-center">
-                {isScreenSharing && stream ? (
-                  <video
-                    ref={videoRef}
-                    autoPlay
-                    playsInline
-                    muted
-                    className="w-full h-full object-contain rounded-lg"
-                  />
-                ) : (
-                  <div className="text-center">
-                    <Monitor className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-                    <p className="text-sm text-gray-300 mb-1">
-                      {isScreenSharing ? 'Connecting...' : 'Screen sharing is off'}
-                    </p>
-                    {!isScreenSharing && (
-                      <button
-                        onClick={startScreenShare}
-                        className="mt-4 px-6 py-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium transition-all shadow-md hover:shadow-lg"
-                      >
-                        Start Screen Share
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
-              <div className="px-4 py-2 bg-gradient-to-r from-gray-50 to-gray-100">
-                <p className="text-xs text-gray-600 flex items-center">
-                  {isScreenSharing ? (
-                    <>
-                      <span className="inline-block w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
-                      Live • Screenshots attached to messages
-                    </>
-                  ) : (
-                    <>
-                      <span className="inline-block w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
-                      Inactive • Click to start sharing
-                    </>
+
+            {/* Dynamic Content Area - Shows either Screen Preview or AI Workspace */}
+            {showAIWorkspace ? (
+              // AI Workspace View - File Explorer + File Viewer
+              <div className="flex-1 flex overflow-hidden bg-gray-50 font-['Inter',sans-serif]">
+                {/* File Explorer Sidebar (with smooth animation) */}
+                <div
+                  className={cn(
+                    "w-80 border-r border-gray-200 bg-white transition-all duration-300 ease-in-out",
+                    panels.fileListPanel ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0 pointer-events-none absolute"
                   )}
-                </p>
+                  style={{ willChange: 'transform, opacity' }}
+                >
+                  {currentAssistant?._id ? (
+                    <WorkspaceFileExplorer
+                      key={fileExplorerKey}
+                      agentId={currentAssistant._id}
+                      agentName={currentAssistant.name}
+                      sessionId={activeSession?._id}
+                      selectedPath={selectedFilePath}
+                      onFileSelect={handleFileSelect}
+                      onFileDeleted={handleFileDeleted}
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center h-full p-6">
+                      <p className="text-sm text-gray-500">No assistant selected</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* File Viewer */}
+                <div className="flex-1 flex flex-col overflow-hidden bg-white">
+                  {selectedFilePath && selectedFileContent ? (
+                    <>
+                      {/* File Header */}
+                      <div className="px-6 py-4 border-b border-gray-100">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <h3 className="text-sm font-semibold text-gray-900 truncate">
+                              {selectedFilePath}
+                            </h3>
+                            <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs font-medium">
+                              {selectedFileType?.toUpperCase()}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {/* Toggle for MD/MDX files */}
+                            {(selectedFileType === 'md' || selectedFileType === 'mdx') && (
+                              <button
+                                onClick={() => setMarkdownViewMode(prev => prev === 'rendered' ? 'raw' : 'rendered')}
+                                className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded text-xs font-medium transition-colors flex items-center gap-1"
+                              >
+                                <FileText className="h-3 w-3" />
+                                {markdownViewMode === 'rendered' ? 'Show Raw' : 'Show Rendered'}
+                              </button>
+                            )}
+                            {/* Embed button for HTML/MDX/MD files */}
+                            {(selectedFileType === 'html' || selectedFileType === 'md' || selectedFileType === 'mdx') && (
+                              <button
+                                onClick={() => setShowEmbedDialog(true)}
+                                className="px-3 py-1 bg-purple-50 hover:bg-purple-100 text-purple-600 rounded text-xs font-medium transition-colors flex items-center gap-1"
+                                title="Embed this file"
+                              >
+                                <Share2 className="h-3 w-3" />
+                                Embed
+                              </button>
+                            )}
+                            {/* Reload button */}
+                            <button
+                              onClick={handleReloadFile}
+                              disabled={isReloadingFile}
+                              className="px-3 py-1 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded text-xs font-medium transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                              title="Reload file"
+                            >
+                              <RefreshCw className={`h-3 w-3 ${isReloadingFile ? 'animate-spin' : ''}`} />
+                              Reload
+                            </button>
+                            {/* Delete button */}
+                            <button
+                              onClick={handleDeleteFile}
+                              className="px-3 py-1 bg-red-50 hover:bg-red-100 text-red-600 rounded text-xs font-medium transition-colors flex items-center gap-1"
+                              title="Delete file"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* File Content */}
+                      <div className="flex-1 overflow-auto">
+                        {selectedFileType === 'html' ? (
+                          <iframe
+                            srcDoc={injectWorkspaceAPIToHTML(selectedFileContent)}
+                            className="w-full h-full border-0"
+                            sandbox="allow-scripts allow-forms allow-same-origin"
+                            title="HTML Preview"
+                          />
+                        ) : (selectedFileType === 'md' || selectedFileType === 'mdx') ? (
+                          markdownViewMode === 'rendered' ? (
+                            <div className="p-8">
+                              <MarkdownRenderer content={selectedFileContent} />
+                            </div>
+                          ) : (
+                            <div className="p-6">
+                              <pre className="text-sm text-gray-800 bg-gray-50 rounded-lg p-4 overflow-auto whitespace-pre-wrap font-mono">
+                                {selectedFileContent}
+                              </pre>
+                            </div>
+                          )
+                        ) : (selectedFileType === 'png' || selectedFileType === 'jpg' || selectedFileType === 'jpeg' || selectedFileType === 'gif') ? (
+                          <div className="p-8 flex items-center justify-center">
+                            <img
+                              src={`data:image/${selectedFileType};base64,${selectedFileContent}`}
+                              alt={selectedFilePath}
+                              className="max-w-full h-auto rounded-lg shadow-lg"
+                            />
+                          </div>
+                        ) : selectedFileType === 'json' ? (
+                          <JSONViewer content={selectedFileContent} />
+                        ) : (
+                          <div className="p-6">
+                            <pre className="text-sm text-gray-800 whitespace-pre-wrap font-mono">
+                              {selectedFileContent}
+                            </pre>
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  ) : isHomePageMissing ? (
+                    // Welcome message for missing home page
+                    <div className="flex-1 flex items-center justify-center p-8">
+                      <div className="text-center max-w-md">
+                        <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-50 to-blue-50 rounded-full mb-6">
+                          <Sparkles className="h-10 w-10 text-purple-600" />
+                        </div>
+                        <h3 className="text-xl font-semibold text-gray-900 mb-3">Welcome to Your Workspace</h3>
+                        <p className="text-sm text-gray-600 mb-6 leading-relaxed">
+                          This workspace doesn't have a home page yet. Create one to get started with organizing your work,
+                          documenting projects, or building interactive dashboards.
+                        </p>
+                        <button
+                          onClick={handleCreateHomePage}
+                          disabled={isCreatingHomePage}
+                          className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mx-auto"
+                        >
+                          {isCreatingHomePage ? (
+                            <>
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                              Creating...
+                            </>
+                          ) : (
+                            <>
+                              <FileText className="h-4 w-4" />
+                              Create Home Page
+                            </>
+                          )}
+                        </button>
+                        <p className="text-xs text-gray-500 mt-4">
+                          This will create a README.mdx file at the root of your workspace
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    // No file selected
+                    <div className="flex-1 flex items-center justify-center p-8">
+                      <div className="text-center">
+                        <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
+                          <FileText className="h-8 w-8 text-gray-400" />
+                        </div>
+                        <h3 className="text-sm font-medium text-gray-900 mb-1">No file selected</h3>
+                        <p className="text-xs text-gray-500">Select a file from the explorer to preview</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
-            </>
-          )}
+            ) : (
+              // User Screen Preview
+              <>
+                <div className="flex-1 bg-gray-900 p-4 flex items-center justify-center">
+                  {isScreenSharing && stream ? (
+                    <video
+                      ref={videoRef}
+                      autoPlay
+                      playsInline
+                      muted
+                      className="w-full h-full object-contain rounded-lg"
+                    />
+                  ) : (
+                    <div className="text-center">
+                      <Monitor className="h-12 w-12 text-gray-400 mx-auto mb-3" />
+                      <p className="text-sm text-gray-300 mb-1">
+                        {isScreenSharing ? 'Connecting...' : 'Screen sharing is off'}
+                      </p>
+                      {!isScreenSharing && (
+                        <button
+                          onClick={startScreenShare}
+                          className="mt-4 px-6 py-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium transition-all shadow-md hover:shadow-lg"
+                        >
+                          Start Screen Share
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+                <div className="px-4 py-2 bg-gradient-to-r from-gray-50 to-gray-100">
+                  <p className="text-xs text-gray-600 flex items-center">
+                    {isScreenSharing ? (
+                      <>
+                        <span className="inline-block w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
+                        Live • Screenshots attached to messages
+                      </>
+                    ) : (
+                      <>
+                        <span className="inline-block w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
+                        Inactive • Click to start sharing
+                      </>
+                    )}
+                  </p>
+                </div>
+              </>
+            )}
+          </ContentPanel>
         </div>
       </div>
-      </div>
+
+      {/* Workspace Embed Dialog */}
+      {showEmbedDialog && selectedFilePath && currentAssistant && (
+        <WorkspaceEmbedDialog
+          isOpen={showEmbedDialog}
+          onClose={() => setShowEmbedDialog(false)}
+          assistantId={currentAssistant._id}
+          assistantName={currentAssistant.name}
+          filePath={selectedFilePath}
+        />
+      )}
+
+      {/* Memory Preview Dialog */}
+      <MemoryPreviewDialog
+        isOpen={showMemoryDialog}
+        onClose={() => setShowMemoryDialog(false)}
+      />
     </div>
   );
 });

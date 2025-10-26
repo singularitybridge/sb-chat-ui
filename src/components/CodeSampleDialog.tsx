@@ -62,8 +62,11 @@ const CodeSampleDialog: React.FC<CodeSampleDialogProps> = ({ isOpen, onClose }) 
       return '// Assistant not found';
     }
 
-    // Always use execute endpoint (stateless) - note: singular 'assistant'
-    const endpoint = `assistant/${activeSession.assistantId}/execute`;
+    // Use workspace-execute for internal testing (no API key required)
+    // Use execute for external integrations (requires API key)
+    const endpoint = embedApiKey
+      ? `assistant/${activeSession.assistantId}/execute`
+      : `assistant/${activeSession.assistantId}/workspace-execute`;
     const fullUrl = `${apiUrl.replace(/\/$/, '')}/${endpoint}`;
 
     if (selectedLanguage === 'javascript') {
@@ -424,12 +427,15 @@ done`;
     setTestResult('');
 
     try {
-      const endpoint = `assistant/${activeSession.assistantId}/execute`;
+      // Use workspace-execute for internal testing (no API key required)
+      const endpoint = embedApiKey
+        ? `assistant/${activeSession.assistantId}/execute`
+        : `assistant/${activeSession.assistantId}/workspace-execute`;
       const fullUrl = `${apiUrl.replace(/\/$/, '')}/${endpoint}`;
-      
-      const payload: any = {
-        userInput: testInput
-      };
+
+      const payload: any = embedApiKey
+        ? { userInput: testInput }  // /execute endpoint
+        : { query: testInput };      // /workspace-execute endpoint
 
       // Add prompt override if enabled
       if (enabledFeatures.has('prompt')) {

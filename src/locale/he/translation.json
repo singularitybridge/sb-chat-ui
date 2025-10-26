@@ -438,5 +438,16 @@
       "createdAt": "נוצר",
       "expiresAt": "תפוגה"
     }
+  },
+  "CommandPalette": {
+    "searchPlaceholder": "חיפוש סוכנים, צוותים, סביבת עבודה...",
+    "noResults": "לא נמצאו תוצאות.",
+    "loading": "טוען פריטי סביבת עבודה...",
+    "hint": "לחץ על",
+    "hintToOpen": "לפתיחה",
+    "navigate": "לניווט",
+    "assistants": "סוכנים",
+    "teams": "צוותים",
+    "workspace": "סביבת עבודה"
   }
 }
