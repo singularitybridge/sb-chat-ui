@@ -1,0 +1,39 @@
+---
+title: "Test 1: Basic Input/Output"
+description: "Simple UserInput → TextDisplay reactive data flow"
+---
+
+# Test 1: Basic Input/Output
+
+This test demonstrates the simplest reactive data flow: user input → AI processing → text display.
+
+## Instructions
+1. Type a question in the input below
+2. Click Submit
+3. Watch the response appear in the display area below
+
+---
+
+<UserInput
+  dataKey="basic_test"
+  agentName="workspace-agent"
+  placeholder="Ask me anything..."
+  buttonText="Submit"
+/>
+
+## Response
+
+<TextDisplay
+  dataKey="basic_test"
+  showLoading={true}
+  fallback="No response yet. Ask a question above!"
+/>
+
+---
+
+## How It Works
+
+1. **UserInput** component sends query to `workspace-agent`
+2. Response is stored in reactive store with key `"basic_test"`
+3. **TextDisplay** component subscribes to `"basic_test"` and updates automatically
+4. Components are "disconnected" - they communicate only through the data store

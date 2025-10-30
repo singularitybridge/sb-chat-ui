@@ -11,6 +11,7 @@ import { CostsPage } from './pages/admin/CostsPage';
 import { UsersPage } from './pages/admin/UsersPage';
 import { InboxPage } from './pages/admin/inbox/InboxPage';
 import { EditCompanyPage } from './pages/admin/EditCompanyPage';
+import { CompanyAdminPage } from './pages/admin/CompanyAdminPage';
 import { TeamsPage } from './pages/admin/TeamsPage';
 import { EditTeamPage } from './pages/admin/EditTeamPage';
 import { MemoryPage } from './pages/admin/MemoryPage'; // Added import for MemoryPage
@@ -113,7 +114,7 @@ export const browserRouter = createBrowserRouter([
           },
           {
             path: 'companies/:id',
-            element: <EditCompanyPage />,
+            element: <CompanyAdminPage />,
           },
           {
             path: 'costs',

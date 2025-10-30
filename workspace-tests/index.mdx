@@ -1,0 +1,99 @@
+---
+title: "Reactive Components Test Suite"
+description: "Comprehensive test suite for workspace reactive components"
+---
+
+# Reactive Components Test Suite
+
+Complete test suite for the workspace reactive data-binding system.
+
+## 🎯 Test Files
+
+### Basic Tests
+1. **[Basic Input/Output](/tests/01-basic-input-output.mdx)** - Simple UserInput → TextDisplay flow
+2. **[Multi-Agent Pipeline](/tests/02-multi-agent-pipeline.mdx)** - Chain multiple agents together
+3. **[JSON Parsing](/tests/03-json-parsing-pipeline.mdx)** - Generate → Parse → Display JSON
+
+### Advanced Tests
+4. **[Product Search](/tests/04-product-search-demo.mdx)** - Complete product search with filtering
+5. **[Streaming Demo](/tests/05-streaming-demo.mdx)** - Real-time streaming responses
+6. **[Data Filtering](/tests/06-data-filter-demo.mdx)** - Advanced data filtering & transformation
+
+### Complete Demo
+7. **[Complete Dashboard](/tests/07-complete-dashboard.mdx)** - Full-featured reactive dashboard
+
+---
+
+## 📚 Available Components
+
+### Input Components
+- **UserInput** - Interactive input that executes AI agents
+- **AgentExecute** - Auto-execute agent on mount
+
+### Display Components
+- **TextDisplay** - Display plain text data
+- **JsonDisplay** - Display JSON with syntax highlighting
+- **StreamingText** - Display streaming text with live updates
+- **MarkdownDisplay** - Display markdown-formatted content
+
+### Processing Components
+- **DataProcessor** - Process data through AI agent
+- **JsonParser** - Parse JSON from text
+- **DataFilter** - Filter data with JavaScript expressions
+
+### List/Table Components
+- **DataList** - Display array data as list
+- **DataTable** - Display array data as table
+- **ProductList** - Display products in card grid
+
+### Utility Components
+- **LoadingSpinner** - Loading indicator
+- **ErrorDisplay** - Error message display
+
+---
+
+## 🔑 Key Concepts
+
+### Reactive Data Binding
+Components communicate through a reactive data store using `dataKey`:
+```mdx
+<UserInput dataKey="my_data" agentName="workspace-agent" />
+<TextDisplay dataKey="my_data" />
+```
+
+### Multi-Agent Orchestration
+Chain multiple agents together:
+```mdx
+<UserInput dataKey="input" agentName="agent-a" />
+<DataProcessor dataKey="input" outputKey="processed" agentName="agent-b" />
+<TextDisplay dataKey="processed" />
+```
+
+### Data Flow Pipeline
+```
+Input → Agent A → dataKey1 → Processor → Agent B → dataKey2 → Display
+```
+
+---
+
+## 🚀 Getting Started
+
+1. Start with **Test 1** for basic concepts
+2. Progress through tests **2-6** for specific features
+3. Explore **Test 7** for complete integration
+
+---
+
+## 📖 Documentation
+
+All components are documented inline with JSDoc comments. Check the component source files for detailed API documentation.
+
+---
+
+## 🧪 Testing Instructions
+
+1. Open any test file above
+2. Follow the on-screen instructions
+3. Interact with components
+4. Observe reactive updates
+5. Check browser console for debug logs

@@ -1,0 +1,96 @@
+---
+title: "Test 6: Data Filtering"
+description: "Filter and transform data with JavaScript expressions"
+---
+
+# Test 6: Data Filtering & Transformation
+
+Demonstrates powerful data filtering using JavaScript expressions.
+
+---
+
+## Generate Sample Data
+
+<AgentExecute
+  dataKey="sample_data"
+  agentName="workspace-agent"
+  query="Generate a JSON array of 10 users with fields: name, age, city, role (developer/designer/manager), salary. Return only the JSON."
+/>
+
+<JsonParser
+  dataKey="sample_data"
+  outputKey="users"
+  autoExecute={true}
+/>
+
+---
+
+## All Users
+
+<DataTable
+  dataKey="users"
+  columns={[
+    { key: 'name', label: 'Name' },
+    { key: 'age', label: 'Age' },
+    { key: 'city', label: 'City' },
+    { key: 'role', label: 'Role' },
+    { key: 'salary', label: 'Salary' }
+  ]}
+/>
+
+---
+
+## Filter 1: Developers Only
+
+<DataFilter
+  dataKey="users"
+  outputKey="developers"
+  filter="item => item.role === 'developer'"
+  autoExecute={true}
+/>
+
+<DataList
+  dataKey="developers"
+  emptyMessage="No developers found"
+/>
+
+---
+
+## Filter 2: High Earners (Salary > $80,000)
+
+<DataFilter
+  dataKey="users"
+  outputKey="high_earners"
+  filter="item => item.salary > 80000"
+  autoExecute={true}
+/>
+
+<DataTable
+  dataKey="high_earners"
+/>
+
+---
+
+## Filter 3: Young Managers (Age < 35 AND role = manager)
+
+<DataFilter
+  dataKey="users"
+  outputKey="young_managers"
+  filter="item => item.age < 35 && item.role === 'manager'"
+  autoExecute={true}
+/>
+
+<DataList
+  dataKey="young_managers"
+  emptyMessage="No young managers found"
+/>
+
+---
+
+## Filter Expressions
+
+DataFilter accepts any JavaScript expression that returns boolean:
+
+- Simple: `item => item.age > 30`
+- Complex: `item => item.salary > 50000 && item.role === 'developer'`
+- Array methods work too: `item => ['San Francisco', 'New York'].includes(item.city)`

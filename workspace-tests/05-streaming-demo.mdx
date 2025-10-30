@@ -1,0 +1,53 @@
+---
+title: "Test 5: Streaming Response"
+description: "Real-time streaming text display"
+---
+
+# Test 5: Streaming AI Response
+
+This demonstrates real-time streaming of AI responses with live updates.
+
+---
+
+## Ask a Question (with streaming)
+
+<UserInput
+  dataKey="streaming_response"
+  agentName="workspace-agent"
+  placeholder="Ask for a detailed explanation or story..."
+  buttonText="Ask (Streaming)"
+  stream={true}
+/>
+
+---
+
+## Streaming Response
+
+<StreamingText
+  dataKey="streaming_response"
+  showLoading={true}
+  fallback="No response yet. Ask a question above to see streaming!"
+/>
+
+---
+
+## How Streaming Works
+
+1. **UserInput** with `stream={true}` enables streaming mode
+2. **StreamingText** component subscribes to data updates
+3. As chunks arrive from the AI, the display updates in real-time
+4. Cursor animation shows when streaming is active
+
+---
+
+## Compare: Non-Streaming Display
+
+<TextDisplay
+  dataKey="streaming_response"
+  showLoading={true}
+  fallback="Same data, different component"
+/>
+
+Both components subscribe to the same dataKey, but:
+- **StreamingText** shows live cursor and streaming indicator
+- **TextDisplay** shows simpler static view

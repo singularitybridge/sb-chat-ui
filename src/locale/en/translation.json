@@ -119,7 +119,9 @@
     "title": "Teams",
     "addTeam": "Add Team",
     "noTeams": "No teams found",
-    "createTeamPrompt": "Click the + button to create a team"
+    "createTeamPrompt": "Click the + button to create a team",
+    "deleteConfirmTitle": "Delete Team",
+    "deleteConfirmMessage": "Are you sure you want to delete the team '{{name}}'? This action cannot be undone."
   },
   "MemoryPage": {
     "title": "Memory Journal",
@@ -152,7 +154,9 @@
         "voice": "voice"
       },
       "copySuccess": "Assistant ID copied to clipboard!",
-      "copyFailed": "Failed to copy Assistant ID."
+      "copyFailed": "Failed to copy Assistant ID.",
+      "deleteConfirmTitle": "Delete AI Assistant",
+      "deleteConfirmMessage": "Are you sure you want to delete '{{name}}'? This action cannot be undone."
     },
   "UsersPage": {
     "title": "Users",
@@ -361,7 +365,8 @@
     "cancel": "Cancel",
     "create": "Create",
     "back": "Back",
-    "done": "Done"
+    "done": "Done",
+    "delete": "Delete"
   },
   "breadcrumbs": {
     "teamAssistants": "Team Assistants"
