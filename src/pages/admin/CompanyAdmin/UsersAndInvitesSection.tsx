@@ -6,7 +6,7 @@ import { IUser } from '../../../store/models/User';
 import { toJS } from 'mobx';
 import { Table } from '../../../components/sb-core-ui-kit/Table';
 import { convertToStringArray } from '../../../utils/utils';
-import { TrashIcon, UserPlus, Mail, XCircle } from 'lucide-react';
+import { TrashIcon, UserPlus, Mail, XCircle, Trash2 } from 'lucide-react';
 import { IconButton } from '../../../components/admin/IconButton';
 import { emitter } from '../../../services/mittEmitter';
 import { EVENT_SHOW_NOTIFICATION } from '../../../utils/eventNames';
@@ -45,11 +45,13 @@ const UsersAndInvitesSection: React.FC<UsersAndInvitesSectionProps> = observer(
     const [inviteEmail, setInviteEmail] = useState('');
     const [inviteName, setInviteName] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [statusFilter, setStatusFilter] = useState<string>('pending'); // Default to pending only
 
     const fetchInvites = async () => {
       try {
         console.log('[fetchInvites] Fetching invites from API...');
-        const response = await apiClient.get('/api/invites', {
+        const params = statusFilter && statusFilter !== 'all' ? `?status=${statusFilter}` : '';
+        const response = await apiClient.get(`/api/invites${params}`, {
           cache: false, // Disable caching for invites
         });
         console.log('[fetchInvites] Received invites count:', response.data.invites?.length || 0);
@@ -63,7 +65,7 @@ const UsersAndInvitesSection: React.FC<UsersAndInvitesSectionProps> = observer(
 
     useEffect(() => {
       fetchInvites();
-    }, []);
+    }, [statusFilter]);
 
     const handleDeleteUser = (row: IUser) => {
       rootStore.deleteUser(row._id);
@@ -134,6 +136,30 @@ const UsersAndInvitesSection: React.FC<UsersAndInvitesSectionProps> = observer(
       }
     };
 
+    const handleDeleteInvite = async (inviteId: string) => {
+      if (!confirm('Are you sure you want to permanently delete this invite? This action cannot be undone.')) {
+        return;
+      }
+
+      try {
+        const response = await apiClient.delete(`/api/invites/${inviteId}`);
+        console.log('Invite deleted:', response.data);
+
+        emitter.emit(EVENT_SHOW_NOTIFICATION, 'Invite deleted successfully');
+
+        // Refresh invites list
+        console.log('Refreshing invites after delete...');
+        await fetchInvites();
+      } catch (error: any) {
+        console.error('Failed to delete invite - Full error:', error);
+        console.error('Error response:', error.response);
+        console.error('Error response data:', error.response?.data);
+
+        const message = error.response?.data?.error || error.message || 'Failed to delete invite';
+        emitter.emit(EVENT_SHOW_NOTIFICATION, message);
+      }
+    };
+
     const userHeaders = ['name', 'nickname', 'email'];
     const UserActions = (row: IUser) => (
       <div className="flex space-x-3 items-center mx-1 rtl:space-x-reverse">
@@ -194,13 +220,26 @@ const UsersAndInvitesSection: React.FC<UsersAndInvitesSectionProps> = observer(
                 Invite colleagues to join your company
               </p>
             </div>
-            <button
-              onClick={() => setShowInviteForm(!showInviteForm)}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-            >
-              <UserPlus className="w-4 h-4" />
-              Send Invite
-            </button>
+            <div className="flex items-center gap-3">
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              >
+                <option value="pending">Pending Only</option>
+                <option value="all">All Invites</option>
+                <option value="accepted">Accepted</option>
+                <option value="revoked">Revoked</option>
+                <option value="expired">Expired</option>
+              </select>
+              <button
+                onClick={() => setShowInviteForm(!showInviteForm)}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              >
+                <UserPlus className="w-4 h-4" />
+                Send Invite
+              </button>
+            </div>
           </div>
 
           {/* Invite Form */}
@@ -307,15 +346,24 @@ const UsersAndInvitesSection: React.FC<UsersAndInvitesSectionProps> = observer(
                         {new Date(invite.expiresAt).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        {invite.status === 'pending' && (
+                        <div className="flex items-center gap-3">
+                          {invite.status === 'pending' && (
+                            <button
+                              onClick={() => handleRevokeInvite(invite._id)}
+                              className="text-orange-600 hover:text-orange-800 flex items-center gap-1"
+                            >
+                              <XCircle className="w-4 h-4" />
+                              Revoke
+                            </button>
+                          )}
                           <button
-                            onClick={() => handleRevokeInvite(invite._id)}
+                            onClick={() => handleDeleteInvite(invite._id)}
                             className="text-red-600 hover:text-red-800 flex items-center gap-1"
                           >
-                            <XCircle className="w-4 h-4" />
-                            Revoke
+                            <Trash2 className="w-4 h-4" />
+                            Delete
                           </button>
-                        )}
+                        </div>
                       </td>
                     </tr>
                   ))}
