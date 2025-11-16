@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Copy, Check, FileCode, Link, FileText, Play, Loader2, Zap } from 'lucide-react';
+import { X, Copy, Check, FileCode, Link, FileText, Play, Loader2, Zap, Braces } from 'lucide-react';
 import { SiJavascript, SiPython, SiCurl } from 'react-icons/si';
 import { useSessionStore } from '../store/useSessionStore';
 import { useAssistantStore } from '../store/useAssistantStore';
@@ -15,7 +15,7 @@ interface CodeSampleDialogProps {
 }
 
 type CodeLanguage = 'javascript' | 'python' | 'curl';
-type CodeFeature = 'file' | 'url' | 'prompt' | 'streaming';
+type CodeFeature = 'file' | 'url' | 'prompt' | 'streaming' | 'json';
 
 const CodeSampleDialog: React.FC<CodeSampleDialogProps> = ({ isOpen, onClose }) => {
   const [selectedLanguage, setSelectedLanguage] = useState<CodeLanguage>('javascript');
@@ -62,11 +62,8 @@ const CodeSampleDialog: React.FC<CodeSampleDialogProps> = ({ isOpen, onClose }) 
       return '// Assistant not found';
     }
 
-    // Use workspace-execute for internal testing (no API key required)
-    // Use execute for external integrations (requires API key)
-    const endpoint = embedApiKey
-      ? `assistant/${activeSession.assistantId}/execute`
-      : `assistant/${activeSession.assistantId}/workspace-execute`;
+    // Always use /execute endpoint (supports both ID and name/slug)
+    const endpoint = `assistant/${encodeURIComponent(assistant.name)}/execute`;
     const fullUrl = `${apiUrl.replace(/\/$/, '')}/${endpoint}`;
 
     if (selectedLanguage === 'javascript') {
@@ -105,6 +102,9 @@ const CodeSampleDialog: React.FC<CodeSampleDialogProps> = ({ isOpen, onClose }) 
     const promptOverride = enabledFeatures.has('prompt') ? `,
     promptOverride: 'You are a helpful assistant specialized in...'` : '';
 
+    const responseFormat = enabledFeatures.has('json') ? `,
+    responseFormat: { type: 'json_object' }` : '';
+
     if (enabledFeatures.has('streaming')) {
       // Streaming version
       const streamingCode = `// Streaming API - Assistant: ${assistant.name}
@@ -113,7 +113,7 @@ const apiKey = '${token}';
 
 async function sendMessageWithStreaming(userInput) {
   const payload = {
-    userInput: userInput${attachments}${promptOverride}
+    userInput: userInput${attachments}${promptOverride}${responseFormat}
   };
 
   const response = await fetch(apiUrl, {
@@ -183,7 +183,7 @@ const apiKey = '${token}';
 
 async function sendMessage(userInput) {
   const payload = {
-    userInput: userInput${attachments}${promptOverride}
+    userInput: userInput${attachments}${promptOverride}${responseFormat}
   };
 
   const response = await fetch(apiUrl, {
@@ -238,6 +238,9 @@ sendMessage('Hello, how can you help me today?')
     const promptOverride = enabledFeatures.has('prompt') ? `,
         'promptOverride': 'You are a helpful assistant specialized in...'` : '';
 
+    const responseFormat = enabledFeatures.has('json') ? `,
+        'responseFormat': {'type': 'json_object'}` : '';
+
     if (enabledFeatures.has('streaming')) {
       // Streaming version
       const streamingCode = `# Streaming API - Assistant: ${assistant.name}
@@ -249,7 +252,7 @@ api_key = '${token}'
 
 def send_message_with_streaming(user_input):
     payload = {
-        'userInput': user_input${attachments}${promptOverride}
+        'userInput': user_input${attachments}${promptOverride}${responseFormat}
     }
     
     headers = {
@@ -302,7 +305,7 @@ api_key = '${token}'
 
 def send_message(user_input):
     payload = {
-        'userInput': user_input${attachments}${promptOverride}
+        'userInput': user_input${attachments}${promptOverride}${responseFormat}
     }
     
     headers = {
@@ -352,6 +355,10 @@ print('Assistant:', response)`;
 
     if (enabledFeatures.has('prompt')) {
       payload.promptOverride = 'You are a helpful assistant specialized in...';
+    }
+
+    if (enabledFeatures.has('json')) {
+      payload.responseFormat = { type: 'json_object' };
     }
 
     if (enabledFeatures.has('streaming')) {
@@ -422,24 +429,36 @@ done`;
       return;
     }
 
+    const assistant = getAssistantById(activeSession.assistantId);
+    if (!assistant) {
+      emitter.emit(EVENT_SHOW_NOTIFICATION, {
+        message: 'Assistant not found',
+        type: 'error',
+      });
+      return;
+    }
+
     setIsTesting(true);
     setShowTestResult(true);
     setTestResult('');
 
     try {
-      // Use workspace-execute for internal testing (no API key required)
-      const endpoint = embedApiKey
-        ? `assistant/${activeSession.assistantId}/execute`
-        : `assistant/${activeSession.assistantId}/workspace-execute`;
+      // Always use /execute endpoint with assistant name
+      const endpoint = `assistant/${encodeURIComponent(assistant.name)}/execute`;
       const fullUrl = `${apiUrl.replace(/\/$/, '')}/${endpoint}`;
 
-      const payload: any = embedApiKey
-        ? { userInput: testInput }  // /execute endpoint
-        : { query: testInput };      // /workspace-execute endpoint
+      const payload: any = {
+        userInput: testInput
+      };
 
       // Add prompt override if enabled
       if (enabledFeatures.has('prompt')) {
         payload.promptOverride = 'You are a helpful assistant specialized in providing concise responses.';
+      }
+
+      // Add response format if JSON mode enabled
+      if (enabledFeatures.has('json')) {
+        payload.responseFormat = { type: 'json_object' };
       }
 
       const headers: any = {
@@ -550,24 +569,30 @@ done`;
       } else {
         // Handle regular JSON response
         const data = await response.json();
-        
-        // Extract the actual content from the response
-        let resultText = '';
-        if (typeof data === 'string') {
-          resultText = data;
-        } else if (data?.content) {
-          if (Array.isArray(data.content) && data.content[0]?.text?.value) {
-            resultText = data.content[0].text.value;
-          } else if (typeof data.content === 'string') {
-            resultText = data.content;
-          } else {
-            resultText = JSON.stringify(data.content);
-          }
-        } else {
-          resultText = JSON.stringify(data, null, 2);
-        }
 
-        setTestResult(resultText);
+        // If JSON mode is enabled, show full response
+        if (enabledFeatures.has('json')) {
+          const prettyJson = JSON.stringify(data, null, 2);
+          setTestResult(prettyJson);
+        } else {
+          // Extract the actual content from the response
+          let resultText = '';
+          if (typeof data === 'string') {
+            resultText = data;
+          } else if (data?.content) {
+            if (Array.isArray(data.content) && data.content[0]?.text?.value) {
+              resultText = data.content[0].text.value;
+            } else if (typeof data.content === 'string') {
+              resultText = data.content;
+            } else {
+              resultText = JSON.stringify(data.content, null, 2);
+            }
+          } else {
+            resultText = JSON.stringify(data, null, 2);
+          }
+
+          setTestResult(resultText);
+        }
       }
     } catch (error: any) {
       console.error('Test failed:', error);
@@ -605,7 +630,8 @@ done`;
     file: { icon: <FileText className="w-4 h-4" />, label: 'File Upload' },
     url: { icon: <Link className="w-4 h-4" />, label: 'URL Attachment' },
     prompt: { icon: <FileCode className="w-4 h-4" />, label: 'Prompt Override' },
-    streaming: { icon: <Zap className="w-4 h-4" />, label: 'Streaming Mode' }
+    streaming: { icon: <Zap className="w-4 h-4" />, label: 'Streaming Mode' },
+    json: { icon: <Braces className="w-4 h-4" />, label: 'JSON Response' }
   };
 
   return (
