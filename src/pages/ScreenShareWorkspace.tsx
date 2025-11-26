@@ -102,10 +102,11 @@ const ScreenShareWorkspace: React.FC = observer(() => {
   // UI context tracking
   const { setWorkspaceFile } = useUiContextStore();
 
-  // Get current assistant from session or URL parameter
-  const currentAssistant = activeSession?.assistantId
+  // Get current assistant - prioritize URL parameter over active session
+  // This allows viewing any assistant's workspace regardless of active session
+  const currentAssistant = assistantByName || (activeSession?.assistantId
     ? rootStore.getAssistantById(activeSession.assistantId)
-    : assistantByName;
+    : null);
 
   // Workspace layout hooks
   const { panels, togglePanel } = useWorkspaceLayout();
@@ -220,26 +221,40 @@ const ScreenShareWorkspace: React.FC = observer(() => {
         const finalPath = urlFilePath || await findDefaultEntryFile(currentAssistant._id, activeSession?._id);
 
         if (finalPath) {
-          // Load the file
-          const response = await getWorkspaceItem(finalPath, 'agent', currentAssistant._id, activeSession?._id);
+          // Determine file extension first
+          const parts = finalPath.split('.');
+          const extension = parts.length > 1 ? parts[parts.length - 1].toLowerCase() : 'text';
 
-          if (response.found && response.content) {
-            let content: string;
-            if (response.isBinary) {
-              content = response.content;
-            } else {
-              content = typeof response.content === 'string'
-                ? response.content
-                : JSON.stringify(response.content, null, 2);
+          // For HTML files, use raw endpoint to avoid JSON wrapping issues with large files
+          if (extension === 'html') {
+            try {
+              const content = await getWorkspaceRawContent(finalPath, 'agent', currentAssistant._id, activeSession?._id);
+              setSelectedFilePath(finalPath);
+              setSelectedFileContent(content);
+              setSelectedFileType(extension);
+              setIsHomePageMissing(false);
+            } catch (error) {
+              console.error('Failed to load HTML file:', error);
             }
+          } else {
+            // Load the file using regular endpoint
+            const response = await getWorkspaceItem(finalPath, 'agent', currentAssistant._id, activeSession?._id);
 
-            const parts = finalPath.split('.');
-            const extension = parts.length > 1 ? parts[parts.length - 1].toLowerCase() : 'text';
+            if (response.found && response.content) {
+              let content: string;
+              if (response.isBinary) {
+                content = response.content;
+              } else {
+                content = typeof response.content === 'string'
+                  ? response.content
+                  : JSON.stringify(response.content, null, 2);
+              }
 
-            setSelectedFilePath(finalPath);
-            setSelectedFileContent(content);
-            setSelectedFileType(extension);
-            setIsHomePageMissing(false); // File was found
+              setSelectedFilePath(finalPath);
+              setSelectedFileContent(content);
+              setSelectedFileType(extension);
+              setIsHomePageMissing(false); // File was found
+            }
           }
         } else if (!urlFilePath) {
           // No URL path and no default entry file - show welcome message
@@ -883,19 +898,26 @@ const ScreenShareWorkspace: React.FC = observer(() => {
 
     try {
       setIsReloadingFile(true);
-      const response = await getWorkspaceItem(selectedFilePath, 'agent', currentAssistant._id, activeSession?._id);
 
-      if (response.found && response.content) {
-        let content: string;
-        if (response.isBinary) {
-          content = response.content;
-        } else {
-          content = typeof response.content === 'string'
-            ? response.content
-            : JSON.stringify(response.content, null, 2);
-        }
-
+      // For HTML files, use raw endpoint to avoid JSON wrapping issues
+      if (selectedFileType === 'html') {
+        const content = await getWorkspaceRawContent(selectedFilePath, 'agent', currentAssistant._id, activeSession?._id);
         setSelectedFileContent(content);
+      } else {
+        const response = await getWorkspaceItem(selectedFilePath, 'agent', currentAssistant._id, activeSession?._id);
+
+        if (response.found && response.content) {
+          let content: string;
+          if (response.isBinary) {
+            content = response.content;
+          } else {
+            content = typeof response.content === 'string'
+              ? response.content
+              : JSON.stringify(response.content, null, 2);
+          }
+
+          setSelectedFileContent(content);
+        }
       }
     } catch (error) {
       console.error('Failed to reload file:', error);
@@ -1326,11 +1348,11 @@ Feel free to customize this page or create new files using the workspace!
                       </div>
 
                       {/* File Content */}
-                      <div className="flex-1 overflow-auto">
+                      <div className="flex-1 overflow-auto min-h-0">
                         {selectedFileType === 'html' ? (
                           <iframe
                             srcDoc={injectWorkspaceAPIToHTML(selectedFileContent)}
-                            className="w-full h-full border-0"
+                            className="w-full h-full min-h-screen border-0"
                             sandbox="allow-scripts allow-forms allow-same-origin"
                             title="HTML Preview"
                           />

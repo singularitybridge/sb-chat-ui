@@ -5,6 +5,7 @@ import { useRootStore } from '../../store/common/RootStoreContext';
 import { emitter } from '../../services/mittEmitter';
 import { EVENT_CLOSE_MODAL } from '../../utils/eventNames';
 import { useTranslation } from 'react-i18next';
+import { IconPicker } from '../IconPicker';
 
 /**
  * AddTeamDialog component for creating new teams
@@ -25,7 +26,6 @@ const AddTeamDialog: React.FC = observer(() => {
     setIsSubmitting(true);
     try {
       await rootStore.createTeam({
-        _id: '', // Will be assigned by the server
         name,
         description,
         icon,
@@ -77,13 +77,7 @@ const AddTeamDialog: React.FC = observer(() => {
         <label className="block text-sm font-medium text-gray-700 mb-1">
           {t('AddTeamDialog.icon') || 'Icon'}
         </label>
-        <input
-          type="text"
-          className="w-full p-2 border border-gray-300 rounded-md"
-          value={icon}
-          onChange={(e) => setIcon(e.target.value)}
-          placeholder={t('AddTeamDialog.iconPlaceholder') || 'Enter an emoji or icon name'}
-        />
+        <IconPicker value={icon} onChange={setIcon} />
       </div>
       
       <div className="flex justify-end space-x-2">

@@ -65,6 +65,10 @@ const EditAssistantActionsDialog: React.FC<EditAssistantActionsDialogProps> = ob
       }
     };
 
+    const handleClear = () => {
+      setSelectedActions([]);
+    };
+
     return (
       <div className="p-4 h-[80vh] flex flex-col">        
         <div className="flex-grow overflow-hidden">
@@ -74,7 +78,14 @@ const EditAssistantActionsDialog: React.FC<EditAssistantActionsDialogProps> = ob
             onChange={handleActionsChange}
           />
         </div>
-        <div className="mt-4 flex justify-end">
+        <div className="mt-4 flex justify-end gap-2">
+          <Button
+            onClick={handleClear}
+            disabled={isLoading || selectedActions.length === 0}
+            className="bg-gray-200 text-gray-700 hover:bg-gray-300"
+          >
+            {t('common.clear') || 'Clear'}
+          </Button>
           <Button onClick={handleSave} disabled={isLoading}>
             {t('common.save')}
           </Button>

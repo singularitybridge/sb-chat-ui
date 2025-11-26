@@ -445,7 +445,7 @@ const RootStore = types
       }
     }),
 
-    createTeam: flow(function* (team: ITeam) {
+    createTeam: flow(function* (team: Omit<ITeam, '_id'>) {
       try {
         const newTeam = yield addTeam(team);
         self.teams.push(newTeam);

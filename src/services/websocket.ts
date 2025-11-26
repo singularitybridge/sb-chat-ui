@@ -172,7 +172,7 @@ class WebSocketService {
 
         case 'openWorkspaceFile': {
           const { assistantId, path } = params;
-          window.location.href = `/workspace/${assistantId}?file=${encodeURIComponent(path)}`;
+          window.location.href = `/admin/assistants/${assistantId}/workspace${path}`;
           result = { success: true };
           break;
         }
