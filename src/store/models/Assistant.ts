@@ -12,12 +12,12 @@ const Identifier = types.model('Identifier', {
 });
 
 const Assistant = types.model('Assistant', {
-  _id: types.identifier,  
+  _id: types.identifier,
   name: types.string, // Used for both display and URL routing (must be URL-safe)
-  description: types.string,
+  description: types.optional(types.string, ''),
   companyId: types.string,
-  voice: types.string,
-  language: types.string,  
+  voice: types.optional(types.string, 'alloy'),
+  language: types.optional(types.string, 'en'),
   llmModel: types.optional(types.string, ''),
   llmProvider: types.optional(types.string, 'openai'),
   llmPrompt: types.optional(types.string, ''),
