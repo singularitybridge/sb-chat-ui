@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory/Journal API Testing Suite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .test-passed { background-color: #10b981; }
+        .test-failed { background-color: #ef4444; }
+        .test-running { background-color: #3b82f6; }
+        .test-pending { background-color: #6b7280; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Memory/Journal API Testing Suite</h1>
+            <p class="text-gray-600">Test the journal entry creation, retrieval, and search capabilities</p>
+
+            <div class="mt-4 flex flex-wrap gap-2">
+                <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">Journal Entries</span>
+                <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">Memory Search</span>
+                <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">Context Management</span>
+            </div>
+        </div>
+
+        <!-- Configuration -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Configuration</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">API Base URL</label>
+                    <input type="text" id="apiUrl" value="http://localhost:4103"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">API Key</label>
+                    <input type="password" id="apiKey" placeholder="Enter your API key"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Company ID</label>
+                    <input type="text" id="companyId" placeholder="Your company ID"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">User ID</label>
+                    <input type="text" id="userId" placeholder="Your user ID"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Session ID (Optional)</label>
+                    <input type="text" id="sessionId" placeholder="Session ID for testing"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">OpenAI API Key</label>
+                    <input type="password" id="openaiKey" placeholder="For embedding tests"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Controls -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-gray-900">Test Suite</h2>
+                <div class="flex gap-2">
+                    <button onclick="runAllTests()"
+                            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                        Run All Tests
+                    </button>
+                    <button onclick="clearResults()"
+                            class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium">
+                        Clear Results
+                    </button>
+                </div>
+            </div>
+
+            <!-- Test Progress -->
+            <div class="mb-4">
+                <div class="flex justify-between text-sm text-gray-600 mb-1">
+                    <span>Progress</span>
+                    <span id="progressText">0 / 0</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div id="progressBar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Test Results Summary -->
+            <div class="grid grid-cols-4 gap-2 mb-4">
+                <div class="bg-gray-50 p-3 rounded-lg text-center">
+                    <div class="text-2xl font-bold text-gray-700" id="totalTests">0</div>
+                    <div class="text-xs text-gray-500">Total</div>
+                </div>
+                <div class="bg-green-50 p-3 rounded-lg text-center">
+                    <div class="text-2xl font-bold text-green-600" id="passedTests">0</div>
+                    <div class="text-xs text-gray-500">Passed</div>
+                </div>
+                <div class="bg-red-50 p-3 rounded-lg text-center">
+                    <div class="text-2xl font-bold text-red-600" id="failedTests">0</div>
+                    <div class="text-xs text-gray-500">Failed</div>
+                </div>
+                <div class="bg-blue-50 p-3 rounded-lg text-center">
+                    <div class="text-2xl font-bold text-blue-600" id="pendingTests">0</div>
+                    <div class="text-xs text-gray-500">Pending</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Individual Tests -->
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Test Cases</h2>
+            <div id="testResults" class="space-y-3"></div>
+        </div>
+
+        <!-- Debug Console -->
+        <div class="bg-gray-900 rounded-lg shadow-sm p-6 mt-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-white">Debug Console</h2>
+                <button onclick="clearConsole()" class="text-gray-400 hover:text-white text-sm">Clear</button>
+            </div>
+            <div id="console" class="bg-black rounded p-4 h-64 overflow-y-auto font-mono text-sm text-green-400"></div>
+        </div>
+    </div>
+
+    <script>
+        // Test configuration
+        const tests = [
+            {
+                name: "Create Basic Journal Entry",
+                description: "Create a simple journal entry with text content",
+                async run() {
+                    const entry = await createJournalEntry({
+                        text: `Test entry created at ${new Date().toISOString()}`,
+                        tags: ['test', 'automated'],
+                        entryType: 'note'
+                    });
+
+                    window.testEntryId = entry._id;
+                    log(`Created entry: ${entry._id}`);
+
+                    return entry._id && entry.text && entry.entryType === 'note';
+                }
+            },
+            {
+                name: "Create Journal Entry with Session",
+                description: "Create entry linked to a specific session",
+                async run() {
+                    const sessionId = document.getElementById('sessionId').value;
+                    if (!sessionId) {
+                        log('No session ID provided, skipping session-linked test');
+                        return true; // Skip if no session ID
+                    }
+
+                    const entry = await createJournalEntry({
+                        text: 'Session-linked journal entry',
+                        sessionId,
+                        tags: ['session', 'linked'],
+                        entryType: 'context'
+                    });
+
+                    log(`Created session-linked entry: ${entry._id}`);
+                    return entry.sessionId === sessionId;
+                }
+            },
+            {
+                name: "Get Journal Entries",
+                description: "Retrieve journal entries with various filters",
+                async run() {
+                    // Get all entries
+                    const allEntries = await getJournalEntries({});
+                    log(`Found ${allEntries.length} total entries`);
+
+                    // Get entries with limit
+                    const limitedEntries = await getJournalEntries({ limit: 5 });
+                    log(`Got ${limitedEntries.length} entries with limit=5`);
+
+                    // Get entries by type
+                    const noteEntries = await getJournalEntries({ entryType: 'note' });
+                    log(`Found ${noteEntries.length} note entries`);
+
+                    return allEntries.length > 0 && limitedEntries.length <= 5;
+                }
+            },
+            {
+                name: "Search Journal Entries",
+                description: "Search for entries using text query",
+                async run() {
+                    // First create an entry with unique content
+                    const uniqueText = `Unique search test ${Date.now()}`;
+                    await createJournalEntry({
+                        text: uniqueText,
+                        tags: ['searchable'],
+                        entryType: 'note'
+                    });
+
+                    // Search for it
+                    const results = await searchJournalEntries(uniqueText.split(' ')[0]);
+                    log(`Search returned ${results.length} results`);
+
+                    return results.length > 0 &&
+                           results.some(r => r.text.includes(uniqueText.split(' ')[0]));
+                }
+            },
+            {
+                name: "Filter by Tags",
+                description: "Retrieve entries filtered by tags",
+                async run() {
+                    // Create entry with specific tags
+                    const testTag = `tag-${Date.now()}`;
+                    await createJournalEntry({
+                        text: 'Tagged entry',
+                        tags: [testTag, 'filter-test'],
+                        entryType: 'note'
+                    });
+
+                    // Get entries with that tag
+                    const taggedEntries = await getJournalEntries({ tags: [testTag] });
+                    log(`Found ${taggedEntries.length} entries with tag: ${testTag}`);
+
+                    return taggedEntries.length > 0 &&
+                           taggedEntries.every(e => e.tags && e.tags.includes(testTag));
+                }
+            },
+            {
+                name: "Filter by Entry Type",
+                description: "Test filtering by different entry types",
+                async run() {
+                    const types = ['note', 'context', 'insight', 'summary'];
+                    const results = {};
+
+                    for (const type of types) {
+                        // Create an entry of this type
+                        await createJournalEntry({
+                            text: `Entry of type: ${type}`,
+                            entryType: type,
+                            tags: [`type-${type}`]
+                        });
+
+                        // Query for this type
+                        const entries = await getJournalEntries({ entryType: type });
+                        results[type] = entries.length;
+                        log(`Type '${type}': ${entries.length} entries`);
+                    }
+
+                    return Object.values(results).every(count => count > 0);
+                }
+            },
+            {
+                name: "Scope-Based Filtering",
+                description: "Test different scope filters (user, company, session)",
+                async run() {
+                    // Test user scope
+                    const userEntries = await getJournalEntries({ scope: 'user' });
+                    log(`User scope: ${userEntries.length} entries`);
+
+                    // Test company scope
+                    const companyEntries = await getJournalEntries({ scope: 'company' });
+                    log(`Company scope: ${companyEntries.length} entries`);
+
+                    // Test session scope if session ID is provided
+                    const sessionId = document.getElementById('sessionId').value;
+                    if (sessionId) {
+                        const sessionEntries = await getJournalEntries({
+                            scope: 'session',
+                            sessionId
+                        });
+                        log(`Session scope: ${sessionEntries.length} entries`);
+                    }
+
+                    return true; // Scope filtering should work without errors
+                }
+            },
+            {
+                name: "Update Journal Entry",
+                description: "Update an existing journal entry",
+                async run() {
+                    if (!window.testEntryId) {
+                        throw new Error("No test entry ID available");
+                    }
+
+                    const updatedText = `Updated at ${new Date().toISOString()}`;
+                    const result = await updateJournalEntry(window.testEntryId, {
+                        text: updatedText,
+                        tags: ['updated', 'modified']
+                    });
+
+                    log(`Updated entry: ${window.testEntryId}`);
+                    return result.text === updatedText && result.tags.includes('updated');
+                }
+            },
+            {
+                name: "Delete Journal Entry",
+                description: "Delete a journal entry",
+                async run() {
+                    // Create a new entry to delete
+                    const entry = await createJournalEntry({
+                        text: 'Entry to be deleted',
+                        tags: ['temporary'],
+                        entryType: 'note'
+                    });
+
+                    // Delete it
+                    await deleteJournalEntry(entry._id);
+                    log(`Deleted entry: ${entry._id}`);
+
+                    // Try to get it (should fail)
+                    try {
+                        await getJournalEntry(entry._id);
+                        return false; // Should have thrown
+                    } catch (error) {
+                        log(`Confirmed deletion - entry not found`);
+                        return true;
+                    }
+                }
+            },
+            {
+                name: "Pagination Test",
+                description: "Test pagination with limit parameter",
+                async run() {
+                    // Create multiple entries
+                    for (let i = 0; i < 7; i++) {
+                        await createJournalEntry({
+                            text: `Pagination test entry ${i}`,
+                            tags: ['pagination'],
+                            entryType: 'note'
+                        });
+                    }
+
+                    const page1 = await getJournalEntries({ limit: 3 });
+                    const page2 = await getJournalEntries({ limit: 5 });
+
+                    log(`Page 1 (limit=3): ${page1.length} entries`);
+                    log(`Page 2 (limit=5): ${page2.length} entries`);
+
+                    return page1.length <= 3 && page2.length <= 5;
+                }
+            },
+            {
+                name: "Complex Search Query",
+                description: "Test search with multiple words and special characters",
+                async run() {
+                    const complexText = "JavaScript async/await function with error-handling";
+                    await createJournalEntry({
+                        text: complexText,
+                        tags: ['complex', 'search'],
+                        entryType: 'note'
+                    });
+
+                    const results = await searchJournalEntries("JavaScript async");
+                    log(`Complex search returned ${results.length} results`);
+
+                    return results.length > 0;
+                }
+            },
+            {
+                name: "Invalid Parameters Handling",
+                description: "Test error handling for invalid parameters",
+                async run() {
+                    try {
+                        // Try with invalid user ID
+                        await getJournalEntries({
+                            userId: 'invalid-id',
+                            companyId: document.getElementById('companyId').value
+                        });
+                        return false;
+                    } catch (error) {
+                        log(`Expected error for invalid ID: ${error.message}`);
+                        return true;
+                    }
+                }
+            }
+        ];
+
+        // API Helper functions
+        async function apiRequest(endpoint, options = {}) {
+            const baseUrl = document.getElementById('apiUrl').value;
+            const apiKey = document.getElementById('apiKey').value;
+            const openaiKey = document.getElementById('openaiKey').value;
+
+            const headers = {
+                'Content-Type': 'application/json',
+                'x-api-key': apiKey,
+                ...options.headers
+            };
+
+            if (openaiKey) {
+                headers['x-openai-api-key'] = openaiKey;
+            }
+
+            const response = await fetch(`${baseUrl}${endpoint}`, {
+                ...options,
+                headers
+            });
+
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({ message: 'Unknown error' }));
+                throw { status: response.status, ...error };
+            }
+
+            return response.json();
+        }
+
+        async function createJournalEntry(data) {
+            const userId = document.getElementById('userId').value;
+            const companyId = document.getElementById('companyId').value;
+
+            return apiRequest('/api/memory/entries', {
+                method: 'POST',
+                body: JSON.stringify({
+                    ...data,
+                    userId,
+                    companyId
+                })
+            });
+        }
+
+        async function getJournalEntries(params) {
+            const userId = document.getElementById('userId').value;
+            const companyId = document.getElementById('companyId').value;
+
+            const queryParams = new URLSearchParams({
+                userId,
+                companyId,
+                ...params
+            });
+
+            if (params.tags) {
+                queryParams.delete('tags');
+                params.tags.forEach(tag => queryParams.append('tags', tag));
+            }
+
+            return apiRequest(`/api/memory/entries?${queryParams}`);
+        }
+
+        async function getJournalEntry(entryId) {
+            return apiRequest(`/api/memory/entries/${entryId}`);
+        }
+
+        async function updateJournalEntry(entryId, data) {
+            return apiRequest(`/api/memory/entries/${entryId}`, {
+                method: 'PUT',
+                body: JSON.stringify(data)
+            });
+        }
+
+        async function deleteJournalEntry(entryId) {
+            return apiRequest(`/api/memory/entries/${entryId}`, {
+                method: 'DELETE'
+            });
+        }
+
+        async function searchJournalEntries(query) {
+            const companyId = document.getElementById('companyId').value;
+            const userId = document.getElementById('userId').value;
+
+            const params = new URLSearchParams({
+                q: query,
+                companyId,
+                userId
+            });
+
+            return apiRequest(`/api/memory/entries/search?${params}`);
+        }
+
+        // Test runner functions
+        let currentTestIndex = 0;
+        let testResults = [];
+
+        async function runAllTests() {
+            currentTestIndex = 0;
+            testResults = [];
+            clearConsole();
+            log('Starting test suite...');
+
+            for (let i = 0; i < tests.length; i++) {
+                await runTest(i);
+            }
+
+            updateSummary();
+            log('Test suite completed!');
+        }
+
+        async function runTest(index) {
+            const test = tests[index];
+            const resultDiv = document.getElementById(`test-${index}`);
+
+            if (!resultDiv) {
+                createTestResultDiv(index);
+            }
+
+            updateTestStatus(index, 'running');
+
+            try {
+                log(`Running: ${test.name}`);
+                const result = await test.run();
+
+                if (result) {
+                    updateTestStatus(index, 'passed');
+                    testResults[index] = 'passed';
+                } else {
+                    updateTestStatus(index, 'failed');
+                    testResults[index] = 'failed';
+                }
+            } catch (error) {
+                log(`Error in ${test.name}: ${error.message || error}`);
+                updateTestStatus(index, 'failed', error.message || error.toString());
+                testResults[index] = 'failed';
+            }
+
+            updateProgress();
+        }
+
+        function createTestResultDiv(index) {
+            const test = tests[index];
+            const container = document.getElementById('testResults');
+
+            const div = document.createElement('div');
+            div.id = `test-${index}`;
+            div.className = 'bg-gray-50 rounded-lg p-4 border border-gray-200';
+            div.innerHTML = `
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-3">
+                            <span class="status-badge px-2 py-1 rounded text-xs font-semibold test-pending">PENDING</span>
+                            <h3 class="font-semibold text-gray-900">${test.name}</h3>
+                        </div>
+                        <p class="text-sm text-gray-600 mt-1">${test.description}</p>
+                        <div class="error-message text-red-600 text-sm mt-2 hidden"></div>
+                    </div>
+                    <button onclick="runTest(${index})" class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                        Run Test
+                    </button>
+                </div>
+            `;
+
+            container.appendChild(div);
+        }
+
+        function updateTestStatus(index, status, error = null) {
+            const resultDiv = document.getElementById(`test-${index}`);
+            if (!resultDiv) return;
+
+            const badge = resultDiv.querySelector('.status-badge');
+            const errorDiv = resultDiv.querySelector('.error-message');
+
+            // Remove all status classes
+            badge.classList.remove('test-pending', 'test-running', 'test-passed', 'test-failed');
+
+            // Add new status class and update text
+            switch(status) {
+                case 'running':
+                    badge.classList.add('test-running');
+                    badge.textContent = 'RUNNING';
+                    badge.classList.add('text-white');
+                    break;
+                case 'passed':
+                    badge.classList.add('test-passed');
+                    badge.textContent = 'PASSED';
+                    badge.classList.add('text-white');
+                    errorDiv.classList.add('hidden');
+                    break;
+                case 'failed':
+                    badge.classList.add('test-failed');
+                    badge.textContent = 'FAILED';
+                    badge.classList.add('text-white');
+                    if (error) {
+                        errorDiv.textContent = `Error: ${error}`;
+                        errorDiv.classList.remove('hidden');
+                    }
+                    break;
+                default:
+                    badge.classList.add('test-pending');
+                    badge.textContent = 'PENDING';
+                    badge.classList.add('text-white');
+            }
+        }
+
+        function updateProgress() {
+            const total = tests.length;
+            const completed = testResults.filter(r => r !== undefined).length;
+            const percentage = (completed / total) * 100;
+
+            document.getElementById('progressBar').style.width = `${percentage}%`;
+            document.getElementById('progressText').textContent = `${completed} / ${total}`;
+        }
+
+        function updateSummary() {
+            const total = tests.length;
+            const passed = testResults.filter(r => r === 'passed').length;
+            const failed = testResults.filter(r => r === 'failed').length;
+            const pending = total - passed - failed;
+
+            document.getElementById('totalTests').textContent = total;
+            document.getElementById('passedTests').textContent = passed;
+            document.getElementById('failedTests').textContent = failed;
+            document.getElementById('pendingTests').textContent = pending;
+        }
+
+        function clearResults() {
+            document.getElementById('testResults').innerHTML = '';
+            testResults = [];
+            updateSummary();
+            updateProgress();
+            clearConsole();
+
+            // Recreate all test divs
+            tests.forEach((test, index) => createTestResultDiv(index));
+        }
+
+        function log(message) {
+            const console = document.getElementById('console');
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.textContent = `[${timestamp}] ${message}`;
+            console.appendChild(entry);
+            console.scrollTop = console.scrollHeight;
+        }
+
+        function clearConsole() {
+            document.getElementById('console').innerHTML = '';
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Create test result divs
+            tests.forEach((test, index) => createTestResultDiv(index));
+            updateSummary();
+
+            // Load saved config
+            const savedConfig = localStorage.getItem('journalTestConfig');
+            if (savedConfig) {
+                const config = JSON.parse(savedConfig);
+                document.getElementById('apiKey').value = config.apiKey || '';
+                document.getElementById('companyId').value = config.companyId || '';
+                document.getElementById('userId').value = config.userId || '';
+                document.getElementById('sessionId').value = config.sessionId || '';
+                document.getElementById('openaiKey').value = config.openaiKey || '';
+            }
+
+            // Save config on change
+            ['apiKey', 'companyId', 'userId', 'sessionId', 'openaiKey'].forEach(id => {
+                document.getElementById(id).addEventListener('change', () => {
+                    const config = {
+                        apiKey: document.getElementById('apiKey').value,
+                        companyId: document.getElementById('companyId').value,
+                        userId: document.getElementById('userId').value,
+                        sessionId: document.getElementById('sessionId').value,
+                        openaiKey: document.getElementById('openaiKey').value
+                    };
+                    localStorage.setItem('journalTestConfig', JSON.stringify(config));
+                });
+            });
+        });
+    </script>
+</body>
+</html>

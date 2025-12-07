@@ -1,0 +1,160 @@
+---
+title: "Test 8: Integration Expert Validation"
+description: "Test integration-expert agent responses with evaluation"
+---
+
+# Test 8: Integration Expert Validation
+
+This test demonstrates querying the integration-expert agent and evaluating the response quality.
+
+## Instructions
+1. Type a question about integrations in the input below
+2. Click Submit to send to integration-expert agent
+3. Review the response
+4. Click "Evaluate Response" to validate the response quality
+
+---
+
+## Step 1: Ask Integration Expert
+
+<UserInput
+  dataKey="integration_query"
+  agentName="integration-expert"
+  placeholder="Ask about integrations, APIs, or technical implementation..."
+  buttonText="Submit"
+/>
+
+---
+
+## Step 2: Response
+
+<MarkdownDisplay
+  dataKey="integration_query"
+  showLoading={true}
+  fallback="No response yet. Ask a question above!"
+/>
+
+---
+
+## Step 3: Evaluate Response
+
+<script>
+{`
+function evaluateResponse() {
+  const workspace = window.workspace;
+  if (!workspace) {
+    alert('Workspace API not available');
+    return;
+  }
+
+  // Get the response data
+  workspace.getData('integration_query').then((dataState) => {
+    if (!dataState || !dataState.data) {
+      document.getElementById('evaluation-result').innerHTML =
+        '<div style="padding: 1rem; background: #fee; border: 1px solid #f00; border-radius: 0.5rem; color: #c00;">❌ No response data found. Please submit a question first.</div>';
+      return;
+    }
+
+    const response = dataState.data;
+    const responseText = typeof response === 'string' ? response :
+                        response.text?.value || response.text || JSON.stringify(response);
+
+    // Evaluation criteria
+    const criteria = {
+      hasContent: responseText && responseText.length > 0,
+      isNotTooShort: responseText.length > 50,
+      hasStructure: responseText.includes('##') || responseText.includes('-') || responseText.includes('1.'),
+      hasCodeOrExample: responseText.includes('\`') || responseText.includes('http') || responseText.includes('API'),
+      hasExplanation: responseText.length > 200
+    };
+
+    // Calculate score
+    const passedCriteria = Object.values(criteria).filter(Boolean).length;
+    const totalCriteria = Object.keys(criteria).length;
+    const score = Math.round((passedCriteria / totalCriteria) * 100);
+
+    // Generate evaluation report
+    let resultHTML = '<div style="padding: 1.5rem; background: #f8f9fa; border-radius: 0.5rem; border: 1px solid #dee2e6;">';
+    resultHTML += '<h3 style="margin-top: 0; color: #212529;">📊 Response Evaluation</h3>';
+
+    resultHTML += '<div style="margin: 1rem 0; padding: 1rem; background: white; border-radius: 0.375rem; border: 2px solid ' + (score >= 80 ? '#22c55e' : score >= 60 ? '#eab308' : '#ef4444') + ';">';
+    resultHTML += '<div style="font-size: 2rem; font-weight: bold; text-align: center; color: ' + (score >= 80 ? '#22c55e' : score >= 60 ? '#eab308' : '#ef4444') + ';">';
+    resultHTML += score + '%</div>';
+    resultHTML += '<div style="text-align: center; color: #6b7280; margin-top: 0.5rem;">Overall Quality Score</div>';
+    resultHTML += '</div>';
+
+    resultHTML += '<h4 style="margin: 1.5rem 0 0.75rem; color: #374151;">Criteria Results:</h4>';
+    resultHTML += '<ul style="list-style: none; padding: 0; margin: 0;">';
+
+    const criteriaLabels = {
+      hasContent: 'Response contains content',
+      isNotTooShort: 'Response has sufficient length (>50 chars)',
+      hasStructure: 'Response has clear structure (headings/lists)',
+      hasCodeOrExample: 'Response includes code examples or URLs',
+      hasExplanation: 'Response provides detailed explanation (>200 chars)'
+    };
+
+    Object.entries(criteria).forEach(([key, passed]) => {
+      const icon = passed ? '✅' : '❌';
+      const color = passed ? '#22c55e' : '#ef4444';
+      resultHTML += '<li style="padding: 0.5rem; margin: 0.25rem 0; background: white; border-radius: 0.25rem; border-left: 3px solid ' + color + ';">';
+      resultHTML += '<span style="margin-right: 0.5rem;">' + icon + '</span>';
+      resultHTML += '<span style="color: #374151;">' + criteriaLabels[key] + '</span>';
+      resultHTML += '</li>';
+    });
+
+    resultHTML += '</ul>';
+
+    // Add summary
+    resultHTML += '<div style="margin-top: 1.5rem; padding: 1rem; background: ' + (score >= 80 ? '#dcfce7' : score >= 60 ? '#fef9c3' : '#fee2e2') + '; border-radius: 0.375rem;">';
+    resultHTML += '<strong style="color: #1f2937;">Summary: </strong>';
+    if (score >= 80) {
+      resultHTML += '<span style="color: #166534;">Excellent response quality! The integration-expert provided a comprehensive and well-structured answer.</span>';
+    } else if (score >= 60) {
+      resultHTML += '<span style="color: #854d0e;">Good response, but could be improved with more detail or examples.</span>';
+    } else {
+      resultHTML += '<span style="color: #991b1b;">Response needs improvement. Consider asking a more specific question or rephrasing.</span>';
+    }
+    resultHTML += '</div>';
+
+    resultHTML += '</div>';
+
+    document.getElementById('evaluation-result').innerHTML = resultHTML;
+  }).catch((error) => {
+    document.getElementById('evaluation-result').innerHTML =
+      '<div style="padding: 1rem; background: #fee; border: 1px solid #f00; border-radius: 0.5rem; color: #c00;">❌ Error evaluating response: ' + error.message + '</div>';
+  });
+}
+`}
+</script>
+
+<div style="margin: 2rem 0;">
+  <button
+    onclick="evaluateResponse()"
+    style="padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 0.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: all 0.2s;"
+    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 12px rgba(0,0,0,0.15)';"
+    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px rgba(0,0,0,0.1)';"
+  >
+    📊 Evaluate Response
+  </button>
+</div>
+
+<div id="evaluation-result" style="margin-top: 1.5rem;">
+  <div style="padding: 1rem; background: #f3f4f6; border: 1px dashed #d1d5db; border-radius: 0.5rem; color: #6b7280; text-align: center;">
+    Click "Evaluate Response" to see quality analysis
+  </div>
+</div>
+
+---
+
+## How It Works
+
+1. **UserInput** sends query to `integration-expert` agent
+2. Response is stored in reactive store with key `"integration_query"`
+3. **MarkdownDisplay** subscribes to `"integration_query"` and renders formatted response
+4. **Evaluate Response** button analyzes response quality using multiple criteria:
+   - Content presence and length
+   - Structural organization (headings, lists)
+   - Technical elements (code, URLs, API references)
+   - Explanation depth
+5. Evaluation results displayed with visual scoring and detailed breakdown

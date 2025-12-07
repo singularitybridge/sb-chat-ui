@@ -11,6 +11,7 @@ import { CostsPage } from './pages/admin/CostsPage';
 import { UsersPage } from './pages/admin/UsersPage';
 import { InboxPage } from './pages/admin/inbox/InboxPage';
 import { EditCompanyPage } from './pages/admin/EditCompanyPage';
+import { CompanyAdminPage } from './pages/admin/CompanyAdminPage';
 import { TeamsPage } from './pages/admin/TeamsPage';
 import { EditTeamPage } from './pages/admin/EditTeamPage';
 import { MemoryPage } from './pages/admin/MemoryPage'; // Added import for MemoryPage
@@ -23,6 +24,7 @@ import { WorkspacePage } from './pages/admin/WorkspacePage';
 import { WorkspaceJoinPage } from './pages/admin/WorkspaceJoinPage';
 import WorkspaceAuthorizePage from './pages/admin/WorkspaceAuthorizePage';
 import EmbedChatPage from './pages/embed/EmbedChatPage'; // Added import for EmbedChatPage
+import EmbedWorkspacePage from './pages/embed/EmbedWorkspacePage'; // Added import for EmbedWorkspacePage
 import { EmbedAuthProvider } from './contexts/EmbedAuthContext'; // Added import for EmbedAuthProvider
 import ScreenShareWorkspace from './pages/ScreenShareWorkspace';
 
@@ -39,6 +41,14 @@ export const browserRouter = createBrowserRouter([
         element: (
           <EmbedAuthProvider>
             <EmbedChatPage />
+          </EmbedAuthProvider>
+        ),
+      },
+      {
+        path: 'embed/workspace/:documentId', // Added route for EmbedWorkspacePage (documentId = base64(assistantId:path))
+        element: (
+          <EmbedAuthProvider>
+            <EmbedWorkspacePage />
           </EmbedAuthProvider>
         ),
       },
@@ -61,10 +71,6 @@ export const browserRouter = createBrowserRouter([
       {
         path: 'test/json-viewer',
         element: <JsonViewerTestPage />,
-      },
-      {
-        path: 'screenshare/:workspace',
-        element: <ScreenShareWorkspace />,
       },
       {
         path: '/admin',
@@ -95,6 +101,10 @@ export const browserRouter = createBrowserRouter([
             element: <WorkspacePage />,
           },
           {
+            path: 'assistants/:assistantName/workspace/*',
+            element: <ScreenShareWorkspace />,
+          },
+          {
             path: 'assistants/:key',
             element: <EditAssistantPage />,
           },
@@ -104,7 +114,7 @@ export const browserRouter = createBrowserRouter([
           },
           {
             path: 'companies/:id',
-            element: <EditCompanyPage />,
+            element: <CompanyAdminPage />,
           },
           {
             path: 'costs',

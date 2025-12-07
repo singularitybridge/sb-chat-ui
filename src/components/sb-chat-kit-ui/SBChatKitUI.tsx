@@ -50,6 +50,7 @@ interface SBChatKitUIProps {
   className?: string;
   style?: React.CSSProperties;
   isLoading: boolean;
+  compact?: boolean; // Enable compact mode for narrower layouts
 }
 
 const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
@@ -59,8 +60,9 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
   onSendMessage,
   onClear,
   className = '',
-  style = {},  
+  style = {},
   isLoading,
+  compact = false,
 }) => {
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const [disabledMessages, setDisabledMessages] = useState<number[]>([]);
@@ -128,6 +130,7 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
             description={assistant?.description || ''}
             avatar={assistant?.avatar || ''}
             onClear={handleClearChat}
+            compact={compact}
           />
 
           <div className="flex-grow overflow-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-300">

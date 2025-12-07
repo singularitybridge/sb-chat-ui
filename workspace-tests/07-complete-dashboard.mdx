@@ -1,0 +1,186 @@
+---
+title: "Test 7: Complete Dashboard"
+description: "Full-featured reactive dashboard with multiple agents and components"
+---
+
+# Test 7: Complete Reactive Dashboard
+
+This is a comprehensive demo showing all reactive components working together.
+
+---
+
+## 🔍 Search & Analysis Section
+
+### Ask a Research Question
+
+<UserInput
+  dataKey="research_query"
+  agentName="workspace-agent"
+  placeholder="Ask a research question (e.g., 'What are the top AI trends?')"
+  buttonText="Research"
+/>
+
+### Research Results
+
+<StreamingText
+  dataKey="research_query"
+  showLoading={true}
+/>
+
+### Extract Key Points
+
+<DataProcessor
+  dataKey="research_query"
+  outputKey="key_points"
+  agentName="integration-expert"
+  query="Extract the top 5 key points from this text as a JSON array of strings. Return ONLY the JSON array."
+  autoExecute={true}
+/>
+
+<JsonParser
+  dataKey="key_points"
+  outputKey="points_array"
+  autoExecute={true}
+/>
+
+<DataList
+  dataKey="points_array"
+  emptyMessage="No key points extracted yet"
+/>
+
+---
+
+## 📊 Data Generation Section
+
+### Generate Sample Dataset
+
+<AgentExecute
+  dataKey="dataset"
+  agentName="workspace-agent"
+  query="Generate a JSON array of 8 tech companies with fields: name, founded, employees, revenue (in billions), category (social/cloud/ai/hardware). Return ONLY the JSON."
+/>
+
+### Parse Dataset
+
+<JsonParser
+  dataKey="dataset"
+  outputKey="companies"
+  autoExecute={true}
+/>
+
+### All Companies
+
+<DataTable
+  dataKey="companies"
+  columns={[
+    { key: 'name', label: 'Company' },
+    { key: 'founded', label: 'Founded' },
+    { key: 'employees', label: 'Employees' },
+    { key: 'revenue', label: 'Revenue ($B)' },
+    { key: 'category', label: 'Category' }
+  ]}
+/>
+
+---
+
+## 🎯 Filtering & Analysis
+
+### Large Companies (Revenue > $100B)
+
+<DataFilter
+  dataKey="companies"
+  outputKey="large_companies"
+  filter="item => item.revenue > 100"
+  autoExecute={true}
+/>
+
+<DataList
+  dataKey="large_companies"
+/>
+
+### AI Companies
+
+<DataFilter
+  dataKey="companies"
+  outputKey="ai_companies"
+  filter="item => item.category === 'ai'"
+  autoExecute={true}
+/>
+
+<DataList
+  dataKey="ai_companies"
+  emptyMessage="No AI companies in dataset"
+/>
+
+### Analyze AI Companies
+
+<DataProcessor
+  dataKey="ai_companies"
+  outputKey="ai_analysis"
+  agentName="integration-expert"
+  query="Provide a brief analysis of these AI companies"
+  autoExecute={true}
+/>
+
+<MarkdownDisplay
+  dataKey="ai_analysis"
+  showLoading={true}
+/>
+
+---
+
+## 📈 Status & Utilities
+
+<LoadingSpinner size="medium" message="Processing data..." />
+
+<ErrorDisplay
+  error="This is how errors are displayed"
+/>
+
+---
+
+## Data Flow Diagram
+
+```
+┌─────────────┐
+│ UserInput   │ → research_query
+└─────────────┘
+       ↓
+┌─────────────┐
+│DataProcessor│ → key_points
+└─────────────┘
+       ↓
+┌─────────────┐
+│ JsonParser  │ → points_array
+└─────────────┘
+       ↓
+┌─────────────┐
+│  DataList   │
+└─────────────┘
+
+┌─────────────┐
+│AgentExecute │ → dataset
+└─────────────┘
+       ↓
+┌─────────────┐
+│ JsonParser  │ → companies
+└─────────────┘
+       ↓
+┌─────────────┐    ┌─────────────┐
+│ DataFilter  │ →  │ DataFilter  │
+│  (revenue)  │    │    (AI)     │
+└─────────────┘    └─────────────┘
+       ↓                  ↓
+large_companies     ai_companies
+       ↓                  ↓
+┌─────────────┐    ┌─────────────┐
+│  DataList   │    │DataProcessor│
+└─────────────┘    └─────────────┘
+```
+
+This dashboard demonstrates:
+- Multi-agent orchestration
+- Reactive data binding
+- Data transformation pipelines
+- Filtering and analysis
+- Multiple component types working together

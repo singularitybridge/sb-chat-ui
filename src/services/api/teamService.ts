@@ -21,7 +21,7 @@ export async function getTeam(id: string): Promise<ITeam> {
   }
 }
 
-export async function addTeam(team: ITeam): Promise<ITeam> {
+export async function addTeam(team: Omit<ITeam, '_id'>): Promise<ITeam> {
   try {
     const response = await apiClient.post('teams', team);
     return response.data;

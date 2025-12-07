@@ -1,0 +1,77 @@
+---
+title: "Test 4: Product Search Demo"
+description: "Complete product search flow with filtering"
+---
+
+# Test 4: Product Search & Filter
+
+Complete e-commerce-style product search with reactive filtering.
+
+---
+
+## Search for Products
+
+<UserInput
+  dataKey="product_search"
+  agentName="workspace-agent"
+  placeholder="Search for products (e.g., laptops, phones, cameras)"
+  buttonText="Search"
+/>
+
+---
+
+## Processing Search Results
+
+<DataProcessor
+  dataKey="product_search"
+  outputKey="product_json"
+  agentName="workspace-agent"
+  query="Convert this to a JSON array of products with fields: name, price, category, description, rating (1-5). Return ONLY the JSON array."
+  autoExecute={true}
+/>
+
+<JsonParser
+  dataKey="product_json"
+  outputKey="products"
+  autoExecute={true}
+/>
+
+---
+
+## All Products
+
+<ProductList
+  dataKey="products"
+  emptyMessage="No products found. Try searching above!"
+/>
+
+---
+
+## Expensive Products (Price > $500)
+
+<DataFilter
+  dataKey="products"
+  outputKey="expensive_products"
+  filter="item => item.price > 500"
+  autoExecute={true}
+/>
+
+<ProductList
+  dataKey="expensive_products"
+  emptyMessage="No expensive products found"
+/>
+
+---
+
+## Data Pipeline
+
+```
+UserInput (search)
+  → DataProcessor (AI converts to JSON)
+  → JsonParser (parse string → object)
+  → products dataKey
+  → ProductList (all products)
+  → DataFilter (price > 500)
+  → expensive_products dataKey
+  → ProductList (filtered)
+```

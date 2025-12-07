@@ -1,0 +1,66 @@
+---
+title: "Test 2: Multi-Agent Pipeline"
+description: "Chain multiple agents together: Input → Agent A → Agent B → Display"
+---
+
+# Test 2: Multi-Agent Orchestration
+
+This demonstrates chaining multiple AI agents together in a processing pipeline.
+
+## Processing Pipeline
+
+```
+User Input → Agent A (workspace-agent) → DataProcessor → Agent B (integration-expert) → Display
+```
+
+---
+
+## Step 1: Ask a Question
+
+<UserInput
+  dataKey="question"
+  agentName="workspace-agent"
+  placeholder="What are the benefits of AI?"
+  buttonText="Ask Question"
+/>
+
+---
+
+## Step 2: Raw Response
+
+<TextDisplay
+  dataKey="question"
+  showLoading={true}
+  fallback="No response yet"
+/>
+
+---
+
+## Step 3: Process with Second Agent
+
+<DataProcessor
+  dataKey="question"
+  outputKey="summary"
+  agentName="integration-expert"
+  query="Summarize this in 3 bullet points"
+  autoExecute={true}
+/>
+
+---
+
+## Step 4: Processed Summary
+
+<MarkdownDisplay
+  dataKey="summary"
+  showLoading={true}
+  fallback="Waiting for processing..."
+/>
+
+---
+
+## How It Works
+
+1. **UserInput** → stores response in `"question"`
+2. **DataProcessor** watches `"question"`, processes through `integration-expert`
+3. Result stored in `"summary"`
+4. **MarkdownDisplay** subscribes to `"summary"` and renders formatted output

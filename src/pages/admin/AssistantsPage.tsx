@@ -4,11 +4,12 @@ import { observer } from 'mobx-react-lite';
 import { useRootStore } from '../../store/common/RootStoreContext'; // Still needed for rootStore.teamsLoaded, etc.
 import { useSessionStore } from '../../store/useSessionStore'; // Import Zustand session store
 import { IAssistant } from '../../store/models/Assistant';
-import { Plus, Settings, X, ChevronRight, ChevronLeft, Copy } from 'lucide-react';
+import { Plus, Settings, X, ChevronRight, ChevronLeft, Copy, Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { IconButton } from '../../components/admin/IconButton';
 import { ModelIndicator } from '../../components/ModelIndicator';
 import { emitter } from '../../services/mittEmitter';
+import { useCommandPalette } from '../../contexts/CommandPaletteContext';
 import {
   EVENT_SET_ACTIVE_ASSISTANT,
   EVENT_SHOW_ADD_ASSISTANT_MODAL,
@@ -21,6 +22,16 @@ import { Avatar, AvatarStyles } from '../../components/Avatar';
 import IntegrationIcons from '../../components/IntegrationIcons';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getAssistantUrl } from '../../utils/assistantUrlUtils';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '../../components/ui/alert-dialog';
 
 
 const AssistantsPage: React.FC = observer(() => {
@@ -32,6 +43,9 @@ const AssistantsPage: React.FC = observer(() => {
   const [teamAssistants, setTeamAssistants] = useState<IAssistant[]>([]);
   const [teamName, setTeamName] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
+  const [assistantToDelete, setAssistantToDelete] = useState<IAssistant | null>(null);
+  const { setOpen: setCommandPaletteOpen } = useCommandPalette();
 
   const { t } = useTranslation();
 
@@ -68,8 +82,22 @@ const AssistantsPage: React.FC = observer(() => {
     }
   }, [teamId, rootStore]);
 
-  const handleDelete = (assistant: IAssistant) => {
-    rootStore.deleteAssistant(assistant._id);
+  const handleDeleteClick = (assistant: IAssistant) => {
+    setAssistantToDelete(assistant);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (assistantToDelete) {
+      rootStore.deleteAssistant(assistantToDelete._id);
+      setDeleteDialogOpen(false);
+      setAssistantToDelete(null);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteDialogOpen(false);
+    setAssistantToDelete(null);
   };
 
   const handleSetAssistant = async (assistant: IAssistant) => {
@@ -141,10 +169,16 @@ const AssistantsPage: React.FC = observer(() => {
                 />
               )}
             </div>
-            <IconButton
-              icon={<Plus className="w-7 h-7 text-gray-600" />}
-              onClick={handleAddAssistant}
-            />
+            <div className="flex items-center gap-2">
+              <IconButton
+                icon={<Search className="w-6 h-6 text-gray-600" />}
+                onClick={() => setCommandPaletteOpen(true)}
+              />
+              <IconButton
+                icon={<Plus className="w-7 h-7 text-gray-600" />}
+                onClick={handleAddAssistant}
+              />
+            </div>
           </div>
 
           <ul className="space-y-6 flex-grow overflow-y-auto">
@@ -221,7 +255,7 @@ const AssistantsPage: React.FC = observer(() => {
                                     className="p-1.5 rounded-full hover:bg-gray-300 bg-white"
                                     onClick={(event) => {
                                       event.stopPropagation();
-                                      handleDelete(assistant);
+                                      handleDeleteClick(assistant);
                                     }}
                                   />
                                 </motion.div>
@@ -258,6 +292,28 @@ const AssistantsPage: React.FC = observer(() => {
           <ChatContainer />
         </div>
       </div>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('AssistantsPage.deleteConfirmTitle')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('AssistantsPage.deleteConfirmMessage', { name: assistantToDelete?.name })}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={handleCancelDelete}>
+              {t('common.cancel')}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmDelete}
+              className="bg-red-600 hover:bg-red-700 focus-visible:ring-red-600"
+            >
+              {t('common.delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 });

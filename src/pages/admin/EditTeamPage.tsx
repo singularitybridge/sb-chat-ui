@@ -9,6 +9,7 @@ import { IAssistant } from '../../store/models/Assistant';
 import { Avatar, AvatarStyles } from '../../components/Avatar';
 import { X } from 'lucide-react';
 import { IconButton } from '../../components/admin/IconButton';
+import { IconPicker } from '../../components/IconPicker';
 
 const EditTeamPage: React.FC = observer(() => {
   const { key } = useParams<{ key: string }>();
@@ -155,13 +156,7 @@ const EditTeamPage: React.FC = observer(() => {
             <label className="block text-sm font-medium text-gray-700 mb-1">
               {t('EditTeamPage.icon') || 'Icon'}
             </label>
-            <input
-              type="text"
-              className="w-full p-2 border border-gray-300 rounded-md"
-              value={icon}
-              onChange={(e) => setIcon(e.target.value)}
-              placeholder={t('EditTeamPage.iconPlaceholder') || 'Enter an icon name'}
-            />
+            <IconPicker value={icon} onChange={setIcon} />
           </div>
           
           <div className="flex justify-end">

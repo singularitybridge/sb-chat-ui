@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Testing Suite Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .feature-card {
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-sm p-8 mb-8">
+            <div class="flex items-center justify-between mb-4">
+                <h1 class="text-4xl font-bold text-gray-900">API Testing Suite Hub</h1>
+                <span class="px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-semibold">
+                    v2.0
+                </span>
+            </div>
+            <p class="text-gray-600 text-lg">Comprehensive testing suites for all API features</p>
+
+            <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <div class="flex items-start">
+                    <svg class="w-5 h-5 text-blue-600 mt-0.5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <div class="text-sm text-blue-800">
+                        <strong>Quick Start:</strong> Click on any feature card below to open its dedicated testing interface.
+                        Each suite includes comprehensive tests with real-time progress tracking and detailed console output.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Suites Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            <!-- Session Management -->
+            <a href="http://localhost:4103/features/session-management/testing/index.html" class="feature-card block">
+                <div class="bg-white rounded-lg shadow-sm p-6 h-full">
+                    <div class="flex items-center mb-4">
+                        <div class="p-3 bg-blue-100 rounded-lg">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                            </svg>
+                        </div>
+                        <h2 class="ml-3 text-xl font-bold text-gray-900">Session Management</h2>
+                    </div>
+                    <p class="text-gray-600 mb-4">Test session creation, retrieval, updates, and language settings</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">CRUD Operations</span>
+                        <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">Language Settings</span>
+                        <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">Assistant Assignment</span>
+                    </div>
+                    <div class="mt-4 pt-4 border-t">
+                        <span class="text-sm text-gray-500">15 test cases</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Session Activation -->
+            <a href="/features/session-activation/testing/index.html" class="feature-card block">
+                <div class="bg-white rounded-lg shadow-sm p-6 h-full">
+                    <div class="flex items-center mb-4">
+                        <div class="p-3 bg-green-100 rounded-lg">
+                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h2 class="ml-3 text-xl font-bold text-gray-900">Session Activation</h2>
+                        <span class="ml-2 px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs font-semibold">NEW</span>
+                    </div>
+                    <p class="text-gray-600 mb-4">Test the new session activation and single-active-session features</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">Activation Control</span>
+                        <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">Multi-Session</span>
+                        <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">Race Conditions</span>
+                    </div>
+                    <div class="mt-4 pt-4 border-t">
+                        <span class="text-sm text-gray-500">10 test cases</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Memory/Journal -->
+            <a href="/features/memory-journal/testing/index.html" class="feature-card block">
+                <div class="bg-white rounded-lg shadow-sm p-6 h-full">
+                    <div class="flex items-center mb-4">
+                        <div class="p-3 bg-purple-100 rounded-lg">
+                            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                        </div>
+                        <h2 class="ml-3 text-xl font-bold text-gray-900">Memory/Journal API</h2>
+                        <span class="ml-2 px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs font-semibold">NEW</span>
+                    </div>
+                    <p class="text-gray-600 mb-4">Test journal entry creation, retrieval, search, and filtering</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">Entry Management</span>
+                        <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">Search</span>
+                        <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">Filtering</span>
+                    </div>
+                    <div class="mt-4 pt-4 border-t">
+                        <span class="text-sm text-gray-500">12 test cases</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- File Manager -->
+            <a href="/features/file-manager/testing/index.html" class="feature-card block">
+                <div class="bg-white rounded-lg shadow-sm p-6 h-full">
+                    <div class="flex items-center mb-4">
+                        <div class="p-3 bg-orange-100 rounded-lg">
+                            <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                        </div>
+                        <h2 class="ml-3 text-xl font-bold text-gray-900">File Manager</h2>
+                        <span class="ml-2 px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs font-semibold">NEW</span>
+                    </div>
+                    <p class="text-gray-600 mb-4">Test file upload, download URLs, and scope-based storage</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">Upload/Download</span>
+                        <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">Scopes</span>
+                        <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">TTL</span>
+                    </div>
+                    <div class="mt-4 pt-4 border-t">
+                        <span class="text-sm text-gray-500">14 test cases</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Assistant Management (Coming Soon) -->
+            <div class="feature-card block opacity-60 cursor-not-allowed">
+                <div class="bg-white rounded-lg shadow-sm p-6 h-full relative">
+                    <div class="absolute top-4 right-4">
+                        <span class="px-2 py-1 bg-gray-200 text-gray-600 rounded text-xs font-semibold">COMING SOON</span>
+                    </div>
+                    <div class="flex items-center mb-4">
+                        <div class="p-3 bg-indigo-100 rounded-lg">
+                            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <h2 class="ml-3 text-xl font-bold text-gray-900">Assistant Management</h2>
+                    </div>
+                    <p class="text-gray-600 mb-4">Test assistant CRUD operations and prompt history</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">CRUD</span>
+                        <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">Prompt History</span>
+                        <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">Versioning</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cost Tracking (Coming Soon) -->
+            <div class="feature-card block opacity-60 cursor-not-allowed">
+                <div class="bg-white rounded-lg shadow-sm p-6 h-full relative">
+                    <div class="absolute top-4 right-4">
+                        <span class="px-2 py-1 bg-gray-200 text-gray-600 rounded text-xs font-semibold">COMING SOON</span>
+                    </div>
+                    <div class="flex items-center mb-4">
+                        <div class="p-3 bg-red-100 rounded-lg">
+                            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h2 class="ml-3 text-xl font-bold text-gray-900">Cost Tracking</h2>
+                    </div>
+                    <p class="text-gray-600 mb-4">Test cost tracking, aggregation, and reporting APIs</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">Cost Records</span>
+                        <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">Aggregation</span>
+                        <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">Reports</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Configuration Guide -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mt-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Configuration Guide</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Required Configuration</h3>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li class="flex items-start">
+                            <svg class="w-4 h-4 text-green-500 mt-0.5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <div>
+                                <strong>API Key:</strong> Your authentication key for API access
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-4 h-4 text-green-500 mt-0.5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <div>
+                                <strong>Company ID:</strong> Your organization's unique identifier
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-4 h-4 text-green-500 mt-0.5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <div>
+                                <strong>User ID:</strong> Your user account identifier
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Optional Configuration</h3>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li class="flex items-start">
+                            <svg class="w-4 h-4 text-blue-500 mt-0.5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                            </svg>
+                            <div>
+                                <strong>Session ID:</strong> For session-specific tests
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-4 h-4 text-blue-500 mt-0.5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                            </svg>
+                            <div>
+                                <strong>Agent ID:</strong> For agent-scoped file tests
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-4 h-4 text-blue-500 mt-0.5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                            </svg>
+                            <div>
+                                <strong>OpenAI Key:</strong> For embedding and AI features
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mt-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                <div class="flex items-start">
+                    <svg class="w-5 h-5 text-yellow-600 mt-0.5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                    <div class="text-sm text-yellow-800">
+                        <strong>Note:</strong> Configuration is saved locally in your browser. Your credentials are never sent to any external servers except the configured API endpoint.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg shadow-sm p-6 mt-8 text-white">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <div>
+                    <div class="text-3xl font-bold">4</div>
+                    <div class="text-sm opacity-90">Active Test Suites</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold">51</div>
+                    <div class="text-sm opacity-90">Total Test Cases</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold">12</div>
+                    <div class="text-sm opacity-90">API Endpoints</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold">100%</div>
+                    <div class="text-sm opacity-90">Coverage Goal</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center text-gray-500 text-sm mt-8">
+            <p>API Testing Suite v2.0 • Built with Tailwind CSS</p>
+            <p class="mt-1">© 2025 SingularityBridge API Services</p>
+        </div>
+    </div>
+</body>
+</html>

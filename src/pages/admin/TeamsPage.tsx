@@ -11,6 +11,16 @@ import { emitter } from '../../services/mittEmitter';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '../../components/ui/alert-dialog';
 
 import { EVENT_SHOW_ADD_TEAM_MODAL } from '../../utils/eventNames';
 
@@ -18,6 +28,8 @@ const TeamsPage: React.FC = observer(() => {
   const rootStore = useRootStore();
   const navigate = useNavigate();
   const [hoveredTeamId, setHoveredTeamId] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
+  const [teamToDelete, setTeamToDelete] = useState<ITeam | null>(null);
 
   const { t } = useTranslation();
 
@@ -27,8 +39,22 @@ const TeamsPage: React.FC = observer(() => {
     }
   }, [rootStore]);
 
-  const handleDelete = (team: ITeam) => {
-    rootStore.deleteTeam(team._id);
+  const handleDeleteClick = (team: ITeam) => {
+    setTeamToDelete(team);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (teamToDelete) {
+      rootStore.deleteTeam(teamToDelete._id);
+      setDeleteDialogOpen(false);
+      setTeamToDelete(null);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteDialogOpen(false);
+    setTeamToDelete(null);
   };
 
   const handleAddTeam = () => {
@@ -136,7 +162,7 @@ const TeamsPage: React.FC = observer(() => {
                                     className="p-1.5 rounded-full hover:bg-gray-300 bg-white"
                                     onClick={(event) => {
                                       event.stopPropagation();
-                                      handleDelete(team);
+                                      handleDeleteClick(team);
                                     }}
                                   />
                                 </motion.div>
@@ -164,6 +190,28 @@ const TeamsPage: React.FC = observer(() => {
           </ul>
         </div>
       </div>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('TeamsPage.deleteConfirmTitle')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('TeamsPage.deleteConfirmMessage', { name: teamToDelete?.name })}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={handleCancelDelete}>
+              {t('common.cancel')}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmDelete}
+              className="bg-red-600 hover:bg-red-700 focus-visible:ring-red-600"
+            >
+              {t('common.delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 });

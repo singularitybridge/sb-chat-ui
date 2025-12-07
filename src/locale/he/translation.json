@@ -100,7 +100,9 @@
     "title": "צוותים",
     "addTeam": "הוסף צוות",
     "noTeams": "לא נמצאו צוותים",
-    "createTeamPrompt": "לחץ על כפתור + כדי ליצור צוות"
+    "createTeamPrompt": "לחץ על כפתור + כדי ליצור צוות",
+    "deleteConfirmTitle": "מחיקת צוות",
+    "deleteConfirmMessage": "האם אתה בטוח שברצונך למחוק את הצוות '{{name}}'? פעולה זו אינה ניתנת לביטול."
   },
   "MemoryPage": {
     "title": "יומן זיכרון",
@@ -153,7 +155,11 @@
       "name": "שם",
       "description": "תיאור",
       "voice": "קול"
-    }
+    },
+    "copySuccess": "מזהה הסוכן הועתק ללוח!",
+    "copyFailed": "נכשל בהעתקת מזהה הסוכן.",
+    "deleteConfirmTitle": "מחיקת סוכן AI",
+    "deleteConfirmMessage": "האם אתה בטוח שברצונך למחוק את '{{name}}'? פעולה זו אינה ניתנת לביטול."
   },
   "UsersPage": {
     "title": "משתמשים",
@@ -387,7 +393,8 @@
     "cancel": "בטל",
     "create": "צור",
     "back": "חזור",
-    "done": "סיום"
+    "done": "סיום",
+    "delete": "מחק"
   },
   "breadcrumbs": {
     "teamAssistants": "סוכנים בצוות"
@@ -438,5 +445,16 @@
       "createdAt": "נוצר",
       "expiresAt": "תפוגה"
     }
+  },
+  "CommandPalette": {
+    "searchPlaceholder": "חיפוש סוכנים, צוותים, סביבת עבודה...",
+    "noResults": "לא נמצאו תוצאות.",
+    "loading": "טוען פריטי סביבת עבודה...",
+    "hint": "לחץ על",
+    "hintToOpen": "לפתיחה",
+    "navigate": "לניווט",
+    "assistants": "סוכנים",
+    "teams": "צוותים",
+    "workspace": "סביבת עבודה"
   }
 }

@@ -123,6 +123,14 @@ export const companyFieldConfigs: FieldConfig[] = [
         key: 'aws_region',
         value: '-',
       },
+      {
+        key: 'nylas_api_key',
+        value: '-',
+      },
+      {
+        key: 'nylas_grant_id',
+        value: '-',
+      },
     ],
     visibility: { create: true, view: true, update: true },
   },

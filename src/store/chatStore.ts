@@ -40,6 +40,7 @@ interface ChatStoreState {
   
   loadMessages: (activeSessionId: string | null | undefined) => Promise<void>;
   addPusherMessage: (pusherMessage: any, assistantId?: string) => void;
+  pushMessage: (message: { content: string; role: 'user' | 'assistant' | 'system'; metadata?: Partial<Metadata> }) => void;
   
   handleSubmitMessage: (
     messageText: string, 
@@ -222,7 +223,37 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
       set({ isLoading: true });
     }
   },
-  
+
+  pushMessage: (message) => {
+    logger.debug('[CHAT_STORE] Pushing message to chat', {
+      role: message.role,
+      contentLength: message.content.length,
+    });
+
+    const newMessage: ChatMessage = {
+      id: `rpc-push-${Date.now()}-${Math.random().toString(36).substring(7)}`,
+      content: removeRAGCitations(message.content),
+      role: message.role,
+      createdAt: Date.now() / 1000,
+      metadata: {
+        message_type: 'text',
+        ...(message.metadata || {}),
+      },
+    };
+
+    set((state) => {
+      const updatedMessages = [...state.messages, newMessage];
+      // Invalidate cache since we have new messages
+      const activeSessionId = useSessionStore.getState().activeSession?._id;
+      if (activeSessionId) {
+        messageCache.invalidate(activeSessionId);
+      }
+      return { messages: updatedMessages };
+    });
+
+    logger.info('[CHAT_STORE] Message pushed to chat successfully', { messageId: newMessage.id });
+  },
+
   handleSubmitMessage: async (messageText, assistant, activeSessionId, attachments) => {
     if (get().isLoading) return;
 
