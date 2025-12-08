@@ -82,7 +82,7 @@ const EditAssistantActionsDialog: React.FC<EditAssistantActionsDialogProps> = ob
           <Button
             onClick={handleClear}
             disabled={isLoading || selectedActions.length === 0}
-            className="bg-gray-200 text-gray-700 hover:bg-gray-300"
+            variant="secondary"
           >
             {t('common.clear') || 'Clear'}
           </Button>

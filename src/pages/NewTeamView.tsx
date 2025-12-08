@@ -33,7 +33,6 @@ const NewTeamView: React.FC = observer(() => {
 
     try {
       await rootStore.createTeam({
-        _id: '', // Will be assigned by the server
         name: teamName,
         description: teamPurpose,
         icon: selectedIcon,

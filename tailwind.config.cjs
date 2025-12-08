@@ -21,7 +21,7 @@ module.exports = {
   				'sans-serif'
   			],
   			'noto-sans-hebrew': [
-  				'Noto Sans Hebrew"',
+  				'"Noto Sans Hebrew"',
   				'sans-serif'
   			]
   		},
