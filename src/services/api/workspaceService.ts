@@ -20,7 +20,20 @@ export interface WorkspaceListResponse {
   success: boolean;
   scope: string;
   prefix: string;
-  paths: string[];
+  paths?: string[]; // Optional for backwards compatibility
+  items?: Array<{
+    path: string;
+    metadata: {
+      contentType?: string;
+      size?: number;
+      createdAt?: Date | string;
+      updatedAt?: Date | string;
+      ttl?: number;
+      [key: string]: any;
+    };
+    type?: 'embedded' | 'external';
+    size?: number;
+  }>;
   count: number;
 }
 
@@ -42,9 +55,10 @@ export const listWorkspaceItems = async (
   prefix: string = '',
   agentId?: string,
   sessionId?: string,
-  teamId?: string
+  teamId?: string,
+  withMetadata: boolean = false
 ): Promise<WorkspaceListResponse> => {
-  const key = `workspace:list:${scope}:${prefix}:${agentId || ''}:${sessionId || ''}:${teamId || ''}`;
+  const key = `workspace:list:${scope}:${prefix}:${agentId || ''}:${sessionId || ''}:${teamId || ''}:${withMetadata}`;
 
   return singleFlight(
     key,
@@ -70,6 +84,7 @@ export const listWorkspaceItems = async (
         ...(prefix && { prefix }),
         ...(agentId && { agentId }),
         ...(teamId && { teamId }),
+        ...(withMetadata && { withMetadata: 'true' }),
       });
 
       const response = await axios.get(
@@ -228,7 +243,7 @@ export const searchWorkspaceItems = async (
   try {
     const listResponse = await listWorkspaceItems(scope, '', agentId, sessionId, teamId);
 
-    if (!listResponse.success || listResponse.paths.length === 0) {
+    if (!listResponse.success || !listResponse.paths || listResponse.paths.length === 0) {
       return [];
     }
 
@@ -339,18 +354,18 @@ export const findDefaultEntryFile = async (
     // List all files in agent workspace
     const listResponse = await listWorkspaceItems('agent', '', agentId, sessionId);
 
-    if (!listResponse.success || listResponse.paths.length === 0) {
+    if (!listResponse.success || listResponse.paths?.length === 0) {
       return null;
     }
 
     // Priority 1: Look for README at root level first
-    const rootReadme = listResponse.paths.find(p =>
+    const rootReadme = listResponse.paths?.find(p =>
       p === '/README.mdx' || p === '/README.md' || p === '/readme.mdx' || p === '/readme.md'
     );
     if (rootReadme) return rootReadme;
 
     // Priority 2: Look for index files at root level
-    const rootIndex = listResponse.paths.find(p =>
+    const rootIndex = listResponse.paths?.find(p =>
       p === '/index.html' || p === '/index.mdx' || p === '/index.md'
     );
     if (rootIndex) return rootIndex;
@@ -366,7 +381,7 @@ export const findDefaultEntryFile = async (
     ];
 
     for (const preferredName of preferredNames) {
-      const found = listResponse.paths.find(p =>
+      const found = listResponse.paths?.find(p =>
         p.toLowerCase().endsWith('/' + preferredName)
       );
       if (found) {
@@ -375,13 +390,13 @@ export const findDefaultEntryFile = async (
     }
 
     // Priority 4: If no preferred name found, look for any file in priority order: HTML > MDX > MD
-    const htmlFile = listResponse.paths.find(p => p.toLowerCase().endsWith('.html'));
+    const htmlFile = listResponse.paths?.find(p => p.toLowerCase().endsWith('.html'));
     if (htmlFile) return htmlFile;
 
-    const mdxFile = listResponse.paths.find(p => p.toLowerCase().endsWith('.mdx'));
+    const mdxFile = listResponse.paths?.find(p => p.toLowerCase().endsWith('.mdx'));
     if (mdxFile) return mdxFile;
 
-    const mdFile = listResponse.paths.find(p => p.toLowerCase().endsWith('.md'));
+    const mdFile = listResponse.paths?.find(p => p.toLowerCase().endsWith('.md'));
     if (mdFile) return mdFile;
 
     return null;

@@ -6,12 +6,11 @@ import {
   File,
   Folder,
   Search,
-  Bot,
   Sparkles,
   Calendar,
   Type
 } from 'lucide-react';
-import { listWorkspaceItems, getWorkspaceItem, WorkspaceGetResponse } from '../../services/api/workspaceService';
+import { listWorkspaceItems } from '../../services/api/workspaceService';
 
 interface WorkspaceFileExplorerProps {
   agentId: string;
@@ -36,11 +35,11 @@ type SortDirection = 'asc' | 'desc';
 
 export const WorkspaceFileExplorer: React.FC<WorkspaceFileExplorerProps> = ({
   agentId,
-  agentName,
+  agentName: _agentName,
   sessionId,
   selectedPath,
   onFileSelect,
-  onFileDeleted
+  onFileDeleted: _onFileDeleted
 }) => {
   const [files, setFiles] = useState<FileItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -60,8 +59,8 @@ export const WorkspaceFileExplorer: React.FC<WorkspaceFileExplorerProps> = ({
     loadFiles();
   }, [agentId, sessionId]);
 
-  // Build tree structure from flat file paths
-  const buildFileTree = (paths: string[]): FileItem[] => {
+  // Build tree structure from items with metadata
+  const buildFileTree = (items: Array<{ path: string; metadata: any }>): FileItem[] => {
     const root: FileItem = {
       name: '/',
       path: '/',
@@ -69,7 +68,16 @@ export const WorkspaceFileExplorer: React.FC<WorkspaceFileExplorerProps> = ({
       children: []
     };
 
-    paths.forEach(path => {
+    // Create a map for quick metadata lookup
+    // Normalize paths by adding leading slash for consistent lookup
+    const metadataMap = new Map<string, any>();
+    items.forEach(item => {
+      const normalizedPath = item.path.startsWith('/') ? item.path : '/' + item.path;
+      metadataMap.set(normalizedPath, item.metadata);
+    });
+
+    items.forEach(item => {
+      const { path } = item;
       const parts = path.split('/').filter(Boolean);
       let currentNode = root;
 
@@ -84,14 +92,17 @@ export const WorkspaceFileExplorer: React.FC<WorkspaceFileExplorerProps> = ({
             ? part.split('.').pop()?.toLowerCase()
             : undefined;
 
+          // Get real timestamp from metadata
+          const metadata = metadataMap.get(currentPath);
+          const updatedAt = metadata?.updatedAt ? new Date(metadata.updatedAt) : undefined;
+
           child = {
             name: part,
             path: currentPath,
             type: isFile ? 'file' : 'folder',
             extension,
             children: isFile ? undefined : [],
-            // Mock date - in real implementation this would come from API
-            updatedAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000)
+            updatedAt
           };
 
           currentNode.children = currentNode.children || [];
@@ -110,11 +121,19 @@ export const WorkspaceFileExplorer: React.FC<WorkspaceFileExplorerProps> = ({
   const loadFiles = async () => {
     try {
       setLoading(true);
-      const response = await listWorkspaceItems('agent', '', agentId, sessionId);
+      // Request with metadata to get real timestamps
+      const response = await listWorkspaceItems('agent', '', agentId, sessionId, undefined, true);
 
-      if (response.success && response.paths) {
-        const tree = buildFileTree(response.paths);
-        setFiles(tree);
+      if (response.success) {
+        // Use items with metadata if available, fallback to paths for backwards compatibility
+        if (response.items && response.items.length > 0) {
+          const tree = buildFileTree(response.items);
+          setFiles(tree);
+        } else if (response.paths) {
+          // Fallback for old API without metadata
+          const tree = buildFileTree(response.paths.map(path => ({ path, metadata: {} })));
+          setFiles(tree);
+        }
       }
     } catch (error) {
       console.error('Failed to load workspace files:', error);
@@ -199,7 +218,7 @@ export const WorkspaceFileExplorer: React.FC<WorkspaceFileExplorerProps> = ({
   }, [files, searchQuery, sortBy, sortDirection]);
 
   const getFileIcon = (extension?: string) => {
-    const iconClass = "h-4 w-4";
+    const iconClass = 'h-4 w-4';
 
     switch (extension) {
       case 'png':
@@ -311,7 +330,7 @@ export const WorkspaceFileExplorer: React.FC<WorkspaceFileExplorerProps> = ({
     }, 0);
   };
 
-  const totalFiles = countFiles(files);
+  const _totalFiles = countFiles(files);
 
   return (
     <div className="h-full flex flex-col bg-white">
