@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { observer } from 'mobx-react-lite';
 import { BookText, Search, Filter, Loader2, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
@@ -7,11 +6,11 @@ import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
 // import { motion, AnimatePresence } from 'framer-motion'; // Not used currently
 
 import { useMemoryStore } from '../../store/useMemoryStore';
-import { useAuthStore } from '../../store/useAuthStore'; // Added import for useAuthStore
-import { IJournalEntry } from '../../store/models/JournalEntry';
+import { useAuthStore } from '../../store/useAuthStore';
+import { IJournalEntry } from '../../types/entities';
 import { SearchInput } from '../../components/SearchInput'; // Changed to named import
 
-const MemoryPage: React.FC = observer(() => {
+const MemoryPage: React.FC = () => {
   const {
     entries,
     isLoading,
@@ -202,6 +201,6 @@ const MemoryPage: React.FC = observer(() => {
       </div>
     </div>
   );
-});
+};
 
 export { MemoryPage };

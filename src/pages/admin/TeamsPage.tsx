@@ -1,8 +1,6 @@
-// file_path: src/pages/admin/TeamsPage.tsx
 import React, { useState, useEffect } from 'react';
-import { observer } from 'mobx-react-lite';
-import { useRootStore } from '../../store/common/RootStoreContext';
-import { ITeam } from '../../store/models/Team';
+import { useTeamStore } from '../../store/useTeamStore';
+import { ITeam } from '../../types/entities';
 import { Plus, Settings, X } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -24,8 +22,8 @@ import {
 
 import { EVENT_SHOW_ADD_TEAM_MODAL } from '../../utils/eventNames';
 
-const TeamsPage: React.FC = observer(() => {
-  const rootStore = useRootStore();
+const TeamsPage: React.FC = () => {
+  const { teams, teamsLoaded, loadTeams, deleteTeam } = useTeamStore();
   const navigate = useNavigate();
   const [hoveredTeamId, setHoveredTeamId] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
@@ -34,10 +32,10 @@ const TeamsPage: React.FC = observer(() => {
   const { t } = useTranslation();
 
   useEffect(() => {
-    if (!rootStore.teamsLoaded) {
-      rootStore.loadTeams();
+    if (!teamsLoaded) {
+      loadTeams();
     }
-  }, [rootStore]);
+  }, [teamsLoaded, loadTeams]);
 
   const handleDeleteClick = (team: ITeam) => {
     setTeamToDelete(team);
@@ -46,7 +44,7 @@ const TeamsPage: React.FC = observer(() => {
 
   const handleConfirmDelete = () => {
     if (teamToDelete) {
-      rootStore.deleteTeam(teamToDelete._id);
+      deleteTeam(teamToDelete._id);
       setDeleteDialogOpen(false);
       setTeamToDelete(null);
     }
@@ -82,7 +80,7 @@ const TeamsPage: React.FC = observer(() => {
           </div>
 
           <ul className="space-y-6 flex-grow overflow-y-auto pr-4 rtl:pl-4 rtl:pr-0">
-            {rootStore.teams.map((team) => {
+            {teams.map((team) => {
               return (
                 <li
                   key={team._id}
@@ -179,7 +177,7 @@ const TeamsPage: React.FC = observer(() => {
                 </li>
               );
             })}
-            {rootStore.teams.length === 0 && (
+            {teams.length === 0 && (
               <div className="text-center py-8 text-gray-500">
                 <p>{t('TeamsPage.noTeams') || 'No teams found'}</p>
                 <p className="mt-2 text-sm">
@@ -214,6 +212,6 @@ const TeamsPage: React.FC = observer(() => {
       </AlertDialog>
     </div>
   );
-});
+};
 
 export { TeamsPage };

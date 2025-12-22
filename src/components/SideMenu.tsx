@@ -4,11 +4,10 @@ import {
   AcademicCapIcon,
   UsersIcon,
   Cog8ToothIcon,
-  BookOpenIcon, // Added BookOpenIcon
+  BookOpenIcon,
 } from '@heroicons/react/24/solid';
-import { observer } from 'mobx-react-lite';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import { useNavigate } from 'react-router-dom'; // Added useNavigate
+import { useNavigate } from 'react-router-dom';
 
 interface SideMenuProps {
   isOpen: boolean;
@@ -34,9 +33,8 @@ const SideMenuItem: React.FC<SideMenuItemProps> = ({
   </div>
 );
 
-const SideMenu: React.FC<SideMenuProps> = observer(({ isOpen, closeMenu }) => { // Added closeMenu to props
+const SideMenu: React.FC<SideMenuProps> = ({ isOpen, closeMenu }) => {
   const navigate = useNavigate();
-  // const { activeChatbot } = useRootStore();
 
   const handleNavigate = (path: string) => {
     navigate(path);
@@ -73,6 +71,6 @@ const SideMenu: React.FC<SideMenuProps> = observer(({ isOpen, closeMenu }) => { 
       </nav>
     </aside>
   );
-});
+};
 
 export { SideMenu };

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { observer } from 'mobx-react';
-import { useRootStore } from '../store/common/RootStoreContext';
+import { useTeamStore } from '../store/useTeamStore';
+import { useAuthStore } from '../store/useAuthStore';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -11,9 +11,10 @@ import { emitter } from '../services/mittEmitter';
 import { EVENT_CLOSE_MODAL } from '../utils/eventNames';
 import { IconPicker } from '../components/IconPicker';
 
-const NewTeamView: React.FC = observer(() => {
+const NewTeamView: React.FC = () => {
   const { t } = useTranslation();
-  const rootStore = useRootStore();
+  const { createTeam } = useTeamStore();
+  const { userSessionInfo } = useAuthStore();
 
   const [step, setStep] = useState(1);
   const [teamName, setTeamName] = useState('');
@@ -32,11 +33,11 @@ const NewTeamView: React.FC = observer(() => {
     setError(null);
 
     try {
-      await rootStore.createTeam({
+      await createTeam({
         name: teamName,
         description: teamPurpose,
         icon: selectedIcon,
-        companyId: rootStore.activeCompany._id,
+        companyId: userSessionInfo.companyId,
       });
 
       // Close the modal
@@ -260,6 +261,6 @@ const NewTeamView: React.FC = observer(() => {
       )}
     </div>
   );
-});
+};
 
 export { NewTeamView };

@@ -1,5 +1,5 @@
 import apiClient from '../AxiosService';
-import { IInboxSession } from '../../store/models/Inbox';
+import { IInboxSession } from '../../types/entities';
 import { singleFlight } from '../../utils/singleFlight';
 
 export const getInboxMessages = (): Promise<IInboxSession[]> =>

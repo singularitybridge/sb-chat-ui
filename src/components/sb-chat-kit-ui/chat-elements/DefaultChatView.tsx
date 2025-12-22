@@ -1,7 +1,7 @@
 import React from 'react';
 import Button from '../../sb-core-ui-kit/Button';
 import { TextComponent } from '../../sb-core-ui-kit/TextComponent';
-import { Avatar, AvatarStyles } from '../../Avatar';
+import { Avatar, AvatarStyles, getAvatarUrl } from '../../Avatar';
 import { useTranslation } from 'react-i18next';
 
 interface ConversationStarter {
@@ -33,7 +33,7 @@ const DefaultChatView: React.FC<DefaultChatViewProps> = ({ assistant, onSendMess
     <div className="flex flex-col items-center justify-center h-full text-center">
       <Avatar
         avatarStyle={AvatarStyles.large}
-        imageUrl={`/assets/avatars/${assistant.avatar}.png`}
+        imageUrl={getAvatarUrl(assistant.avatar)}
         active={true}
       />
 

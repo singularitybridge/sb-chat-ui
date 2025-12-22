@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { observer } from 'mobx-react-lite';
 import { useTranslation } from 'react-i18next';
-import { useRootStore } from '../../store/common/RootStoreContext';
 import AdminPageContainer from '../../components/admin/AdminPageContainer';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
 import { IconButton } from '../../components/admin/IconButton';
@@ -20,9 +18,8 @@ interface ApiKey {
   createdAt: string;
 }
 
-export const ApiKeysPage: React.FC = observer(() => {
+export const ApiKeysPage: React.FC = () => {
   const { t } = useTranslation();
-  const rootStore = useRootStore();
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -155,4 +152,4 @@ export const ApiKeysPage: React.FC = observer(() => {
       )}
     </AdminPageContainer>
   );
-});
+};

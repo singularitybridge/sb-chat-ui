@@ -1,14 +1,15 @@
 import React, { useEffect } from 'react';
-import { observer } from 'mobx-react-lite';
 import { ContentContainer } from '../components/ContentContainer';
 import { Menu } from '../components/admin/Menu';
 import { Outlet, useLocation } from 'react-router-dom';
-import { useRootStore } from '../store/common/RootStoreContext';
+import { useAuthStore } from '../store/useAuthStore';
+import { useOnboardingStore } from '../store/useOnboardingStore';
 import DynamicBackground, { setDynamicBackground } from '../components/DynamicBackground';
 
-const Admin: React.FC = observer(() => {
-  const rootStore = useRootStore();
+const Admin: React.FC = () => {
   const location = useLocation();
+  const { isUserDataLoaded } = useAuthStore();
+  const { loadOnboardingStatus } = useOnboardingStore();
 
   // Check if we're on a workspace route
   const isWorkspacePage = location.pathname.includes('/workspace');
@@ -29,10 +30,10 @@ const Admin: React.FC = observer(() => {
   );
 
   useEffect(() => {
-    if (rootStore.isInitialDataLoaded) {
-      rootStore.fetchOnboardingStatus();
+    if (isUserDataLoaded) {
+      loadOnboardingStatus();
     }
-  }, [rootStore.isInitialDataLoaded]);
+  }, [isUserDataLoaded, loadOnboardingStatus]);
 
   return (
     <div className="h-screen flex flex-col relative">
@@ -53,6 +54,6 @@ const Admin: React.FC = observer(() => {
       </div>
     </div>
   );
-});
+};
 
 export { Admin };

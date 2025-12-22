@@ -1,4 +1,4 @@
-import { IUser } from '../../store/models/User';
+import { IUser } from '../../types/entities';
 import apiClient from '../AxiosService';
 import { singleFlight } from '../../utils/singleFlight';
 

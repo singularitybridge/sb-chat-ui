@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { observer } from 'mobx-react-lite';
-import { IInboxSession, IMessage } from '../../../store/models/Inbox';
-import { useRootStore } from '../../../store/common/RootStoreContext';
-import { autorun } from 'mobx';
+import { useInboxStore } from '../../../store/useInboxStore';
+import { IInboxSession, IMessage } from '../../../types/entities';
 import { InboxMessage } from './InboxMessage';
 import { SessionInfo } from './SessionInfo';
 import { addInboxResponse } from '../../../services/api/inboxService';
@@ -19,8 +17,8 @@ const DisplayMessages: React.FC<{ session: IInboxSession }> = ({ session }) => {
   );
 };
 
-const InboxPage: React.FC = observer(() => {
-  const rootStore = useRootStore();
+const InboxPage: React.FC = () => {
+  const { inboxSessions } = useInboxStore();
   const { t } = useTranslation();
 
   const [selectedSession, setSelectedSession] = useState<IInboxSession | null>(null);
@@ -49,13 +47,10 @@ const InboxPage: React.FC = observer(() => {
   };
 
   useEffect(() => {
-    const dispose = autorun(() => {
-      if (rootStore.inboxSessions.length > 0) {
-        setSelectedSession(rootStore.inboxSessions[0]);
-      }
-    });
-    return () => dispose();
-  }, [rootStore.inboxSessions]);
+    if (inboxSessions.length > 0 && !selectedSession) {
+      setSelectedSession(inboxSessions[0]);
+    }
+  }, [inboxSessions, selectedSession]);
 
   return (
     <AdminPageContainer>
@@ -72,8 +67,8 @@ const InboxPage: React.FC = observer(() => {
             </label>
 
             <ul className="mt-4">
-              {rootStore.inboxSessions.length > 0 &&
-                rootStore.inboxSessions.map((session) => (
+              {inboxSessions.length > 0 &&
+                inboxSessions.map((session) => (
                   <SessionInfo
                     key={session.sessionId}
                     session={session}
@@ -140,6 +135,6 @@ const InboxPage: React.FC = observer(() => {
       </div>
     </AdminPageContainer>
   );
-});
+};
 
 export { InboxPage };

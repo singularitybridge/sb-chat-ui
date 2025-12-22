@@ -5,7 +5,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useEventEmitter } from './services/mittEmitter';
 import { DialogManager } from './components/admin/DialogManager';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import { observer } from 'mobx-react-lite';
 import AuthManager from './components/AuthManager';
 import PusherManager from './components/PusherManager';
 import { UiContextTracker } from './components/UiContextTracker';
@@ -21,7 +20,7 @@ import { useWebSocketCommands } from './hooks/useWebSocketCommands';
 
 const initialLanguage = getInitialLanguage();
 
-const App: React.FC = observer(() => {
+const App: React.FC = () => {
   const direction = initialLanguage === 'he' ? 'rtl' : 'ltr';
 
   const toastHandler = useCallback((message: string) => {
@@ -58,6 +57,6 @@ const App: React.FC = observer(() => {
       </AuthManager>
     </GoogleOAuthProvider>
   );
-});
+};
 
 export default App;

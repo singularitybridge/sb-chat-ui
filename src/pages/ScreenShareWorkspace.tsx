@@ -4,8 +4,8 @@ import { User, Laptop, Bot, RefreshCw, FileText, Trash2, PanelLeftClose, PanelLe
 import { useScreenShareStore } from '../store/useScreenShareStore';
 import { useChatStore } from '../store/chatStore';
 import { useSessionStore } from '../store/useSessionStore';
-import { useRootStore } from '../store/common/RootStoreContext';
-import { observer } from 'mobx-react-lite';
+import { useAssistantStore } from '../store/useAssistantStore';
+import { useAuthStore } from '../store/useAuthStore';
 import { useTranslation } from 'react-i18next';
 import { SBChatKitUI } from '../components/sb-chat-kit-ui/SBChatKitUI';
 import { cn } from '../utils/cn';
@@ -27,12 +27,13 @@ import { useWorkspaceKeyboard } from '../hooks/useWorkspaceKeyboard';
 import { useWorkspaceDataStore } from '../store/useWorkspaceDataStore';
 import { useUiContextStore } from '../store/useUiContextStore';
 
-const ScreenShareWorkspace: React.FC = observer(() => {
+const ScreenShareWorkspace: React.FC = () => {
   const { assistantName } = useParams<{ assistantName: string }>();
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const rootStore = useRootStore();
+  const { getAssistantById } = useAssistantStore();
+  const { userSessionInfo, isAuthenticated } = useAuthStore();
 
   // Parse file path from URL (everything after /workspace/)
   const getFilePathFromUrl = (): string | null => {
@@ -45,7 +46,7 @@ const ScreenShareWorkspace: React.FC = observer(() => {
   };
 
   // Find assistant by name (getAssistantById supports both ID and name)
-  const assistantByName = assistantName ? rootStore.getAssistantById(assistantName) : null;
+  const assistantByName = assistantName ? getAssistantById(assistantName) : null;
 
   // Background configuration - same as Admin pages
   const backgroundProps = setDynamicBackground(
@@ -105,7 +106,7 @@ const ScreenShareWorkspace: React.FC = observer(() => {
   // Get current assistant - prioritize URL parameter over active session
   // This allows viewing any assistant's workspace regardless of active session
   const currentAssistant = assistantByName || (activeSession?.assistantId
-    ? rootStore.getAssistantById(activeSession.assistantId)
+    ? getAssistantById(activeSession.assistantId)
     : null);
 
   // Workspace layout hooks
@@ -177,7 +178,7 @@ const ScreenShareWorkspace: React.FC = observer(() => {
     const token = localStorage.getItem('userToken');
     console.log('🔐 ScreenShareWorkspace - Auth token check:', {
       hasToken: !!token,
-      isAuthenticated: rootStore.authStore?.isAuthenticated
+      isAuthenticated
     });
 
     if (token) {
@@ -189,7 +190,7 @@ const ScreenShareWorkspace: React.FC = observer(() => {
     return () => {
       disconnectWebSocket();
     };
-  }, [rootStore.authStore?.isAuthenticated]);
+  }, [isAuthenticated]);
 
   // Cleanup screen sharing on unmount
   useEffect(() => {
@@ -313,7 +314,7 @@ const ScreenShareWorkspace: React.FC = observer(() => {
 
         // Support agent name lookup
         if (agentName && agentName !== currentAssistant.name) {
-          const foundAgent = rootStore.getAssistantById(agentName);
+          const foundAgent = getAssistantById(agentName);
           if (foundAgent) {
             targetAgentId = foundAgent._id;
           }
@@ -385,7 +386,7 @@ const ScreenShareWorkspace: React.FC = observer(() => {
         let targetAgentId = currentAssistant._id;
 
         if (agentName && agentName !== currentAssistant.name) {
-          const foundAgent = rootStore.getAssistantById(agentName);
+          const foundAgent = getAssistantById(agentName);
           if (foundAgent) {
             targetAgentId = foundAgent._id;
           }
@@ -450,7 +451,7 @@ const ScreenShareWorkspace: React.FC = observer(() => {
         delete (window as any).workspace;
       }
     };
-  }, [currentAssistant, activeSession, rootStore]); // Re-initialize if assistant or session changes
+  }, [currentAssistant, activeSession, getAssistantById]); // Re-initialize if assistant or session changes
 
   // Listen for PostMessage events from workspace iframe
   useEffect(() => {
@@ -634,7 +635,7 @@ const ScreenShareWorkspace: React.FC = observer(() => {
 
         // Try to find agent by name if not an ID format
         if (!targetAgentId.match(/^[a-f0-9]{24}$/i)) {
-          const foundAgent = rootStore.getAssistantById(targetAgentId); // This supports name lookup
+          const foundAgent = getAssistantById(targetAgentId); // This supports name lookup
           if (foundAgent) {
             targetAgentId = foundAgent._id;
           }
@@ -794,8 +795,8 @@ const ScreenShareWorkspace: React.FC = observer(() => {
           agentId: currentAssistant?._id || null,
           agentName: currentAssistant?.name || null,
           sessionId: activeSession?._id || null,
-          userId: rootStore.currentUser?._id || null,
-          userName: rootStore.currentUser?.name || null
+          userId: userSessionInfo?.userId || null,
+          userName: userSessionInfo?.userName || null
         };
 
         if (event.source) {
@@ -1503,6 +1504,6 @@ Feel free to customize this page or create new files using the workspace!
       />
     </div>
   );
-});
+};
 
 export default ScreenShareWorkspace;

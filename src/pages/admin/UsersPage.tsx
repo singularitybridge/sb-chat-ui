@@ -1,10 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { observer } from 'mobx-react-lite';
-import { useRootStore } from '../../store/common/RootStoreContext';
+import { useUserStore } from '../../store/useUserStore';
 import { Table } from '../../components/sb-core-ui-kit/Table';
-import { toJS } from 'mobx';
-import { UserKeys, IUser } from '../../store/models/User';
+import { UserKeys, IUser } from '../../types/entities';
 import { convertToStringArray } from '../../utils/utils';
 import { PlayIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { IconButton } from '../../components/admin/IconButton';
@@ -15,14 +13,14 @@ import {
 import AdminPageContainer from '../../components/admin/AdminPageContainer';
 import { useTranslation } from 'react-i18next';
 
-const UsersPage: React.FC = observer(() => {
-  const rootStore = useRootStore();
+const UsersPage: React.FC = () => {
+  const { users, deleteUser } = useUserStore();
   const navigate = useNavigate();
   const { t } = useTranslation();
 
   const headers: UserKeys[] = ['name', 'nickname', 'email'];
   const handleDelete = (_row: IUser) => {
-    rootStore.deleteUser(_row._id);
+    deleteUser(_row._id);
   };
 
   const handleSetUser = async (_row: IUser) => {
@@ -54,13 +52,13 @@ const UsersPage: React.FC = observer(() => {
       <p className="text-gray-600 mb-6">{t('UsersPage.description')}</p>
       <Table
         headers={convertToStringArray(headers)}
-        data={toJS(rootStore.users)}
+        data={users}
         Page="UsersPage"
         onRowClick={(row: IUser) => navigate(`/admin/users/${row._id}`)}
         Actions={Actions}
       />
     </AdminPageContainer>
   );
-});
+};
 
 export { UsersPage };

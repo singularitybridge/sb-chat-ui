@@ -1,4 +1,4 @@
-import { IAssistant } from '../store/models/Assistant';
+import { IAssistant } from '../types/entities';
 
 /**
  * Generates the URL for an assistant using name (if URL-safe) or _id

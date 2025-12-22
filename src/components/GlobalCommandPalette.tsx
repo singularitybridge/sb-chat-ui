@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useCommandPalette } from '../contexts/CommandPaletteContext';
 import { useUnifiedSearch } from '../hooks/useUnifiedSearch';
-import { IAssistant } from '../store/models/Assistant';
-import { ITeam } from '../store/models/Team';
+import { IAssistant, ITeam } from '../types/entities';
 import { WorkspaceSearchItem } from '../contexts/CommandPaletteContext';
 import {
   CommandDialog,
@@ -15,7 +14,7 @@ import {
   CommandList,
   CommandSeparator,
 } from './ui/command';
-import { Avatar, AvatarStyles } from './Avatar';
+import { Avatar, AvatarStyles, getAvatarUrl } from './Avatar';
 import { ModelIndicator } from './ModelIndicator';
 import IntegrationIcons from './IntegrationIcons';
 import { CornerDownLeft, FileText, Layers } from 'lucide-react';
@@ -127,7 +126,7 @@ export const GlobalCommandPalette: React.FC = () => {
                   >
                     <div className="flex-shrink-0">
                       <Avatar
-                        imageUrl={`/assets/avatars/${assistant.avatarImage}.png`}
+                        imageUrl={getAvatarUrl(assistant.avatarImage)}
                         avatarStyle={AvatarStyles.avatar}
                         active={false}
                       />

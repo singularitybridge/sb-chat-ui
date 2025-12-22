@@ -1,26 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { observer } from 'mobx-react-lite';
-import { useRootStore } from '../../store/common/RootStoreContext';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { useSessionStore } from '../../store/useSessionStore';
+import { useAssistantStore } from '../../store/useAssistantStore';
+import { useLanguageStore } from '../../store/useLanguageStore';
 import { ChatContainer } from '../../components/chat-container/ChatContainer';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
-import { IAssistant } from '../../store/models/Assistant';
+import { IAssistant } from '../../types/entities';
 import { logger } from '../../services/LoggingService';
-import { changeActiveSessionLanguage } from '../../services/api/sessionService'; // Added import
-import { useEmbedAuth } from '../../contexts/EmbedAuthContext'; // Added import for EmbedAuthContext
-import { useSearchParams } from 'react-router-dom'; // Added import for useSearchParams
-import { setGlobalEmbedApiKey } from '../../services/AxiosService'; // Import the setter
-import { useLanguageStore } from '../../store/useLanguageStore'; // Import language store
+import { changeActiveSessionLanguage } from '../../services/api/sessionService';
+import { useEmbedAuth } from '../../contexts/EmbedAuthContext';
+import { setGlobalEmbedApiKey } from '../../services/AxiosService';
 
-const EmbedChatPage: React.FC = observer(() => {
+const EmbedChatPage: React.FC = () => {
   const { id: assistantIdFromParams } = useParams<{ id: string }>();
-  const [searchParams] = useSearchParams(); // For getting apiKey from URL
-  const { setApiKey: setEmbedApiKey } = useEmbedAuth(); // Context for API key
-  const rootStore = useRootStore();
-  const { setLanguage } = useLanguageStore(); // Get setLanguage from language store
+  const [searchParams] = useSearchParams();
+  const { setApiKey: setEmbedApiKey } = useEmbedAuth();
+  const { language, setLanguage } = useLanguageStore();
+  const { assistants, assistantsLoaded, loadAssistants, getAssistantById } = useAssistantStore();
   const {
-    activeSession, // This is from the store, might be stale during async setup
+    activeSession,
     fetchActiveSession,
     changeAssistant,
     isLoadingSession,
@@ -38,7 +36,7 @@ const EmbedChatPage: React.FC = observer(() => {
 
       // Embedded chats always use English
       // Set the UI language to English if it's not already
-      if (rootStore.language !== 'en') {
+      if (language !== 'en') {
         await setLanguage('en');
       }
 
@@ -145,16 +143,16 @@ const EmbedChatPage: React.FC = observer(() => {
         }
 
         // Step 4: Fetch assistant details
-        if (rootStore.assistantsLoaded) {
-          const foundAssistant = rootStore.getAssistantById(assistantIdFromParams);
+        if (assistantsLoaded) {
+          const foundAssistant = getAssistantById(assistantIdFromParams);
           if (foundAssistant) {
             setAssistant(foundAssistant);
           } else {
             setError('Assistant not found.');
           }
         } else {
-          await rootStore.loadAssistants();
-          const loadedAssistant = rootStore.getAssistantById(assistantIdFromParams);
+          await loadAssistants();
+          const loadedAssistant = useAssistantStore.getState().getAssistantById(assistantIdFromParams);
           if (loadedAssistant) {
             setAssistant(loadedAssistant);
           } else {
@@ -180,10 +178,10 @@ const EmbedChatPage: React.FC = observer(() => {
     setActiveSession,
     setEmbedApiKey,
     setLanguage,
-    rootStore.language,
-    rootStore.assistantsLoaded, 
-    rootStore.getAssistantById,
-    rootStore.loadAssistants
+    language,
+    assistantsLoaded,
+    getAssistantById,
+    loadAssistants
   ]);
 
   // Cleanup global API key when component unmounts
@@ -198,21 +196,19 @@ const EmbedChatPage: React.FC = observer(() => {
   // not directly managed by the `setupSession`'s `workingSession` variable.
   useEffect(() => {
     const currentStoreSession = useSessionStore.getState().activeSession;
-    if (currentStoreSession?.assistantId && currentStoreSession._id && rootStore.assistantsLoaded) {
+    if (currentStoreSession?.assistantId && currentStoreSession._id && assistantsLoaded) {
       if (currentStoreSession.assistantId === assistantIdFromParams) {
-        const assistantFromStore = rootStore.getAssistantById(currentStoreSession.assistantId);
+        const assistantFromStore = getAssistantById(currentStoreSession.assistantId);
         if (assistantFromStore) {
           setAssistant(assistantFromStore);
-        } else if (!error && !isSettingUp) { // Only set error if not already in error/setup
-            setError(`Assistant with ID ${currentStoreSession.assistantId} not found in root store.`);
+        } else if (!error && !isSettingUp) {
+            setError(`Assistant with ID ${currentStoreSession.assistantId} not found.`);
         }
       }
-      // If assistantId in store does not match params, setupSession effect should handle it.
     } else if (!currentStoreSession?._id && !error && !isSettingUp) {
         // If session is gone from store and not in error/setup, reflect this.
-        // setAssistant(undefined); // Or show an error/message
     }
-  }, [activeSession?._id, activeSession?.assistantId, rootStore.assistantsLoaded, assistantIdFromParams, rootStore.getAssistantById, error, isSettingUp]);
+  }, [activeSession?._id, activeSession?.assistantId, assistantsLoaded, assistantIdFromParams, getAssistantById, error, isSettingUp]);
 
 
   if (isLoadingSession || isSettingUp) {
@@ -245,6 +241,6 @@ const EmbedChatPage: React.FC = observer(() => {
       <ChatContainer />
     </div>
   );
-});
+};
 
 export default EmbedChatPage;

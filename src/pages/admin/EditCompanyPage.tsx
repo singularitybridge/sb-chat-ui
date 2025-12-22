@@ -1,37 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { observer } from 'mobx-react-lite';
-import { useRootStore } from '../../store/common/RootStoreContext';
-import { ICompany } from '../../store/models/Company';
+import { useCompanyStore } from '../../store/useCompanyStore';
+import { useAuthStore } from '../../store/useAuthStore';
+import { ICompany } from '../../types/entities';
 import {
   DynamicForm,
   FieldConfig,
   FormValues,
 } from '../../components/DynamicForm';
-import { toJS } from 'mobx';
 import { companyFieldConfigs } from '../../store/fieldConfigs/companyFieldConfigs';
 import { useTranslation } from 'react-i18next';
 import AdminPageContainer from '../../components/admin/AdminPageContainer';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
 
-const EditCompanyPage: React.FC = observer(() => {
+const EditCompanyPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const rootStore = useRootStore();
+  const { companiesLoaded, loadCompanies, getCompanyById, updateCompany, refreshToken } = useCompanyStore();
+  const { loadUserSessionInfo } = useAuthStore();
   const [company, setCompany] = useState<ICompany | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { t } = useTranslation();
 
   const fetchCompany = async () => {
     if (id) {
-      const fetchedCompany = await rootStore.getCompanyById();
-      setCompany(fetchedCompany);
+      const fetchedCompany = getCompanyById(id);
+      setCompany(fetchedCompany || null);
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
     fetchCompany();
-  }, [id, rootStore, rootStore.companiesLoaded]);
+  }, [id, companiesLoaded]);
 
   if (isLoading) {
     return (
@@ -54,23 +54,23 @@ const EditCompanyPage: React.FC = observer(() => {
     let fieldValue;
 
     if (config.id === 'api_keys') {
-      const companyApiKeys = company ? toJS(company.api_keys) || [] : [];
+      const companyApiKeys = company ? company.api_keys || [] : [];
       const companyApiKeysMap = new Map(companyApiKeys.map(k => [k.key, k.value]));
-      
+
       // config.value here is the default list of ApiKey objects from companyFieldConfigs
       fieldValue = (config.value as { key: string; value: string }[]).map(defaultApiKey => ({
         ...defaultApiKey,
         value: companyApiKeysMap.get(defaultApiKey.key) || defaultApiKey.value,
       }));
     } else {
-      fieldValue = company ? toJS((company as any)[fieldKeyString]) : config.value;
+      fieldValue = company ? (company as any)[fieldKeyString] : config.value;
     }
 
     return {
       ...config,
       value: fieldValue,
       // Ensure options is always an array, even if not explicitly in config
-      options: (config as any).options || [], 
+      options: (config as any).options || [],
     } as FieldConfig;
   });
 
@@ -78,24 +78,32 @@ const EditCompanyPage: React.FC = observer(() => {
     if (!id) {
       return;
     }
-    
+
     setIsLoading(true);
-    await rootStore.updateCompany(values as unknown as ICompany);
-    await rootStore.loadCompanies();
+    await updateCompany(id, values as unknown as ICompany);
+    await loadCompanies();
     await fetchCompany();
-    await rootStore.authStore.loadUserSessionInfo();
+    await loadUserSessionInfo();
     setIsLoading(false);
   };
 
-  const handleRefreshToken = async () => { // Removed unused 'values' parameter
+  const handleRefreshToken = async () => {
     if (!id) {
       return;
     }
     setIsLoading(true);
-    const updatedCompany = await rootStore.refreshToken();
-    if (updatedCompany) {
-      setCompany(updatedCompany as ICompany);
-      localStorage.setItem('userToken', updatedCompany.token.value);
+    try {
+      await refreshToken(id);
+      // Reload company data after token refresh
+      const updatedCompany = getCompanyById(id);
+      if (updatedCompany) {
+        setCompany(updatedCompany);
+        if (updatedCompany.token?.value) {
+          localStorage.setItem('userToken', updatedCompany.token.value);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to refresh token:', error);
     }
     setIsLoading(false);
   };
@@ -121,6 +129,6 @@ const EditCompanyPage: React.FC = observer(() => {
       </div>
     </AdminPageContainer>
   );
-});
+};
 
 export { EditCompanyPage };

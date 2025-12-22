@@ -5,12 +5,12 @@ import {
   updateTeam,
   deleteTeam,
   assignAssistantToTeam,
-  removeAssistantFromTeam,  
+  removeAssistantFromTeam,
 } from '../services/api/teamService';
-import { ITeam } from './models/Team';
+import { ITeam } from '../types/entities';
 import { logger } from '../services/LoggingService';
 
-// Use MST model type instead of defining our own
+// Re-export type for convenience
 export type Team = ITeam;
 
 interface TeamStoreState {

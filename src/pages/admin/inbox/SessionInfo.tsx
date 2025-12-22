@@ -1,6 +1,6 @@
 /// file_path /src/pages/admin/inbox/SessionInfo.tsx
 import React from 'react';
-import { IInboxSession } from '../../../store/models/Inbox';
+import { IInboxSession } from '../../../types/entities';
 import moment from 'moment';
 
 export interface SessionInfoProps {

@@ -5,7 +5,7 @@ import {
   UserIcon,
   BellIcon,
 } from '@heroicons/react/24/outline';
-import { IMessage } from '../../../store/models/Inbox';
+import { IMessage } from '../../../types/entities';
 import moment from 'moment';
 
 interface InboxMessageProps {

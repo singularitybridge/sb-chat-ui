@@ -6,7 +6,7 @@ import {
   // updateJournalEntry, // For future use
   // deleteJournalEntry, // For future use
 } from '../services/api/memoryService';
-import { IJournalEntry } from './models/JournalEntry';
+import { IJournalEntry } from '../types/entities';
 import { logger } from '../services/LoggingService';
 import { useAuthStore } from './useAuthStore'; // To get userId and companyId
 

@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { observer } from 'mobx-react-lite';
-import { useRootStore } from '../store/common/RootStoreContext';
+import { useAssistantStore } from '../store/useAssistantStore';
 import Button from './sb-core-ui-kit/Button';
 import { useTranslation } from 'react-i18next';
-import { IAssistant } from '../store/models/Assistant';
-import { cast } from 'mobx-state-tree';
+import { IAssistant } from '../types/entities';
 import { fetchAllowedActionOptions, ActionOption } from '../store/fieldConfigs/assistantFieldConfigs';
 import ActionsGallery from './ActionsGallery';
 
@@ -13,86 +11,83 @@ interface EditAssistantActionsDialogProps {
   allowedActions: string[] | undefined;
 }
 
-const EditAssistantActionsDialog: React.FC<EditAssistantActionsDialogProps> = observer(
-  ({ assistantId, allowedActions }) => {
-    const { t, i18n } = useTranslation();
-    const rootStore = useRootStore();
-    const [selectedActions, setSelectedActions] = useState<string[]>(allowedActions || []);
-    const [availableActions, setAvailableActions] = useState<ActionOption[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
+const EditAssistantActionsDialog: React.FC<EditAssistantActionsDialogProps> = (
+  { assistantId, allowedActions }
+) => {
+  const { t, i18n } = useTranslation();
+  const { getAssistantById, updateAssistant } = useAssistantStore();
+  const [selectedActions, setSelectedActions] = useState<string[]>(allowedActions || []);
+  const [availableActions, setAvailableActions] = useState<ActionOption[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-    useEffect(() => {
-      const getAvailableActions = async () => {
-        try {
-          const actions = await fetchAllowedActionOptions(i18n.language);
-          setAvailableActions(actions);
-        } catch (error) {
-          console.error('Failed to fetch available actions:', error);
-          // Handle error (e.g., show error message)
-        }
-      };
-
-      getAvailableActions();
-    }, [i18n.language]);
-
-    useEffect(() => {
-      setSelectedActions(allowedActions || []);
-    }, [allowedActions]);
-
-    const handleActionsChange = (actions: string[]) => {
-      setSelectedActions(actions);
-    };
-
-    const handleSave = async () => {
-      setIsLoading(true);
+  useEffect(() => {
+    const getAvailableActions = async () => {
       try {
-        const assistant = rootStore.getAssistantById(assistantId);
-        if (assistant) {
-          const updatedAssistant: IAssistant = {
-            ...assistant,
-            allowedActions: cast(selectedActions)
-          };
-          await rootStore.updateAssistant(assistantId, updatedAssistant);
-          // Close the dialog or show a success message
-        } else {
-          throw new Error('Assistant not found');
-        }
+        const actions = await fetchAllowedActionOptions(i18n.language);
+        setAvailableActions(actions);
       } catch (error) {
-        console.error('Failed to update assistant actions:', error);
-        // Show an error message
-      } finally {
-        setIsLoading(false);
+        console.error('Failed to fetch available actions:', error);
       }
     };
 
-    const handleClear = () => {
-      setSelectedActions([]);
-    };
+    getAvailableActions();
+  }, [i18n.language]);
 
-    return (
-      <div className="p-4 h-[80vh] flex flex-col">        
-        <div className="flex-grow overflow-hidden">
-          <ActionsGallery
-            selectedActions={selectedActions}
-            availableActions={availableActions}
-            onChange={handleActionsChange}
-          />
-        </div>
-        <div className="mt-4 flex justify-end gap-2">
-          <Button
-            onClick={handleClear}
-            disabled={isLoading || selectedActions.length === 0}
-            variant="secondary"
-          >
-            {t('common.clear') || 'Clear'}
-          </Button>
-          <Button onClick={handleSave} disabled={isLoading}>
-            {t('common.save')}
-          </Button>
-        </div>
+  useEffect(() => {
+    setSelectedActions(allowedActions || []);
+  }, [allowedActions]);
+
+  const handleActionsChange = (actions: string[]) => {
+    setSelectedActions(actions);
+  };
+
+  const handleSave = async () => {
+    setIsLoading(true);
+    try {
+      const assistant = getAssistantById(assistantId);
+      if (assistant) {
+        const updatedAssistant: Partial<IAssistant> = {
+          ...assistant,
+          allowedActions: selectedActions
+        };
+        await updateAssistant(assistantId, updatedAssistant);
+      } else {
+        throw new Error('Assistant not found');
+      }
+    } catch (error) {
+      console.error('Failed to update assistant actions:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleClear = () => {
+    setSelectedActions([]);
+  };
+
+  return (
+    <div className="p-4 h-[80vh] flex flex-col">
+      <div className="flex-grow overflow-hidden">
+        <ActionsGallery
+          selectedActions={selectedActions}
+          availableActions={availableActions}
+          onChange={handleActionsChange}
+        />
       </div>
-    );
-  }
-);
+      <div className="mt-4 flex justify-end gap-2">
+        <Button
+          onClick={handleClear}
+          disabled={isLoading || selectedActions.length === 0}
+          variant="secondary"
+        >
+          {t('common.clear') || 'Clear'}
+        </Button>
+        <Button onClick={handleSave} disabled={isLoading}>
+          {t('common.save')}
+        </Button>
+      </div>
+    </div>
+  );
+};
 
 export default EditAssistantActionsDialog;

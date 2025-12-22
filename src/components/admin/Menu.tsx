@@ -1,6 +1,5 @@
 import React from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { observer } from 'mobx-react';
 import { SessionView } from './SessionView';
 import { useTranslation } from 'react-i18next';
 import LanguageToggle from '../LanguageToggle';
@@ -8,7 +7,7 @@ import { TextComponent } from '../sb-core-ui-kit/TextComponent';
 import LogoutButton from '../LogoutButton';
 import ShowOnboardingButton from '../ShowOnboardingButton';
 
-export const Menu = observer(() => {
+export const Menu: React.FC = () => {
   const menuItems = [
     { name: 'Agents', link: '/admin/assistants' },
     { name: 'Teams', link: '/admin/teams' },
@@ -79,4 +78,4 @@ export const Menu = observer(() => {
       </div>
     </nav>
   );
-});
+};

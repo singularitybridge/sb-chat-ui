@@ -1,17 +1,13 @@
 import React, { useEffect, useCallback } from 'react';
-// import { observer } from 'mobx-react-lite'; // Removed if rootStore is no longer used
 import {
   subscribeToSessionChannel,
   unsubscribeFromChannel,
 } from '../services/PusherService';
-// import { useRootStore } from '../store/common/RootStoreContext'; // Removed
-import { useSessionStore } from '../store/useSessionStore'; // Import Zustand session store
+import { useSessionStore } from '../store/useSessionStore';
 
 const CHANNEL_PREFIX = 'sb-';
 
 function PusherManager(): React.ReactElement | null {
-  // Changed to function declaration
-  // const rootStore = useRootStore(); // Removed
   const activeSession = useSessionStore((state) => state.activeSession);
   const activeSessionId = activeSession?._id;
 

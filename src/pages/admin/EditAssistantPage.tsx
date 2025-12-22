@@ -1,16 +1,13 @@
-// src/pages/admin/EditAssistantPage.tsx
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { observer } from 'mobx-react-lite';
-import { useRootStore } from '../../store/common/RootStoreContext';
-import { IAssistant } from '../../store/models/Assistant';
+import { useAssistantStore } from '../../store/useAssistantStore';
+import { IAssistant } from '../../types/entities';
 import {
   DynamicForm,
   FieldConfig,
   FormValues,
   DropdownFieldConfig,
 } from '../../components/DynamicForm';
-import { toJS } from 'mobx';
 import { getAssistantFieldConfigs, defaultAssistantFieldConfigs } from '../../store/fieldConfigs/assistantFieldConfigs';
 import {
   uploadFile,
@@ -35,12 +32,12 @@ interface UploadedFile {
   filename: string;
 }
 
-const EditAssistantPage: React.FC = observer(() => {
+const EditAssistantPage: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { key } = useParams<{ key: string }>();
   const navigate = useNavigate();
-  const rootStore = useRootStore();
-  const assistant = key ? rootStore.getAssistantById(key) : null;
+  const { assistantsLoaded, getAssistantById, updateAssistant } = useAssistantStore();
+  const assistant = key ? getAssistantById(key) : null;
   const [isLoading, setIsLoading] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -93,7 +90,7 @@ const EditAssistantPage: React.FC = observer(() => {
     }
   };
 
-  if (rootStore.assistantsLoaded === false || isFieldConfigsLoading) {
+  if (assistantsLoaded === false || isFieldConfigsLoading) {
     return <TextComponent text={t('common.pleaseWait')} size="medium" />;
   }
 
@@ -106,10 +103,10 @@ const EditAssistantPage: React.FC = observer(() => {
       return null; // Remove the allowedActions field from the form
     }
     const fieldKeyString = String(field.key);
-    let value = assistant ? toJS((assistant as any)[fieldKeyString]) : '';
+    let value = assistant ? (assistant as any)[fieldKeyString] : '';
 
     if (field.key === 'voice') {
-      value = assistant ? toJS(assistant.voice) : '';
+      value = assistant ? assistant.voice : '';
     }
 
     if (field.type === 'dropdown') {
@@ -146,11 +143,11 @@ const EditAssistantPage: React.FC = observer(() => {
     
     console.log('Name - Old:', oldName, 'New:', newName);
     
-    await rootStore.updateAssistant(key, updatedValues as IAssistant);
-    
+    await updateAssistant(key, updatedValues as IAssistant);
+
     // If name has changed, navigate to the new URL
     if (newName && newName !== oldName) {
-      const updatedAssistant = rootStore.getAssistantById(key);
+      const updatedAssistant = getAssistantById(key);
       console.log('Updated assistant after save:', updatedAssistant);
       if (updatedAssistant) {
         const newUrl = getAssistantUrl(updatedAssistant);
@@ -261,6 +258,6 @@ const EditAssistantPage: React.FC = observer(() => {
       </div>
     </AdminPageContainer>
   );
-});
+};
 
 export { EditAssistantPage };

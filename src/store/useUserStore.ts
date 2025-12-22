@@ -4,12 +4,12 @@ import {
   addUser,
   deleteUser,
 } from '../services/api/userService';
-import { IUser } from './models/User';
-import { Identifier } from './models/Assistant';
+import { IUser, IIdentifier } from '../types/entities';
 import { logger } from '../services/LoggingService';
 
-// Use MST model types instead of defining our own
+// Re-export types for convenience
 export type User = IUser;
+export type Identifier = IIdentifier;
 
 export const UserKeys = {
   name: 'name',

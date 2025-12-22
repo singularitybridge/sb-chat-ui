@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { observer } from 'mobx-react-lite';
 import { useEmbedAuth } from '../../contexts/EmbedAuthContext';
 import { setGlobalEmbedApiKey } from '../../services/AxiosService';
 import { MarkdownRenderer } from '../../components/workspace/MarkdownRenderer';
@@ -17,7 +16,7 @@ import { Loader2, AlertCircle } from 'lucide-react';
  * - /embed/workspace/aW50ZWdyYXRpb24tZXhwZXJ0Oi90ZXN0cy9nZW5lcmFsLXRlc3QuaHRtbA==?apiKey=sk_live_abc123
  */
 
-const EmbedWorkspacePage: React.FC = observer(() => {
+const EmbedWorkspacePage: React.FC = () => {
   const { documentId } = useParams<{ documentId: string }>();
   const [searchParams] = useSearchParams();
   const { setApiKey: setEmbedApiKey } = useEmbedAuth();
@@ -418,6 +417,6 @@ const EmbedWorkspacePage: React.FC = observer(() => {
       {renderFileContent()}
     </div>
   );
-});
+};
 
 export default EmbedWorkspacePage;

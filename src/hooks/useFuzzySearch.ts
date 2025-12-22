@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import Fuse from 'fuse.js';
-import { IAssistant } from '../store/models/Assistant';
+import { IAssistant } from '../types/entities';
 
 interface UseFuzzySearchOptions {
   threshold?: number;

@@ -1,4 +1,4 @@
-import { AIAssistedFormConfig } from '../store/models/AIAssistedFieldConfig';
+import { AIAssistedFormConfig } from '../types/entities';
 
 export const aiAssistedConfigs: Record<string, AIAssistedFormConfig> = {
   assistantFieldConfigs: {

@@ -1,7 +1,7 @@
 // file_path: src/components/admin/AddTeamDialog.tsx
 import React, { useState } from 'react';
-import { observer } from 'mobx-react-lite';
-import { useRootStore } from '../../store/common/RootStoreContext';
+import { useTeamStore } from '../../store/useTeamStore';
+import { useAuthStore } from '../../store/useAuthStore';
 import { emitter } from '../../services/mittEmitter';
 import { EVENT_CLOSE_MODAL } from '../../utils/eventNames';
 import { useTranslation } from 'react-i18next';
@@ -11,8 +11,9 @@ import { IconPicker } from '../IconPicker';
  * AddTeamDialog component for creating new teams
  * This component is used by the DialogManager and doesn't render anything directly
  */
-const AddTeamDialog: React.FC = observer(() => {
-  const rootStore = useRootStore();
+const AddTeamDialog: React.FC = () => {
+  const { createTeam } = useTeamStore();
+  const { userSessionInfo } = useAuthStore();
   const { t } = useTranslation();
 
   const [name, setName] = useState('');
@@ -25,16 +26,16 @@ const AddTeamDialog: React.FC = observer(() => {
 
     setIsSubmitting(true);
     try {
-      await rootStore.createTeam({
+      await createTeam({
         name,
         description,
         icon,
-        companyId: rootStore.activeCompany._id,
+        companyId: userSessionInfo.companyId,
       });
-      
+
       // Close the dialog
       emitter.emit(EVENT_CLOSE_MODAL);
-      
+
       // Reset form
       setName('');
       setDescription('');
@@ -103,6 +104,6 @@ const AddTeamDialog: React.FC = observer(() => {
       </div>
     </div>
   );
-});
+};
 
 export { AddTeamDialog };

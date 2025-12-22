@@ -8,6 +8,17 @@ export enum AvatarStyles {
 
 const DEFAULT_AVATAR = '/assets/avatars/default-avatar.png';
 
+/**
+ * Get the full avatar URL from an avatar ID/name.
+ * Returns the default avatar if the input is undefined/null/empty.
+ */
+export const getAvatarUrl = (avatarId: string | undefined | null): string => {
+  if (!avatarId || avatarId === 'undefined' || avatarId === 'null') {
+    return DEFAULT_AVATAR;
+  }
+  return `/assets/avatars/${avatarId}.png`;
+};
+
 const Avatar = ({
   imageUrl,
   avatarStyle,

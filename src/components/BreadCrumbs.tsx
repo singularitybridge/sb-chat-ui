@@ -1,16 +1,15 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import { useRootStore } from '../store/common/RootStoreContext';
-  import { useTranslation } from 'react-i18next';
+import { useAssistantStore } from '../store/useAssistantStore';
+import { useTranslation } from 'react-i18next';
 
 const BreadCrumbs: React.FC = () => {
-  
   const location = useLocation();
-  const rootStore = useRootStore();
+  const { getAssistantById } = useAssistantStore();
   const pathParts = location.pathname.split('/');
   const currentPage = pathParts[2];
   const assistantId = pathParts[3];
-  const assistant = assistantId ? rootStore.getAssistantById(assistantId) : null;
+  const assistant = assistantId ? getAssistantById(assistantId) : null;
   const { t } = useTranslation();
 
   return (

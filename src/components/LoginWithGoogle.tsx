@@ -1,17 +1,16 @@
-/// file_path=src/components/LoginWithGoogle.tsx
 import React from 'react';
 import { GoogleLogin } from '@react-oauth/google';
-import { useRootStore } from '../store/common/RootStoreContext';
 import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../store/useAuthStore';
 
 const LoginWithGoogle: React.FC = () => {
-  const rootStore = useRootStore();
+  const { authenticate } = useAuthStore();
   const navigate = useNavigate();
 
   const onSuccess = async (res: any) => {
     try {
-      await rootStore.authStore.authenticate(res.credential);
-      navigate('/admin/assistants'); // Add this line to redirect after successful login
+      await authenticate(res.credential);
+      navigate('/admin/assistants');
     } catch (error) {
       console.error('Login failed:', error);
     }

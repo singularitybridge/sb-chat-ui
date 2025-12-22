@@ -1,23 +1,19 @@
-import React, { useEffect, useRef, useState } from 'react'; // Keep useState for local assistant state
-import { observer } from 'mobx-react';
-import { useRootStore } from '../../store/common/RootStoreContext'; // Still needed for rootStore.language, rootStore.assistantsLoaded etc.
-import { useChatStore } from '../../store/chatStore'; 
+import React, { useEffect, useRef, useState } from 'react';
+import { useChatStore } from '../../store/chatStore';
 import { useSessionStore } from '../../store/useSessionStore';
 import { useAudioStore } from '../../store/useAudioStore';
+import { useAssistantStore } from '../../store/useAssistantStore';
+import { useLanguageStore } from '../../store/useLanguageStore';
 import { addEventHandler, removeEventHandler } from '../../services/PusherService';
-import { ChatMessage as PusherChatMessage } from '../../types/pusher'; // Keep for Pusher type
 import {
-  // EVENT_CHAT_SESSION_DELETED, // Removed as emitter is not used for this directly here
   EVENT_SET_ACTIVE_ASSISTANT,
   EVENT_ACTION_EXECUTION,
   EVENT_ADD_IFRAME_MESSAGE,
 } from '../../utils/eventNames';
-import { useEventEmitter } from '../../services/mittEmitter'; // emitter removed
-import { IAssistant } from '../../store/models/Assistant';
+import { useEventEmitter } from '../../services/mittEmitter';
+import { IAssistant } from '../../types/entities';
 import { SBChatKitUI } from '../sb-chat-kit-ui/SBChatKitUI';
 import { Base64Attachment } from '../../utils/base64Utils';
-// import { textToSpeech, TTSVoice } from '../../services/api/voiceService'; // Moved to Zustand store
-import i18n from '../../i18n';
 import { changeActiveSessionLanguage } from '../../services/api/sessionService';
 
 // ActionExecutionMessage interface might be needed if Pusher payload for EVENT_ACTION_EXECUTION is specific
@@ -35,14 +31,13 @@ interface ActionExecutionMessage {
 
 const getDefaultConversationStarters = () => [];
 
-const ChatContainer = observer(() => {
-  const rootStore = useRootStore();
+const ChatContainer: React.FC = () => {
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
-  const localAudioRef = useRef<HTMLAudioElement | null>(null); // Local ref for the audio element
+  const localAudioRef = useRef<HTMLAudioElement | null>(null);
 
   // Zustand store selectors
-  const { 
-    messages, 
+  const {
+    messages,
     isLoading,
     isClearing,
     loadMessages: storeLoadMessages,
@@ -52,40 +47,41 @@ const ChatContainer = observer(() => {
     updateActionExecutionMessage: storeUpdateActionExecutionMessage,
   } = useChatStore();
 
-  // Audio store selectors (keeping for potential future use)
-  const {
-    setAudioRef: storeSetAudioRef,
-  } = useAudioStore();
+  // Audio store selectors
+  const { setAudioRef: storeSetAudioRef } = useAudioStore();
 
-  const [assistant, setAssistant] = useState<IAssistant | undefined>(); // Keep local state for current assistant object
+  // Assistant store selectors
+  const { assistantsLoaded, getAssistantById } = useAssistantStore();
+
+  // Language store selectors
+  const { language } = useLanguageStore();
+
+  const [assistant, setAssistant] = useState<IAssistant | undefined>();
 
   // Zustand session store selectors
-  const { 
-    activeSession, 
-    changeAssistant: zustandChangeAssistant, 
-    clearAndRenewActiveSession: zustandClearAndRenewActiveSession 
+  const {
+    activeSession,
+    changeAssistant: zustandChangeAssistant,
+    clearAndRenewActiveSession: zustandClearAndRenewActiveSession
   } = useSessionStore();
   const assistantIdFromZustand = activeSession?.assistantId;
 
   useEffect(() => {
-    if (assistantIdFromZustand && rootStore.assistantsLoaded) {
-      setAssistant(rootStore.getAssistantById(assistantIdFromZustand));
+    if (assistantIdFromZustand && assistantsLoaded) {
+      setAssistant(getAssistantById(assistantIdFromZustand));
     } else if (!assistantIdFromZustand) {
-      setAssistant(undefined); // Clear local assistant if no active session assistant
+      setAssistant(undefined);
     }
-  }, [assistantIdFromZustand, rootStore.assistantsLoaded, rootStore]);
+  }, [assistantIdFromZustand, assistantsLoaded, getAssistantById]);
 
   useEffect(() => {
     const setSessionLanguage = async () => {
-      // activeSession is from Zustand now, language is from MST rootStore
-      if (activeSession) { 
-        await changeActiveSessionLanguage(rootStore.language);
-        // If language is part of ISession in Zustand, update it there too
-        // useSessionStore.getState().setActiveSession({ ...activeSession, language: rootStore.language });
+      if (activeSession) {
+        await changeActiveSessionLanguage(language);
       }
     };
     setSessionLanguage();
-  }, [activeSession, rootStore.language]);
+  }, [activeSession, language]);
 
   useEffect(() => {
     // Don't load messages if we're in the process of clearing
@@ -227,9 +223,9 @@ const ChatContainer = observer(() => {
         onClear={handleClear} // Use new handleClear
         isLoading={isLoading}
       />
-      <audio ref={localAudioRef} style={{ display: 'none' }} /> {/* Use localAudioRef */}
+      <audio ref={localAudioRef} style={{ display: 'none' }} />
     </div>
   );
-});
+};
 
 export { ChatContainer };

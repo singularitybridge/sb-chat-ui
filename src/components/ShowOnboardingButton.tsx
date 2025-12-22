@@ -1,15 +1,13 @@
 /// file_path: src/components/ShowOnboardingButton.tsx
 import React from 'react';
-import { observer } from 'mobx-react-lite';
 import { BotIcon } from 'lucide-react';
 import { IconButton } from './admin/IconButton';
 import { emitter } from '../services/mittEmitter';
 import { EVENT_SHOW_ONBOARDING_MODAL } from '../utils/eventNames';
 import i18n from '../i18n';
 
-const ShowOnboardingButton: React.FC = observer(() => {
-
-  const handleShowOnboarding = () => {    
+const ShowOnboardingButton: React.FC = () => {
+  const handleShowOnboarding = () => {
     emitter.emit(EVENT_SHOW_ONBOARDING_MODAL, { title: i18n.t('dialogTitles.onboarding') });
   };
 
@@ -20,6 +18,6 @@ const ShowOnboardingButton: React.FC = observer(() => {
       onClick={handleShowOnboarding}
     />
   );
-});
+};
 
 export default ShowOnboardingButton;

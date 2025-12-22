@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IAssistant } from '../store/models/Assistant';
+import { IAssistant } from '../types/entities';
 import { useFuzzySearch } from '../hooks/useFuzzySearch';
 import {
   CommandDialog,
@@ -12,7 +12,7 @@ import {
   CommandSeparator,
 } from './ui/command';
 import { commandGroups, getKeyboardShortcut } from '../config/commandPalette';
-import { Avatar, AvatarStyles } from './Avatar';
+import { Avatar, AvatarStyles, getAvatarUrl } from './Avatar';
 import { ModelIndicator } from './ModelIndicator';
 import IntegrationIcons from './IntegrationIcons';
 import { CornerDownLeft } from 'lucide-react';
@@ -89,7 +89,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
               >
                 <div className="flex-shrink-0">
                   <Avatar
-                    imageUrl={`/assets/avatars/${assistant.avatarImage}.png`}
+                    imageUrl={getAvatarUrl(assistant.avatarImage)}
                     avatarStyle={AvatarStyles.avatar}
                     active={false}
                   />
