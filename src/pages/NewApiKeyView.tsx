@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { observer } from 'mobx-react-lite';
 import { useTranslation } from 'react-i18next';
 import { DynamicForm } from '../components/DynamicForm';
 import { FieldConfig, FormValues } from '../components/DynamicForm';
@@ -10,7 +9,7 @@ import { EVENT_CLOSE_MODAL } from '../utils/eventNames';
 import { toast } from 'react-toastify';
 import { Copy, CheckCircle } from 'lucide-react';
 
-export const NewApiKeyView: React.FC = observer(() => {
+export const NewApiKeyView: React.FC = () => {
   const { t, i18n } = useTranslation();
   const [formFields, setFormFields] = useState<FieldConfig[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -120,4 +119,4 @@ export const NewApiKeyView: React.FC = observer(() => {
       formType="create"
     />
   );
-});
+};

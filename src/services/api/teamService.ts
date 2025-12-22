@@ -1,5 +1,5 @@
 import apiClient from '../AxiosService';
-import { ITeam } from '../../store/models/Team';
+import { ITeam } from '../../types/entities';
 
 export async function getTeams(): Promise<ITeam[]> {
   try {

@@ -6,15 +6,14 @@ import {
   deleteCompany,
   refreshCompanyToken,
 } from '../services/api/companyService';
-import { ICompany, ApiKey as MSTApiKey, Token as MSTToken } from './models/Company';
-import { Identifier as MSTIdentifier } from './models/Assistant';
+import { ICompany, IApiKey, IToken, IIdentifier, CompanyKeys as CompanyKeyType } from '../types/entities';
 import { logger } from '../services/LoggingService';
 
-// Use MST model types instead of defining our own
+// Re-export types for convenience
 export type Company = ICompany;
-export type ApiKey = typeof MSTApiKey.Type;
-export type Token = typeof MSTToken.Type;
-export type Identifier = typeof MSTIdentifier.Type;
+export type ApiKey = IApiKey;
+export type Token = IToken;
+export type Identifier = IIdentifier;
 
 export const CompanyKeys = {
   name: 'name',

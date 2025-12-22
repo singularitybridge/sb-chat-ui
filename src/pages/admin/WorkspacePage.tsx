@@ -1,10 +1,9 @@
 import React from 'react';
-import { observer } from 'mobx-react-lite';
 import { useParams } from 'react-router-dom';
 import { ChatContainer } from '../../components/chat-container/ChatContainer';
 import ArtifactEditor from '../../components/ArtifactEditor';
 
-const WorkspacePage: React.FC = observer(() => {
+const WorkspacePage: React.FC = () => {
   const { artifactId } = useParams<{ artifactId: string }>();
 
   return (
@@ -21,6 +20,6 @@ const WorkspacePage: React.FC = observer(() => {
       </div>
     </div>
   );
-});
+};
 
 export { WorkspacePage };

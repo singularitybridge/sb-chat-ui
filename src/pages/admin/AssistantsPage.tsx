@@ -1,9 +1,9 @@
-// file_path: src/pages/admin/AssistantsPage.tsx
 import React, { useState, useEffect } from 'react';
-import { observer } from 'mobx-react-lite';
-import { useRootStore } from '../../store/common/RootStoreContext'; // Still needed for rootStore.teamsLoaded, etc.
-import { useSessionStore } from '../../store/useSessionStore'; // Import Zustand session store
-import { IAssistant } from '../../store/models/Assistant';
+import { useSessionStore } from '../../store/useSessionStore';
+import { useAssistantStore } from '../../store/useAssistantStore';
+import { useTeamStore } from '../../store/useTeamStore';
+import { useLanguageStore } from '../../store/useLanguageStore';
+import { IAssistant } from '../../types/entities';
 import { Plus, Settings, X, ChevronRight, ChevronLeft, Copy, Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { IconButton } from '../../components/admin/IconButton';
@@ -18,7 +18,7 @@ import {
 import { ChatContainer } from '../../components/chat-container/ChatContainer';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Avatar, AvatarStyles } from '../../components/Avatar';
+import { Avatar, AvatarStyles, getAvatarUrl } from '../../components/Avatar';
 import IntegrationIcons from '../../components/IntegrationIcons';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getAssistantUrl } from '../../utils/assistantUrlUtils';
@@ -34,9 +34,11 @@ import {
 } from '../../components/ui/alert-dialog';
 
 
-const AssistantsPage: React.FC = observer(() => {
-  const rootStore = useRootStore();
-  const activeSession = useSessionStore(state => state.activeSession); // Get activeSession from Zustand
+const AssistantsPage: React.FC = () => {
+  const activeSession = useSessionStore(state => state.activeSession);
+  const { assistants, assistantsLoaded, loadAssistants, deleteAssistant, getAssistantsByTeam } = useAssistantStore();
+  const { teamsLoaded, loadTeams, getTeamById } = useTeamStore();
+  const { language } = useLanguageStore();
   const navigate = useNavigate();
   const { teamId } = useParams<{ teamId: string }>();
   const [hoveredAssistantId, setHoveredAssistantId] = useState<string | null>(null);
@@ -52,35 +54,38 @@ const AssistantsPage: React.FC = observer(() => {
   useEffect(() => {
     if (teamId) {
       setIsLoading(true);
-      
+
       const loadData = async () => {
         try {
           // Make sure teams are loaded
-          if (!rootStore.teamsLoaded) {
-            await rootStore.loadTeams();
+          if (!teamsLoaded) {
+            await loadTeams();
           }
-          
+
+          // Make sure assistants are loaded
+          if (!assistantsLoaded) {
+            await loadAssistants();
+          }
+
           // Get team name
-          const team = rootStore.getTeamById(teamId);
+          const team = getTeamById(teamId);
           if (team) {
             setTeamName(team.name);
           }
-          
-          // Load assistants for this team
-          const assistants = await rootStore.loadAssistantsByTeam(teamId);
-          if (assistants) {
-            setTeamAssistants(assistants);
-          }
+
+          // Get assistants for this team from already loaded data
+          const filteredAssistants = getAssistantsByTeam(teamId);
+          setTeamAssistants(filteredAssistants);
         } catch (error) {
           console.error('Failed to load data:', error);
         } finally {
           setIsLoading(false);
         }
       };
-      
+
       loadData();
     }
-  }, [teamId, rootStore]);
+  }, [teamId, teamsLoaded, assistantsLoaded, loadTeams, loadAssistants, getTeamById, getAssistantsByTeam]);
 
   const handleDeleteClick = (assistant: IAssistant) => {
     setAssistantToDelete(assistant);
@@ -89,7 +94,7 @@ const AssistantsPage: React.FC = observer(() => {
 
   const handleConfirmDelete = () => {
     if (assistantToDelete) {
-      rootStore.deleteAssistant(assistantToDelete._id);
+      deleteAssistant(assistantToDelete._id);
       setDeleteDialogOpen(false);
       setAssistantToDelete(null);
     }
@@ -151,7 +156,7 @@ const AssistantsPage: React.FC = observer(() => {
                     />
                   </span>
                   <span className="mx-2">
-                    {rootStore.language === 'he' ? (
+                    {language === 'he' ? (
                       <ChevronLeft className="w-5 h-5 inline-block" />
                     ) : (
                       <ChevronRight className="w-5 h-5 inline-block" />
@@ -187,7 +192,7 @@ const AssistantsPage: React.FC = observer(() => {
                 <p>{t('common.pleaseWait')}</p>
               </div>
             ) : (
-              (teamId ? teamAssistants : rootStore.assistants).map((assistant) => {
+              (teamId ? teamAssistants : assistants).map((assistant) => {
               const isActive =
                 activeSession?.assistantId === // Use activeSession from Zustand
                 assistant._id;
@@ -210,7 +215,7 @@ const AssistantsPage: React.FC = observer(() => {
                     <div className="flex items-start space-x-4 rtl:space-x-reverse">
                       <div className="flex-shrink-0">
                         <Avatar
-                          imageUrl={`/assets/avatars/${assistant.avatarImage}.png`}
+                          imageUrl={getAvatarUrl(assistant.avatarImage)}
                           avatarStyle={AvatarStyles.avatar}
                           active={isActive}
                         />
@@ -281,7 +286,7 @@ const AssistantsPage: React.FC = observer(() => {
               );
               })
             )}
-            {!isLoading && (teamId ? teamAssistants.length === 0 : rootStore.assistants.length === 0) && (
+            {!isLoading && (teamId ? teamAssistants.length === 0 : assistants.length === 0) && (
               <div className="text-center py-8 text-gray-500">
                 <p>{teamId ? t('teamAssistants.noAssistants') : t('teamAssistants.noAssistantsFound')}</p>
               </div>
@@ -316,6 +321,6 @@ const AssistantsPage: React.FC = observer(() => {
       </AlertDialog>
     </div>
   );
-});
+};
 
 export { AssistantsPage };

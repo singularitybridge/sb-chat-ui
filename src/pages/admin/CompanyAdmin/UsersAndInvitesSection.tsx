@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { observer } from 'mobx-react-lite';
-import { useRootStore } from '../../../store/common/RootStoreContext';
-import { ICompany } from '../../../store/models/Company';
-import { IUser } from '../../../store/models/User';
-import { toJS } from 'mobx';
+import { useUserStore } from '../../../store/useUserStore';
+import { ICompany, IUser } from '../../../types/entities';
 import { Table } from '../../../components/sb-core-ui-kit/Table';
 import { convertToStringArray } from '../../../utils/utils';
 import { TrashIcon, UserPlus, Mail, XCircle, Trash2 } from 'lucide-react';
-import { IconButton } from '../../../components/admin/IconButton';
 import { emitter } from '../../../services/mittEmitter';
 import { EVENT_SHOW_NOTIFICATION } from '../../../utils/eventNames';
 import apiClient from '../../../services/AxiosService';
@@ -37,15 +33,16 @@ interface UsersAndInvitesSectionProps {
   company: ICompany;
 }
 
-const UsersAndInvitesSection: React.FC<UsersAndInvitesSectionProps> = observer(
-  ({ company }) => {
-    const rootStore = useRootStore();
-    const [invites, setInvites] = useState<Invite[]>([]);
-    const [showInviteForm, setShowInviteForm] = useState(false);
-    const [inviteEmail, setInviteEmail] = useState('');
-    const [inviteName, setInviteName] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [statusFilter, setStatusFilter] = useState<string>('pending'); // Default to pending only
+const UsersAndInvitesSection: React.FC<UsersAndInvitesSectionProps> = (
+  { company }
+) => {
+  const { users, deleteUser } = useUserStore();
+  const [invites, setInvites] = useState<Invite[]>([]);
+  const [showInviteForm, setShowInviteForm] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [inviteName, setInviteName] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<string>('pending'); // Default to pending only
 
     const fetchInvites = async () => {
       try {
@@ -67,13 +64,13 @@ const UsersAndInvitesSection: React.FC<UsersAndInvitesSectionProps> = observer(
       fetchInvites();
     }, [statusFilter]);
 
-    const handleDeleteUser = (row: IUser) => {
-      rootStore.deleteUser(row._id);
-    };
+  const handleDeleteUser = (row: IUser) => {
+    deleteUser(row._id);
+  };
 
-    const handleSetUser = async (row: IUser) => {
-      emitter.emit(EVENT_SHOW_NOTIFICATION, 'User set successfully');
-    };
+  const handleSetUser = async (_row: IUser) => {
+    emitter.emit(EVENT_SHOW_NOTIFICATION, 'User set successfully');
+  };
 
     const handleCreateInvite = async (e: React.FormEvent) => {
       e.preventDefault();
@@ -204,9 +201,9 @@ const UsersAndInvitesSection: React.FC<UsersAndInvitesSectionProps> = observer(
           </p>
           <Table
             headers={convertToStringArray(userHeaders)}
-            data={toJS(rootStore.users)}
+            data={users}
             Page="UsersPage"
-            onRowClick={(row: IUser) => {}}
+            onRowClick={(_row: IUser) => {}}
             Actions={UserActions}
           />
         </div>
@@ -382,7 +379,6 @@ const UsersAndInvitesSection: React.FC<UsersAndInvitesSectionProps> = observer(
         </div>
       </div>
     );
-  }
-);
+};
 
 export { UsersAndInvitesSection };

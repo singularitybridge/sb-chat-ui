@@ -1,5 +1,5 @@
 import apiClient from '../AxiosService';
-import { IJournalEntry } from '../../store/models/JournalEntry';
+import { IJournalEntry } from '../../types/entities';
 
 interface GetJournalEntriesParams {
   userId?: string; // Made optional

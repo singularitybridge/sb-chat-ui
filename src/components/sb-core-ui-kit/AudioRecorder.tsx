@@ -1,19 +1,18 @@
 /// file_path: src/components/sb-core-ui-kit/AudioRecorder.tsx
 
 import React, { useState, useRef, useCallback } from 'react';
-import { observer } from 'mobx-react';
 import { Mic, Loader } from 'lucide-react';
 import { transcribeAudio } from '../../services/api/voiceService';
-import { useRootStore } from '../../store/common/RootStoreContext';
+import { useLanguageStore } from '../../store/useLanguageStore';
 
 interface AudioRecorderProps {
   onTranscriptionComplete: (transcription: string) => void;
 }
 
-export const AudioRecorder: React.FC<AudioRecorderProps> = observer(({
+export const AudioRecorder: React.FC<AudioRecorderProps> = ({
   onTranscriptionComplete,
 }) => {
-  const rootStore = useRootStore();
+  const { language } = useLanguageStore();
   const [isRecording, setIsRecording] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -55,15 +54,15 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = observer(({
 
     const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
     try {
-      setIsLoading(true);      
-      const transcription = await transcribeAudio(audioBlob, rootStore.language);
+      setIsLoading(true);
+      const transcription = await transcribeAudio(audioBlob, language);
       onTranscriptionComplete(transcription);
     } catch (error) {
       console.error('Error processing audio:', error);
     } finally {
       setIsLoading(false);
     }
-  }, [rootStore.language, onTranscriptionComplete]);
+  }, [language, onTranscriptionComplete]);
 
   const handleRecording = useCallback(() => {
     if (isRecording) {
@@ -88,4 +87,4 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = observer(({
       )}
     </button>
   );
-});
+};

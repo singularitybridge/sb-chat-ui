@@ -1,5 +1,5 @@
 import apiClient, { getGlobalEmbedApiKey } from '../AxiosService'; // Import getGlobalEmbedApiKey
-import { IAssistant } from '../../store/models/Assistant';
+import { IAssistant } from '../../types/entities';
 import { getToken } from './authService'; // Import getToken for manual auth header
 import { singleFlight } from '../../utils/singleFlight';
 

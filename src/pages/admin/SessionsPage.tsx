@@ -1,20 +1,16 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { observer } from 'mobx-react-lite';
-// import { useRootStore } from '../../store/common/RootStoreContext'; // Removed
 import { Table } from '../../components/sb-core-ui-kit/Table';
-// import { toJS } from 'mobx'; // Removed
 import { convertToStringArray } from '../../utils/utils';
 import { PlayIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { IconButton } from '../../components/admin/IconButton';
-import { ISession, useSessionStore } from '../../store/useSessionStore'; // Changed to useSessionStore
+import { ISession, useSessionStore } from '../../store/useSessionStore';
 import { EVENT_SHOW_NOTIFICATION } from '../../utils/eventNames';
 import { emitter } from '../../services/mittEmitter';
 import AdminPageContainer from '../../components/admin/AdminPageContainer';
 import { useTranslation } from 'react-i18next';
 
-const SessionsPage: React.FC = observer(() => {
-  // const rootStore = useRootStore(); // Removed
+const SessionsPage: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -82,6 +78,6 @@ const SessionsPage: React.FC = observer(() => {
       />
     </AdminPageContainer>
   );
-});
+};
 
 export { SessionsPage };

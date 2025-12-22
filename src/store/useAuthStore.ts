@@ -7,8 +7,10 @@ import {
 import { logger } from '../services/LoggingService';
 
 interface UserSessionInfo {
+  userId: string;
   userName: string;
   userRole: string;
+  companyId: string;
   companyName: string;
 }
 
@@ -35,10 +37,12 @@ export const useAuthStore = create<AuthStoreState>()(
       isAuthenticated: false, // This will be derived from token presence initially
       isUserDataLoaded: false,
       userSessionInfo: {
-    userName: '',
-    userRole: '',
-    companyName: '',
-  },
+        userId: '',
+        userName: '',
+        userRole: '',
+        companyId: '',
+        companyName: '',
+      },
   
   // Computed value
   isLoggedIn: () => {
@@ -73,11 +77,13 @@ export const useAuthStore = create<AuthStoreState>()(
     try {
       const response = await verifyToken();
       const { user, company } = response;
-      
+
       set({
         userSessionInfo: {
+          userId: user._id || user.id || '',
           userName: user.name,
           userRole: user.role,
+          companyId: company._id || company.id || '',
           companyName: company.name,
         },
         isUserDataLoaded: true,
@@ -110,8 +116,10 @@ export const useAuthStore = create<AuthStoreState>()(
       isAuthenticated: false,
       isUserDataLoaded: false,
       userSessionInfo: {
+        userId: '',
         userName: '',
         userRole: '',
+        companyId: '',
         companyName: '',
       },
     });

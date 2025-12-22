@@ -5,16 +5,11 @@ import {
   updateAssistant,
   deleteAssistant,
 } from '../services/api/assistantService';
-import { IAssistant } from './models/Assistant';
+import { IAssistant, ConversationStarter } from '../types/entities';
 import { logger } from '../services/LoggingService';
 
-export interface ConversationStarter {
-  _id?: string;
-  key: string;
-  value: string;
-}
-
-// Use the MST model type instead of defining our own
+// Re-export types for convenience
+export type { ConversationStarter };
 export type Assistant = IAssistant;
 
 interface AssistantStoreState {

@@ -4,13 +4,10 @@ import { TextareaWithLabel } from './sb-core-ui-kit/TextareaWithLabel';
 import { KeyValue, KeyValueList } from './sb-core-ui-kit/KeyValueList';
 import { ApiKey, ApiKeyList } from './ApiKeyList';
 import LoadingButton from './core/LoadingButton';
-import { AssistantKeys } from '../store/models/Assistant';
-import { CompanyKeys } from '../store/models/Company';
-import { UserKeys } from '../store/models/User';
-import { TeamKeys } from '../store/models/Team';
+import { AssistantKeys, CompanyKeys, UserKeys, TeamKeys } from '../types/entities';
 import TokenInput from './admin/TokenInput';
 import { useTranslation } from 'react-i18next';
-import { useRootStore } from '../store/common/RootStoreContext';
+import { useAIAssistedStore } from '../store/useAIAssistedStore';
 import { AIAssistedTextareaContainer } from './sb-core-ui-kit/AIAssistedTextareaContainer';
 import { SelectList, SelectListOption } from './sb-core-ui-kit/SelectList';
 import { TagsInput, TagType } from './TagsInput';
@@ -121,7 +118,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   const [filteredFields, setFilteredFields] = useState<FieldConfig[]>([]);
   const [values, setValues] = useState<FormValues>({});
   const { t } = useTranslation();
-  const rootStore = useRootStore();
+  const { getFieldConfig } = useAIAssistedStore();
 
   useEffect(() => {
     const newFilteredFields =
@@ -168,10 +165,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     >
       {filteredFields.map((field) => {
         const labelKey = `${formContext}.${field.key as string}`;
-        const aiConfig = rootStore.aiAssistedConfigStore.getFieldConfig(
-          formContext,
-          field.id
-        );
+        const aiConfig = getFieldConfig(formContext, field.id);
 
         switch (field.type) {
           case 'textarea':

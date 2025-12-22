@@ -1,17 +1,14 @@
-/// file_path: src/components/LogoutButton.tsx
 import React from 'react';
-import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
-import { useRootStore } from '../store/common/RootStoreContext';
 import { LogOutIcon } from 'lucide-react';
 import { IconButton } from './admin/IconButton';
+import { logout } from '../utils/logout';
 
-const LogoutButton: React.FC = observer(() => {
-  const rootStore = useRootStore();
+const LogoutButton: React.FC = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    const loggedOut = rootStore.authStore.logout();
+    const loggedOut = logout();
     if (loggedOut) {
       navigate('/signup');
     }
@@ -24,6 +21,6 @@ const LogoutButton: React.FC = observer(() => {
       onClick={handleLogout}
     />
   );
-});
+};
 
 export default LogoutButton;

@@ -1,19 +1,22 @@
 // file_path: src/pages/admin/EditTeamPage.tsx
 import React, { useEffect, useState } from 'react';
-import { observer } from 'mobx-react-lite';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useRootStore } from '../../store/common/RootStoreContext';
+import { useTeamStore } from '../../store/useTeamStore';
+import { useAssistantStore } from '../../store/useAssistantStore';
+import { useAuthStore } from '../../store/useAuthStore';
 import { useTranslation } from 'react-i18next';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
-import { IAssistant } from '../../store/models/Assistant';
-import { Avatar, AvatarStyles } from '../../components/Avatar';
+import { IAssistant } from '../../types/entities';
+import { Avatar, AvatarStyles, getAvatarUrl } from '../../components/Avatar';
 import { X } from 'lucide-react';
 import { IconButton } from '../../components/admin/IconButton';
 import { IconPicker } from '../../components/IconPicker';
 
-const EditTeamPage: React.FC = observer(() => {
+const EditTeamPage: React.FC = () => {
   const { key } = useParams<{ key: string }>();
-  const rootStore = useRootStore();
+  const { teamsLoaded, loadTeams, getTeamById, updateTeam, assignAssistant, removeAssistant } = useTeamStore();
+  const { assistantsLoaded, loadAssistants, assistants, getAssistantById } = useAssistantStore();
+  const { userSessionInfo } = useAuthStore();
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -26,48 +29,48 @@ const EditTeamPage: React.FC = observer(() => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    if (!rootStore.teamsLoaded) {
-      rootStore.loadTeams();
+    if (!teamsLoaded) {
+      loadTeams();
     }
-    if (!rootStore.assistantsLoaded) {
-      rootStore.loadAssistants();
+    if (!assistantsLoaded) {
+      loadAssistants();
     }
-  }, [rootStore]);
+  }, [teamsLoaded, assistantsLoaded, loadTeams, loadAssistants]);
 
   useEffect(() => {
-    if (key && rootStore.teamsLoaded && rootStore.assistantsLoaded) {
-      const team = rootStore.getTeamById(key);
+    if (key && teamsLoaded && assistantsLoaded) {
+      const team = getTeamById(key);
       if (team) {
         setName(team.name);
         setDescription(team.description);
         setIcon(team.icon);
-        
+
         // Get assistants for this team
-        const assistantsInTeam = rootStore.assistants.filter(assistant => 
+        const assistantsInTeam = assistants.filter(assistant =>
           assistant.teams.includes(key)
         );
         setTeamAssistants(assistantsInTeam);
-        
+
         // Get available assistants (those not in the team)
-        const availableAssts = rootStore.assistants.filter(assistant => 
+        const availableAssts = assistants.filter(assistant =>
           !assistant.teams.includes(key)
         );
         setAvailableAssistants(availableAssts);
       }
     }
-  }, [key, rootStore.teamsLoaded, rootStore.assistantsLoaded]);
+  }, [key, teamsLoaded, assistantsLoaded, getTeamById, assistants]);
 
   const handleSave = async () => {
     if (!key || !name) return;
 
     setIsSubmitting(true);
     try {
-      await rootStore.updateTeam(key, {
+      await updateTeam(key, {
         _id: key,
         name,
         description,
         icon,
-        companyId: rootStore.activeCompany._id,
+        companyId: userSessionInfo.companyId,
       });
       navigate('/admin/teams');
     } catch (error) {
@@ -81,10 +84,10 @@ const EditTeamPage: React.FC = observer(() => {
     if (!key || !selectedAssistantId) return;
 
     try {
-      await rootStore.assignAssistantToTeam(key, selectedAssistantId);
-      
+      await assignAssistant(key, selectedAssistantId);
+
       // Update local state
-      const assistant = rootStore.getAssistantById(selectedAssistantId);
+      const assistant = getAssistantById(selectedAssistantId);
       if (assistant) {
         setTeamAssistants([...teamAssistants, assistant]);
         setAvailableAssistants(availableAssistants.filter(a => a._id !== selectedAssistantId));
@@ -99,10 +102,10 @@ const EditTeamPage: React.FC = observer(() => {
     if (!key) return;
 
     try {
-      await rootStore.removeAssistantFromTeam(key, assistantId);
-      
+      await removeAssistant(key, assistantId);
+
       // Update local state
-      const assistant = rootStore.getAssistantById(assistantId);
+      const assistant = getAssistantById(assistantId);
       if (assistant) {
         setTeamAssistants(teamAssistants.filter(a => a._id !== assistantId));
         setAvailableAssistants([...availableAssistants, assistant]);
@@ -217,7 +220,7 @@ const EditTeamPage: React.FC = observer(() => {
               <li key={assistant._id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                 <div className="flex items-center space-x-3">
                   <Avatar
-                    imageUrl={`/assets/avatars/${assistant.avatarImage}.png`}
+                    imageUrl={getAvatarUrl(assistant.avatarImage)}
                     avatarStyle={AvatarStyles.avatar}
                     active={false}
                   />
@@ -240,6 +243,6 @@ const EditTeamPage: React.FC = observer(() => {
       </div>
     </div>
   );
-});
+};
 
 export { EditTeamPage };

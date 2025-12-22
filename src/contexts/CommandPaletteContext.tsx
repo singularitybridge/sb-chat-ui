@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { useRootStore } from '../store/common/RootStoreContext';
-import { IAssistant } from '../store/models/Assistant';
-import { ITeam } from '../store/models/Team';
+import { useAssistantStore } from '../store/useAssistantStore';
+import { useTeamStore } from '../store/useTeamStore';
+import { IAssistant, ITeam } from '../types/entities';
 import { searchWorkspaceItemsMultiScope } from '../services/api/workspaceService';
 
 export interface WorkspaceSearchItem {
@@ -29,7 +29,8 @@ interface CommandPaletteContextValue {
 const CommandPaletteContext = createContext<CommandPaletteContextValue | undefined>(undefined);
 
 export const CommandPaletteProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const rootStore = useRootStore();
+  const { assistants } = useAssistantStore();
+  const { teams } = useTeamStore();
   const [open, setOpen] = useState(false);
   const [workspaceItems, setWorkspaceItems] = useState<WorkspaceSearchItem[]>([]);
   const [isLoadingWorkspace, setIsLoadingWorkspace] = useState(false);
@@ -39,7 +40,7 @@ export const CommandPaletteProvider: React.FC<{ children: React.ReactNode }> = (
     setIsLoadingWorkspace(true);
     try {
       // Get all agent IDs
-      const agentIds = rootStore.assistants.map(a => a._id);
+      const agentIds = assistants.map(a => a._id);
 
       if (agentIds.length === 0) {
         setWorkspaceItems([]);
@@ -54,7 +55,7 @@ export const CommandPaletteProvider: React.FC<{ children: React.ReactNode }> = (
 
       // Map results to include agent names
       const itemsWithAgentNames = items.map(item => {
-        const assistant = rootStore.assistants.find(a => a._id === item.scopeId);
+        const assistant = assistants.find(a => a._id === item.scopeId);
         return {
           path: item.path,
           metadata: item.metadata,
@@ -69,7 +70,7 @@ export const CommandPaletteProvider: React.FC<{ children: React.ReactNode }> = (
     } finally {
       setIsLoadingWorkspace(false);
     }
-  }, [rootStore.assistants]);
+  }, [assistants]);
 
   // Refresh workspace items when command palette opens
   useEffect(() => {
@@ -94,8 +95,8 @@ export const CommandPaletteProvider: React.FC<{ children: React.ReactNode }> = (
   const value: CommandPaletteContextValue = {
     open,
     setOpen,
-    assistants: rootStore.assistants,
-    teams: rootStore.teams,
+    assistants,
+    teams,
     workspaceItems,
     refreshWorkspaceItems,
     isLoadingWorkspace,

@@ -1,9 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { observer } from 'mobx-react-lite';
-import { useRootStore } from '../../store/common/RootStoreContext';
+import { useCompanyStore } from '../../store/useCompanyStore';
+import { useAssistantStore } from '../../store/useAssistantStore';
+import { useInboxStore } from '../../store/useInboxStore';
 import { Table } from '../../components/sb-core-ui-kit/Table';
-import { toJS } from 'mobx';
 import { convertToStringArray } from '../../utils/utils';
 import { PlayIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { IconButton } from '../../components/admin/IconButton';
@@ -11,24 +11,26 @@ import { emitter } from '../../services/mittEmitter';
 import {
   EVENT_SHOW_NOTIFICATION,
 } from '../../utils/eventNames';
-import { CompanyKeys, ICompany } from '../../store/models/Company';
+import { CompanyKeys, ICompany } from '../../types/entities';
 import { useTranslation } from 'react-i18next';
 import AdminPageContainer from '../../components/admin/AdminPageContainer';
 
-const CompaniesPage: React.FC = observer(() => {
-  const rootStore = useRootStore();
+const CompaniesPage: React.FC = () => {
+  const { companies } = useCompanyStore();
+  const { loadAssistants } = useAssistantStore();
+  const { loadInboxSessions } = useInboxStore();
   const navigate = useNavigate();
 
   const { t } = useTranslation();
   const headers: CompanyKeys[] = ['name'];
 
   const handleDelete = (_row: ICompany) => {
-    // rootStore.deleteCompany(row._id);
+    // Not implemented
   };
 
   const handleSetCompany = async (_row: ICompany) => {
-    rootStore.loadAssistants();
-    rootStore.loadInboxMessages();
+    loadAssistants();
+    loadInboxSessions();
     emitter.emit(EVENT_SHOW_NOTIFICATION, t('CompaniesPage.successfullySet'));
   };
 
@@ -59,9 +61,9 @@ const CompaniesPage: React.FC = observer(() => {
       <p className="text-gray-600 mb-6">{t('CompaniesPage.description')}</p>
       <Table
         headers={convertToStringArray(headers)}
-        data={toJS(rootStore.companies).map(company => ({
+        data={companies.map(company => ({
           ...company,
-          api_keys: company.api_keys.length.toString(), // Convert to string to display count
+          api_keys: company.api_keys?.length.toString() || '0',
           token: company.token ? '[Encrypted]' : ''
         }))}
         Page="CompaniesPage"
@@ -70,6 +72,6 @@ const CompaniesPage: React.FC = observer(() => {
       />
     </AdminPageContainer>
   );
-});
+};
 
 export { CompaniesPage };

@@ -6,18 +6,17 @@ import {
   DropdownFieldConfig,
 } from '../components/DynamicForm';
 import { getAssistantFieldConfigs, defaultAssistantFieldConfigs } from '../store/fieldConfigs/assistantFieldConfigs';
-import { observer } from 'mobx-react';
-import { useRootStore } from '../store/common/RootStoreContext';
-import { IAssistant } from '../store/models/Assistant';
+import { useAssistantStore } from '../store/useAssistantStore';
+import { IAssistant } from '../types/entities';
 import { useEventEmitter } from '../services/mittEmitter';
 import { EVENT_SET_ASSISTANT_VALUES } from '../utils/eventNames';
 import AvatarSelector from '../components/AvatarSelector';
 import { TextComponent } from '../components/sb-core-ui-kit/TextComponent';
 import { useTranslation } from 'react-i18next';
 
-const NewAssistantView: React.FC = observer(() => {
+const NewAssistantView: React.FC = () => {
   const { t, i18n } = useTranslation();
-  const rootStore = useRootStore();
+  const { addAssistant } = useAssistantStore();
   const [isLoading, setIsLoading] = useState(false);
   const [formFields, setFormFields] = useState<FieldConfig[]>(defaultAssistantFieldConfigs);
   const [isFieldConfigsLoading, setIsFieldConfigsLoading] = useState(true);
@@ -88,7 +87,7 @@ const NewAssistantView: React.FC = observer(() => {
       ...values,
       avatarImage: selectedAvatarId,
     } as unknown as IAssistant;
-    await rootStore.createAssistant(assistantData);
+    await addAssistant(assistantData);
     setIsLoading(false);
   };
 
@@ -114,6 +113,6 @@ const NewAssistantView: React.FC = observer(() => {
       />
     </div>
   );
-});
+};
 
 export { NewAssistantView };

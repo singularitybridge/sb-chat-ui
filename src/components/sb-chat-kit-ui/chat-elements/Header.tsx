@@ -1,7 +1,7 @@
 /// file_path: src/components/sb-chat-kit-ui/chat-elements/Header.tsx
 import React, { useState, useEffect } from 'react';
 import { CircleFadingPlus, Monitor, Settings, Copy, Code2 } from 'lucide-react';
-import { Avatar, AvatarStyles } from '../../Avatar';
+import { Avatar, AvatarStyles, getAvatarUrl } from '../../Avatar';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSessionStore } from '../../../store/useSessionStore';
 import { useAssistantStore } from '../../../store/useAssistantStore';
@@ -136,7 +136,7 @@ const Header: React.FC<HeaderProps> = ({
             {/* Left: Avatar */}
             <Avatar
               avatarStyle={AvatarStyles.avatar}
-              imageUrl={`/assets/avatars/${avatar}.png`}
+              imageUrl={getAvatarUrl(avatar)}
               active={true}
             />
 
@@ -236,7 +236,7 @@ const Header: React.FC<HeaderProps> = ({
         {/* Left: Avatar */}
         <Avatar
           avatarStyle={AvatarStyles.medium}
-          imageUrl={`/assets/avatars/${avatar}.png`}
+          imageUrl={getAvatarUrl(avatar)}
           active={true}
         />
 

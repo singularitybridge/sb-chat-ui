@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import Fuse from 'fuse.js';
-import { IAssistant } from '../store/models/Assistant';
-import { ITeam } from '../store/models/Team';
+import { IAssistant, ITeam } from '../types/entities';
 import { WorkspaceSearchItem } from '../contexts/CommandPaletteContext';
 
 export type SearchResultType = 'assistant' | 'team' | 'workspace';

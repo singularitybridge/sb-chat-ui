@@ -17,10 +17,9 @@ import {
   DialogComponentEventData,
   dialogComponentFactory,
 } from '../../services/DialogFactory';
-import { observer } from 'mobx-react-lite';
 
-const DialogManager = observer(() => {
-  
+const DialogManager: React.FC = () => {
+
   const [isOpen, setIsOpen] = useState(false);
   const [dialogData, setDialogData] = useState<DialogComponentEventData>({
     component: <div>Hello</div>,
@@ -102,6 +101,6 @@ const DialogManager = observer(() => {
       }}
     />
   );
-});
+};
 
 export { DialogManager };

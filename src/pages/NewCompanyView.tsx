@@ -1,18 +1,16 @@
 import React, { useState } from 'react';
 import { DynamicForm, FormValues } from '../components/DynamicForm';
-
-import { observer } from 'mobx-react';
-import { useRootStore } from '../store/common/RootStoreContext';
+import { useCompanyStore } from '../store/useCompanyStore';
 import { companyFieldConfigs } from '../store/fieldConfigs/companyFieldConfigs';
-import { ICompany } from '../store/models/Company';
+import { ICompany } from '../types/entities';
 
-const NewCompanyView: React.FC = observer(() => {
-  const rootStore = useRootStore();
+const NewCompanyView: React.FC = () => {
+  const { addCompany } = useCompanyStore();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (values: FormValues) => {
     setIsLoading(true);
-    await rootStore.addCompany(values as unknown as ICompany);
+    await addCompany(values as unknown as ICompany);
     setIsLoading(false);
   };
 
@@ -31,6 +29,6 @@ const NewCompanyView: React.FC = observer(() => {
       formType="create"
     />
   );
-});
+};
 
 export { NewCompanyView };

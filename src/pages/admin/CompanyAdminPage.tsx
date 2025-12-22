@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { observer } from 'mobx-react-lite';
-import { useRootStore } from '../../store/common/RootStoreContext';
-import { ICompany } from '../../store/models/Company';
+import { useCompanyStore } from '../../store/useCompanyStore';
+import { ICompany } from '../../types/entities';
 import AdminPageContainer from '../../components/admin/AdminPageContainer';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
 import { useTranslation } from 'react-i18next';
@@ -21,10 +20,10 @@ import { UsersAndInvitesSection } from './CompanyAdmin/UsersAndInvitesSection';
 
 type SectionType = 'details' | 'users-invites';
 
-const CompanyAdminPage: React.FC = observer(() => {
+const CompanyAdminPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const rootStore = useRootStore();
+  const { companiesLoaded, getCompanyById } = useCompanyStore();
   const [company, setCompany] = useState<ICompany | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeSection, setActiveSection] = useState<SectionType>('details');
@@ -32,15 +31,15 @@ const CompanyAdminPage: React.FC = observer(() => {
 
   const fetchCompany = async () => {
     if (id) {
-      const fetchedCompany = await rootStore.getCompanyById();
-      setCompany(fetchedCompany);
+      const fetchedCompany = getCompanyById(id);
+      setCompany(fetchedCompany || null);
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
     fetchCompany();
-  }, [id, rootStore, rootStore.companiesLoaded]);
+  }, [id, companiesLoaded]);
 
   if (isLoading) {
     return (
@@ -114,6 +113,6 @@ const CompanyAdminPage: React.FC = observer(() => {
       </SidebarProvider>
     </AdminPageContainer>
   );
-});
+};
 
 export { CompanyAdminPage };
