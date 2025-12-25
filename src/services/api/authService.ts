@@ -19,18 +19,6 @@ export const loginWithGoogle = async (token: string) => {
   }
 };
 
-export const verifyBetaKey = async (betaKey: string) => {
-  try {
-    const response = await apiClient.post('auth/beta-key', {
-      betaKey: betaKey,
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Failed to verify beta key', error);
-    throw error;
-  }
-};
-
 export const verifyToken = () =>
   singleFlight('POST /auth/verify-token', async () => {
     try {
