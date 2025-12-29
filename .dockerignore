@@ -1,0 +1,13 @@
+node_modules
+dist
+.git
+.gitignore
+yarn.lock
+*.md
+.env*
+!.env.example
+.vscode
+.idea
+*.log
+npm-debug.log*
+.DS_Store

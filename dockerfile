@@ -12,8 +12,8 @@ ENV PORT=5173
 # Copy package.json and package-lock.json
 COPY package.json package-lock.json ./
 
-# Install dependencies
-RUN npm install
+# Install dependencies (using ci for faster, deterministic installs)
+RUN npm ci --legacy-peer-deps
 
 # Copy the rest of your app's source code from your host to your image filesystem.
 COPY . .
