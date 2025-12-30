@@ -71,6 +71,9 @@ export interface DropdownFieldConfig extends BaseFieldConfig {
   type: 'dropdown';
   value: string | number;
   options: SelectListOption[];
+  dependsOn?: string;
+  optionsByDependency?: Record<string, SelectListOption[]>;
+  defaultByDependency?: Record<string, string>;
 }
 
 export interface TagsFieldConfig extends BaseFieldConfig {
@@ -148,7 +151,36 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     id: string,
     newValue: string | number | KeyValue[] | ApiKey[] | string[]
   ) => {
-    setValues((prevValues) => ({ ...prevValues, [id]: newValue }));
+    setValues((prevValues) => {
+      const newValues = { ...prevValues, [id]: newValue };
+
+      // Check if any other fields depend on this field
+      filteredFields.forEach((field) => {
+        if (field.type === 'dropdown') {
+          const dropdownField = field as DropdownFieldConfig;
+          if (dropdownField.dependsOn === id && dropdownField.optionsByDependency) {
+            const dependencyValue = String(newValue);
+            const availableOptions = dropdownField.optionsByDependency[dependencyValue] || dropdownField.options;
+            const currentValue = prevValues[field.id];
+
+            // Check if current value is valid for the new dependency
+            const isValueValid = availableOptions.some(
+              (opt) => opt.value === currentValue
+            );
+
+            // Reset to default if current value is not valid
+            if (!isValueValid) {
+              const defaultValue = dropdownField.defaultByDependency?.[dependencyValue] ||
+                availableOptions[0]?.value ||
+                dropdownField.value;
+              newValues[field.id] = defaultValue;
+            }
+          }
+        }
+      });
+
+      return newValues;
+    });
   };
 
   const handleSubmit = () => {
@@ -226,17 +258,36 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                 }}
               />
             );
-          case 'dropdown':
+          case 'dropdown': {
+            const dropdownField = field as DropdownFieldConfig;
+            let dropdownOptions = dropdownField.options;
+            let selectKey = field.id;
+
+            // If this field depends on another, filter options based on dependency value
+            if (dropdownField.dependsOn && dropdownField.optionsByDependency) {
+              const dependencyValue = String(values[dropdownField.dependsOn] || '');
+              dropdownOptions = dropdownField.optionsByDependency[dependencyValue] || dropdownField.options;
+              // Add dependency value to key to force re-render when dependency changes
+              selectKey = `${field.id}-${dependencyValue}`;
+            }
+
+            // Ensure initialValue is valid - fallback to field default or first option
+            let initialValue = values[field.id] as string | number;
+            if (initialValue === undefined || initialValue === null || initialValue === '') {
+              initialValue = dropdownField.value || dropdownOptions[0]?.value || '';
+            }
+
             return (
               <SelectList
-                key={field.id}
+                key={selectKey}
                 label={t(labelKey)}
-                options={(field as DropdownFieldConfig).options}
+                options={dropdownOptions}
                 onSelect={(value) => handleChange(field.id, value)}
-                initialValue={values[field.id] as string | number}
-                placeholder={labelKey}
+                initialValue={initialValue}
+                placeholder={t(labelKey)}
               />
             );
+          }
           case 'tags': {
             const tagsField = field as TagsFieldConfig;
             return (
