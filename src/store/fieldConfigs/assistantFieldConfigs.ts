@@ -17,21 +17,67 @@ const languageOptions: SelectListOption[] = [
   { value: 'en', label: 'English' },
 ];
 
-const llmModelOptions: SelectListOption[] = [
-  { value: 'gpt-4o-mini', label: 'GPT-4o Mini' },
-  { value: 'o3', label: 'GPT o3' },
-  { value: 'o4-mini', label: 'GPT o4 Mini' },
-  { value: 'o3-mini-low', label: 'GPT o3 Mini (low)' },
-  { value: 'o3-mini-medium', label: 'GPT o3 Mini (medium)' },
-  { value: 'o3-mini-high', label: 'GPT o3 Mini (high)' },
+// Models grouped by provider
+const openaiModels: SelectListOption[] = [
+  // GPT-5.x family (stable)
+  { value: 'gpt-5.2', label: 'GPT-5.2' },
+  { value: 'gpt-5', label: 'GPT-5' },
+  { value: 'gpt-5-mini', label: 'GPT-5 Mini' },
+  { value: 'gpt-5-nano', label: 'GPT-5 Nano' },
+  // GPT-4.x family
   { value: 'gpt-4.1', label: 'GPT-4.1' },
   { value: 'gpt-4.1-mini', label: 'GPT-4.1 Mini' },
   { value: 'gpt-4.1-nano', label: 'GPT-4.1 Nano' },
-  { value: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash' },
-  { value: 'gemini-2.5-pro', label: 'Gemini 2.5 Pro' },
-  { value: 'claude-opus-4-1', label: 'Claude Opus 4.1' },
-  { value: 'claude-sonnet-4-0', label: 'Claude Sonnet 4.0' },
+  { value: 'gpt-4o', label: 'GPT-4o' },
+  { value: 'gpt-4o-mini', label: 'GPT-4o Mini' },
 ];
+
+const googleModels: SelectListOption[] = [
+  // Gemini 3 (preview only - no stable version yet)
+  { value: 'gemini-3-pro-preview', label: 'Gemini 3 Pro (preview)' },
+  { value: 'gemini-3-flash-preview', label: 'Gemini 3 Flash (preview)' },
+  // Gemini 2.5 (stable)
+  { value: 'gemini-2.5-pro', label: 'Gemini 2.5 Pro' },
+  { value: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash' },
+  { value: 'gemini-2.5-flash-lite', label: 'Gemini 2.5 Flash-Lite' },
+  // Gemini 2.0 (legacy)
+  { value: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash' },
+];
+
+const anthropicModels: SelectListOption[] = [
+  // Claude 4.5 (latest)
+  { value: 'claude-sonnet-4-5', label: 'Claude Sonnet 4.5' },
+  { value: 'claude-haiku-4-5', label: 'Claude Haiku 4.5' },
+  { value: 'claude-opus-4-5', label: 'Claude Opus 4.5' },
+  // Claude 4.1
+  { value: 'claude-opus-4-1', label: 'Claude Opus 4.1' },
+  // Claude 4
+  { value: 'claude-sonnet-4-0', label: 'Claude Sonnet 4' },
+  { value: 'claude-opus-4-0', label: 'Claude Opus 4' },
+  // Claude 3 (legacy)
+  { value: 'claude-3-haiku-20240307', label: 'Claude 3 Haiku' },
+];
+
+// Combined list for fallback
+const llmModelOptions: SelectListOption[] = [
+  ...openaiModels,
+  ...googleModels,
+  ...anthropicModels,
+];
+
+// Models organized by provider for dependent dropdown
+export const modelsByProvider: Record<string, SelectListOption[]> = {
+  openai: openaiModels,
+  google: googleModels,
+  anthropic: anthropicModels,
+};
+
+// Default model for each provider
+export const defaultModelByProvider: Record<string, string> = {
+  openai: 'gpt-4.1-mini',
+  google: 'gemini-2.5-flash',
+  anthropic: 'claude-sonnet-4-5',
+};
 
 const llmProviderOptions: SelectListOption[] = [
   { value: 'openai', label: 'OpenAI' },
@@ -163,7 +209,7 @@ export const getAssistantFieldConfigs = async (
     {
       id: 'llmProvider',
       key: 'llmProvider',
-      label: 'assistant.llmProvider', // Changed to translation key
+      label: 'assistant.llmProvider',
       type: 'dropdown',
       value: 'openai',
       options: llmProviderOptions,
@@ -174,8 +220,11 @@ export const getAssistantFieldConfigs = async (
       key: 'llmModel',
       label: 'LLM Model',
       type: 'dropdown',
-      value: 'gpt-4o-mini',
+      value: 'gpt-4.1-mini',
       options: llmModelOptions,
+      dependsOn: 'llmProvider',
+      optionsByDependency: modelsByProvider,
+      defaultByDependency: defaultModelByProvider,
       visibility: { create: true, view: true, update: true },
     },
     {
@@ -260,7 +309,7 @@ export const defaultAssistantFieldConfigs: FieldConfig[] = [
     {
       id: 'llmProvider',
       key: 'llmProvider',
-      label: 'assistant.llmProvider', // Changed to translation key
+      label: 'assistant.llmProvider',
       type: 'dropdown',
       value: 'openai',
       options: llmProviderOptions,
@@ -271,8 +320,11 @@ export const defaultAssistantFieldConfigs: FieldConfig[] = [
       key: 'llmModel',
       label: 'LLM Model',
       type: 'dropdown',
-      value: 'gpt-4o-mini',
+      value: 'gpt-4.1-mini',
       options: llmModelOptions,
+      dependsOn: 'llmProvider',
+      optionsByDependency: modelsByProvider,
+      defaultByDependency: defaultModelByProvider,
       visibility: { create: true, view: true, update: true },
     },
     {
