@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router';
 import { useAuthStore } from '../store/useAuthStore';
 import { useSessionStore } from '../store/useSessionStore';
 import { useAssistantStore } from '../store/useAssistantStore';
@@ -23,11 +23,13 @@ const AuthManager: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   const loadInitialData = async () => {
     if (initialDataLoadedRef.current) {
+      setLoading(false);
       return; // Already loaded
     }
 
     logger.info('AuthManager - Loading initial data...');
 
+    // Load user session info first - this sets isUserDataLoaded
     await loadUserSessionInfo();
 
     // Load all stores in parallel for better performance
@@ -67,18 +69,20 @@ const AuthManager: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       const authenticated = await checkAuthStatus();
       if (!authenticated && location.pathname !== '/signup' && location.pathname !== '/health') {
         navigate('/signup');
+        setLoading(false);
       } else if (authenticated) {
         try {
-          if (!initialDataLoadedRef.current) {
-            await loadInitialData();
-          }
+          await loadInitialData();
         } catch (error) {
           logger.error('Failed to load initial data', error);
           logout();
           navigate('/signup');
+          setLoading(false);
         }
+      } else {
+        // On /signup or /health without auth
+        setLoading(false);
       }
-      setLoading(false);
     };
     checkAuth();
   }, [navigate, location.pathname, checkAuthStatus, loadUserSessionInfo]);

@@ -131,7 +131,7 @@ const ActionExecutionMessage: React.FC<ActionExecutionMessageProps> = ({
                 onClick={handleExpand}
                 className="p-1 rounded-full hover:bg-gray-200"
               >
-                <IconComponent className="w-4 h-4 flex-shrink-0" />
+                <IconComponent className="w-4 h-4 shrink-0" />
               </button>
               <span className="font-medium text-sm">{actionTitle}</span>
             </div>
@@ -142,7 +142,7 @@ const ActionExecutionMessage: React.FC<ActionExecutionMessageProps> = ({
                 className="p-1 rounded-full hover:bg-gray-200"
                 title="Reload"
               >
-                <LucideIcons.RefreshCw className="w-4 h-4 flex-shrink-0" />
+                <LucideIcons.RefreshCw className="w-4 h-4 shrink-0" />
               </button>
             </div>
           </div>

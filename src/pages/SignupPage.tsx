@@ -14,7 +14,7 @@ const SignupPage: React.FC = () => {
           className="font-bold"
         />
       </div>
-      <div className="flex-grow flex flex-col items-center justify-center">
+      <div className="grow flex flex-col items-center justify-center">
         <div className="flex flex-col items-center justify-center">
           <img
             src="assets/sb-welcome.png"

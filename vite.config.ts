@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import fs from 'fs';
+import tailwindcss from '@tailwindcss/vite';
 import path from 'path';
 
 export default defineConfig(({ command }) => {
@@ -25,6 +25,7 @@ export default defineConfig(({ command }) => {
     },
     plugins: [
       react(),
+      tailwindcss(),
       // SPA fallback middleware for dev server
       {
         name: 'spa-fallback',

@@ -95,7 +95,7 @@ const AssistantMessage: React.FC<AssistantMessageProps> = ({ text, assistantName
     }
 
     // Otherwise, process parts for mixed content (text and raw URLs) using matchAll
-    const contentElements: JSX.Element[] = [];
+    const contentElements: React.ReactElement[] = [];
     let lastIndex = 0;
 
     // Ensure the regex is global for matchAll, imageUrlRegex is already defined with /gi

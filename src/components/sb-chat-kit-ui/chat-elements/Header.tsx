@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { CircleFadingPlus, Monitor, Settings, Copy, Code2 } from 'lucide-react';
 import { Avatar, AvatarStyles, getAvatarUrl } from '../../Avatar';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router';
 import { useSessionStore } from '../../../store/useSessionStore';
 import { useAssistantStore } from '../../../store/useAssistantStore';
 import { emitter } from '../../../services/mittEmitter';
@@ -145,7 +145,7 @@ const Header: React.FC<HeaderProps> = ({
               {/* Row 1: Name + Actions */}
               <div className="flex items-center justify-between mb-2">
                 <h2 className="font-semibold text-base tracking-tight truncate">{title}</h2>
-                <div className="flex items-center space-x-1 rtl:space-x-reverse flex-shrink-0 ml-2">
+                <div className="flex items-center space-x-1 rtl:space-x-reverse shrink-0 ml-2">
                   <button
                     onClick={handleCopyAssistantId}
                     className="p-1 rounded-full transition-colors hover:bg-gray-100"
@@ -263,7 +263,7 @@ const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Right: Action Buttons */}
-        <div className="flex items-center space-x-1 rtl:space-x-reverse flex-shrink-0">
+        <div className="flex items-center space-x-1 rtl:space-x-reverse shrink-0">
           <button
             onClick={handleCopyAssistantId}
             className="p-1 rounded-full transition-colors hover:bg-gray-100"

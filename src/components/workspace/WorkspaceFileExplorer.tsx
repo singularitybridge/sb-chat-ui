@@ -294,13 +294,13 @@ export const WorkspaceFileExplorer: React.FC<WorkspaceFileExplorerProps> = ({
             style={{ paddingLeft: `${level * 16 + 12}px` }}
           >
             <div className={`
-              flex-shrink-0
+              shrink-0
               ${isSelected ? 'text-blue-600' : 'text-gray-400'}
             `}>
               {getFileIcon(item.extension)}
             </div>
             <span className="flex-1 text-sm truncate">{item.name}</span>
-            <span className="text-xs text-gray-400 flex-shrink-0">{formatDate(item.updatedAt)}</span>
+            <span className="text-xs text-gray-400 shrink-0">{formatDate(item.updatedAt)}</span>
           </button>
         )}
       </div>
@@ -344,7 +344,7 @@ export const WorkspaceFileExplorer: React.FC<WorkspaceFileExplorerProps> = ({
             placeholder="Search files..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50"
+            className="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50"
           />
         </div>
 

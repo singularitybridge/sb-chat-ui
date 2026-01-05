@@ -1,6 +1,6 @@
 // file_path: src/pages/admin/EditTeamPage.tsx
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router';
 import { useTeamStore } from '../../store/useTeamStore';
 import { useAssistantStore } from '../../store/useAssistantStore';
 import { useAuthStore } from '../../store/useAuthStore';
@@ -183,7 +183,7 @@ const EditTeamPage: React.FC = () => {
         <TextComponent text={t('EditTeamPage.teamAssistants') || 'Team Assistants'} size="subtitle" />
         
         <div className="mt-4 flex items-end space-x-4">
-          <div className="flex-grow">
+          <div className="grow">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               {t('EditTeamPage.addAssistant') || 'Add Assistant'}
             </label>

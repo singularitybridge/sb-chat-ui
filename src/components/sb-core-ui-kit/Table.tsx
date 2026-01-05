@@ -7,7 +7,7 @@ interface TableProps {
   Page: string;
   data: { [key: string]: any }[];
   onRowClick?: (row: any) => void;
-  Actions?: (row: any) => JSX.Element;
+  Actions?: (row: any) => React.ReactNode;
 }
 
 const Table: React.FC<TableProps> = ({

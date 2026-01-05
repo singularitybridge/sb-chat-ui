@@ -65,7 +65,7 @@ export const MDXCallout: React.FC<CalloutProps> = ({
         className
       )}
     >
-      <Icon className={cn('h-5 w-5 mt-0.5 flex-shrink-0', config.iconClassName)} aria-hidden="true" />
+      <Icon className={cn('h-5 w-5 mt-0.5 shrink-0', config.iconClassName)} aria-hidden="true" />
       <div className="flex-1 min-w-0">
         {title && (
           <div className={cn('font-semibold mb-1', config.titleClassName)}>

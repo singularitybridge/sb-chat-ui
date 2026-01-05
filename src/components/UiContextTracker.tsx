@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router';
 import { useUiContextStore } from '../store/useUiContextStore';
 import { useSessionStore } from '../store/useSessionStore';
 import { logger } from '../services/LoggingService';

@@ -133,7 +133,7 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
             compact={compact}
           />
 
-          <div className="flex-grow overflow-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-300">
+          <div className="grow overflow-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-300">
             {messages.map((message, index) => { // index is still used for disabledMessages logic
               const key = message.id; // Use message.id for React key
 

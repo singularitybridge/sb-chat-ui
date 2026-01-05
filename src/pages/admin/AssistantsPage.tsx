@@ -17,7 +17,7 @@ import {
 } from '../../utils/eventNames';
 import { ChatContainer } from '../../components/chat-container/ChatContainer';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import { Avatar, AvatarStyles, getAvatarUrl } from '../../components/Avatar';
 import IntegrationIcons from '../../components/IntegrationIcons';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -186,7 +186,7 @@ const AssistantsPage: React.FC = () => {
             </div>
           </div>
 
-          <ul className="space-y-6 flex-grow overflow-y-auto">
+          <ul className="space-y-6 grow overflow-y-auto">
             {isLoading ? (
               <div className="text-center py-8 text-gray-500">
                 <p>{t('common.pleaseWait')}</p>
@@ -213,14 +213,14 @@ const AssistantsPage: React.FC = () => {
                 >
                   <div className="flex flex-col space-y-2.5">
                     <div className="flex items-start space-x-4 rtl:space-x-reverse">
-                      <div className="flex-shrink-0">
+                      <div className="shrink-0">
                         <Avatar
                           imageUrl={getAvatarUrl(assistant.avatarImage)}
                           avatarStyle={AvatarStyles.avatar}
                           active={isActive}
                         />
                       </div>
-                      <div className="flex-grow min-w-0 flex flex-col space-y-2">
+                      <div className="grow min-w-0 flex flex-col space-y-2">
                         <div className="flex justify-between items-center">
                           <h4 className="font-bold text-base truncate text-right rtl:text-left">
                             {assistant.name}
@@ -293,7 +293,7 @@ const AssistantsPage: React.FC = () => {
             )}
           </ul>
         </div>
-        <div className="flex-grow min-w-0">
+        <div className="grow min-w-0">
           <ChatContainer />
         </div>
       </div>

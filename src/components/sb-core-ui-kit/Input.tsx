@@ -67,7 +67,7 @@ const Input: React.FC<InputProps> = ({
           disabled={disabled}
           onKeyDown={onKeyDown}
           className={clsx(
-            'w-full rtl:text-right lrt:text-left text-base font-normal leading-[140%] tracking-[0.56px] focus:outline-none bg-transparent',
+            'w-full rtl:text-right lrt:text-left text-base font-normal leading-[140%] tracking-[0.56px] focus:outline-hidden bg-transparent',
             {
               'text-gray-800': value && !disabled,
               'text-gray-400 placeholder-gray-400': !value || disabled,

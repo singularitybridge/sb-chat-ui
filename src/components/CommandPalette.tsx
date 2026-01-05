@@ -87,14 +87,14 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                 onSelect={() => handleSelect(assistant)}
                 className="flex items-center gap-3 py-3"
               >
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <Avatar
                     imageUrl={getAvatarUrl(assistant.avatarImage)}
                     avatarStyle={AvatarStyles.avatar}
                     active={false}
                   />
                 </div>
-                <div className="flex-grow min-w-0">
+                <div className="grow min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="font-medium text-sm truncate">
                       {assistant.name}
@@ -114,7 +114,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                     </div>
                   )}
                 </div>
-                <CornerDownLeft className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                <CornerDownLeft className="w-4 h-4 text-gray-400 shrink-0" />
               </CommandItem>
             );
           })}

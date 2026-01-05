@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router';
 import { useAssistantStore } from '../../store/useAssistantStore';
 import { IAssistant } from '../../types/entities';
 import {
@@ -230,7 +230,7 @@ const EditAssistantPage: React.FC = () => {
                 size="subtitle"
                 className="mb-2"
               />
-              <ul className="bg-white rounded-lg shadow p-4">
+              <ul className="bg-white rounded-lg shadow-sm p-4">
                 {uploadedFiles.map((file) => (
                   <li
                     key={file.fileId}

@@ -7,7 +7,7 @@ import {
   BookOpenIcon,
 } from '@heroicons/react/24/solid';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 interface SideMenuProps {
   isOpen: boolean;
@@ -51,7 +51,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, closeMenu }) => {
         <img
           src="/vite.svg" // Placeholder image, as original was commented out
           alt="Logo"
-          className="w-[6rem] object-contain h-auto" // Adjusted size
+          className="w-24 object-contain h-auto" // Adjusted size
         />
         <button onClick={closeMenu} className="p-1 rounded-full hover:bg-slate-200 w-10 h-10 flex items-center justify-center">
           <XMarkIcon className="h-6 w-6 text-slate-500" />

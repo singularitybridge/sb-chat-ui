@@ -221,7 +221,7 @@ const UsersAndInvitesSection: React.FC<UsersAndInvitesSectionProps> = (
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 text-sm"
               >
                 <option value="pending">Pending Only</option>
                 <option value="all">All Invites</option>
@@ -251,7 +251,7 @@ const UsersAndInvitesSection: React.FC<UsersAndInvitesSectionProps> = (
                     type="email"
                     value={inviteEmail}
                     onChange={(e) => setInviteEmail(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                     placeholder="colleague@example.com"
                     required
                   />
@@ -264,7 +264,7 @@ const UsersAndInvitesSection: React.FC<UsersAndInvitesSectionProps> = (
                     type="text"
                     value={inviteName}
                     onChange={(e) => setInviteName(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                     placeholder="John Doe"
                   />
                 </div>

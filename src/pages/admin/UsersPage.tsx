@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { useUserStore } from '../../store/useUserStore';
 import { Table } from '../../components/sb-core-ui-kit/Table';
 import { UserKeys, IUser } from '../../types/entities';

@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 
 interface UseIframeCommunicationParams {
-  iframeRef: React.RefObject<HTMLIFrameElement>;
+  iframeRef: React.RefObject<HTMLIFrameElement | null>;
   targetOrigin: string;
   onMessage: (message: any) => void;
 }

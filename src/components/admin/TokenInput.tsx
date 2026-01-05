@@ -47,7 +47,7 @@ const TokenInput: React.FC<TokenInputProps> = ({
         <button
           type="button"
           onClick={toggleVisibility}
-          className="p-2 text-neutral-500 hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary rounded"
+          className="p-2 text-neutral-500 hover:text-primary focus:outline-hidden focus:ring-2 focus:ring-primary rounded"
         >
           {inputType === 'password' ? (
             <EyeOff className="w-4 h-4" />
@@ -59,7 +59,7 @@ const TokenInput: React.FC<TokenInputProps> = ({
           <button
             type="button"
             onClick={onRefresh}
-            className="p-2 text-neutral-500 hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary rounded"
+            className="p-2 text-neutral-500 hover:text-primary focus:outline-hidden focus:ring-2 focus:ring-primary rounded"
           >
             <RefreshCcw className="w-4 h-4" />
           </button>

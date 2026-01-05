@@ -101,7 +101,7 @@ const FileMessage: React.FC<FileMessageProps> = ({
             <div className="flex flex-col space-y-2"> {/* Reduced space-y */}
               {/* File Name and Info Row */}
               <div className="flex items-center justify-between">
-                <div className="flex-grow space-y-0.5">
+                <div className="grow space-y-0.5">
                   <p className={`text-sm font-medium break-all ${isUser ? 'text-gray-800' : 'text-gray-800'}`}>
                     {fileMetadata.fileName}
                   </p>
@@ -122,7 +122,7 @@ const FileMessage: React.FC<FileMessageProps> = ({
                   onClick={handleDownload}
                   title={`Download ${fileTypeLabel}`}
                   className={`
-                    p-1.5 rounded-md transition-colors ml-2 flex-shrink-0
+                    p-1.5 rounded-md transition-colors ml-2 shrink-0
                     ${isUser ? 'text-gray-500 hover:bg-gray-200 hover:text-gray-700' : `${iconColor.replace('text-', 'hover:bg-').replace('-600', '-100').replace('-500', '-100')} ${iconColor.replace('text-', 'hover:text-').replace('-600', '-700').replace('-500', '-700')}`}
                   `}
                 >

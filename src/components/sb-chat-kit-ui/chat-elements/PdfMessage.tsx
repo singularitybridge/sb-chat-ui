@@ -64,7 +64,7 @@ const PdfMessage: React.FC<PdfMessageProps> = ({
             <div className="flex flex-col space-y-2"> {/* Reduced space-y */}
               {/* File Name and Info Row */}
               <div className="flex items-center justify-between">
-                <div className="flex-grow space-y-0.5">
+                <div className="grow space-y-0.5">
                   <p className={`text-sm font-medium break-all ${isUser ? 'text-gray-800' : 'text-gray-800'}`}>
                     {fileMetadata.fileName}
                   </p>
@@ -81,7 +81,7 @@ const PdfMessage: React.FC<PdfMessageProps> = ({
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center space-x-1 ml-2 flex-shrink-0">
+                <div className="flex items-center space-x-1 ml-2 shrink-0">
                   <button
                     onClick={handleViewPdf}
                     title="Open PDF in new tab"

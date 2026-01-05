@@ -2,7 +2,7 @@ import { NotFound } from './pages/NotFound';
 import HealthCheckPage from './pages/HealthCheckPage';
 import { Admin } from './pages/Admin';
 import React from 'react';
-import { Navigate, createBrowserRouter } from 'react-router-dom';
+import { Navigate, createBrowserRouter } from 'react-router';
 import App from './App';
 import { AssistantsPage } from './pages/admin/AssistantsPage';
 import { EditAssistantPage } from './pages/admin/EditAssistantPage';
@@ -28,10 +28,11 @@ import EmbedWorkspacePage from './pages/embed/EmbedWorkspacePage'; // Added impo
 import { EmbedAuthProvider } from './contexts/EmbedAuthContext'; // Added import for EmbedAuthProvider
 import ScreenShareWorkspace from './pages/ScreenShareWorkspace';
 
-export const browserRouter = createBrowserRouter([
-  {
-    element: <App />,
-    children: [
+export const browserRouter = createBrowserRouter(
+  [
+    {
+      element: <App />,
+      children: [
       {
         path: '/health',
         element: <HealthCheckPage />,

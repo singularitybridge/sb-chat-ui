@@ -55,7 +55,7 @@ const VerifiedInputWithLabel: React.FC<VerifiedInputWithLabelProps> = ({
 
   return (
     <div className="mb-2 flex w-full">
-      <div className="flex-grow">
+      <div className="grow">
         <InputWithLabel
           id={id}
           label={label}

@@ -1,8 +1,8 @@
 import React from 'react';
 
 interface LabelTextProps {
-  label: JSX.Element;
-  text: string | number | JSX.Element;
+  label: React.ReactNode;
+  text: string | number | React.ReactNode;
   labelVerticalAlign?: 'top' | 'center';
   layout?: 'horizontal' | 'vertical';
 }

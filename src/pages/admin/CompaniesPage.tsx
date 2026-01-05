@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { useCompanyStore } from '../../store/useCompanyStore';
 import { useAssistantStore } from '../../store/useAssistantStore';
 import { useInboxStore } from '../../store/useInboxStore';

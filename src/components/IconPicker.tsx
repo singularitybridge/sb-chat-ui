@@ -50,7 +50,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({ value, onChange }) => {
           placeholder="Search icons..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-3 pr-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full pl-3 pr-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
         />
       </div>
 

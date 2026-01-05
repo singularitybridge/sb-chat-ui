@@ -109,7 +109,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
           disabled={disabled}
           rows={autogrow ? 1 : rows}
           className={clsx(
-            'w-full text-base font-normal leading-[140%] tracking-[0.56px] focus:outline-none bg-transparent',
+            'w-full text-base font-normal leading-[140%] tracking-[0.56px] focus:outline-hidden bg-transparent',
             {
               'resize-none': autogrow,
               'resize-vertical': !autogrow,

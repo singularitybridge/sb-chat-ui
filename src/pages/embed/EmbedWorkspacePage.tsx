@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router';
 import { useEmbedAuth } from '../../contexts/EmbedAuthContext';
 import { setGlobalEmbedApiKey } from '../../services/AxiosService';
 import { MarkdownRenderer } from '../../components/workspace/MarkdownRenderer';
@@ -319,7 +319,7 @@ const EmbedWorkspacePage: React.FC = () => {
       <div className="flex items-center justify-center min-h-screen bg-gray-50 p-6">
         <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-6">
           <div className="flex items-start gap-3">
-            <AlertCircle className="h-6 w-6 text-red-500 flex-shrink-0 mt-0.5" />
+            <AlertCircle className="h-6 w-6 text-red-500 shrink-0 mt-0.5" />
             <div>
               <h2 className="text-lg font-semibold text-gray-900 mb-2">Failed to Load File</h2>
               <p className="text-sm text-gray-600 mb-4">{error}</p>

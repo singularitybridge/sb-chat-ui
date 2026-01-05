@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { BookText, Search, Filter, Loader2, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
-// import { useNavigate } from 'react-router-dom'; // Not used currently
+// import { useNavigate } from 'react-router'; // Not used currently
 // import { motion, AnimatePresence } from 'framer-motion'; // Not used currently
 
 import { useMemoryStore } from '../../store/useMemoryStore';
@@ -128,7 +128,7 @@ const MemoryPage: React.FC = () => {
               value={localSearchTerm}
               onChange={handleLocalSearchChange}
               placeholder={t('MemoryPage.searchPlaceholder') || 'Search entries...'} 
-              // className="flex-grow" // SearchInput already has w-full
+              // className="grow" // SearchInput already has w-full
             />
             <div className="flex items-center space-x-2">
               <Filter className="w-5 h-5 text-gray-500" />
@@ -143,7 +143,7 @@ const MemoryPage: React.FC = () => {
               <TextComponent text={t('MemoryPage.loading') || 'Loading entries...'} size="normal" className="mt-4" />
             </div>
           ) : (
-            <ul className="space-y-4 flex-grow overflow-y-auto pr-2 rtl:pl-2 rtl:pr-0 pb-6">
+            <ul className="space-y-4 grow overflow-y-auto pr-2 rtl:pl-2 rtl:pr-0 pb-6">
               {entries.map((item: IJournalEntry) => {
                 return (
                   <li
@@ -155,12 +155,12 @@ const MemoryPage: React.FC = () => {
                   >
                     <div className="flex flex-col space-y-2">
                       <div className="flex items-start space-x-3 rtl:space-x-reverse">
-                        <div className="flex-shrink-0 mt-1">
+                        <div className="shrink-0 mt-1">
                           <div className="w-10 h-10 flex items-center justify-center bg-slate-100 rounded-full">
                              <BookText className="w-5 h-5 text-slate-600" />
                           </div>
                         </div>
-                        <div className="flex-grow min-w-0 flex flex-col">
+                        <div className="grow min-w-0 flex flex-col">
                           <div className="flex justify-between items-start">
                             <h4 className="font-semibold text-md text-slate-800 truncate">
                               {/* Displaying content snippet as title if no specific title field */}
