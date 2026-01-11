@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { useAuthStore } from '../../store/useAuthStore';
 import { Building2, UserRound } from 'lucide-react';
 import { useTranslation } from 'react-i18next';

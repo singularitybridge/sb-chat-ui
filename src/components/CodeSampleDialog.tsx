@@ -711,7 +711,7 @@ done`;
               value={testInput}
               onChange={(e) => setTestInput(e.target.value)}
               placeholder="Enter test message..."
-              className="flex-1 px-3 py-1.5 text-sm border border-gray-200 rounded-md focus:outline-none focus:border-purple-400"
+              className="flex-1 px-3 py-1.5 text-sm border border-gray-200 rounded-md focus:outline-hidden focus:border-purple-400"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !isTesting) {
                   handleTest();

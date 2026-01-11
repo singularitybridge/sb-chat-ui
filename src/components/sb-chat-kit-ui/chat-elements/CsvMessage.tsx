@@ -107,7 +107,7 @@ const CsvMessage: React.FC<CsvMessageProps> = ({
             <div className="flex flex-col space-y-2">
               {/* File Name and Info Row */}
               <div className="flex items-center justify-between">
-                <div className="flex-grow space-y-0.5">
+                <div className="grow space-y-0.5">
                   <p className={`text-sm font-medium break-all ${
                     isUser ? 'text-gray-800' : 'text-gray-800' 
                   }`}>
@@ -137,7 +137,7 @@ const CsvMessage: React.FC<CsvMessageProps> = ({
                   onClick={handleDownload}
                   title="Download CSV"
                   className={`
-                    p-1.5 rounded-md transition-colors ml-2 flex-shrink-0
+                    p-1.5 rounded-md transition-colors ml-2 shrink-0
                     ${isUser
                       ? 'text-gray-500 hover:bg-gray-200 hover:text-gray-700' 
                       : 'text-green-500 hover:bg-green-100 hover:text-green-700'

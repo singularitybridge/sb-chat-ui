@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { useOnboardingStore, OnboardingStatus } from '../../store/useOnboardingStore';
 import WizardProgress from '../../components/WizardProgress';
 import OnboardingStep1 from '../../components/OnboardingStep1';

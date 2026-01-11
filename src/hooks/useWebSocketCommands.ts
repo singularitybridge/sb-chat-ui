@@ -5,7 +5,7 @@
  */
 
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
 import { websocketService } from '../services/websocket';
 import { useUiContextStore } from '../store/useUiContextStore';

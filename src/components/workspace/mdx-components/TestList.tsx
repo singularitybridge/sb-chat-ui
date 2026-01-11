@@ -68,14 +68,14 @@ export const TestList: React.FC<TestListProps> = ({
         >
           <div className="flex items-start gap-4">
             {/* Radio button / Circle indicator */}
-            <div className="flex-shrink-0 mt-1">
+            <div className="shrink-0 mt-1">
               <div className="w-5 h-5 rounded-full border-2 border-gray-300"></div>
             </div>
 
             {/* Test content */}
-            <div className="flex-grow min-w-0">
+            <div className="grow min-w-0">
               <div className="flex items-start justify-between gap-4">
-                <div className="flex-grow min-w-0">
+                <div className="grow min-w-0">
                   <h3 className="text-base font-semibold text-gray-900 mb-1">
                     {test.title}
                   </h3>
@@ -92,7 +92,7 @@ export const TestList: React.FC<TestListProps> = ({
                 </div>
 
                 {/* Status badge */}
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <span
                     className={`inline-block px-3 py-1 rounded-md text-xs font-medium ${getStatusBadge(
                       test.status

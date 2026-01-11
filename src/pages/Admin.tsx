@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { ContentContainer } from '../components/ContentContainer';
 import { Menu } from '../components/admin/Menu';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router';
 import { useAuthStore } from '../store/useAuthStore';
 import { useOnboardingStore } from '../store/useOnboardingStore';
 import DynamicBackground, { setDynamicBackground } from '../components/DynamicBackground';
@@ -47,7 +47,7 @@ const Admin: React.FC = () => {
           </div>
         ) : (
           // Regular admin pages use ContentContainer with padding and scroll
-          <ContentContainer className="px-14 py-10 flex-grow overflow-hidden">
+          <ContentContainer className="px-14 py-10 grow overflow-hidden">
             <Outlet />
           </ContentContainer>
         )}

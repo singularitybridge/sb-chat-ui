@@ -67,7 +67,7 @@ const EditAssistantActionsDialog: React.FC<EditAssistantActionsDialogProps> = (
 
   return (
     <div className="p-4 h-[80vh] flex flex-col">
-      <div className="flex-grow overflow-hidden">
+      <div className="grow overflow-hidden">
         <ActionsGallery
           selectedActions={selectedActions}
           availableActions={availableActions}

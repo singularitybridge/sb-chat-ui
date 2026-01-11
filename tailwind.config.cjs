@@ -3,7 +3,6 @@ module.exports = {
   content: [
     './index.html',
     './src/**/*.{js,ts,jsx,tsx,html}',
-    './node_modules/tw-elements-react/dist/js/**/*.js'
   ],
   theme: {
   	extend: {
@@ -85,11 +84,11 @@ module.exports = {
   	}
   },
   plugins: [
-    require('tw-elements-react/dist/plugin.cjs'),
-    require('tailwind-scrollbar'),
+    // tw-elements-react plugin removed - incompatible with v4
+    // tailwind-scrollbar - will add v4 version later
     require('@tailwindcss/typography'),
-    require('tailwindcss-rtl'),
-      require("tailwindcss-animate")
+    // tailwindcss-rtl removed - v4 has built-in RTL support
+    // tailwindcss-animate removed - will use tw-animate-css for v4
 ],
   darkMode: ['class', 'class'],
 };

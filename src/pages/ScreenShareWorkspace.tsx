@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router';
 import { User, Laptop, Bot, RefreshCw, FileText, Trash2, PanelLeftClose, PanelLeft, Share2, FolderOpen, FolderClosed, Database, Sparkles, Monitor } from 'lucide-react';
 import { useScreenShareStore } from '../store/useScreenShareStore';
 import { useChatStore } from '../store/chatStore';
@@ -19,7 +19,7 @@ import { findDefaultEntryFile, getWorkspaceRawContent, deleteWorkspaceItem, getW
 import { MarkdownRenderer } from '../components/workspace/MarkdownRenderer';
 import { WorkspaceFileExplorer } from '../components/workspace/WorkspaceFileExplorer';
 import { JSONViewer } from '../components/workspace/JSONViewer';
-import { workspaceApiScript, workspaceReactiveApiScript } from '../utils/workspace-api';
+import { workspaceReactiveApiScript } from '../utils/workspace-api';
 import WorkspaceEmbedDialog from '../components/WorkspaceEmbedDialog';
 import { MemoryPreviewDialog } from '../components/workspace/MemoryPreviewDialog';
 import { useWorkspaceLayout } from '../hooks/useWorkspaceLayout';

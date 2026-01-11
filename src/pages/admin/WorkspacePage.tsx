@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { ChatContainer } from '../../components/chat-container/ChatContainer';
 import ArtifactEditor from '../../components/ArtifactEditor';
 
@@ -12,7 +12,7 @@ const WorkspacePage: React.FC = () => {
         <div className="flex flex-col rounded-lg max-w-sm w-full">
           <ChatContainer />
         </div>
-        <div className="flex-grow max-w-3xl w-full">
+        <div className="grow max-w-3xl w-full">
           <div className="bg-white rounded-lg h-full p-6 shadow-sm">
             <ArtifactEditor artifactId={artifactId} />
           </div>

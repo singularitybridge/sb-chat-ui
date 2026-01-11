@@ -136,7 +136,7 @@ export const WorkspaceSearch: React.FC<WorkspaceSearchProps> = ({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Ask me anything about the workspace..."
-            className="w-full pl-12 pr-4 py-4 text-lg border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors"
+            className="w-full pl-12 pr-4 py-4 text-lg border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-hidden transition-colors"
             disabled={isSearching || !isConnected}
           />
         </div>
@@ -197,7 +197,7 @@ export const WorkspaceSearch: React.FC<WorkspaceSearchProps> = ({
       {/* Error */}
       {error && (
         <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
-          <XCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
+          <XCircle className="h-5 w-5 text-red-500 mt-0.5 shrink-0" />
           <div className="flex-1">
             <p className="text-sm font-medium text-red-900">Search Error</p>
             <p className="text-xs text-red-700 mt-0.5">{error}</p>

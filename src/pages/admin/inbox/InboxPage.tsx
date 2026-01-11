@@ -61,7 +61,7 @@ const InboxPage: React.FC = () => {
           <section className="flex flex-col w-4/12 h-full overflow-y-scroll border-r-2 border-sky-100">
             <label className="px-2">
               <input
-                className="rounded-lg p-4 bg-gray-200 transition duration-200 focus:outline-none focus:ring-2 w-full"
+                className="rounded-lg p-4 bg-gray-200 transition duration-200 focus:outline-hidden focus:ring-2 w-full"
                 placeholder={t('InboxPage.placeholder')}
               />
             </label>

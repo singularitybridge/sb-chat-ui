@@ -5,9 +5,9 @@ import { logger } from '../services/LoggingService';
 
 interface AudioStoreState {
   audioState: AudioState;
-  audioRef: React.RefObject<HTMLAudioElement> | null;
+  audioRef: React.RefObject<HTMLAudioElement | null> | null;
 
-  setAudioRef: (ref: React.RefObject<HTMLAudioElement>) => void;
+  setAudioRef: (ref: React.RefObject<HTMLAudioElement | null>) => void;
   toggleAudio: () => void;
   playText: (text: string, voice: TTSVoice) => Promise<void>;
   stopAudio: () => void;

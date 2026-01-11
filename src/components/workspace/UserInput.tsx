@@ -100,7 +100,7 @@ export const UserInput: React.FC<InputComponentProps> = ({
             onChange={(e) => setInputValue(e.target.value)}
             placeholder={placeholder}
             disabled={isLoading}
-            className="w-full h-9 pl-3 pr-16 rounded-md border border-slate-200 bg-white text-sm placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-300 disabled:cursor-not-allowed disabled:opacity-50"
+            className="w-full h-9 pl-3 pr-16 rounded-md border border-slate-200 bg-white text-sm placeholder:text-slate-400 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-slate-300 disabled:cursor-not-allowed disabled:opacity-50"
           />
 
           {/* Inline buttons */}

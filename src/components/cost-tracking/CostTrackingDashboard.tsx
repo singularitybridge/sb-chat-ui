@@ -149,7 +149,7 @@ export const CostTrackingDashboard: React.FC<CostTrackingDashboardProps> = ({ cl
               type="date"
               value={dateRange.start || ''}
               onChange={(e) => handleDateRangeChange('start', e.target.value)}
-              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-primary-500"
               placeholder="Start date"
             />
             <span className="text-gray-500">to</span>
@@ -157,7 +157,7 @@ export const CostTrackingDashboard: React.FC<CostTrackingDashboardProps> = ({ cl
               type="date"
               value={dateRange.end || ''}
               onChange={(e) => handleDateRangeChange('end', e.target.value)}
-              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-primary-500"
               placeholder="End date"
             />
           </div>

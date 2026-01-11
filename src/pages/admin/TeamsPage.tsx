@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { IconButton } from '../../components/admin/IconButton';
 import { emitter } from '../../services/mittEmitter';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   AlertDialog,
@@ -79,7 +79,7 @@ const TeamsPage: React.FC = () => {
             />
           </div>
 
-          <ul className="space-y-6 flex-grow overflow-y-auto pr-4 rtl:pl-4 rtl:pr-0">
+          <ul className="space-y-6 grow overflow-y-auto pr-4 rtl:pl-4 rtl:pr-0">
             {teams.map((team) => {
               return (
                 <li
@@ -91,7 +91,7 @@ const TeamsPage: React.FC = () => {
                 >
                   <div className="flex flex-col space-y-2.5">
                     <div className="flex items-start space-x-4 rtl:space-x-reverse">
-                      <div className="flex-shrink-0">
+                      <div className="shrink-0">
                         {team.icon && (
                           <div className="w-12 h-12 flex items-center justify-center bg-gray-200 rounded-full">
                             {(() => {
@@ -130,7 +130,7 @@ const TeamsPage: React.FC = () => {
                           </div>
                         )}
                       </div>
-                      <div className="flex-grow min-w-0 flex flex-col space-y-2">
+                      <div className="grow min-w-0 flex flex-col space-y-2">
                         <div className="flex justify-between items-center">
                           <h4 className="font-bold text-base truncate text-right rtl:text-left">
                             {team.name}

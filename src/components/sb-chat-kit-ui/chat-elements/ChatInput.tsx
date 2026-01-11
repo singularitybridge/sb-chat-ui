@@ -465,7 +465,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
         <div className="flex flex-row bg-neutral-200 items-end rtl:space-x-reverse w-full space-x-2 rounded-2xl px-3 py-2">
           <textarea
             ref={textareaRef}
-            className="flex-grow px-2 min-h-6 bg-neutral-200 resize-y max-h-40 overflow-auto border-none focus:ring-0 text-sm text-gray-800 placeholder-gray-500 focus:outline-none"
+            className="grow px-2 min-h-6 bg-neutral-200 resize-y max-h-40 overflow-auto border-none focus:ring-0 text-sm text-gray-800 placeholder-gray-500 focus:outline-hidden"
             placeholder={
               selectedFiles.length > 0 
                 ? t('ChatContainer.input.withFiles', 'Add a caption (optional)...') 

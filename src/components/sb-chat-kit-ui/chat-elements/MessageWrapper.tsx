@@ -17,7 +17,7 @@ const MessageWrapper: React.FC<MessageWrapperProps> = ({ icon, bgColor, borderCo
           {icon}
         </div>
       </span>
-      <div className="leading-relaxed flex-grow">
+      <div className="leading-relaxed grow">
         <div className="flex justify-between items-center">
           <span className="font-bold text-gray-800">{role}</span>
           {dateText && <span className="text-xs text-gray-400">{dateText}</span>}

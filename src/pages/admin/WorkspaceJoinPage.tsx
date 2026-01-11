@@ -27,7 +27,7 @@ const StartButton: React.FC = () => (
 
 const ProcessStep: React.FC<{ number: number; title: string; description: string }> = ({ number, title, description }) => (
   <div dir="rtl" className='flex items-start gap-2'>
-    <div className='bg-blue-100 text-blue-600 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1'>
+    <div className='bg-blue-100 text-blue-600 w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-1'>
       {number}
     </div>
     <div className='flex-1'>

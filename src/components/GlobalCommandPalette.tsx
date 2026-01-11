@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useCommandPalette } from '../contexts/CommandPaletteContext';
 import { useUnifiedSearch } from '../hooks/useUnifiedSearch';
@@ -124,14 +124,14 @@ export const GlobalCommandPalette: React.FC = () => {
                     onSelect={() => handleSelectAssistant(assistant)}
                     className="flex items-center gap-3 py-3"
                   >
-                    <div className="flex-shrink-0">
+                    <div className="shrink-0">
                       <Avatar
                         imageUrl={getAvatarUrl(assistant.avatarImage)}
                         avatarStyle={AvatarStyles.avatar}
                         active={false}
                       />
                     </div>
-                    <div className="flex-grow min-w-0">
+                    <div className="grow min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="font-semibold text-sm text-gray-900 truncate">
                           {assistant.name}
@@ -151,7 +151,7 @@ export const GlobalCommandPalette: React.FC = () => {
                         </div>
                       )}
                     </div>
-                    <CornerDownLeft className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                    <CornerDownLeft className="w-4 h-4 text-gray-400 shrink-0" />
                   </CommandItem>
                 );
               })}
@@ -172,8 +172,8 @@ export const GlobalCommandPalette: React.FC = () => {
                     onSelect={() => handleSelectTeam(team)}
                     className="flex items-center gap-3 py-3"
                   >
-                    <Layers className="w-4 h-4 text-blue-600 flex-shrink-0" />
-                    <div className="flex-grow min-w-0">
+                    <Layers className="w-4 h-4 text-blue-600 shrink-0" />
+                    <div className="grow min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="font-semibold text-sm text-gray-900 truncate">
                           {team.name}
@@ -183,7 +183,7 @@ export const GlobalCommandPalette: React.FC = () => {
                         {team.description}
                       </p>
                     </div>
-                    <CornerDownLeft className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                    <CornerDownLeft className="w-4 h-4 text-gray-400 shrink-0" />
                   </CommandItem>
                 );
               })}
@@ -211,8 +211,8 @@ export const GlobalCommandPalette: React.FC = () => {
                   onSelect={() => handleSelectWorkspace(item)}
                   className="flex items-center gap-3 py-3"
                 >
-                  <FileText className="w-4 h-4 text-green-600 flex-shrink-0" />
-                  <div className="flex-grow min-w-0">
+                  <FileText className="w-4 h-4 text-green-600 shrink-0" />
+                  <div className="grow min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="font-semibold text-sm text-gray-950 truncate">
                         {getWorkspaceItemTitle(item)}
@@ -222,7 +222,7 @@ export const GlobalCommandPalette: React.FC = () => {
                       {getWorkspaceItemDescription(item)}
                     </p>
                   </div>
-                  <CornerDownLeft className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                  <CornerDownLeft className="w-4 h-4 text-gray-400 shrink-0" />
                 </CommandItem>
               );
             })}

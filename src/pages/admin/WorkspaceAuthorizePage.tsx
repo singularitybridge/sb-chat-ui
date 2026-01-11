@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '../../components/ui/card';
 import Button from '../../components/sb-core-ui-kit/Button';
 import { Alert, AlertDescription } from '../../components/ui/alert';
@@ -41,7 +41,7 @@ const WorkspaceAuthorizePage: React.FC = () => {
         <div className="flex flex-col rounded-lg max-w-sm w-full">
           <ChatContainer />
         </div>
-        <div className="flex-grow max-w-3xl w-full">
+        <div className="grow max-w-3xl w-full">
           <div className="bg-white rounded-lg h-full p-6 shadow-sm" dir="rtl">
             <Card className="max-w-xl w-full mx-auto border-0 shadow-none">
               <CardHeader className="text-center border-b pb-6">
@@ -76,15 +76,15 @@ const WorkspaceAuthorizePage: React.FC = () => {
                   <h3 className="font-semibold mb-3">היישום יקבל גישה ל:</h3>
                   <ul className="space-y-2 text-gray-600">
                     <li className="flex items-start gap-2">
-                      <div className="w-5 h-5 flex-shrink-0">•</div>
+                      <div className="w-5 h-5 shrink-0">•</div>
                       <span>צפייה במידע הבסיסי של החשבון שלך</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <div className="w-5 h-5 flex-shrink-0">•</div>
+                      <div className="w-5 h-5 shrink-0">•</div>
                       <span>שליחה וקבלה של הודעות בשמך</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <div className="w-5 h-5 flex-shrink-0">•</div>
+                      <div className="w-5 h-5 shrink-0">•</div>
                       <span>ביצוע פעולות מותרות בהתאם להרשאות החשבון שלך</span>
                     </li>
                   </ul>
