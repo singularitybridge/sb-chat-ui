@@ -131,6 +131,14 @@ export const companyFieldConfigs: FieldConfig[] = [
         key: 'nylas_grant_id',
         value: '-',
       },
+      {
+        key: 'roomboss_username',
+        value: '-',
+      },
+      {
+        key: 'roomboss_password',
+        value: '-',
+      },
     ],
     visibility: { create: true, view: true, update: true },
   },
