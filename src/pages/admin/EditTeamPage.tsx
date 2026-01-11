@@ -47,13 +47,13 @@ const EditTeamPage: React.FC = () => {
 
         // Get assistants for this team
         const assistantsInTeam = assistants.filter(assistant =>
-          assistant.teams.includes(key)
+          assistant.teams?.includes(key)
         );
         setTeamAssistants(assistantsInTeam);
 
         // Get available assistants (those not in the team)
         const availableAssts = assistants.filter(assistant =>
-          !assistant.teams.includes(key)
+          !assistant.teams?.includes(key)
         );
         setAvailableAssistants(availableAssts);
       }
