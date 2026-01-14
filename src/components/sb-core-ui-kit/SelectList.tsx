@@ -88,10 +88,10 @@ export const SelectList: React.FC<SelectListProps> = ({
       <div className="flex flex-col w-full" ref={selectRef}>
         <div
           className={clsx(
-            'relative flex py-3 px-5 justify-between items-center gap-2 self-stretch bg-white rounded-lg transition-all duration-200',
+            'relative flex py-3 px-5 justify-between items-center gap-2 self-stretch bg-background rounded-lg transition-all duration-200',
             {
-              'border border-gray-400': isFocused,
-              'border border-gray-300': !isFocused,
+              'border border-ring': isFocused,
+              'border border-input': !isFocused,
               'opacity-50': disabled,
             },
             className
@@ -102,8 +102,8 @@ export const SelectList: React.FC<SelectListProps> = ({
             className={clsx(
               'w-full text-base font-normal leading-[140%] tracking-[0.56px] cursor-pointer',
               {
-                'text-gray-800': selectedValue && !disabled,
-                'text-gray-400': !selectedValue || disabled,
+                'text-foreground': selectedValue && !disabled,
+                'text-muted-foreground': !selectedValue || disabled,
               }
             )}
           >
@@ -111,23 +111,23 @@ export const SelectList: React.FC<SelectListProps> = ({
           </div>
           <ChevronDownIcon
             className={clsx(
-              'w-5 h-5 text-gray-400 transition-transform duration-200 cursor-pointer',
+              'w-5 h-5 text-muted-foreground transition-transform duration-200 cursor-pointer',
               {
                 'transform rotate-180': isOpen,
               }
             )}
           />
           {isOpen && options.length > 0 && (
-            <div className="absolute left-0 right-0 z-10 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg top-full">
+            <div className="absolute left-0 right-0 z-10 mt-1 bg-popover border border-border rounded-lg shadow-lg top-full">
               {options.map((option) => (
                 <div
                   key={option.value}
-                  className="p-3 hover:bg-gray-100 cursor-pointer text-base"
+                  className="p-3 hover:bg-accent cursor-pointer text-base"
                   onClick={() => handleSelect(option.value)}
                 >
-                  <div className="text-gray-800">{option.label}</div>
+                  <div className="text-foreground">{option.label}</div>
                   {option.description && (
-                    <div className="text-sm text-gray-500">{option.description}</div>
+                    <div className="text-sm text-muted-foreground">{option.description}</div>
                   )}
                 </div>
               ))}

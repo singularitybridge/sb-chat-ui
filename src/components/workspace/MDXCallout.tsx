@@ -42,9 +42,9 @@ const calloutConfig = {
   },
   note: {
     icon: Zap,
-    className: 'border-gray-200 bg-gray-50/50 dark:border-gray-700 dark:bg-gray-800/30',
-    iconClassName: 'text-gray-600 dark:text-gray-400',
-    titleClassName: 'text-gray-900 dark:text-gray-200',
+    className: 'border-border bg-secondary/50 dark:border-border dark:bg-secondary/30',
+    iconClassName: 'text-muted-foreground dark:text-muted-foreground',
+    titleClassName: 'text-foreground dark:text-foreground',
   },
 };
 
@@ -72,7 +72,7 @@ export const MDXCallout: React.FC<CalloutProps> = ({
             {title}
           </div>
         )}
-        <div className="text-sm leading-relaxed text-gray-700 dark:text-gray-300">
+        <div className="text-sm leading-relaxed text-foreground/80 dark:text-foreground/80">
           {children}
         </div>
       </div>

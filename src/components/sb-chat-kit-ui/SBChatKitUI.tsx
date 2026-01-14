@@ -273,8 +273,8 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
               }
             })}
             {isLoading && (
-              <div className="flex justify-center items-center my-4">
-                <l-dot-wave size="40" speed="1" color="black"></l-dot-wave>
+              <div className="flex justify-center items-center my-4 text-foreground">
+                <l-dot-wave size="40" speed="1" color="currentColor"></l-dot-wave>
               </div>
             )}
 

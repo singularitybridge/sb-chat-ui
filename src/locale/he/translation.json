@@ -92,9 +92,9 @@
   },
   "Dialog": {
     "title": "",
-    "content": "This action cannot be undone",
-    "cancel": "Cancel",
-    "confirm": "Confirm"
+    "content": "לא ניתן לבטל פעולה זו",
+    "cancel": "ביטול",
+    "confirm": "אישור"
   },
   "TeamsPage": {
     "title": "צוותים",
@@ -103,6 +103,39 @@
     "createTeamPrompt": "לחץ על כפתור + כדי ליצור צוות",
     "deleteConfirmTitle": "מחיקת צוות",
     "deleteConfirmMessage": "האם אתה בטוח שברצונך למחוק את הצוות '{{name}}'? פעולה זו אינה ניתנת לביטול."
+  },
+  "teams": {
+    "createSuccess": "הצוות נוצר בהצלחה",
+    "createError": "שגיאה ביצירת הצוות",
+    "selectIconError": "נא לבחור אייקון"
+  },
+  "company": {
+    "createSuccess": "החברה נוצרה בהצלחה",
+    "createError": "שגיאה ביצירת החברה"
+  },
+  "user": {
+    "createSuccess": "המשתמש נוצר בהצלחה",
+    "createError": "שגיאה ביצירת המשתמש"
+  },
+  "invites": {
+    "userSetSuccess": "המשתמש הוגדר בהצלחה",
+    "emailRequired": "נדרש אימייל",
+    "sendSuccess": "ההזמנה נשלחה בהצלחה",
+    "sendError": "שגיאה בשליחת ההזמנה",
+    "revokeConfirm": "האם אתה בטוח שברצונך לבטל את ההזמנה?",
+    "revokeSuccess": "ההזמנה בוטלה בהצלחה",
+    "revokeError": "שגיאה בביטול ההזמנה",
+    "deleteConfirm": "האם אתה בטוח שברצונך למחוק את ההזמנה לצמיתות? פעולה זו אינה ניתנת לביטול.",
+    "deleteSuccess": "ההזמנה נמחקה בהצלחה",
+    "deleteError": "שגיאה במחיקת ההזמנה"
+  },
+  "costTracking": {
+    "exportSuccess": "נתוני עלויות יוצאו בהצלחה",
+    "exportError": "שגיאה בייצוא נתוני עלויות"
+  },
+  "assistantActions": {
+    "saveSuccess": "הפעולות עודכנו בהצלחה",
+    "saveError": "שגיאה בעדכון הפעולות"
   },
   "MemoryPage": {
     "title": "יומן זיכרון",
@@ -146,6 +179,7 @@
       "token": "טוקן"
     },
     "successfullySet": "חברה נבחרה בהצלחה",
+    "companyUpdated": "החברה עודכנה בהצלחה",
     "addTag": "הוסף"
   },
   "AssistantsPage": {
@@ -236,7 +270,8 @@
     "type": "סוג",
     "name": "שם",
     "description": "תיאור",
-    "parameters": "פרמטרים"
+    "parameters": "פרמטרים",
+    "save": "שמור שינויים"
   },
   "CreateNewUser": {
     "name": "שם",
@@ -253,6 +288,8 @@
   "EditCompanyPage": {
     "title": "עריכת חברה",
     "description": "עדכן כאן את הפרטים של החברה שלך",
+    "emitterMessage": "החברה עודכנה בהצלחה",
+    "emitterTokenMessage": "טוקן חדש נוצר בהצלחה",
     "name" : "שם החברה",
     "token" : "טוקן API",
     "APIKeys": {
@@ -296,7 +333,13 @@
     "dropFile" : "גרור קובץ לכאן",
     "dragFileHere" : "גרור קובץ לכאן, או לחץ כדי לבחור",
     "selectAvatar": "בחר אווטאר",
-    "editAllowedActions": "ערוך פעולות מורשות"
+    "editAllowedActions": "ערוך פעולות מורשות",
+    "saveSuccess": "הסוכן עודכן בהצלחה",
+    "saveError": "שגיאה בעדכון הסוכן",
+    "fileUploadSuccess": "הקובץ הועלה בהצלחה",
+    "fileUploadError": "שגיאה בהעלאת הקובץ",
+    "fileDeleteSuccess": "הקובץ נמחק בהצלחה",
+    "fileDeleteError": "שגיאה במחיקת הקובץ"
   },
   "ChatContainer": {
     "input": {

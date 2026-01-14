@@ -7,7 +7,7 @@ import { IconButton } from '../../components/admin/IconButton';
 import { ISession, useSessionStore } from '../../store/useSessionStore';
 import { EVENT_SHOW_NOTIFICATION } from '../../utils/eventNames';
 import { emitter } from '../../services/mittEmitter';
-import AdminPageContainer from '../../components/admin/AdminPageContainer';
+import { PageLayout } from '../../components/admin/PageLayout';
 import { useTranslation } from 'react-i18next';
 
 const SessionsPage: React.FC = () => {
@@ -66,9 +66,13 @@ const SessionsPage: React.FC = () => {
   );
 
   return (
-    <AdminPageContainer>
-      <h1 className="text-2xl font-semibold mb-2">{t('SessionsPage.title')}</h1>
-      <p className="text-gray-600 mb-6">{t('SessionsPage.description')}</p>
+    <PageLayout
+      variant="card"
+      header={{
+        title: t('SessionsPage.title'),
+        description: t('SessionsPage.description'),
+      }}
+    >
       <Table
         headers={convertToStringArray(headers)}
         data={[]}
@@ -76,7 +80,7 @@ const SessionsPage: React.FC = () => {
         onRowClick={(row: ISession) => navigate(`/admin/sessions/${row._id}`)}
         Actions={Actions}
       />
-    </AdminPageContainer>
+    </PageLayout>
   );
 };
 

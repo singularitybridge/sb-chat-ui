@@ -15,12 +15,12 @@ export const SessionsEmpty: React.FC<SessionsEmptyProps> = ({
   description = 'Start a voice call to see session information here',
 }) => {
   return (
-    <div className="not-prose bg-white p-8 rounded-lg border border-gray-200 text-center mb-6">
-      <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-        <Inbox className="w-6 h-6 text-gray-400" />
+    <div className="not-prose bg-card p-8 rounded-lg border border-border text-center mb-6">
+      <div className="w-12 h-12 bg-secondary rounded-full flex items-center justify-center mx-auto mb-3">
+        <Inbox className="w-6 h-6 text-muted-foreground" />
       </div>
-      <p className="text-sm text-gray-500 mb-1">{message}</p>
-      <p className="text-xs text-gray-400">{description}</p>
+      <p className="text-sm text-muted-foreground mb-1">{message}</p>
+      <p className="text-xs text-muted-foreground/70">{description}</p>
     </div>
   );
 };

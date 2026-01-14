@@ -42,12 +42,12 @@ const Admin: React.FC = () => {
         <Menu />
         {isWorkspacePage ? (
           // Workspace pages manage their own layout but use same padding as other pages
-          <div className="flex-1 min-h-0 overflow-hidden px-14 py-10">
+          <div className="flex-1 min-h-0 overflow-hidden px-4 md:px-8 lg:px-14 py-4 md:py-10">
             <Outlet />
           </div>
         ) : (
           // Regular admin pages use ContentContainer with padding and scroll
-          <ContentContainer className="px-14 py-10 grow overflow-hidden">
+          <ContentContainer className="px-4 md:px-8 lg:px-14 py-4 md:py-10 grow overflow-hidden">
             <Outlet />
           </ContentContainer>
         )}

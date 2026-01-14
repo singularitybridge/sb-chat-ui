@@ -48,18 +48,18 @@ export const StatsGrid: React.FC<StatsGridProps> = ({
     <div className={`not-prose grid ${gridColsClass} gap-4 mb-6`}>
       {statItems.map((stat, index) => {
         const IconComponent = (LucideIcons as any)[stat.icon] || LucideIcons.Circle;
-        const iconColor = stat.color || 'text-gray-600';
-        const bgColor = stat.bgcolor || 'bg-gray-100';
+        const iconColor = stat.color || 'text-muted-foreground';
+        const bgColor = stat.bgcolor || 'bg-secondary';
 
         return (
-          <div key={index} className="bg-white p-4 rounded-lg border border-gray-200">
+          <div key={index} className="bg-card p-4 rounded-lg border border-border">
             <div className="flex items-center gap-3">
               <div className={`w-10 h-10 ${bgColor} rounded-lg flex items-center justify-center`}>
                 <IconComponent className={`w-5 h-5 ${iconColor}`} />
               </div>
               <div>
-                <div className="text-sm text-gray-500">{stat.label}</div>
-                <div className={`text-2xl font-semibold ${stat.color || 'text-gray-900'}`}>
+                <div className="text-sm text-muted-foreground">{stat.label}</div>
+                <div className={`text-2xl font-semibold ${stat.color || 'text-foreground'}`}>
                   {stat.value}
                 </div>
               </div>

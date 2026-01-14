@@ -31,7 +31,7 @@ export const ScreenShareSession: React.FC<ScreenShareSessionProps> = ({ onScreen
       {!isActive ? (
         <button
           onClick={handleStartSession}
-          className="inline-flex items-center justify-center h-7 w-7 text-gray-600 hover:text-gray-800 transition-colors"
+          className="inline-flex items-center justify-center h-7 w-7 text-muted-foreground hover:text-foreground transition-colors"
           title="Start screen sharing"
         >
           <Monitor className="h-5 w-5" />

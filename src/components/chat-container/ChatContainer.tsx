@@ -15,6 +15,7 @@ import { IAssistant } from '../../types/entities';
 import { SBChatKitUI } from '../sb-chat-kit-ui/SBChatKitUI';
 import { Base64Attachment } from '../../utils/base64Utils';
 import { changeActiveSessionLanguage } from '../../services/api/sessionService';
+import { useIsCompactView } from '../../hooks/useMediaQuery';
 
 // ActionExecutionMessage interface might be needed if Pusher payload for EVENT_ACTION_EXECUTION is specific
 interface ActionExecutionMessage {
@@ -34,6 +35,7 @@ const getDefaultConversationStarters = () => [];
 const ChatContainer: React.FC = () => {
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const localAudioRef = useRef<HTMLAudioElement | null>(null);
+  const isCompactView = useIsCompactView();
 
   // Zustand store selectors
   const {
@@ -203,7 +205,7 @@ const ChatContainer: React.FC = () => {
   });
 
   return (
-    <div className="h-full w-full bg-zinc-50 rounded-2xl">
+    <div className="h-full w-full bg-card rounded-2xl">
       <SBChatKitUI
         messages={messages}
         assistant={ // assistant from local state, derived from MST
@@ -222,6 +224,7 @@ const ChatContainer: React.FC = () => {
         onSendMessage={handleSubmit} // Use new handleSubmit
         onClear={handleClear} // Use new handleClear
         isLoading={isLoading}
+        compact={isCompactView}
       />
       <audio ref={localAudioRef} style={{ display: 'none' }} />
     </div>

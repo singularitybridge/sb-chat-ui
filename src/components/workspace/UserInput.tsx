@@ -100,7 +100,7 @@ export const UserInput: React.FC<InputComponentProps> = ({
             onChange={(e) => setInputValue(e.target.value)}
             placeholder={placeholder}
             disabled={isLoading}
-            className="w-full h-9 pl-3 pr-16 rounded-md border border-slate-200 bg-white text-sm placeholder:text-slate-400 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-slate-300 disabled:cursor-not-allowed disabled:opacity-50"
+            className="w-full h-9 pl-3 pr-16 rounded-md border border-border bg-background text-sm placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
           />
 
           {/* Inline buttons */}
@@ -112,7 +112,7 @@ export const UserInput: React.FC<InputComponentProps> = ({
               onClick={handleReload}
               disabled={isLoading || !inputValue.trim()}
               title="Reload"
-              className="h-7 w-7 text-slate-400 hover:text-slate-600 hover:bg-slate-50"
+              className="h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-accent"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
             </Button>
@@ -123,7 +123,7 @@ export const UserInput: React.FC<InputComponentProps> = ({
               size="icon"
               disabled={isLoading || !inputValue.trim()}
               title={buttonText}
-              className="h-8 w-8 text-slate-700 hover:text-slate-900 hover:bg-slate-50"
+              className="h-8 w-8 text-foreground hover:text-foreground hover:bg-accent"
             >
               {isLoading ? (
                 <RefreshCw className="w-4.5 h-4.5 animate-spin" />
@@ -136,7 +136,7 @@ export const UserInput: React.FC<InputComponentProps> = ({
       </form>
 
       {/* Data flow info */}
-      <div className="flex items-center gap-1.5 text-[11px] text-slate-500 font-mono">
+      <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground font-mono">
         <span>{dataKey}</span>
         <span>→</span>
         <span>{agentName}</span>

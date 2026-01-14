@@ -84,7 +84,7 @@ const CompanyDetailsSection: React.FC<CompanyDetailsSectionProps> = (
         <h1 className="text-2xl font-semibold mb-2">
           {t('EditCompanyPage.title')}
         </h1>
-        <p className="text-gray-600 mb-6">
+        <p className="text-muted-foreground mb-6">
           {t('EditCompanyPage.description')}
         </p>
       </div>

@@ -12,6 +12,7 @@ import { ModelIndicator } from '../../ModelIndicator';
 import IntegrationIcons from '../../IntegrationIcons';
 import CodeSampleDialog from '../../CodeSampleDialog';
 import { getAssistantUrl } from '../../../utils/assistantUrlUtils';
+import { Button } from '../../ui/button';
 
 interface HeaderProps {
   title: string;
@@ -110,7 +111,7 @@ const Header: React.FC<HeaderProps> = ({
     if (description.length > 100 && !isExpanded) {
       return (
         <p
-          className="text-sm text-[#6b7280] leading-4 "
+          className="text-sm text-muted-foreground leading-4 "
           onClick={toggleDescription}
         >
           {`${description.substring(0, 97)}...`}
@@ -119,7 +120,7 @@ const Header: React.FC<HeaderProps> = ({
     }
     return (
       <p
-        className="text-sm text-[#6b7280] leading-4"
+        className="text-sm text-muted-foreground leading-4"
         onClick={toggleDescription}
       >
         {description}
@@ -131,72 +132,79 @@ const Header: React.FC<HeaderProps> = ({
     // Compact layout for narrow views (workspace)
     return (
       <>
-        <div className="mb-4 p-3 border-b border-b-gray-200">
-          <div className="flex items-start space-x-3 rtl:space-x-reverse">
+        <div className="mb-4 p-3 border-b border-b-border">
+          <div className="flex items-start gap-3">
             {/* Left: Avatar */}
-            <Avatar
-              avatarStyle={AvatarStyles.avatar}
-              imageUrl={getAvatarUrl(avatar)}
-              active={true}
-            />
+            <div className="shrink-0">
+              <Avatar
+                avatarStyle={AvatarStyles.avatar}
+                imageUrl={getAvatarUrl(avatar)}
+                active={true}
+              />
+            </div>
 
             {/* Right: Info stack */}
             <div className="flex-1 min-w-0">
               {/* Row 1: Name + Actions */}
               <div className="flex items-center justify-between mb-2">
                 <h2 className="font-semibold text-base tracking-tight truncate">{title}</h2>
-                <div className="flex items-center space-x-1 rtl:space-x-reverse shrink-0 ml-2">
-                  <button
+                <div className="flex items-center gap-1 shrink-0 ms-2">
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
                     onClick={handleCopyAssistantId}
-                    className="p-1 rounded-full transition-colors hover:bg-gray-100"
                     aria-label="Copy assistant ID"
                     title="Copy assistant ID"
                     disabled={!activeSession?.assistantId}
                   >
-                    <Copy className="w-4 h-4 text-gray-500 hover:text-primary-600" />
-                  </button>
-                  <button
+                    <Copy className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
                     onClick={() => setShowCodeSample(true)}
-                    className="p-1 rounded-full transition-colors hover:bg-gray-100"
                     aria-label="Show API code sample"
                     title="Show API code sample"
                     disabled={!activeSession?.assistantId}
                   >
-                    <Code2 className="w-4 h-4 text-gray-500 hover:text-primary-600" />
-                  </button>
-                  <button
+                    <Code2 className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
                     onClick={handleEditAssistant}
-                    className="p-1 rounded-full transition-colors hover:bg-gray-100"
                     aria-label="Edit assistant"
                     title="Edit assistant"
                     disabled={!activeSession?.assistantId}
                   >
-                    <Settings className="w-4 h-4 text-gray-500 hover:text-primary-600" />
-                  </button>
+                    <Settings className="w-4 h-4" />
+                  </Button>
                   {!isInWorkspace && (
-                    <button
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
                       onClick={handleScreenShare}
-                      className="p-1 rounded-full transition-colors hover:bg-gray-100"
                       aria-label="Share screen"
                       title="Share screen"
                     >
-                      <Monitor className="w-4 h-4 text-gray-500 hover:text-primary-600" />
-                    </button>
+                      <Monitor className="w-4 h-4" />
+                    </Button>
                   )}
-                  <button
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
                     onClick={onClear}
-                    className="p-1 rounded-full transition-colors hover:bg-gray-100"
                     aria-label="Clear chat"
                   >
-                    <CircleFadingPlus className="w-4 h-4 text-gray-500 hover:text-primary-600" />
-                  </button>
+                    <CircleFadingPlus className="w-4 h-4" />
+                  </Button>
                 </div>
               </div>
 
               {/* Row 2: Description */}
               {description && (
                 <div className="mb-2">
-                  <p className="text-xs text-[#6b7280] leading-4">
+                  <p className="text-xs text-muted-foreground leading-4">
                     {description.length > 80 ? `${description.substring(0, 77)}...` : description}
                   </p>
                 </div>
@@ -232,17 +240,19 @@ const Header: React.FC<HeaderProps> = ({
   // Normal layout for wider views
   return (
     <>
-      <div className="flex justify-between items-start mb-4 p-3 border-b border-b-gray-200 space-x-4 rtl:space-x-reverse">
+      <div className="flex justify-between items-start mb-4 p-3 border-b border-b-border gap-4">
         {/* Left: Avatar */}
-        <Avatar
-          avatarStyle={AvatarStyles.medium}
-          imageUrl={getAvatarUrl(avatar)}
-          active={true}
-        />
+        <div className="shrink-0">
+          <Avatar
+            avatarStyle={AvatarStyles.medium}
+            imageUrl={getAvatarUrl(avatar)}
+            active={true}
+          />
+        </div>
 
         {/* Center: Name, Description, Integrations */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center space-x-2 rtl:space-x-reverse mb-1">
+          <div className="flex items-center gap-2 mb-1">
             <h2 className="font-semibold text-lg tracking-tight truncate">{title}</h2>
             {modelName && (
               <ModelIndicator modelName={modelName} size="small" />
@@ -256,58 +266,63 @@ const Header: React.FC<HeaderProps> = ({
           )}
 
           {integrations.length > 0 && (
-            <div>
+            <div className="w-full">
               <IntegrationIcons integrations={integrations} />
             </div>
           )}
         </div>
 
         {/* Right: Action Buttons */}
-        <div className="flex items-center space-x-1 rtl:space-x-reverse shrink-0">
-          <button
+        <div className="flex items-center gap-1 shrink-0">
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={handleCopyAssistantId}
-            className="p-1 rounded-full transition-colors hover:bg-gray-100"
             aria-label="Copy assistant ID"
             title="Copy assistant ID"
             disabled={!activeSession?.assistantId}
           >
-            <Copy className="w-5 h-5 text-gray-500 hover:text-primary-600" />
-          </button>
-          <button
+            <Copy className="w-5 h-5" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => setShowCodeSample(true)}
-            className="p-1 rounded-full transition-colors hover:bg-gray-100"
             aria-label="Show API code sample"
             title="Show API code sample"
             disabled={!activeSession?.assistantId}
           >
-            <Code2 className="w-5 h-5 text-gray-500 hover:text-primary-600" />
-          </button>
-          <button
+            <Code2 className="w-5 h-5" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={handleEditAssistant}
-            className="p-1 rounded-full transition-colors hover:bg-gray-100"
             aria-label="Edit assistant"
             title="Edit assistant"
             disabled={!activeSession?.assistantId}
           >
-            <Settings className="w-5 h-5 text-gray-500 hover:text-primary-600" />
-          </button>
+            <Settings className="w-5 h-5" />
+          </Button>
           {!isInWorkspace && (
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={handleScreenShare}
-              className="p-1 rounded-full transition-colors hover:bg-gray-100"
               aria-label="Share screen"
               title="Share screen"
             >
-              <Monitor className="w-5 h-5 text-gray-500 hover:text-primary-600" />
-            </button>
+              <Monitor className="w-5 h-5" />
+            </Button>
           )}
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={onClear}
-            className="p-1 rounded-full transition-colors hover:bg-gray-100"
             aria-label="Clear chat"
           >
-            <CircleFadingPlus className="w-5 h-5 text-gray-500 hover:text-primary-600" />
-          </button>
+            <CircleFadingPlus className="w-5 h-5" />
+          </Button>
         </div>
       </div>
 

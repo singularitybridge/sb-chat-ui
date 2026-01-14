@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 import {
   DynamicForm,
   FieldConfig,
@@ -10,6 +12,7 @@ import { IUser } from '../types/entities';
 import { userFieldConfigs } from '../store/fieldConfigs/userFieldConfigs';
 
 const NewUserView: React.FC = () => {
+  const { t } = useTranslation();
   const { addUser } = useUserStore();
   const [isLoading, setIsLoading] = useState(false);
   const [formFields, setFormFields] = useState<FieldConfig[]>([]);
@@ -35,8 +38,9 @@ const NewUserView: React.FC = () => {
     setIsLoading(true);
     try {
       await addUser(values as unknown as IUser);
+      toast.success(t('user.createSuccess'));
     } catch (error) {
-      console.error('Failed to add user', error);
+      toast.error(t('user.createError'));
     } finally {
       setIsLoading(false);
     }

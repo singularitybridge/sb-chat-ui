@@ -13,7 +13,7 @@ import {
 } from '../../utils/eventNames';
 import { CompanyKeys, ICompany } from '../../types/entities';
 import { useTranslation } from 'react-i18next';
-import AdminPageContainer from '../../components/admin/AdminPageContainer';
+import { PageLayout } from '../../components/admin/PageLayout';
 
 const CompaniesPage: React.FC = () => {
   const { companies } = useCompanyStore();
@@ -56,9 +56,13 @@ const CompaniesPage: React.FC = () => {
   );
 
   return (
-    <AdminPageContainer>
-      <h1 className="text-2xl font-semibold mb-2">{t('CompaniesPage.title')}</h1>
-      <p className="text-gray-600 mb-6">{t('CompaniesPage.description')}</p>
+    <PageLayout
+      variant="card"
+      header={{
+        title: t('CompaniesPage.title'),
+        description: t('CompaniesPage.description'),
+      }}
+    >
       <Table
         headers={convertToStringArray(headers)}
         data={companies.map(company => ({
@@ -70,7 +74,7 @@ const CompaniesPage: React.FC = () => {
         onRowClick={(row: ICompany) => navigate(`/admin/companies/${row._id}`)}
         Actions={Actions}
       />
-    </AdminPageContainer>
+    </PageLayout>
   );
 };
 

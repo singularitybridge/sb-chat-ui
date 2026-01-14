@@ -2,21 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { useCompanyStore } from '../../store/useCompanyStore';
 import { ICompany } from '../../types/entities';
-import AdminPageContainer from '../../components/admin/AdminPageContainer';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
 import { useTranslation } from 'react-i18next';
-import {
-  SidebarProvider,
-  Sidebar,
-  SidebarHeader,
-  SidebarContent,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-} from '@/components/ui/sidebar';
-import { Building2, Users } from 'lucide-react';
+import { Building2, Users, ArrowLeft } from 'lucide-react';
 import { CompanyDetailsSection } from './CompanyAdmin/CompanyDetailsSection';
 import { UsersAndInvitesSection } from './CompanyAdmin/UsersAndInvitesSection';
+import { Button } from '@/components/ui/button';
 
 type SectionType = 'details' | 'users-invites';
 
@@ -27,6 +18,9 @@ const CompanyAdminPage: React.FC = () => {
   const [company, setCompany] = useState<ICompany | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeSection, setActiveSection] = useState<SectionType>('details');
+  // mobileView state controls which panel is visible on mobile (<768px)
+  // On desktop (>=768px), nav is always visible via CSS
+  const [mobileView, setMobileView] = useState<'nav' | 'content'>('nav');
   const { t } = useTranslation();
 
   const fetchCompany = async () => {
@@ -41,26 +35,10 @@ const CompanyAdminPage: React.FC = () => {
     fetchCompany();
   }, [id, companiesLoaded]);
 
-  if (isLoading) {
-    return (
-      <AdminPageContainer>
-        <TextComponent text={t('common.pleaseWait')} size="medium" />
-      </AdminPageContainer>
-    );
-  }
-
-  if (!company) {
-    return (
-      <AdminPageContainer>
-        <TextComponent text="Company not found" size="medium" />
-      </AdminPageContainer>
-    );
-  }
-
   const menuItems = [
     {
       id: 'details' as SectionType,
-      label: 'Company Details',
+      label: t('EditCompanyPage.title'),
       icon: Building2,
     },
     {
@@ -70,33 +48,88 @@ const CompanyAdminPage: React.FC = () => {
     },
   ];
 
-  return (
-    <AdminPageContainer>
-      <SidebarProvider defaultOpen={true}>
-        <div className="flex h-[calc(100vh-4rem)] w-full">
-          <Sidebar className="h-full">
-            <SidebarHeader>
-              <h2 className="text-lg font-semibold">Company Admin</h2>
-              <p className="text-sm text-muted-foreground">{company.name}</p>
-            </SidebarHeader>
-            <SidebarContent>
-              <SidebarMenu>
-                {menuItems.map((item) => (
-                  <SidebarMenuItem key={item.id}>
-                    <SidebarMenuButton
-                      isActive={activeSection === item.id}
-                      onClick={() => setActiveSection(item.id)}
-                    >
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.label}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarContent>
-          </Sidebar>
+  const handleSectionClick = (sectionId: SectionType) => {
+    setActiveSection(sectionId);
+    setMobileView('content');
+  };
 
-          <main className="flex-1 overflow-auto p-6">
+  if (isLoading) {
+    return (
+      <div className="flex justify-center h-full">
+        <div className="flex flex-col md:flex-row w-full gap-4 md:gap-7">
+          <div className="text-center py-8 text-muted-foreground">
+            <p>{t('common.pleaseWait')}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!company) {
+    return (
+      <div className="flex justify-center h-full">
+        <div className="flex flex-col md:flex-row w-full gap-4 md:gap-7">
+          <div className="text-center py-8 text-muted-foreground">
+            <p>Company not found</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex justify-center h-full">
+      <div className="flex flex-col md:flex-row w-full gap-4 md:gap-7">
+        {/* Navigation Panel - hidden on mobile when viewing content, always visible on desktop */}
+        <div className={`flex flex-col rounded-lg md:max-w-xs w-full ${mobileView === 'content' ? 'hidden' : 'flex'} md:flex`}>
+          {/* Header */}
+          <div className="mb-6">
+            <TextComponent
+              text={company.name}
+              size="subtitle"
+            />
+            <p className="text-sm text-muted-foreground mt-1">Company Settings</p>
+          </div>
+
+          {/* Navigation Items */}
+          <nav className="space-y-2">
+            {menuItems.map((item) => {
+              const isActive = activeSection === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => handleSectionClick(item.id)}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-start transition-colors ${
+                    isActive
+                      ? 'bg-accent text-foreground'
+                      : 'hover:bg-accent/50 text-muted-foreground'
+                  }`}
+                >
+                  <item.icon className="w-5 h-5 shrink-0" />
+                  <span className="font-medium">{item.label}</span>
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+
+        {/* Content Panel - hidden on mobile when viewing nav, always visible on desktop */}
+        <div className={`grow min-w-0 ${mobileView === 'nav' ? 'hidden' : 'flex flex-col'} md:block`}>
+          {/* Mobile Back Button */}
+          <div className="md:hidden mb-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setMobileView('nav')}
+              className="gap-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              {t('common.back')}
+            </Button>
+          </div>
+
+          {/* Content */}
+          <div className="bg-card rounded-lg p-6 border border-border">
             {activeSection === 'details' && (
               <CompanyDetailsSection
                 company={company}
@@ -108,10 +141,10 @@ const CompanyAdminPage: React.FC = () => {
             {activeSection === 'users-invites' && (
               <UsersAndInvitesSection company={company} />
             )}
-          </main>
+          </div>
         </div>
-      </SidebarProvider>
-    </AdminPageContainer>
+      </div>
+    </div>
   );
 };
 

@@ -46,11 +46,11 @@ const Input: React.FC<InputProps> = ({
     <div className="flex flex-col w-full">
       <div
         className={clsx(
-          'flex py-3 px-5 justify-end items-center gap-2 self-stretch bg-white rounded-lg transition-all duration-200',
+          'flex py-3 px-5 justify-end items-center gap-2 self-stretch bg-background rounded-lg transition-all duration-200',
           {
-            'border border-gray-400': isFocused && !error,
-            'border border-red-500': error,
-            'border border-gray-300': !isFocused && !error,
+            'border border-ring': isFocused && !error,
+            'border border-destructive': error,
+            'border border-input': !isFocused && !error,
             'opacity-50': disabled,
           },
           className
@@ -69,15 +69,15 @@ const Input: React.FC<InputProps> = ({
           className={clsx(
             'w-full rtl:text-right lrt:text-left text-base font-normal leading-[140%] tracking-[0.56px] focus:outline-hidden bg-transparent',
             {
-              'text-gray-800': value && !disabled,
-              'text-gray-400 placeholder-gray-400': !value || disabled,
+              'text-foreground': value && !disabled,
+              'text-muted-foreground placeholder:text-muted-foreground': !value || disabled,
             }
           )}
           id={id}
         />
       </div>
       {error && (
-        <p className="p-1 mt-1 text-sm text-red-500 rtl:text-right ltr:text-left">{error}</p>
+        <p className="p-1 mt-1 text-sm text-destructive rtl:text-right ltr:text-left">{error}</p>
       )}
     </div>
   );

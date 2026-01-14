@@ -47,38 +47,39 @@ export const StreamingText: React.FC<DisplayComponentProps> = ({
   };
 
   return (
-    <div className={`border border-gray-200 rounded-lg p-4 ${className}`}>
+    <div className={`border border-border rounded-lg p-4 ${className}`}>
       {loading && showLoading && (
-        <div className="flex items-center gap-2 text-blue-600 mb-2">
-          <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+        <div className="flex items-center gap-2 text-primary mb-2">
+          <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
           <span>Connecting...</span>
         </div>
       )}
 
       {error && (
-        <div className="text-red-600 bg-red-50 p-3 rounded">
-          <strong>Error:</strong> {error}
+        <div className="bg-destructive/10 border border-destructive/30 p-3 rounded">
+          <span className="text-destructive font-medium">Error:</span>{' '}
+          <span className="text-foreground">{error}</span>
         </div>
       )}
 
       {!error && data && (
-        <div className="prose prose-sm max-w-none relative">
+        <div className="prose prose-sm dark:prose-invert max-w-none relative">
           <div className="whitespace-pre-wrap">
             {getText()}
             {isStreaming && (
-              <span className="inline-block w-2 h-4 bg-purple-600 ml-1 animate-pulse" />
+              <span className="inline-block w-2 h-4 bg-violet ml-1 animate-pulse" />
             )}
           </div>
         </div>
       )}
 
       {!loading && !error && !data && (
-        <div className="text-gray-500 italic">{fallback}</div>
+        <div className="text-muted-foreground italic">{fallback}</div>
       )}
 
       {isStreaming && (
-        <div className="text-xs text-gray-500 mt-2 flex items-center gap-1">
-          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+        <div className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
+          <div className="w-2 h-2 bg-success-foreground rounded-full animate-pulse" />
           Streaming...
         </div>
       )}

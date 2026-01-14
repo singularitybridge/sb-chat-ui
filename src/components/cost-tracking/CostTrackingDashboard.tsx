@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
+import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 import * as Tabs from '@radix-ui/react-tabs';
-import { 
-  DollarSign, 
-  TrendingUp, 
-  Bot, 
-  Cpu, 
-  FileSpreadsheet, 
+import {
+  DollarSign,
+  TrendingUp,
+  Bot,
+  Cpu,
+  FileSpreadsheet,
   RefreshCw,
   Download,
-  Calendar,
-  Filter
+  Filter,
+  List
 } from 'lucide-react';
 import { MetricsCards } from './MetricsCards';
 import { UsageChart } from './UsageChart';
@@ -19,76 +21,128 @@ import { ModelComparison } from './ModelComparison';
 import { useCostDashboard } from '../../hooks/useCostData';
 import { CostFilters } from '../../types/costTracking';
 import { formatCost } from '../../services/api/costTrackingService';
+import { DatePicker } from '@/components/ui/date-picker';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+
+// Helper to get default date range (1 month ago to today)
+const getDefaultDateRange = () => {
+  const today = new Date();
+  const oneMonthAgo = new Date();
+  oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+
+  return {
+    start: oneMonthAgo.toISOString().split('T')[0],
+    end: today.toISOString().split('T')[0]
+  };
+};
+
+// Provider display names
+const PROVIDER_LABELS: Record<string, string> = {
+  openai: 'OpenAI',
+  anthropic: 'Anthropic',
+  google: 'Google'
+};
 
 interface CostTrackingDashboardProps {
   className?: string;
 }
 
 export const CostTrackingDashboard: React.FC<CostTrackingDashboardProps> = ({ className = '' }) => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('overview');
-  const [dateRange, setDateRange] = useState<{ start?: string; end?: string }>({});
-  const [filters, setFilters] = useState<CostFilters>({});
-  
-  // Fetch all dashboard data
+  const [pageSize, setPageSize] = useState<number>(10);
+
+  // Memoize default dates to prevent re-initialization on every render
+  const defaultDates = useMemo(() => getDefaultDateRange(), []);
+  const [dateRange, setDateRange] = useState<{ start?: string; end?: string }>(defaultDates);
+  const [filters, setFilters] = useState<CostFilters>({
+    startDate: defaultDates.start,
+    endDate: defaultDates.end,
+    limit: 1000 // Increased limit for better pagination
+  });
+
+  // Fetch all dashboard data - TanStack Query handles background refetching automatically
   const {
     summary,
     records,
     recordCount,
+    totalRecordCount,
     dailyCosts,
     isLoading,
     error,
+    lastUpdatedAt,
     refetch
-  } = useCostDashboard({ ...filters, ...dateRange });
-
-  // Auto-refresh every 30 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      refetch();
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, [refetch]);
+  } = useCostDashboard(filters);
 
   const handleExport = () => {
     if (!records || records.length === 0) return;
 
-    // Convert records to CSV
-    const headers = ['Timestamp', 'Assistant', 'Model', 'Provider', 'Input Tokens', 'Output Tokens', 'Cost', 'Duration'];
-    const csvContent = [
-      headers.join(','),
-      ...records.map(record => [
-        new Date(record.timestamp).toISOString(),
-        record.assistantName || 'Unknown',
-        record.modelName,
-        record.provider,
-        record.inputTokens,
-        record.outputTokens,
-        record.totalCost,
-        record.duration
-      ].join(','))
-    ].join('\n');
+    try {
+      // Convert records to CSV
+      const headers = ['Timestamp', 'Assistant', 'Model', 'Provider', 'Input Tokens', 'Output Tokens', 'Cost', 'Duration'];
+      const csvContent = [
+        headers.join(','),
+        ...records.map(record => [
+          new Date(record.timestamp).toISOString(),
+          record.assistantName || 'Unknown',
+          record.modelName,
+          record.provider,
+          record.inputTokens,
+          record.outputTokens,
+          record.totalCost,
+          record.duration
+        ].join(','))
+      ].join('\n');
 
-    // Download CSV
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `cost-tracking-${new Date().toISOString().split('T')[0]}.csv`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(url);
+      // Download CSV
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `cost-tracking-${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+
+      toast.success(t('costTracking.exportSuccess'));
+    } catch (error) {
+      toast.error(t('costTracking.exportError'));
+    }
   };
 
-  const handleDateRangeChange = (type: 'start' | 'end', value: string) => {
-    setDateRange(prev => ({ ...prev, [type]: value }));
-    setFilters(prev => ({ ...prev, [`${type}Date`]: value }));
+  // Convert Date to YYYY-MM-DD string format for backend
+  const formatDateForBackend = (date: Date | undefined): string | undefined => {
+    if (!date) return undefined;
+    return date.toISOString().split('T')[0];
+  };
+
+  // Parse YYYY-MM-DD string to Date object for DatePicker
+  const parseDateString = (dateStr: string | undefined): Date | undefined => {
+    if (!dateStr) return undefined;
+    return new Date(dateStr + 'T00:00:00');
+  };
+
+  const handleDateChange = (type: 'start' | 'end', date: Date | undefined) => {
+    const dateStr = formatDateForBackend(date);
+    setDateRange(prev => ({ ...prev, [type]: dateStr }));
+    setFilters(prev => ({
+      ...prev,
+      startDate: type === 'start' ? dateStr : prev.startDate,
+      endDate: type === 'end' ? dateStr : prev.endDate
+    }));
   };
 
   const handleProviderFilter = (provider: string) => {
-    setFilters(prev => ({ 
-      ...prev, 
-      provider: prev.provider === provider ? undefined : provider 
+    setFilters(prev => ({
+      ...prev,
+      provider: prev.provider === provider ? undefined : provider
     }));
   };
 
@@ -96,10 +150,10 @@ export const CostTrackingDashboard: React.FC<CostTrackingDashboardProps> = ({ cl
     return (
       <div className={`flex items-center justify-center h-96 ${className}`}>
         <div className="text-center">
-          <p className="text-red-500 mb-4">Failed to load cost data</p>
+          <p className="text-destructive mb-4">Failed to load cost data</p>
           <button
             onClick={refetch}
-            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
           >
             Retry
           </button>
@@ -109,7 +163,7 @@ export const CostTrackingDashboard: React.FC<CostTrackingDashboardProps> = ({ cl
   }
 
   return (
-    <div className={`p-6 ${className}`}>
+    <div className={className}>
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
@@ -118,21 +172,21 @@ export const CostTrackingDashboard: React.FC<CostTrackingDashboardProps> = ({ cl
               <DollarSign className="h-6 w-6" />
               AI Cost Analytics
             </h1>
-            <p className="text-gray-500 text-sm mt-1">
+            <p className="text-muted-foreground text-sm mt-1">
               Monitor and optimize your AI usage costs
             </p>
           </div>
           <div className="flex items-center gap-2">
             <button
-              onClick={refetch}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              onClick={() => refetch()}
+              className="p-2 hover:bg-accent rounded-lg transition-colors"
               title="Refresh data"
             >
               <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
             </button>
             <button
               onClick={handleExport}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-2 hover:bg-accent rounded-lg transition-colors"
               title="Export to CSV"
               disabled={!records || records.length === 0}
             >
@@ -142,42 +196,56 @@ export const CostTrackingDashboard: React.FC<CostTrackingDashboardProps> = ({ cl
         </div>
 
         {/* Date Range Filters */}
-        <div className="flex items-center gap-4 mb-4">
+        <div className="flex items-center gap-4 mb-4 flex-wrap">
           <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-gray-500" />
-            <input
-              type="date"
-              value={dateRange.start || ''}
-              onChange={(e) => handleDateRangeChange('start', e.target.value)}
-              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-primary-500"
+            <span className="text-sm text-muted-foreground">From</span>
+            <DatePicker
+              date={parseDateString(dateRange.start)}
+              onDateChange={(date) => handleDateChange('start', date)}
               placeholder="Start date"
             />
-            <span className="text-gray-500">to</span>
-            <input
-              type="date"
-              value={dateRange.end || ''}
-              onChange={(e) => handleDateRangeChange('end', e.target.value)}
-              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-primary-500"
+            <span className="text-sm text-muted-foreground">to</span>
+            <DatePicker
+              date={parseDateString(dateRange.end)}
+              onDateChange={(date) => handleDateChange('end', date)}
               placeholder="End date"
             />
           </div>
 
           {/* Provider Filters */}
           <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4 text-gray-500" />
-            {['openai', 'anthropic', 'google'].map(provider => (
+            <Filter className="h-4 w-4 text-muted-foreground" />
+            {(['openai', 'anthropic', 'google'] as const).map(provider => (
               <button
                 key={provider}
                 onClick={() => handleProviderFilter(provider)}
                 className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
                   filters.provider === provider
-                    ? 'bg-primary-600 text-white'
-                    : 'bg-gray-100 hover:bg-gray-200'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-secondary hover:bg-accent'
                 }`}
               >
-                {provider.charAt(0).toUpperCase() + provider.slice(1)}
+                {PROVIDER_LABELS[provider]}
               </button>
             ))}
+          </div>
+
+          {/* Page Size Selector */}
+          <div className="flex items-center gap-2">
+            <List className="h-4 w-4 text-muted-foreground" />
+            <Select
+              value={pageSize.toString()}
+              onValueChange={(value) => setPageSize(Number(value))}
+            >
+              <SelectTrigger className="w-[100px]">
+                <SelectValue placeholder="Page size" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="10">10 rows</SelectItem>
+                <SelectItem value="20">20 rows</SelectItem>
+                <SelectItem value="50">50 rows</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </div>
@@ -190,7 +258,7 @@ export const CostTrackingDashboard: React.FC<CostTrackingDashboardProps> = ({ cl
         <Tabs.List className="flex border-b mb-6">
           <Tabs.Trigger
             value="overview"
-            className="px-4 py-2 text-sm font-medium hover:text-primary-600 data-[state=active]:text-primary-600 data-[state=active]:border-b-2 data-[state=active]:border-primary-600"
+            className="px-4 py-2 text-sm font-medium hover:text-primary data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary"
           >
             <div className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4" />
@@ -199,7 +267,7 @@ export const CostTrackingDashboard: React.FC<CostTrackingDashboardProps> = ({ cl
           </Tabs.Trigger>
           <Tabs.Trigger
             value="assistants"
-            className="px-4 py-2 text-sm font-medium hover:text-primary-600 data-[state=active]:text-primary-600 data-[state=active]:border-b-2 data-[state=active]:border-primary-600"
+            className="px-4 py-2 text-sm font-medium hover:text-primary data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary"
           >
             <div className="flex items-center gap-2">
               <Bot className="h-4 w-4" />
@@ -208,7 +276,7 @@ export const CostTrackingDashboard: React.FC<CostTrackingDashboardProps> = ({ cl
           </Tabs.Trigger>
           <Tabs.Trigger
             value="models"
-            className="px-4 py-2 text-sm font-medium hover:text-primary-600 data-[state=active]:text-primary-600 data-[state=active]:border-b-2 data-[state=active]:border-primary-600"
+            className="px-4 py-2 text-sm font-medium hover:text-primary data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary"
           >
             <div className="flex items-center gap-2">
               <Cpu className="h-4 w-4" />
@@ -217,7 +285,7 @@ export const CostTrackingDashboard: React.FC<CostTrackingDashboardProps> = ({ cl
           </Tabs.Trigger>
           <Tabs.Trigger
             value="details"
-            className="px-4 py-2 text-sm font-medium hover:text-primary-600 data-[state=active]:text-primary-600 data-[state=active]:border-b-2 data-[state=active]:border-primary-600"
+            className="px-4 py-2 text-sm font-medium hover:text-primary data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary"
           >
             <div className="flex items-center gap-2">
               <FileSpreadsheet className="h-4 w-4" />
@@ -229,7 +297,13 @@ export const CostTrackingDashboard: React.FC<CostTrackingDashboardProps> = ({ cl
         {/* Tab Content */}
         <Tabs.Content value="overview" className="space-y-6">
           <UsageChart data={dailyCosts} loading={isLoading} />
-          <CostTable data={records.slice(0, 10)} loading={isLoading} />
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-medium text-muted-foreground">Recent Activity</h3>
+              <span className="text-sm text-muted-foreground">{totalRecordCount} total records</span>
+            </div>
+            <CostTable data={records} loading={isLoading} pageSize={pageSize} totalCount={totalRecordCount} />
+          </div>
         </Tabs.Content>
 
         <Tabs.Content value="assistants">
@@ -249,18 +323,18 @@ export const CostTrackingDashboard: React.FC<CostTrackingDashboardProps> = ({ cl
         </Tabs.Content>
 
         <Tabs.Content value="details">
-          <CostTable data={records} loading={isLoading} pageSize={20} />
+          <CostTable data={records} loading={isLoading} pageSize={pageSize} totalCount={totalRecordCount} />
         </Tabs.Content>
       </Tabs.Root>
 
       {/* Footer Stats */}
       {summary && (
-        <div className="mt-8 pt-4 border-t flex items-center justify-between text-sm text-gray-500">
+        <div className="mt-8 pt-4 border-t flex items-center justify-between text-sm text-muted-foreground">
           <div>
-            Last updated: {new Date().toLocaleTimeString()}
+            Last updated: {lastUpdatedAt?.toLocaleTimeString() ?? 'Loading...'}
           </div>
           <div className="flex items-center gap-4">
-            <span>Total records: {recordCount}</span>
+            <span>Total records: {totalRecordCount}</span>
             <span>•</span>
             <span>Period total: {formatCost(summary.totalCost)}</span>
           </div>

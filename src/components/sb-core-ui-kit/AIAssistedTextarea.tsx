@@ -48,15 +48,22 @@ const AIAssistedTextareaBase: ForwardRefRenderFunction<
   const [isAIMode, setIsAIMode] = useState(false);
   const aiTextareaRef = useRef<HTMLTextAreaElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const hasToggledAIMode = useRef(false);
 
   const toggleAIMode = () => {
+    hasToggledAIMode.current = true;
     setIsAIMode((prev) => !prev);
     if (isAIMode) {
       onAIPromptChange('');
     }
   };
 
+  // Focus management only when AI mode is explicitly toggled by user
   useEffect(() => {
+    if (!hasToggledAIMode.current) {
+      return;
+    }
+
     if (isAIMode) {
       aiTextareaRef.current?.focus();
     } else if (ref && 'current' in ref) {
@@ -93,7 +100,7 @@ const AIAssistedTextareaBase: ForwardRefRenderFunction<
 
       <div
         className={clsx(
-          'grid border border-indigo-200 rounded-xl p-0.5',
+          'grid border border-violet/30 rounded-xl p-0.5',
           isAIMode ? 'grid-cols-1' : 'grid-cols-[1fr,auto]',
           className
         )}
@@ -112,7 +119,7 @@ const AIAssistedTextareaBase: ForwardRefRenderFunction<
           <div className="flex items-end justify-end rtl:justify-start">
             <button
               onClick={toggleAIMode}
-              className="m-2 p-1.5 text-indigo-400 hover:text-indigo-500 rounded-md transition duration-150 ease-in-out"
+              className="m-2 p-1.5 text-violet hover:text-violet/80 rounded-md transition duration-150 ease-in-out"
               aria-label="Toggle AI Assist"
             >
               <Sparkles size={18} />
@@ -120,7 +127,7 @@ const AIAssistedTextareaBase: ForwardRefRenderFunction<
           </div>
         )}
         {isAIMode && (
-          <div className="grid bg-indigo-50 bg-opacity-70 rounded-b-xl grid-cols-[1fr,auto]">
+          <div className="grid bg-violet/10 rounded-b-xl grid-cols-[1fr,auto]">
             <Textarea
               ref={aiTextareaRef}
               id={`${id}-ai-prompt`}
@@ -138,7 +145,7 @@ const AIAssistedTextareaBase: ForwardRefRenderFunction<
               <button
                 onClick={handleAIAssist}
                 disabled={isLoading}
-                className="p-1.5 rounded-xl text-gray-500 bg-indigo-100 hover:bg-indigo-200 transition duration-150 ease-in-out disabled:opacity-50"
+                className="p-1.5 rounded-xl text-violet bg-violet/20 hover:bg-violet/30 transition duration-150 ease-in-out disabled:opacity-50"
                 aria-label="Apply AI Assist"
               >
                 {isLoading ? (

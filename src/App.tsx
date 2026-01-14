@@ -23,13 +23,33 @@ const initialLanguage = getInitialLanguage();
 const App: React.FC = () => {
   const direction = initialLanguage === 'he' ? 'rtl' : 'ltr';
 
-  const toastHandler = useCallback((message: string) => {
-    toast(message);
+  // Handle both string and object notification payloads
+  type NotificationPayload = string | { message: string; type?: 'success' | 'error' | 'info' | 'warning' };
+
+  const toastHandler = useCallback((payload: NotificationPayload) => {
+    if (typeof payload === 'string') {
+      toast(payload);
+    } else if (payload && typeof payload === 'object' && 'message' in payload) {
+      const { message, type = 'info' } = payload;
+      switch (type) {
+        case 'success':
+          toast.success(message);
+          break;
+        case 'error':
+          toast.error(message);
+          break;
+        case 'warning':
+          toast.warning(message);
+          break;
+        default:
+          toast.info(message);
+      }
+    }
   }, []);
 
-  useEventEmitter<string>(EVENT_CHAT_SESSION_DELETED, toastHandler);
-  useEventEmitter<string>(EVENT_ERROR, toastHandler);
-  useEventEmitter<string>(EVENT_SHOW_NOTIFICATION, toastHandler);
+  useEventEmitter<NotificationPayload>(EVENT_CHAT_SESSION_DELETED, toastHandler);
+  useEventEmitter<NotificationPayload>(EVENT_ERROR, toastHandler);
+  useEventEmitter<NotificationPayload>(EVENT_SHOW_NOTIFICATION, toastHandler);
 
   // Initialize WebSocket command handlers (Phase 2)
   useWebSocketCommands();

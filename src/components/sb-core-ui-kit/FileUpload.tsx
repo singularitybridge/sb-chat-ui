@@ -24,21 +24,21 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, isUploading }) =>
   });
 
   return (
-    <div 
-      {...getRootProps()} 
-      className={`border border-dashed border-gray-300 rounded-xl p-4 text-center cursor-pointer transition duration-300 ${
-        isUploading ? 'bg-gray-50' : 'hover:border-blue-500'
+    <div
+      {...getRootProps()}
+      className={`border border-dashed border-border rounded-xl p-4 text-center cursor-pointer transition duration-300 ${
+        isUploading ? 'bg-muted' : 'hover:border-primary'
       }`}
     >
       <input {...getInputProps()} />
       {isUploading ? (
-        <p className="text-slate-500 text-sm animate-pulse duration-75">
+        <p className="text-muted-foreground text-sm animate-pulse duration-75">
           {t('EditAssistantPage.uploading')}
           </p>
       ) : isDragActive ? (
-        <p className="text-slate-500 text-sm">{t('EditAssistantPage.dropFile')}</p>
+        <p className="text-muted-foreground text-sm">{t('EditAssistantPage.dropFile')}</p>
       ) : (
-        <p className='text-sm text-slate-500'>{t('EditAssistantPage.dragFileHere')}</p>
+        <p className='text-sm text-muted-foreground'>{t('EditAssistantPage.dragFileHere')}</p>
       )}
     </div>
   );

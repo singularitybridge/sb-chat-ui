@@ -75,13 +75,13 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
   return (
     <button
       onClick={handleRecording}
-      className="p-1.5 rounded-full text-gray-500 bg-red-100 hover:bg-pink-200 transition duration-150 ease-in-out"
+      className="p-1.5 rounded-full text-muted-foreground bg-destructive/20 hover:bg-destructive/30 transition duration-150 ease-in-out"
       aria-label="Record Audio"
     >
       {isLoading ? (
         <Loader size={18} className="animate-spin" />
       ) : isRecording ? (
-        <Mic size={18} className="animate-pulse text-red-500" />
+        <Mic size={18} className="animate-pulse text-destructive" />
       ) : (
         <Mic size={18} />
       )}

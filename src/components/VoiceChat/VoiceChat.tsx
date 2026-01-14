@@ -60,8 +60,8 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ className = '', compact = false }
   };
   
   const getStatusColor = () => {
-    if (!isCallActive) return 'bg-gray-500';
-    if (currentTranscript) return 'bg-purple-500';
+    if (!isCallActive) return 'bg-muted-foreground';
+    if (currentTranscript) return 'bg-violet';
     if (isSpeaking) return 'bg-blue-500';
     if (isListening) return 'bg-green-500';
     return 'bg-yellow-500';
@@ -95,8 +95,8 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ className = '', compact = false }
             <button
               onClick={toggleMute}
               className={`p-2 rounded-lg transition-colors ${
-                isMuted 
-                  ? 'bg-gray-600 text-white hover:bg-gray-700' 
+                isMuted
+                  ? 'bg-muted-foreground text-white hover:bg-foreground'
                   : 'bg-blue-600 text-white hover:bg-blue-700'
               }`}
             >
@@ -104,7 +104,7 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ className = '', compact = false }
             </button>
             <div className="flex items-center gap-1">
               <div className={`w-2 h-2 rounded-full ${getStatusColor()} ${isListening ? 'animate-pulse' : ''}`} />
-              <span className="text-sm text-gray-600">{getStatusText()}</span>
+              <span className="text-sm text-muted-foreground">{getStatusText()}</span>
             </div>
           </>
         )}
@@ -114,11 +114,11 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ className = '', compact = false }
   
   // Full voice chat interface
   return (
-    <div className={`bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-6 ${className}`}>
+    <div className={`bg-background/90 backdrop-blur-sm rounded-2xl shadow-lg p-6 ${className}`}>
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-semibold text-gray-800">Voice Assistant</h3>
+        <h3 className="text-xl font-semibold text-foreground">Voice Assistant</h3>
         <div className={`px-3 py-1 rounded-full text-sm font-medium ${
-          isCallActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'
+          isCallActive ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' : 'bg-secondary text-muted-foreground'
         }`}>
           {getStatusText()}
         </div>
@@ -134,12 +134,12 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ className = '', compact = false }
                   key={i}
                   className={`w-1 bg-gradient-to-t ${
                     currentTranscript
-                      ? 'from-purple-400 to-purple-600'
+                      ? 'from-violet/70 to-violet'
                       : isSpeaking 
                       ? 'from-blue-400 to-blue-600' 
                       : isListening 
                       ? 'from-green-400 to-green-600'
-                      : 'from-gray-300 to-gray-400'
+                      : 'from-muted-foreground/50 to-muted-foreground'
                   } rounded-full`}
                   animate={{
                     height: isCallActive 
@@ -156,7 +156,7 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ className = '', compact = false }
             </>
           )}
           {!isCallActive && (
-            <div className="text-gray-400">
+            <div className="text-muted-foreground">
               <Volume2 className="w-12 h-12" />
             </div>
           )}
@@ -191,8 +191,8 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ className = '', compact = false }
             <button
               onClick={toggleMute}
               className={`p-3 rounded-xl transition-all shadow-lg ${
-                isMuted 
-                  ? 'bg-gradient-to-r from-gray-500 to-gray-600 text-white hover:from-gray-600 hover:to-gray-700' 
+                isMuted
+                  ? 'bg-gradient-to-r from-muted-foreground to-foreground text-white hover:from-foreground hover:to-foreground'
                   : 'bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700'
               }`}
             >
@@ -209,13 +209,13 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ className = '', compact = false }
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg"
+            className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg dark:bg-green-900/20 dark:border-green-800"
           >
-            <p className="text-sm font-medium text-green-800 mb-1">You're saying:</p>
-            <p className="text-gray-700">{currentTranscript}</p>
+            <p className="text-sm font-medium text-green-800 dark:text-green-300 mb-1">You're saying:</p>
+            <p className="text-foreground">{currentTranscript}</p>
             <div className="flex items-center gap-2 mt-2">
-              <Loader2 className="w-4 h-4 animate-spin text-purple-600" />
-              <span className="text-sm text-purple-600">Processing with AI agent...</span>
+              <Loader2 className="w-4 h-4 animate-spin text-violet" />
+              <span className="text-sm text-violet">Processing with AI agent...</span>
             </div>
           </motion.div>
         )}
@@ -224,12 +224,12 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ className = '', compact = false }
       
       {/* Message History */}
       {messages.length > 0 && (
-        <div className="mt-6 pt-6 border-t border-gray-200">
+        <div className="mt-6 pt-6 border-t border-border">
           <div className="flex items-center justify-between mb-3">
-            <h4 className="text-sm font-medium text-gray-600">Conversation History</h4>
+            <h4 className="text-sm font-medium text-muted-foreground">Conversation History</h4>
             <button
               onClick={() => setShowTranscript(!showTranscript)}
-              className="text-xs text-blue-600 hover:text-blue-700"
+              className="text-xs text-primary hover:text-primary/80"
             >
               {showTranscript ? 'Hide' : 'Show'} Details
             </button>
@@ -239,11 +239,11 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ className = '', compact = false }
               <div
                 key={index}
                 className={`text-sm p-2 rounded-lg ${
-                  message.type === 'user' 
-                    ? 'bg-green-50 text-green-800 ml-8' 
+                  message.type === 'user'
+                    ? 'bg-green-50 text-green-800 dark:bg-green-900/20 dark:text-green-300 ml-8'
                     : message.type === 'assistant'
-                    ? 'bg-blue-50 text-blue-800 mr-8'
-                    : 'bg-gray-50 text-gray-600'
+                    ? 'bg-blue-50 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300 mr-8'
+                    : 'bg-secondary text-muted-foreground'
                 }`}
               >
                 <span className="font-medium">
@@ -258,14 +258,14 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ className = '', compact = false }
       
       {/* Setup Instructions */}
       {!vapi && (
-        <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <p className="text-sm text-yellow-800">
+        <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg dark:bg-yellow-900/20 dark:border-yellow-800">
+          <p className="text-sm text-yellow-800 dark:text-yellow-300">
             <strong>Setup Required:</strong> Please add your VAPI credentials to the .env file:
           </p>
-          <code className="block mt-2 text-xs bg-yellow-100 p-2 rounded">
+          <code className="block mt-2 text-xs bg-yellow-100 dark:bg-yellow-900/30 p-2 rounded">
             VITE_VAPI_PUBLIC_KEY=your-key-here
           </code>
-          <p className="text-xs text-yellow-700 mt-2">
+          <p className="text-xs text-yellow-700 dark:text-yellow-400 mt-2">
             Note: Without VITE_VAPI_ASSISTANT_ID, VAPI will use custom LLM routing to your backend.
           </p>
         </div>

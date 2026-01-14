@@ -96,7 +96,7 @@ export const MemoryPreviewDialog: React.FC<MemoryPreviewDialogProps> = ({
                 onClick={handleClearAll}
                 variant="outline"
                 size="sm"
-                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                className="text-destructive hover:text-destructive/80 hover:bg-destructive/10"
               >
                 <Trash2 className="w-4 h-4 mr-2" />
                 Clear All
@@ -140,14 +140,14 @@ export const MemoryPreviewDialog: React.FC<MemoryPreviewDialogProps> = ({
                             </Badge>
 
                             {state.loading && (
-                              <Badge variant="outline" className="text-blue-600 border-blue-200 bg-blue-50">
+                              <Badge variant="outline" className="text-primary border-primary/30 bg-primary/10">
                                 <RefreshCw className="w-3 h-3 mr-1 animate-spin" />
                                 Loading
                               </Badge>
                             )}
 
                             {state.error && (
-                              <Badge variant="outline" className="text-red-600 border-red-200 bg-red-50">
+                              <Badge variant="outline" className="text-destructive border-destructive/30 bg-destructive/10">
                                 <AlertCircle className="w-3 h-3 mr-1" />
                                 Error
                               </Badge>
@@ -177,7 +177,7 @@ export const MemoryPreviewDialog: React.FC<MemoryPreviewDialogProps> = ({
                         }}
                         variant="ghost"
                         size="sm"
-                        className="ml-2 text-slate-400 hover:text-red-600"
+                        className="ml-2 text-muted-foreground hover:text-destructive"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -188,7 +188,7 @@ export const MemoryPreviewDialog: React.FC<MemoryPreviewDialogProps> = ({
                   {isExpanded && (
                     <div className="p-4 bg-white border-t border-slate-200">
                       {state.error ? (
-                        <div className="p-3 bg-red-50 border border-red-200 rounded text-sm text-red-700">
+                        <div className="p-3 bg-destructive/10 border border-destructive/30 rounded text-sm text-destructive">
                           <div className="font-medium mb-1">Error:</div>
                           <div className="font-mono text-xs">{state.error}</div>
                         </div>

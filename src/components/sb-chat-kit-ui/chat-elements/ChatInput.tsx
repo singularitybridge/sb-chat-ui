@@ -387,12 +387,12 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
       {/* Drag overlay */}
       {isDragging && (
         <div className="absolute inset-0 z-50 pointer-events-none">
-          <div className="absolute inset-0 bg-blue-500 bg-opacity-10 border-2 border-dashed border-blue-500 rounded-2xl flex items-center justify-center">
-            <div className="bg-white rounded-lg shadow-lg px-6 py-4">
+          <div className="absolute inset-0 bg-primary/10 border-2 border-dashed border-primary rounded-2xl flex items-center justify-center">
+            <div className="bg-background rounded-lg shadow-lg px-6 py-4">
               <div className="flex flex-col items-center space-y-2">
-                <PaperClipIcon className="h-10 w-10 text-blue-500 animate-pulse" />
-                <p className="text-lg font-medium text-gray-800">Drop files here</p>
-                <p className="text-sm text-gray-500">Release to add files to your message</p>
+                <PaperClipIcon className="h-10 w-10 text-primary animate-pulse" />
+                <p className="text-lg font-medium text-foreground">Drop files here</p>
+                <p className="text-sm text-muted-foreground">Release to add files to your message</p>
               </div>
             </div>
           </div>
@@ -401,10 +401,10 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
       
       {/* Screen sharing indicator */}
       {isScreenSharing && (
-        <div className="mx-1 px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg">
+        <div className="mx-1 px-3 py-2 bg-info border border-info-foreground/20 rounded-lg">
           <div className="flex items-center space-x-2 rtl:space-x-reverse">
-            <div className="animate-pulse h-2 w-2 bg-red-500 rounded-full"></div>
-            <span className="text-sm text-blue-700">
+            <div className="animate-pulse h-2 w-2 bg-destructive rounded-full"></div>
+            <span className="text-sm text-info-foreground">
               {t('ChatContainer.screenShare.active', 'Screen sharing active - Current screen will be attached to your message')}
             </span>
           </div>
@@ -420,7 +420,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
           />
           <div className="flex items-center justify-between px-2">
             <div className="flex items-center space-x-2">
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-muted-foreground">
                 {selectedFiles.length} {selectedFiles.length === 1 ? 'file' : 'files'} selected
               </span>
               <button
@@ -433,9 +433,9 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
             <button
               onClick={() => setSaveToCloud(!saveToCloud)}
               className={`flex items-center space-x-1 px-3 py-1 rounded-lg text-sm transition-colors ${
-                saveToCloud 
-                  ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' 
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                saveToCloud
+                  ? 'bg-info text-info-foreground hover:bg-info/80'
+                  : 'bg-secondary text-muted-foreground hover:bg-accent'
               }`}
               title={saveToCloud ? 'Files will be saved to cloud' : 'Files will be sent directly'}
             >
@@ -448,11 +448,11 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
 
       {/* Upload errors */}
       {Object.keys(uploadErrors).length > 0 && (
-        <div className="mx-1 p-2 bg-red-50 border border-red-200 rounded-lg">
+        <div className="mx-1 p-2 bg-destructive/10 border border-destructive/30 rounded-lg">
           {Object.entries(uploadErrors).map(([fileId, error]) => {
             const file = selectedFiles.find(f => f.id === fileId);
             return (
-              <p key={fileId} className="text-sm text-red-600">
+              <p key={fileId} className="text-sm text-destructive">
                 {file?.file.name}: {error}
               </p>
             );
@@ -462,10 +462,10 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
 
       {/* Main input area */}
       <div className="flex items-end w-full">
-        <div className="flex flex-row bg-neutral-200 items-end rtl:space-x-reverse w-full space-x-2 rounded-2xl px-3 py-2">
+        <div className="flex flex-row bg-secondary items-end rtl:space-x-reverse w-full space-x-2 rounded-2xl px-3 py-2">
           <textarea
             ref={textareaRef}
-            className="grow px-2 min-h-6 bg-neutral-200 resize-y max-h-40 overflow-auto border-none focus:ring-0 text-sm text-gray-800 placeholder-gray-500 focus:outline-hidden"
+            className="grow px-2 min-h-6 bg-secondary resize-y max-h-40 overflow-auto border-none focus:ring-0 text-sm text-foreground placeholder:text-muted-foreground focus:outline-hidden"
             placeholder={
               selectedFiles.length > 0 
                 ? t('ChatContainer.input.withFiles', 'Add a caption (optional)...') 
@@ -507,9 +507,9 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
                 disabled={isUploading}
                 title="Attach files"
               >
-                <PaperClipIcon className="h-5 w-5 text-gray-600" />
+                <PaperClipIcon className="h-5 w-5 text-muted-foreground" />
                 {selectedFiles.length > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-4 w-4 flex items-center justify-center">
                     {selectedFiles.length}
                   </span>
                 )}
@@ -520,9 +520,9 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
                 disabled={isUploading || !hasContent}
               >
                 {isUploading ? (
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-muted-foreground"></div>
                 ) : (
-                  <PaperAirplaneIcon className="h-5 w-5 text-gray-600 rtl:-scale-x-100" />
+                  <PaperAirplaneIcon className="h-5 w-5 text-muted-foreground rtl:-scale-x-100" />
                 )}
               </button>
             </div>

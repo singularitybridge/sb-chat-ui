@@ -90,9 +90,9 @@ const ImageMessage: React.FC<ImageMessageProps> = ({
   return (
     <>
       <MessageWrapper
-        icon={<UserIcon className="w-5 h-5 text-gray-800" />}
+        icon={<UserIcon className="w-5 h-5 text-foreground" />}
         bgColor=""
-        borderColor="bg-gray-100"
+        borderColor="bg-secondary"
         role="Human"
         dateText={formatRelativeTime(createdAt)}
       >
@@ -104,7 +104,7 @@ const ImageMessage: React.FC<ImageMessageProps> = ({
                 ref={imgRef}
                 src={fileMetadata.url || fileMetadata.gcpStorageUrl}
                 alt={fileMetadata.fileName}
-                className="max-w-xs md:max-w-sm h-auto rounded-lg my-2 border border-gray-200 cursor-pointer"
+                className="max-w-xs md:max-w-sm h-auto rounded-lg my-2 border border-border cursor-pointer"
                 onLoad={handleImageLoad}
                 onError={handleImageError}
                 onClick={() => setOpenLightbox(true)}
@@ -112,21 +112,21 @@ const ImageMessage: React.FC<ImageMessageProps> = ({
               />
           )}
           {isVisible && isLoading && ( // Loading state
-            <div className="w-full h-48 bg-gray-50 flex items-center justify-center my-2 rounded-lg border border-gray-200">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-300"></div>
+            <div className="w-full h-48 bg-secondary flex items-center justify-center my-2 rounded-lg border border-border">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-muted-foreground"></div>
             </div>
           )}
           {isVisible && hasError && ( // Error state
-            <div className="w-full h-48 bg-gray-50 flex flex-col items-center justify-center my-2 rounded-lg border border-gray-200 p-4 text-center">
+            <div className="w-full h-48 bg-secondary flex flex-col items-center justify-center my-2 rounded-lg border border-border p-4 text-center">
               <span className="text-4xl mb-2">🖼️</span>
-              <p className="text-sm text-gray-500">Failed to load image: {fileMetadata.fileName}</p>
+              <p className="text-sm text-muted-foreground">Failed to load image: {fileMetadata.fileName}</p>
             </div>
           )}
 
           {/* Separate Text Message content if any (remains the same) */}
           {content && content.trim() && (
             <div className="mt-1 max-w-sm md:max-w-md lg:max-w-lg self-start">
-              <div className="px-4 py-3 bg-gray-100 text-gray-800 rounded-2xl border border-gray-200 shadow-sm">
+              <div className="px-4 py-3 bg-secondary text-foreground rounded-2xl border border-border shadow-sm">
                 <p className="text-sm whitespace-pre-wrap">{content}</p>
               </div>
             </div>

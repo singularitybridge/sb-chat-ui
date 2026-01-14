@@ -101,7 +101,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                     </span>
                     <ModelIndicator modelName={assistant.llmModel} size="small" />
                   </div>
-                  <p className="text-xs text-gray-500 line-clamp-1">
+                  <p className="text-xs text-muted-foreground line-clamp-1">
                     {assistant.description}
                   </p>
                   {integrationNames.length > 0 && (
@@ -114,7 +114,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                     </div>
                   )}
                 </div>
-                <CornerDownLeft className="w-4 h-4 text-gray-400 shrink-0" />
+                <CornerDownLeft className="w-4 h-4 text-muted-foreground shrink-0" />
               </CommandItem>
             );
           })}
@@ -135,12 +135,12 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
       </CommandList>
 
       {/* Keyboard Shortcut Hint */}
-      <div className="border-t px-3 py-2 text-xs text-gray-500 flex items-center justify-between">
+      <div className="border-t px-3 py-2 text-xs text-muted-foreground flex items-center justify-between">
         <span>
-          {t('CommandPalette.hint', 'Press')} <kbd className="px-1.5 py-0.5 text-xs bg-gray-100 border border-gray-300 rounded">{getKeyboardShortcut()}</kbd> {t('CommandPalette.hintToOpen', 'to open')}
+          {t('CommandPalette.hint', 'Press')} <kbd className="px-1.5 py-0.5 text-xs bg-secondary border border-border rounded">{getKeyboardShortcut()}</kbd> {t('CommandPalette.hintToOpen', 'to open')}
         </span>
         <span className="flex items-center gap-1">
-          <kbd className="px-1.5 py-0.5 text-xs bg-gray-100 border border-gray-300 rounded">↑↓</kbd>
+          <kbd className="px-1.5 py-0.5 text-xs bg-secondary border border-border rounded">↑↓</kbd>
           {t('CommandPalette.navigate', 'to navigate')}
         </span>
       </div>

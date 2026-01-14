@@ -42,14 +42,14 @@ const WorkspaceAuthorizePage: React.FC = () => {
           <ChatContainer />
         </div>
         <div className="grow max-w-3xl w-full">
-          <div className="bg-white rounded-lg h-full p-6 shadow-sm" dir="rtl">
+          <div className="bg-background rounded-lg h-full p-6 shadow-sm" dir="rtl">
             <Card className="max-w-xl w-full mx-auto border-0 shadow-none">
               <CardHeader className="text-center border-b pb-6">
                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Shield size={32} />
                 </div>
                 <CardTitle className="text-2xl mb-2">אישור גישה ליישום חיצוני</CardTitle>
-                <p className="text-gray-600">
+                <p className="text-muted-foreground">
                   היישום {appData.appName} מבקש גישה לחשבונך
                 </p>
               </CardHeader>
@@ -61,20 +61,20 @@ const WorkspaceAuthorizePage: React.FC = () => {
                     <div className="bg-blue-100 p-1.5 rounded-full w-6 h-6 flex items-center justify-center">
                       <ExternalLink size={14} />
                     </div>
-                    <span className="text-gray-600">{appData.redirectUrl}</span>
+                    <span className="text-muted-foreground">{appData.redirectUrl}</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="bg-blue-100 p-1.5 rounded-full w-6 h-6 flex items-center justify-center">
                       <Lock size={14} />
                     </div>
-                    <span className="text-gray-600">{appData.appName}</span>
+                    <span className="text-muted-foreground">{appData.appName}</span>
                   </div>
                 </div>
 
                 {/* Permissions */}
                 <div>
                   <h3 className="font-semibold mb-3">היישום יקבל גישה ל:</h3>
-                  <ul className="space-y-2 text-gray-600">
+                  <ul className="space-y-2 text-muted-foreground">
                     <li className="flex items-start gap-2">
                       <div className="w-5 h-5 shrink-0">•</div>
                       <span>צפייה במידע הבסיסי של החשבון שלך</span>

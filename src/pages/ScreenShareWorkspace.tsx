@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router';
-import { User, Laptop, Bot, RefreshCw, FileText, Trash2, PanelLeftClose, PanelLeft, Share2, FolderOpen, FolderClosed, Database, Sparkles, Monitor } from 'lucide-react';
+import { User, Laptop, Bot, RefreshCw, FileText, Trash2, PanelLeftClose, PanelLeft, Share2, FolderOpen, FolderClosed, Database, Sparkles, Monitor, ArrowLeft } from 'lucide-react';
 import { useScreenShareStore } from '../store/useScreenShareStore';
 import { useChatStore } from '../store/chatStore';
 import { useSessionStore } from '../store/useSessionStore';
@@ -120,6 +120,7 @@ const ScreenShareWorkspace: React.FC = () => {
 
   // Local state
   const [showAIWorkspace, setShowAIWorkspace] = useState(true); // true = AI Workspace (default), false = User Screen
+  const [mobileView, setMobileView] = useState<'chat' | 'workspace'>('workspace'); // Mobile view toggle
   const [selectedFilePath, setSelectedFilePath] = useState<string | null>(null);
   const [selectedFileContent, setSelectedFileContent] = useState<string | null>(null);
   const [selectedFileType, setSelectedFileType] = useState<string | null>(null);
@@ -1150,24 +1151,72 @@ Feel free to customize this page or create new files using the workspace!
     >
       <DynamicBackground {...backgroundProps} />
       <div className="relative z-10 flex w-full justify-center h-full">
-        <div className="flex w-full gap-7 rtl:gap-7">
+        {/* Mobile View Toggle - Only visible on mobile */}
+        <div className="md:hidden absolute top-0 left-0 right-0 z-20 px-4 py-2 bg-background/95 backdrop-blur-sm border-b border-border">
+          <div className="flex items-center justify-between">
+            <button
+              onClick={() => navigate('/admin/assistants')}
+              className="p-2 hover:bg-accent rounded-lg transition-colors"
+              title="Back to assistants"
+            >
+              <ArrowLeft className="h-5 w-5 text-muted-foreground rtl:rotate-180" />
+            </button>
+            <div className="flex items-center gap-1 bg-secondary rounded-lg p-1">
+              <button
+                onClick={() => setMobileView('chat')}
+                className={cn(
+                  'px-3 py-1.5 rounded-md text-sm font-medium transition-colors',
+                  mobileView === 'chat'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-muted-foreground hover:text-foreground'
+                )}
+              >
+                Chat
+              </button>
+              <button
+                onClick={() => setMobileView('workspace')}
+                className={cn(
+                  'px-3 py-1.5 rounded-md text-sm font-medium transition-colors',
+                  mobileView === 'workspace'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-muted-foreground hover:text-foreground'
+                )}
+              >
+                Workspace
+              </button>
+            </div>
+            <button
+              onClick={() => setShowMemoryDialog(true)}
+              className="p-2 hover:bg-accent rounded-lg transition-colors"
+              title="View workspace memory"
+            >
+              <Database className="h-5 w-5 text-muted-foreground" />
+            </button>
+          </div>
+        </div>
+
+        <div className="flex flex-col md:flex-row w-full gap-4 md:gap-7 pt-14 md:pt-0">
           {/* Left Panel - Chat (with smooth animation) */}
           <ContentPanel
             className={cn(
-              "flex flex-col max-w-sm w-full h-full transition-all duration-300 ease-in-out",
-              panels.chatPanel ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0 pointer-events-none absolute"
+              'flex flex-col w-full md:max-w-sm md:w-full h-full transition-all duration-300 ease-in-out',
+              // Desktop: use panels state
+              'hidden md:flex',
+              panels.chatPanel ? 'md:translate-x-0 md:opacity-100' : 'md:-translate-x-full md:opacity-0 md:pointer-events-none md:absolute',
+              // Mobile: use mobileView state
+              mobileView === 'chat' ? '!flex' : '!hidden md:!flex'
             )}
           >
               {!activeSession ? (
                 <div className="flex-1 flex items-center justify-center p-8">
                   <div className="text-center">
-                    <h3 className="text-lg font-semibold text-gray-700 mb-2">No Active Session</h3>
-                    <p className="text-sm text-gray-500 mb-4">
+                    <h3 className="text-lg font-semibold text-foreground mb-2">No Active Session</h3>
+                    <p className="text-sm text-muted-foreground mb-4">
                       Please select an assistant from the assistants page first.
                     </p>
                     <button
                       onClick={() => navigate('/admin/assistants')}
-                      className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium transition-colors shadow-sm"
+                      className="px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg text-sm font-medium transition-colors shadow-sm"
                     >
                       Go to Assistants
                     </button>
@@ -1194,25 +1243,38 @@ Feel free to customize this page or create new files using the workspace!
           </ContentPanel>
 
           {/* Right Panel - Workspace View Area */}
-          <ContentPanel className="flex-1 min-w-0 flex flex-col h-full">
-            {/* Toolbar */}
-            <div className="px-4 py-3 flex items-center justify-between border-b border-gray-100">
-              {/* Left: Workspace Title + Icon Switcher */}
+          <ContentPanel
+            className={cn(
+              'flex-1 min-w-0 flex flex-col h-full',
+              // Mobile: use mobileView state
+              mobileView === 'workspace' ? 'flex' : 'hidden md:flex'
+            )}
+          >
+            {/* Toolbar - hidden on mobile (mobile has its own header) */}
+            <div className="hidden md:flex px-4 py-3 items-center justify-between border-b border-border">
+              {/* Left: Back Button + Workspace Title + Icon Switcher */}
               <div className="flex items-center gap-2">
-                <h3 className="text-sm font-semibold text-gray-700">
+                <button
+                  onClick={() => navigate('/admin/assistants')}
+                  className="p-2 hover:bg-accent rounded-lg transition-colors"
+                  title="Back to assistants"
+                >
+                  <ArrowLeft className="h-5 w-5 text-muted-foreground rtl:rotate-180" />
+                </button>
+                <h3 className="text-sm font-semibold text-foreground">
                   {currentAssistant?.name || 'AI'} Workspace
                 </h3>
 
                 {/* Icon Workspace Switcher */}
-                <div className="inline-flex items-center rounded-lg bg-purple-100/50 px-2 py-0.5 gap-1.5">
-                  <span className="text-xs font-medium text-purple-700">View:</span>
+                <div className="inline-flex items-center rounded-lg bg-violet/10 px-2 py-0.5 gap-1.5">
+                  <span className="text-xs font-medium text-violet">View:</span>
                   <button
                     onClick={() => setShowAIWorkspace(false)}
                     className={cn(
-                      "p-1 rounded transition-all",
+                      'p-1 rounded transition-all',
                       !showAIWorkspace
-                        ? "text-purple-900 opacity-100"
-                        : "text-purple-600 opacity-40 hover:opacity-60"
+                        ? 'text-foreground opacity-100'
+                        : 'text-muted-foreground opacity-40 hover:opacity-60'
                     )}
                     title="User Screen"
                   >
@@ -1221,10 +1283,10 @@ Feel free to customize this page or create new files using the workspace!
                   <button
                     onClick={() => setShowAIWorkspace(true)}
                     className={cn(
-                      "p-1 rounded transition-all",
+                      'p-1 rounded transition-all',
                       showAIWorkspace
-                        ? "text-purple-900 opacity-100"
-                        : "text-purple-600 opacity-40 hover:opacity-60"
+                        ? 'text-foreground opacity-100'
+                        : 'text-muted-foreground opacity-40 hover:opacity-60'
                     )}
                     title="AI Workspace"
                   >
@@ -1237,24 +1299,69 @@ Feel free to customize this page or create new files using the workspace!
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => setShowMemoryDialog(true)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-2 hover:bg-accent rounded-lg transition-colors"
                   title="View workspace memory"
                 >
-                  <Database className="h-5 w-5 text-gray-600" />
+                  <Database className="h-5 w-5 text-muted-foreground" />
                 </button>
                 <button
                   onClick={() => togglePanel('chatPanel')}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-2 hover:bg-accent rounded-lg transition-colors"
                   title={panels.chatPanel ? 'Hide chat panel (⌘⇧C)' : 'Show chat panel (⌘⇧C)'}
                 >
-                  {panels.chatPanel ? <PanelLeftClose className="h-5 w-5 text-gray-600" /> : <PanelLeft className="h-5 w-5 text-gray-600" />}
+                  {panels.chatPanel ? <PanelLeftClose className="h-5 w-5 text-muted-foreground" /> : <PanelLeft className="h-5 w-5 text-muted-foreground" />}
                 </button>
                 <button
                   onClick={() => togglePanel('fileListPanel')}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-2 hover:bg-accent rounded-lg transition-colors"
                   title={panels.fileListPanel ? 'Hide file list (⌘⇧E)' : 'Show file list (⌘⇧E)'}
                 >
-                  {panels.fileListPanel ? <FolderClosed className="h-5 w-5 text-gray-600" /> : <FolderOpen className="h-5 w-5 text-gray-600" />}
+                  {panels.fileListPanel ? <FolderClosed className="h-5 w-5 text-muted-foreground" /> : <FolderOpen className="h-5 w-5 text-muted-foreground" />}
+                </button>
+              </div>
+            </div>
+
+            {/* Mobile Workspace Toolbar */}
+            <div className="md:hidden px-3 py-2 flex items-center justify-between border-b border-border bg-background">
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm font-semibold text-foreground truncate">
+                  {currentAssistant?.name || 'AI'} Workspace
+                </h3>
+                {/* Icon Workspace Switcher */}
+                <div className="inline-flex items-center rounded-lg bg-violet/10 px-1.5 py-0.5 gap-1">
+                  <button
+                    onClick={() => setShowAIWorkspace(false)}
+                    className={cn(
+                      'p-0.5 rounded transition-all',
+                      !showAIWorkspace
+                        ? 'text-foreground opacity-100'
+                        : 'text-muted-foreground opacity-40 hover:opacity-60'
+                    )}
+                    title="User Screen"
+                  >
+                    <User className="h-3.5 w-3.5" />
+                  </button>
+                  <button
+                    onClick={() => setShowAIWorkspace(true)}
+                    className={cn(
+                      'p-0.5 rounded transition-all',
+                      showAIWorkspace
+                        ? 'text-foreground opacity-100'
+                        : 'text-muted-foreground opacity-40 hover:opacity-60'
+                    )}
+                    title="AI Workspace"
+                  >
+                    <Bot className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => togglePanel('fileListPanel')}
+                  className="p-1.5 hover:bg-accent rounded-lg transition-colors"
+                  title={panels.fileListPanel ? 'Hide files' : 'Show files'}
+                >
+                  {panels.fileListPanel ? <FolderClosed className="h-4 w-4 text-muted-foreground" /> : <FolderOpen className="h-4 w-4 text-muted-foreground" />}
                 </button>
               </div>
             </div>
@@ -1262,12 +1369,16 @@ Feel free to customize this page or create new files using the workspace!
             {/* Dynamic Content Area - Shows either Screen Preview or AI Workspace */}
             {showAIWorkspace ? (
               // AI Workspace View - File Explorer + File Viewer
-              <div className="flex-1 flex overflow-hidden bg-gray-50 font-['Inter',sans-serif]">
+              <div className="flex-1 flex overflow-hidden bg-secondary font-['Inter',sans-serif]">
                 {/* File Explorer Sidebar (with smooth animation) */}
                 <div
                   className={cn(
-                    "w-80 border-r border-gray-200 bg-white transition-all duration-300 ease-in-out",
-                    panels.fileListPanel ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0 pointer-events-none absolute"
+                    'w-64 md:w-80 border-r border-border bg-background transition-all duration-300 ease-in-out',
+                    // Desktop behavior
+                    'hidden md:block',
+                    panels.fileListPanel ? 'md:translate-x-0 md:opacity-100' : 'md:-translate-x-full md:opacity-0 md:pointer-events-none md:absolute',
+                    // Mobile: show as overlay when panel is open
+                    panels.fileListPanel ? '!block absolute md:relative z-10 h-full' : ''
                   )}
                   style={{ willChange: 'transform, opacity' }}
                 >
@@ -1283,66 +1394,67 @@ Feel free to customize this page or create new files using the workspace!
                     />
                   ) : (
                     <div className="flex items-center justify-center h-full p-6">
-                      <p className="text-sm text-gray-500">No assistant selected</p>
+                      <p className="text-sm text-muted-foreground">No assistant selected</p>
                     </div>
                   )}
                 </div>
 
                 {/* File Viewer */}
-                <div className="flex-1 flex flex-col overflow-hidden bg-white">
+                <div className="flex-1 flex flex-col overflow-hidden bg-background">
                   {selectedFilePath && selectedFileContent ? (
                     <>
                       {/* File Header */}
-                      <div className="px-6 py-4 border-b border-gray-100">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <h3 className="text-sm font-semibold text-gray-900 truncate">
+                      <div className="px-3 md:px-6 py-2 md:py-4 border-b border-border">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <h3 className="text-xs md:text-sm font-semibold text-foreground truncate">
                               {selectedFilePath}
                             </h3>
-                            <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs font-medium">
+                            <span className="px-1.5 md:px-2 py-0.5 bg-secondary text-muted-foreground rounded text-[10px] md:text-xs font-medium shrink-0">
                               {selectedFileType?.toUpperCase()}
                             </span>
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-1.5 md:gap-2 flex-wrap">
                             {/* Toggle for MD/MDX files */}
                             {(selectedFileType === 'md' || selectedFileType === 'mdx') && (
                               <button
                                 onClick={() => setMarkdownViewMode(prev => prev === 'rendered' ? 'raw' : 'rendered')}
-                                className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded text-xs font-medium transition-colors flex items-center gap-1"
+                                className="p-1.5 md:px-3 md:py-1 bg-secondary hover:bg-accent text-foreground rounded text-xs font-medium transition-colors flex items-center gap-1"
+                                title={markdownViewMode === 'rendered' ? 'Show Raw' : 'Show Rendered'}
                               >
                                 <FileText className="h-3 w-3" />
-                                {markdownViewMode === 'rendered' ? 'Show Raw' : 'Show Rendered'}
+                                <span className="hidden md:inline">{markdownViewMode === 'rendered' ? 'Show Raw' : 'Show Rendered'}</span>
                               </button>
                             )}
                             {/* Embed button for HTML/MDX/MD files */}
                             {(selectedFileType === 'html' || selectedFileType === 'md' || selectedFileType === 'mdx') && (
                               <button
                                 onClick={() => setShowEmbedDialog(true)}
-                                className="px-3 py-1 bg-purple-50 hover:bg-purple-100 text-purple-600 rounded text-xs font-medium transition-colors flex items-center gap-1"
+                                className="p-1.5 md:px-3 md:py-1 bg-violet/10 hover:bg-violet/20 text-violet rounded text-xs font-medium transition-colors flex items-center gap-1"
                                 title="Embed this file"
                               >
                                 <Share2 className="h-3 w-3" />
-                                Embed
+                                <span className="hidden md:inline">Embed</span>
                               </button>
                             )}
                             {/* Reload button */}
                             <button
                               onClick={handleReloadFile}
                               disabled={isReloadingFile}
-                              className="px-3 py-1 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded text-xs font-medium transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="p-1.5 md:px-3 md:py-1 bg-primary/10 hover:bg-primary/20 text-primary rounded text-xs font-medium transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                               title="Reload file"
                             >
                               <RefreshCw className={`h-3 w-3 ${isReloadingFile ? 'animate-spin' : ''}`} />
-                              Reload
+                              <span className="hidden md:inline">Reload</span>
                             </button>
                             {/* Delete button */}
                             <button
                               onClick={handleDeleteFile}
-                              className="px-3 py-1 bg-red-50 hover:bg-red-100 text-red-600 rounded text-xs font-medium transition-colors flex items-center gap-1"
+                              className="p-1.5 md:px-3 md:py-1 bg-destructive/10 hover:bg-destructive/20 text-destructive rounded text-xs font-medium transition-colors flex items-center gap-1"
                               title="Delete file"
                             >
                               <Trash2 className="h-3 w-3" />
-                              Delete
+                              <span className="hidden md:inline">Delete</span>
                             </button>
                           </div>
                         </div>
@@ -1359,18 +1471,18 @@ Feel free to customize this page or create new files using the workspace!
                           />
                         ) : (selectedFileType === 'md' || selectedFileType === 'mdx') ? (
                           markdownViewMode === 'rendered' ? (
-                            <div className="p-8">
+                            <div className="p-4 md:p-8">
                               <MarkdownRenderer content={selectedFileContent} />
                             </div>
                           ) : (
-                            <div className="p-6">
-                              <pre className="text-sm text-gray-800 bg-gray-50 rounded-lg p-4 overflow-auto whitespace-pre-wrap font-mono">
+                            <div className="p-3 md:p-6">
+                              <pre className="text-xs md:text-sm text-foreground bg-secondary rounded-lg p-3 md:p-4 overflow-auto whitespace-pre-wrap font-mono">
                                 {selectedFileContent}
                               </pre>
                             </div>
                           )
                         ) : (selectedFileType === 'png' || selectedFileType === 'jpg' || selectedFileType === 'jpeg' || selectedFileType === 'gif') ? (
-                          <div className="p-8 flex items-center justify-center">
+                          <div className="p-4 md:p-8 flex items-center justify-center">
                             <img
                               src={`data:image/${selectedFileType};base64,${selectedFileContent}`}
                               alt={selectedFilePath}
@@ -1380,8 +1492,8 @@ Feel free to customize this page or create new files using the workspace!
                         ) : selectedFileType === 'json' ? (
                           <JSONViewer content={selectedFileContent} />
                         ) : (
-                          <div className="p-6">
-                            <pre className="text-sm text-gray-800 whitespace-pre-wrap font-mono">
+                          <div className="p-3 md:p-6">
+                            <pre className="text-xs md:text-sm text-foreground whitespace-pre-wrap font-mono">
                               {selectedFileContent}
                             </pre>
                           </div>
@@ -1390,24 +1502,24 @@ Feel free to customize this page or create new files using the workspace!
                     </>
                   ) : isHomePageMissing ? (
                     // Welcome message for missing home page
-                    <div className="flex-1 flex items-center justify-center p-8">
+                    <div className="flex-1 flex items-center justify-center p-4 md:p-8">
                       <div className="text-center max-w-md">
-                        <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-50 to-blue-50 rounded-full mb-6">
-                          <Sparkles className="h-10 w-10 text-purple-600" />
+                        <div className="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-violet/10 rounded-full mb-4 md:mb-6">
+                          <Sparkles className="h-8 w-8 md:h-10 md:w-10 text-violet" />
                         </div>
-                        <h3 className="text-xl font-semibold text-gray-900 mb-3">Welcome to Your Workspace</h3>
-                        <p className="text-sm text-gray-600 mb-6 leading-relaxed">
+                        <h3 className="text-lg md:text-xl font-semibold text-foreground mb-2 md:mb-3">Welcome to Your Workspace</h3>
+                        <p className="text-xs md:text-sm text-muted-foreground mb-4 md:mb-6 leading-relaxed">
                           This workspace doesn't have a home page yet. Create one to get started with organizing your work,
                           documenting projects, or building interactive dashboards.
                         </p>
                         <button
                           onClick={handleCreateHomePage}
                           disabled={isCreatingHomePage}
-                          className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mx-auto"
+                          className="px-4 md:px-6 py-2 md:py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg text-xs md:text-sm font-medium transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mx-auto"
                         >
                           {isCreatingHomePage ? (
                             <>
-                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground"></div>
                               Creating...
                             </>
                           ) : (
@@ -1417,20 +1529,20 @@ Feel free to customize this page or create new files using the workspace!
                             </>
                           )}
                         </button>
-                        <p className="text-xs text-gray-500 mt-4">
+                        <p className="text-[10px] md:text-xs text-muted-foreground mt-3 md:mt-4">
                           This will create a README.mdx file at the root of your workspace
                         </p>
                       </div>
                     </div>
                   ) : (
                     // No file selected
-                    <div className="flex-1 flex items-center justify-center p-8">
+                    <div className="flex-1 flex items-center justify-center p-4 md:p-8">
                       <div className="text-center">
-                        <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
-                          <FileText className="h-8 w-8 text-gray-400" />
+                        <div className="inline-flex items-center justify-center w-12 h-12 md:w-16 md:h-16 bg-secondary rounded-full mb-3 md:mb-4">
+                          <FileText className="h-6 w-6 md:h-8 md:w-8 text-muted-foreground" />
                         </div>
-                        <h3 className="text-sm font-medium text-gray-900 mb-1">No file selected</h3>
-                        <p className="text-xs text-gray-500">Select a file from the explorer to preview</p>
+                        <h3 className="text-xs md:text-sm font-medium text-foreground mb-1">No file selected</h3>
+                        <p className="text-[10px] md:text-xs text-muted-foreground">Select a file from the explorer to preview</p>
                       </div>
                     </div>
                   )}
@@ -1439,7 +1551,7 @@ Feel free to customize this page or create new files using the workspace!
             ) : (
               // User Screen Preview
               <>
-                <div className="flex-1 bg-gray-900 p-4 flex items-center justify-center">
+                <div className="flex-1 bg-card p-4 flex items-center justify-center">
                   {isScreenSharing && stream ? (
                     <video
                       ref={videoRef}
@@ -1450,14 +1562,14 @@ Feel free to customize this page or create new files using the workspace!
                     />
                   ) : (
                     <div className="text-center">
-                      <Monitor className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-                      <p className="text-sm text-gray-300 mb-1">
+                      <Monitor className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+                      <p className="text-sm text-muted-foreground/70 mb-1">
                         {isScreenSharing ? 'Connecting...' : 'Screen sharing is off'}
                       </p>
                       {!isScreenSharing && (
                         <button
                           onClick={startScreenShare}
-                          className="mt-4 px-6 py-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium transition-all shadow-md hover:shadow-lg"
+                          className="mt-4 px-6 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg text-sm font-medium transition-all shadow-md hover:shadow-lg"
                         >
                           Start Screen Share
                         </button>
@@ -1465,16 +1577,16 @@ Feel free to customize this page or create new files using the workspace!
                     </div>
                   )}
                 </div>
-                <div className="px-4 py-2 bg-gradient-to-r from-gray-50 to-gray-100">
-                  <p className="text-xs text-gray-600 flex items-center">
+                <div className="px-4 py-2 bg-secondary">
+                  <p className="text-xs text-muted-foreground flex items-center">
                     {isScreenSharing ? (
                       <>
-                        <span className="inline-block w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
+                        <span className="inline-block w-2 h-2 bg-destructive rounded-full mr-2 animate-pulse"></span>
                         Live • Screenshots attached to messages
                       </>
                     ) : (
                       <>
-                        <span className="inline-block w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
+                        <span className="inline-block w-2 h-2 bg-muted-foreground rounded-full mr-2"></span>
                         Inactive • Click to start sharing
                       </>
                     )}

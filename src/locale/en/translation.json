@@ -123,11 +123,48 @@
     "deleteConfirmTitle": "Delete Team",
     "deleteConfirmMessage": "Are you sure you want to delete the team '{{name}}'? This action cannot be undone."
   },
+  "teams": {
+    "createSuccess": "Team created successfully",
+    "createError": "Failed to create team",
+    "selectIconError": "Please select an icon"
+  },
+  "company": {
+    "createSuccess": "Company created successfully",
+    "createError": "Failed to create company"
+  },
+  "user": {
+    "createSuccess": "User created successfully",
+    "createError": "Failed to create user"
+  },
+  "invites": {
+    "userSetSuccess": "User set successfully",
+    "emailRequired": "Email is required",
+    "sendSuccess": "Invite sent successfully",
+    "sendError": "Failed to send invite",
+    "revokeConfirm": "Are you sure you want to revoke this invite?",
+    "revokeSuccess": "Invite revoked successfully",
+    "revokeError": "Failed to revoke invite",
+    "deleteConfirm": "Are you sure you want to permanently delete this invite? This action cannot be undone.",
+    "deleteSuccess": "Invite deleted successfully",
+    "deleteError": "Failed to delete invite"
+  },
+  "costTracking": {
+    "exportSuccess": "Cost data exported successfully",
+    "exportError": "Failed to export cost data"
+  },
+  "assistantActions": {
+    "saveSuccess": "Actions updated successfully",
+    "saveError": "Failed to update actions"
+  },
   "MemoryPage": {
     "title": "Memory Journal",
     "noItems": "No journal entries found",
-    "searchPlaceholder": "Search Placeholder",
-    "filterByTypePlaceholder": "Filter By Type Placeholder"
+    "searchPlaceholder": "Search entries...",
+    "filterByTypePlaceholder": "Filter by type...",
+    "tryAdjustingFilters": "Try adjusting your search or filters.",
+    "errorLoading": "Error loading entries",
+    "tryAgain": "Try again",
+    "loading": "Loading entries..."
   },
   "EditTeamPage": {
     "title": "Edit Team",
@@ -272,7 +309,13 @@
     "dropFile" : "Drop file here",
     "dragFileHere" : "Drag file here, or click to upload",
     "selectAvatar": "Select Avatar",
-    "editAllowedActions": "Edit Allowed Actions"
+    "editAllowedActions": "Edit Allowed Actions",
+    "saveSuccess": "Assistant updated successfully",
+    "saveError": "Failed to update assistant",
+    "fileUploadSuccess": "File uploaded successfully",
+    "fileUploadError": "Failed to upload file",
+    "fileDeleteSuccess": "File deleted successfully",
+    "fileDeleteError": "Failed to delete file"
   },
   "ChatContainer": {
     "input": {
@@ -332,9 +375,13 @@
     "save": "Save Changes",
     "allowedActions": "Allowed Actions",
     "allowedActions_description": "Description of allowed actions",
+    "newAssistant": "New Assistant",
+    "newAssistantDescription": "New assistant description",
+    "newAssistantIntroMessage": "New assistant intro message",
+    "defaultLlmPrompt": "You are chatting with an AI assistant. The assistant is helpful, creative, clever, and very friendly.",
     "identifiers" : {
       "title": "Conversation Starters",
-      "description": "Conversation starters are used to initiate a conversation with the assistant"      
+      "description": "Conversation starters are used to initiate a conversation with the assistant"
     }
   },
   "teamFieldConfigs": {

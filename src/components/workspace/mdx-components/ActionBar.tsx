@@ -33,7 +33,7 @@ export const ActionBar: React.FC<ActionBarProps> = ({
   }
 
   return (
-    <div className="not-prose bg-white p-4 rounded-lg border border-gray-200 mb-6">
+    <div className="not-prose bg-card p-4 rounded-lg border border-border mb-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           {actionItems.map((action, index) => {
@@ -41,8 +41,8 @@ export const ActionBar: React.FC<ActionBarProps> = ({
             const isPrimary = action.variant === 'primary' || index === 0; // First button is primary by default
 
             const buttonClass = isPrimary
-              ? 'px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2'
-              : 'px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2';
+              ? 'px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2'
+              : 'px-4 py-2 bg-secondary text-foreground text-sm font-medium rounded-lg hover:bg-accent transition-colors flex items-center gap-2';
 
             return (
               <button key={index} className={buttonClass}>
@@ -53,7 +53,7 @@ export const ActionBar: React.FC<ActionBarProps> = ({
           })}
         </div>
         {statustext && (
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-muted-foreground">
             {statustext}
           </div>
         )}

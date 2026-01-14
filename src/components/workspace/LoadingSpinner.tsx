@@ -34,7 +34,7 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   const iconSize = sizeClasses[size];
 
   return (
-    <div className={`flex items-center gap-2 text-blue-600 ${className}`}>
+    <div className={`flex items-center gap-2 text-primary ${className}`}>
       <Loader2 className={`${iconSize} animate-spin`} />
       {message && <span className="text-sm">{message}</span>}
     </div>

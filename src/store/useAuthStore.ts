@@ -18,10 +18,10 @@ interface AuthStoreState {
   isAuthenticated: boolean;
   isUserDataLoaded: boolean;
   userSessionInfo: UserSessionInfo;
-  
+
   // Computed getter
   isLoggedIn: () => boolean;
-  
+
   // Actions
   setIsAuthenticated: (value: boolean) => void;
   setUserSessionInfo: (info: Partial<UserSessionInfo>) => void;

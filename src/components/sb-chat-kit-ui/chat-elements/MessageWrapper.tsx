@@ -11,7 +11,7 @@ interface MessageWrapperProps {
 
 const MessageWrapper: React.FC<MessageWrapperProps> = ({ icon, bgColor, borderColor, role, children, dateText }) => {
   return (
-    <div className={`flex ${bgColor} gap-3 my-1 text-gray-600 text-sm flex-1 py-2`}>
+    <div className={`flex ${bgColor} gap-3 my-1 text-foreground text-sm flex-1 py-2`}>
       <span className="relative flex shrink-0 overflow-hidden rounded-full w-8 h-8">
         <div className={`rounded-full ${borderColor} border p-1`}>
           {icon}
@@ -19,8 +19,8 @@ const MessageWrapper: React.FC<MessageWrapperProps> = ({ icon, bgColor, borderCo
       </span>
       <div className="leading-relaxed grow">
         <div className="flex justify-between items-center">
-          <span className="font-bold text-gray-800">{role}</span>
-          {dateText && <span className="text-xs text-gray-400">{dateText}</span>}
+          <span className="font-bold text-foreground">{role}</span>
+          {dateText && <span className="text-xs text-muted-foreground">{dateText}</span>}
         </div>
         {children}
       </div>

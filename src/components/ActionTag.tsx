@@ -39,28 +39,28 @@ export interface ActionTagProps {
 
 const ActionTag: React.FC<ActionTagProps> = ({ iconName, title, description, serviceName, onRemove, className }) => {
   return (
-    <div className={clsx('p-3 bg-slate-100 rounded-xl', className)}>
+    <div className={clsx('p-3 bg-muted rounded-xl', className)}>
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2 rtl:space-x-reverse">
           {iconName in dynamicIconImports ? (
-            <Icon name={iconName} className="w-5 h-5" />
+            <Icon name={iconName} className="w-5 h-5 text-foreground" />
           ) : (
-            <span className="w-5 h-5 flex items-center justify-center text-sm">{iconName}</span>
+            <span className="w-5 h-5 flex items-center justify-center text-sm text-foreground">{iconName}</span>
           )}
-          <span className="font-medium text-base text-slate-600">{title}</span>
+          <span className="font-medium text-base text-foreground">{title}</span>
         </div>
         {onRemove && (
           <button
             onClick={onRemove}
-            className="text-gray-500 hover:text-gray-800"
+            className="text-muted-foreground hover:text-foreground"
           >
             <Icon name="x" size={16} />
           </button>
         )}
       </div>
-      <p className="text-sm mt-1 text-slate-700">{description}</p>
+      <p className="text-sm mt-1 text-muted-foreground">{description}</p>
       <div className="flex">
-        <div className="text-xs text-gray-500 mt-4 bg-blue-100 px-2.5 py-1 rounded-2xl">{serviceName}</div>
+        <div className="text-xs text-primary mt-4 bg-primary/10 px-2.5 py-1 rounded-2xl">{serviceName}</div>
       </div>
     </div>
   );

@@ -59,8 +59,10 @@ const AuthManager: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   useEffect(() => {
     const checkAuth = async () => {
       const isEmbedRoute = location.pathname.startsWith('/embed/assistants/');
-      if (isEmbedRoute || location.pathname === '/health') {
-        // For embed routes, we might not require full user authentication
+      const isDevRoute = location.pathname.startsWith('/dev');
+      const isTestRoute = location.pathname.startsWith('/test/');
+      if (isEmbedRoute || isDevRoute || isTestRoute || location.pathname === '/health') {
+        // For embed/dev/test routes, we might not require full user authentication
         // but we still need to load essential data if an API key is present or for public assistants
         setLoading(false);
         return;
@@ -89,14 +91,16 @@ const AuthManager: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     const isEmbedRoute = location.pathname.startsWith('/embed/assistants/');
-    if (!isEmbedRoute && !isAuthenticated && location.pathname !== '/signup' && location.pathname !== '/health') {
+    const isDevRoute = location.pathname.startsWith('/dev');
+    const isTestRoute = location.pathname.startsWith('/test/');
+    if (!isEmbedRoute && !isDevRoute && !isTestRoute && !isAuthenticated && location.pathname !== '/signup' && location.pathname !== '/health') {
       navigate('/signup');
     }
   }, [isAuthenticated, navigate, location.pathname]);
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-200">
+      <div className="flex justify-center items-center min-h-screen bg-accent">
         <ClipLoader color="#123abc" loading={true} size={50} />
       </div>
     );

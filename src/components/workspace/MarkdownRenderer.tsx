@@ -109,24 +109,28 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
           border: none !important;
         }
         .workspace-markdown-content :not(pre) > code {
-          background-color: rgb(241 245 249) !important;
-          color: rgb(219 39 119) !important;
+          background-color: var(--color-slate-100, rgb(241 245 249)) !important;
+          color: var(--color-pink-600, rgb(219 39 119)) !important;
           padding: 0.125rem 0.375rem !important;
           border-radius: 0.25rem !important;
           font-size: 13px !important;
           font-family: 'JetBrains Mono', monospace !important;
           font-weight: 500 !important;
-          border: 1px solid rgb(226 232 240) !important;
+          border: 1px solid var(--color-slate-200, rgb(226 232 240)) !important;
+        }
+        .dark .workspace-markdown-content :not(pre) > code {
+          background-color: rgb(30 41 59) !important;
+          color: rgb(244 114 182) !important;
+          border: 1px solid rgb(51 65 85) !important;
         }
         .workspace-markdown-content :not(pre) > code::before,
         .workspace-markdown-content :not(pre) > code::after {
           content: '' !important;
         }
       `}} />
-      <div className={`workspace-markdown-content prose prose-slate max-w-none font-['Inter',sans-serif] px-1 ${className}`} style={{
+      <div className={`workspace-markdown-content prose prose-slate dark:prose-invert max-w-none font-['Inter',sans-serif] px-1 ${className}`} style={{
         fontSize: '16px',
-        lineHeight: '1.75',
-        color: '#1e293b'
+        lineHeight: '1.75'
       }}>
         {/* Render WorkspaceSearch if requested in content and not disabled */}
         {hasWorkspaceSearch && !disableWorkspaceSearch && (
@@ -312,7 +316,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
               ? (e: React.MouseEvent<HTMLButtonElement>) => {
                   try {
                     // Execute the onclick string as JavaScript
-                    // eslint-disable-next-line no-eval
+                     
                     eval(onclickStr);
                   } catch (error) {
                     console.error('Error executing onclick:', error);
@@ -335,7 +339,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
             const handleMouseOver = (typeof onmouseoverStr === 'string')
               ? (e: React.MouseEvent<HTMLButtonElement>) => {
                   try {
-                    // eslint-disable-next-line no-eval
+                     
                     const fn = new Function('event', onmouseoverStr);
                     fn.call(e.currentTarget, e);
                   } catch (error) {
@@ -351,7 +355,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
             const handleMouseOut = (typeof onmouseoutStr === 'string')
               ? (e: React.MouseEvent<HTMLButtonElement>) => {
                   try {
-                    // eslint-disable-next-line no-eval
+                     
                     const fn = new Function('event', onmouseoutStr);
                     fn.call(e.currentTarget, e);
                   } catch (error) {
@@ -368,7 +372,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
                 onClick={handleClick}
                 onMouseOver={handleMouseOver}
                 onMouseOut={handleMouseOut}
-                variant={dataMessage || onclickStr ? "default" : "secondary"}
+                variant={dataMessage || onclickStr ? 'default' : 'secondary'}
                 size="sm"
                 className={className}
                 style={style}

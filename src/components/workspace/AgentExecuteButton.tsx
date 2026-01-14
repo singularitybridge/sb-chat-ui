@@ -87,24 +87,24 @@ export const AgentExecuteButton: React.FC<InputComponentProps & { buttonText?: s
   };
 
   return (
-    <div className={`border border-gray-200 rounded-lg p-4 ${className}`}>
+    <div className={`border border-border rounded-lg p-4 ${className}`}>
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <Play className="w-4 h-4 text-purple-600" />
-          <span className="text-sm font-medium text-gray-700">
-            Agent: <span className="text-purple-600">{agentName}</span>
+          <Play className="w-4 h-4 text-violet" />
+          <span className="text-sm font-medium text-foreground">
+            Agent: <span className="text-violet">{agentName}</span>
           </span>
         </div>
       </div>
 
-      <div className="text-xs text-gray-500 font-mono bg-gray-50 p-2 rounded mb-3">
+      <div className="text-xs text-muted-foreground font-mono bg-secondary p-2 rounded mb-3">
         {query}
       </div>
 
       <button
         onClick={executeAgent}
         disabled={isLoading}
-        className="w-full px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        className="w-full px-4 py-2 bg-violet hover:bg-violet/90 text-violet-foreground rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
         {isLoading ? (
           <>
@@ -120,13 +120,14 @@ export const AgentExecuteButton: React.FC<InputComponentProps & { buttonText?: s
       </button>
 
       {error && (
-        <div className="mt-3 text-sm text-red-600 bg-red-50 p-2 rounded border border-red-200">
-          <strong>Error:</strong> {error}
+        <div className="mt-3 text-sm bg-destructive/10 p-2 rounded border border-destructive/30">
+          <span className="text-destructive font-medium">Error:</span>{' '}
+          <span className="text-foreground">{error}</span>
         </div>
       )}
 
       {lastExecuted > 0 && !isLoading && !error && (
-        <div className="mt-3 text-xs text-green-600 flex items-center gap-1">
+        <div className="mt-3 text-xs text-success-foreground flex items-center gap-1">
           <span className="font-bold">✓</span> Executed at {new Date(lastExecuted).toLocaleTimeString()}
         </div>
       )}

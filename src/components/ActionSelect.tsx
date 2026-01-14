@@ -83,8 +83,8 @@ export const ActionSelect: React.FC<ActionSelectProps> = ({
       <div
         className={clsx(
           'mt-1 relative border rounded-md',
-          disabled ? 'bg-gray-100' : 'bg-white',
-          isOpen ? 'border-blue-500' : 'border-gray-300'
+          disabled ? 'bg-secondary' : 'bg-background',
+          isOpen ? 'border-ring' : 'border-border'
         )}
       >
         <div
@@ -101,23 +101,23 @@ export const ActionSelect: React.FC<ActionSelectProps> = ({
                 className="p-0 bg-transparent"
               />
             ) : (
-              <span className="text-gray-400">{placeholder}</span>
+              <span className="text-muted-foreground">{placeholder}</span>
             )}
           </div>
           <ChevronDownIcon
-            className={clsx('w-5 h-5 text-gray-400', isOpen && 'transform rotate-180')}
+            className={clsx('w-5 h-5 text-muted-foreground', isOpen && 'transform rotate-180')}
           />
         </div>
         {isOpen && (
-          <div className="mt-1 bg-white border-t border-gray-200 rounded-b-md shadow-inner">
+          <div className="mt-1 bg-background border-t border-border rounded-b-md shadow-inner">
             <div className="p-2">
               {/* Sticky Header */}
-              <div className="sticky top-0 bg-white z-10">
+              <div className="sticky top-0 bg-background z-10">
                 {/* Search Input */}
                 <SearchInput value={searchTerm} onChange={setSearchTerm} />
                 {/* Active Service Name */}
                 {activeServiceName && (
-                  <div className="text-sm text-gray-500 bg-blue-100 p-2 rounded-xl mb-1">{activeServiceName}</div>
+                  <div className="text-sm text-muted-foreground bg-info p-2 rounded-xl mb-1">{activeServiceName}</div>
                 )}
               </div>
               {/* Options List */}

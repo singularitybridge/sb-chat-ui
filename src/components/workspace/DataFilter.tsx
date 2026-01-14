@@ -111,44 +111,44 @@ export const DataFilter: React.FC<DataFilterProps> = ({
   }, [inputData, autoExecute, inputLoading, filter, isFiltering]);
 
   return (
-    <div className={`border border-gray-200 rounded-lg p-4 ${className}`}>
+    <div className={`border border-border rounded-lg p-4 ${className}`}>
       <div className="flex items-center gap-2 mb-2">
-        <Filter className="w-4 h-4 text-green-600" />
-        <span className="text-sm font-medium text-gray-700">
+        <Filter className="w-4 h-4 text-success-foreground" />
+        <span className="text-sm font-medium text-foreground">
           Data Filter
         </span>
       </div>
 
       <div className="text-xs space-y-1">
         <div className="flex gap-2">
-          <span className="text-gray-500">Input:</span>
-          <span className="font-mono text-purple-600">{dataKey}</span>
+          <span className="text-muted-foreground">Input:</span>
+          <span className="font-mono text-violet">{dataKey}</span>
         </div>
         <div className="flex gap-2">
-          <span className="text-gray-500">Output:</span>
-          <span className="font-mono text-blue-600">{outputKey}</span>
+          <span className="text-muted-foreground">Output:</span>
+          <span className="font-mono text-primary">{outputKey}</span>
         </div>
-        <div className="bg-gray-50 p-2 rounded mt-2">
-          <div className="text-gray-500 mb-1">Filter:</div>
-          <code className="text-xs text-gray-700">{filter}</code>
+        <div className="bg-secondary p-2 rounded mt-2">
+          <div className="text-muted-foreground mb-1">Filter:</div>
+          <code className="text-xs text-foreground">{filter}</code>
         </div>
       </div>
 
       {isFiltering && (
-        <div className="mt-2 text-sm text-blue-600 flex items-center gap-2">
-          <div className="w-3 h-3 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+        <div className="mt-2 text-sm text-primary flex items-center gap-2">
+          <div className="w-3 h-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />
           Filtering...
         </div>
       )}
 
       {(localError || inputError) && (
-        <div className="mt-2 text-sm text-red-600">
+        <div className="mt-2 text-sm text-destructive">
           Error: {localError || inputError}
         </div>
       )}
 
       {lastFiltered > 0 && !isFiltering && !localError && !inputError && (
-        <div className="mt-2 text-xs text-green-600">
+        <div className="mt-2 text-xs text-success-foreground">
           ✓ Filtered {filteredCount} items at {new Date(lastFiltered).toLocaleTimeString()}
         </div>
       )}
@@ -156,7 +156,7 @@ export const DataFilter: React.FC<DataFilterProps> = ({
       {!autoExecute && inputData && !isFiltering && (
         <button
           onClick={() => filterData(inputData)}
-          className="mt-2 text-sm px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
+          className="mt-2 text-sm px-3 py-1 bg-primary text-primary-foreground rounded hover:bg-primary/90 transition-colors"
         >
           Filter Now
         </button>

@@ -28,10 +28,10 @@ const Avatar = ({
   avatarStyle: AvatarStyles;
   active?: boolean;
 }) => {
-  const bgColor = active ? 'bg-blue-300' : 'bg-gray-300';
-  
+  const bgColor = active ? 'bg-primary/30' : 'bg-muted-foreground/30';
+
   return (
-    <div className={`${avatarStyle} rounded-full ${bgColor} flex items-center justify-center hover:bg-blue-200`}>
+    <div className={`${avatarStyle} rounded-full ${bgColor} flex items-center justify-center hover:bg-accent`}>
       <img 
         src={imageUrl || DEFAULT_AVATAR} 
         className="rounded-full w-full h-full object-cover" 

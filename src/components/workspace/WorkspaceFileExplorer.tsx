@@ -263,13 +263,13 @@ export const WorkspaceFileExplorer: React.FC<WorkspaceFileExplorerProps> = ({
           // Folder header (non-clickable)
           <>
             <div
-              className="flex items-center gap-2 px-3 py-1 text-gray-600"
+              className="flex items-center gap-2 px-3 py-1 text-muted-foreground"
               style={{ paddingLeft: `${level * 16 + 12}px` }}
             >
-              <Folder className="h-4 w-4 text-gray-400" />
+              <Folder className="h-4 w-4 text-muted-foreground" />
               <span className="text-xs font-medium uppercase tracking-wide">{item.name}</span>
               {item.children && (
-                <span className="text-[10px] text-gray-400">({item.children.length})</span>
+                <span className="text-[10px] text-muted-foreground">({item.children.length})</span>
               )}
             </div>
             {/* Always render children */}
@@ -287,20 +287,20 @@ export const WorkspaceFileExplorer: React.FC<WorkspaceFileExplorerProps> = ({
               w-full flex items-center gap-2 px-3 py-1.5 text-left
               transition-all duration-150
               ${isSelected
-                ? 'bg-blue-50 text-blue-700'
-                : 'hover:bg-gray-50 text-gray-700'
+                ? 'bg-primary/10 text-primary'
+                : 'hover:bg-accent text-foreground'
               }
             `}
             style={{ paddingLeft: `${level * 16 + 12}px` }}
           >
             <div className={`
               shrink-0
-              ${isSelected ? 'text-blue-600' : 'text-gray-400'}
+              ${isSelected ? 'text-primary' : 'text-muted-foreground'}
             `}>
               {getFileIcon(item.extension)}
             </div>
             <span className="flex-1 text-sm truncate">{item.name}</span>
-            <span className="text-xs text-gray-400 shrink-0">{formatDate(item.updatedAt)}</span>
+            <span className="text-xs text-muted-foreground shrink-0">{formatDate(item.updatedAt)}</span>
           </button>
         )}
       </div>
@@ -311,8 +311,8 @@ export const WorkspaceFileExplorer: React.FC<WorkspaceFileExplorerProps> = ({
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center space-y-3">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400 mx-auto"></div>
-          <p className="text-sm text-gray-500">Loading workspace...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-muted-foreground mx-auto"></div>
+          <p className="text-sm text-muted-foreground">Loading workspace...</p>
         </div>
       </div>
     );
@@ -333,31 +333,31 @@ export const WorkspaceFileExplorer: React.FC<WorkspaceFileExplorerProps> = ({
   const _totalFiles = countFiles(files);
 
   return (
-    <div className="h-full flex flex-col bg-white">
+    <div className="h-full flex flex-col bg-background">
       {/* Search and Sort Controls */}
-      <div className="px-4 py-4 border-b border-gray-100">
+      <div className="px-4 py-4 border-b border-border">
         {/* Search */}
         <div className="relative mb-3">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input
             type="text"
             placeholder="Search files..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50"
+            className="w-full pl-10 pr-4 py-2 text-sm border border-border rounded-lg focus:outline-hidden focus:ring-2 focus:ring-ring focus:border-transparent bg-secondary"
           />
         </div>
 
         {/* Sort Controls */}
         <div className="flex items-center gap-1.5">
-          <span className="text-xs text-gray-500">Sort:</span>
+          <span className="text-xs text-muted-foreground">Sort:</span>
           <button
             onClick={() => handleSortChange('name')}
             className={`
               px-2.5 py-1 text-xs font-medium rounded-md flex items-center gap-1.5 transition-all
               ${sortBy === 'name'
-                ? 'bg-blue-50 text-blue-700 shadow-sm'
-                : 'text-gray-600 hover:bg-gray-100'
+                ? 'bg-primary/10 text-primary shadow-sm'
+                : 'text-muted-foreground hover:bg-accent'
               }
             `}
           >
@@ -372,8 +372,8 @@ export const WorkspaceFileExplorer: React.FC<WorkspaceFileExplorerProps> = ({
             className={`
               px-2.5 py-1 text-xs font-medium rounded-md flex items-center gap-1.5 transition-all
               ${sortBy === 'date'
-                ? 'bg-blue-50 text-blue-700 shadow-sm'
-                : 'text-gray-600 hover:bg-gray-100'
+                ? 'bg-primary/10 text-primary shadow-sm'
+                : 'text-muted-foreground hover:bg-accent'
               }
             `}
           >
@@ -390,21 +390,21 @@ export const WorkspaceFileExplorer: React.FC<WorkspaceFileExplorerProps> = ({
       <div className="flex-1 overflow-y-auto">
         {processedFiles.length === 0 && !searchQuery ? (
           <div className="flex flex-col items-center justify-center h-full text-center p-8">
-            <div className="p-4 bg-gray-50 rounded-full mb-4">
-              <Sparkles className="h-8 w-8 text-gray-400" />
+            <div className="p-4 bg-secondary rounded-full mb-4">
+              <Sparkles className="h-8 w-8 text-muted-foreground" />
             </div>
-            <p className="text-sm font-medium text-gray-900 mb-1">No files yet</p>
-            <p className="text-xs text-gray-500 max-w-xs">
+            <p className="text-sm font-medium text-foreground mb-1">No files yet</p>
+            <p className="text-xs text-muted-foreground max-w-xs">
               The AI agent can create and manage files in this workspace
             </p>
           </div>
         ) : processedFiles.length === 0 && searchQuery ? (
           <div className="flex flex-col items-center justify-center h-full text-center p-8">
-            <div className="p-4 bg-gray-50 rounded-full mb-4">
-              <Search className="h-8 w-8 text-gray-400" />
+            <div className="p-4 bg-secondary rounded-full mb-4">
+              <Search className="h-8 w-8 text-muted-foreground" />
             </div>
-            <p className="text-sm font-medium text-gray-900 mb-1">No results found</p>
-            <p className="text-xs text-gray-500 max-w-xs">
+            <p className="text-sm font-medium text-foreground mb-1">No results found</p>
+            <p className="text-xs text-muted-foreground max-w-xs">
               Try a different search term
             </p>
           </div>

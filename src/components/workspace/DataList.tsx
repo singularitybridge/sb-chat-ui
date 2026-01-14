@@ -48,54 +48,54 @@ export const DataList: React.FC<ListComponentProps> = ({
   // Default item renderer
   const defaultRenderItem = (item: any, index: number) => {
     if (typeof item === 'string') {
-      return <div className="text-gray-700">{item}</div>;
+      return <div className="text-foreground">{item}</div>;
     }
 
     if (typeof item === 'object') {
       return (
         <div className="text-sm">
-          {item.name && <div className="font-medium text-gray-900">{item.name}</div>}
-          {item.title && <div className="font-medium text-gray-900">{item.title}</div>}
-          {item.description && <div className="text-gray-600 mt-1">{item.description}</div>}
+          {item.name && <div className="font-medium text-foreground">{item.name}</div>}
+          {item.title && <div className="font-medium text-foreground">{item.title}</div>}
+          {item.description && <div className="text-muted-foreground mt-1">{item.description}</div>}
         </div>
       );
     }
 
-    return <div className="text-gray-700">{String(item)}</div>;
+    return <div className="text-foreground">{String(item)}</div>;
   };
 
   const itemRenderer = renderItem || defaultRenderItem;
 
   return (
-    <div className={`border border-gray-200 rounded-lg ${className}`}>
-      <div className="flex items-center gap-2 p-4 border-b border-gray-200">
-        <List className="w-4 h-4 text-purple-600" />
-        <span className="text-sm font-medium text-gray-700">
+    <div className={`border border-border rounded-lg ${className}`}>
+      <div className="flex items-center gap-2 p-4 border-b border-border">
+        <List className="w-4 h-4 text-violet" />
+        <span className="text-sm font-medium text-foreground">
           Data List ({items.length} items)
         </span>
       </div>
 
       {loading && showLoading && (
-        <div className="flex items-center gap-2 text-blue-600 p-4">
-          <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+        <div className="flex items-center gap-2 text-primary p-4">
+          <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
           <span>Loading...</span>
         </div>
       )}
 
       {error && (
-        <div className="text-red-600 bg-red-50 p-4">
+        <div className="text-destructive bg-destructive/10 p-4">
           <strong>Error:</strong> {error}
         </div>
       )}
 
       {!loading && !error && items.length === 0 && (
-        <div className="text-gray-500 italic p-4">{emptyMessage}</div>
+        <div className="text-muted-foreground italic p-4">{emptyMessage}</div>
       )}
 
       {!loading && !error && items.length > 0 && (
-        <div className="divide-y divide-gray-100">
+        <div className="divide-y divide-border">
           {items.map((item, index) => (
-            <div key={index} className="p-4 hover:bg-gray-50 transition-colors">
+            <div key={index} className="p-4 hover:bg-accent transition-colors">
               {itemRenderer(item, index)}
             </div>
           ))}
@@ -103,7 +103,7 @@ export const DataList: React.FC<ListComponentProps> = ({
       )}
 
       {!loading && !error && !data && (
-        <div className="text-gray-500 italic p-4">{fallback}</div>
+        <div className="text-muted-foreground italic p-4">{fallback}</div>
       )}
     </div>
   );

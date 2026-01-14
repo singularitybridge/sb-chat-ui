@@ -20,7 +20,7 @@ const LoginWithGoogle: React.FC = () => {
   };
 
   const onError = (error?: any) => {
-    console.error('Login failed:', error);
+    logger.error('Google login error:', error);
   };
 
   return (

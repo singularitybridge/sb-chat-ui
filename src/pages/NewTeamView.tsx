@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { toast } from 'react-toastify';
 import { useTeamStore } from '../store/useTeamStore';
 import { useAuthStore } from '../store/useAuthStore';
 import { useTranslation } from 'react-i18next';
@@ -25,7 +26,7 @@ const NewTeamView: React.FC = () => {
 
   const handleCreateTeam = async () => {
     if (!selectedIcon) {
-      setError('Please select an icon');
+      setError(t('teams.selectIconError'));
       return;
     }
 
@@ -40,11 +41,12 @@ const NewTeamView: React.FC = () => {
         companyId: userSessionInfo.companyId,
       });
 
+      toast.success(t('teams.createSuccess'));
       // Close the modal
       emitter.emit(EVENT_CLOSE_MODAL);
     } catch (err: any) {
-      console.error('Failed to create team:', err);
-      setError(err?.message || 'Failed to create team');
+      toast.error(t('teams.createError'));
+      setError(err?.message || t('teams.createError'));
     } finally {
       setIsCreating(false);
     }
@@ -59,11 +61,11 @@ const NewTeamView: React.FC = () => {
   const renderStep1 = () => (
     <div className="space-y-6">
       <div className="text-center space-y-2">
-        <div className="flex items-center justify-center gap-2 text-purple-600 mb-4">
+        <div className="flex items-center justify-center gap-2 text-violet mb-4">
           <Wand2 className="w-8 h-8" />
         </div>
         <h3 className="text-lg font-semibold">Name your team</h3>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-muted-foreground">
           Choose a name that reflects your team's purpose
         </p>
       </div>
@@ -80,7 +82,7 @@ const NewTeamView: React.FC = () => {
         <Button
           type="submit"
           disabled={!teamName.trim()}
-          className="w-full bg-purple-600 hover:bg-purple-700 mt-6 py-3 text-base font-medium"
+          className="w-full bg-violet hover:bg-violet/90 mt-6 py-3 text-base font-medium"
         >
           Continue
           <ArrowRight className="w-4 h-4 ml-2" />
@@ -97,11 +99,11 @@ const NewTeamView: React.FC = () => {
   const renderStep2 = () => (
     <div className="space-y-6">
       <div className="text-center space-y-2">
-        <div className="flex items-center justify-center gap-2 text-purple-600 mb-4">
+        <div className="flex items-center justify-center gap-2 text-violet mb-4">
           <Wand2 className="w-8 h-8" />
         </div>
         <h3 className="text-lg font-semibold">Describe your team</h3>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-muted-foreground">
           Tell us what this team does
         </p>
       </div>
@@ -138,7 +140,7 @@ const NewTeamView: React.FC = () => {
           <Button
             type="submit"
             disabled={!teamPurpose.trim()}
-            className="flex-[1.2] bg-purple-600 hover:bg-purple-700 py-3 text-base font-medium"
+            className="flex-[1.2] bg-violet hover:bg-violet/90 py-3 text-base font-medium"
           >
             Continue
             <ArrowRight className="w-4 h-4 ml-2" />
@@ -156,18 +158,18 @@ const NewTeamView: React.FC = () => {
   const renderStep3 = () => (
     <div className="space-y-6">
       <div className="text-center space-y-2">
-        <div className="flex items-center justify-center gap-2 text-purple-600 mb-4">
+        <div className="flex items-center justify-center gap-2 text-violet mb-4">
           <Wand2 className="w-8 h-8" />
         </div>
         <h3 className="text-lg font-semibold">Choose an icon</h3>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-muted-foreground">
           Select an icon that represents your team
         </p>
       </div>
 
       <form onSubmit={(e) => { e.preventDefault(); handleStep3Submit(); }}>
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-foreground mb-2">
             Team Icon
           </label>
           <IconPicker value={selectedIcon} onChange={setSelectedIcon} />
@@ -195,7 +197,7 @@ const NewTeamView: React.FC = () => {
           <Button
             type="submit"
             disabled={!selectedIcon || isCreating}
-            className="flex-[1.2] bg-purple-600 hover:bg-purple-700 py-3 text-base font-medium"
+            className="flex-[1.2] bg-violet hover:bg-violet/90 py-3 text-base font-medium"
           >
             {isCreating ? (
               <>
@@ -225,8 +227,8 @@ const NewTeamView: React.FC = () => {
                 w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors
                 ${
                   step >= stepNum
-                    ? 'bg-purple-600 text-white'
-                    : 'bg-gray-200 text-gray-400'
+                    ? 'bg-violet text-violet-foreground'
+                    : 'bg-secondary text-muted-foreground'
                 }
               `}
             >
@@ -236,7 +238,7 @@ const NewTeamView: React.FC = () => {
               <div
                 className={`
                   w-12 h-0.5 transition-colors
-                  ${step > stepNum ? 'bg-purple-600' : 'bg-gray-200'}
+                  ${step > stepNum ? 'bg-violet' : 'bg-secondary'}
                 `}
               />
             )}
@@ -245,7 +247,7 @@ const NewTeamView: React.FC = () => {
       </div>
 
       {/* Step content */}
-      <Card className="p-6 border-gray-200 shadow-sm">
+      <Card className="p-6 border-border shadow-sm">
         {step === 1 && renderStep1()}
         {step === 2 && renderStep2()}
         {step === 3 && renderStep3()}
@@ -253,10 +255,10 @@ const NewTeamView: React.FC = () => {
 
       {/* Team info preview (steps 2-3) */}
       {step >= 2 && (
-        <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
-          <div className="text-xs text-gray-500 mb-1">Preview</div>
+        <div className="mt-4 p-4 bg-secondary rounded-lg border border-border">
+          <div className="text-xs text-muted-foreground mb-1">Preview</div>
           <div className="font-medium">{teamName}</div>
-          <div className="text-sm text-gray-600 mt-1">{teamPurpose}</div>
+          <div className="text-sm text-muted-foreground mt-1">{teamPurpose}</div>
         </div>
       )}
     </div>

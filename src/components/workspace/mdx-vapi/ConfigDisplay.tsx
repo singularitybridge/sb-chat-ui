@@ -25,16 +25,16 @@ export const ConfigDisplay: React.FC<ConfigDisplayProps> = ({
   ],
 }) => {
   return (
-    <div className="not-prose bg-white p-4 rounded-lg border border-gray-200 mb-6">
-      <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+    <div className="not-prose bg-card p-4 rounded-lg border border-border mb-6">
+      <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
         <Settings className="w-4 h-4" />
         {title}
       </h3>
       <div className="grid grid-cols-2 gap-4 text-sm">
         {items.map((item, index) => (
           <div key={index}>
-            <div className="text-gray-500 mb-1">{item.label}</div>
-            <div className="font-mono text-xs text-gray-900 break-all">{item.value}</div>
+            <div className="text-muted-foreground mb-1">{item.label}</div>
+            <div className="font-mono text-xs text-foreground break-all">{item.value}</div>
           </div>
         ))}
       </div>

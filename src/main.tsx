@@ -22,8 +22,9 @@ const queryClient = new QueryClient({
   }
 });
 /* Prefetch integrations once so first render never blocks */
+const appLanguage = localStorage.getItem('appLanguage') || 'en';
 queryClient.prefetchQuery({
-  queryKey: ['integrations'],
+  queryKey: ['integrations', appLanguage],
   queryFn: () => import('./services/integrationService').then(m => m.getLeanIntegrations())
 });
 

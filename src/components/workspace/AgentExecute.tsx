@@ -88,43 +88,44 @@ export const AgentExecute: React.FC<InputComponentProps> = ({
   }, [query, agentName]);
 
   return (
-    <div className={`border border-gray-200 rounded-lg p-4 ${className}`}>
+    <div className={`border border-border rounded-lg p-4 ${className}`}>
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <Play className="w-4 h-4 text-purple-600" />
-          <span className="text-sm font-medium text-gray-700">
-            Agent: <span className="text-purple-600">{agentName}</span>
+          <Play className="w-4 h-4 text-violet" />
+          <span className="text-sm font-medium text-foreground">
+            Agent: <span className="text-violet">{agentName}</span>
           </span>
         </div>
         <button
           onClick={executeAgent}
           disabled={isLoading}
-          className="p-1 hover:bg-gray-100 rounded transition-colors disabled:opacity-50"
+          className="p-1 hover:bg-accent rounded transition-colors disabled:opacity-50"
           title="Re-execute"
         >
-          <RefreshCw className={`w-4 h-4 text-gray-600 ${isLoading ? 'animate-spin' : ''}`} />
+          <RefreshCw className={`w-4 h-4 text-muted-foreground ${isLoading ? 'animate-spin' : ''}`} />
         </button>
       </div>
 
-      <div className="text-xs text-gray-500 font-mono bg-gray-50 p-2 rounded">
+      <div className="text-xs text-muted-foreground font-mono bg-secondary p-2 rounded">
         {query}
       </div>
 
       {isLoading && (
-        <div className="mt-2 text-sm text-blue-600 flex items-center gap-2">
-          <div className="w-3 h-3 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+        <div className="mt-2 text-sm text-primary flex items-center gap-2">
+          <div className="w-3 h-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />
           Executing...
         </div>
       )}
 
       {error && (
-        <div className="mt-2 text-sm text-red-600">
-          Error: {error}
+        <div className="mt-2 text-sm bg-destructive/10 border border-destructive/30 p-2 rounded">
+          <span className="text-destructive font-medium">Error:</span>{' '}
+          <span className="text-foreground">{error}</span>
         </div>
       )}
 
       {lastExecuted > 0 && !isLoading && !error && (
-        <div className="mt-2 text-xs text-green-600">
+        <div className="mt-2 text-xs text-success-foreground">
           ✓ Executed at {new Date(lastExecuted).toLocaleTimeString()}
         </div>
       )}

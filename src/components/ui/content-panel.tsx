@@ -21,9 +21,9 @@ export const ContentPanel: React.FC<ContentPanelProps> = ({
   variant = 'default'
 }) => {
   const variantStyles = {
-    default: 'bg-white/95 backdrop-blur-sm',
-    solid: 'bg-white',
-    glass: 'bg-white/60 backdrop-blur-md',
+    default: 'bg-background/95 backdrop-blur-sm',
+    solid: 'bg-background',
+    glass: 'bg-background/60 backdrop-blur-md',
   };
 
   return (

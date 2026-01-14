@@ -50,12 +50,12 @@ const AddTeamDialog: React.FC = () => {
   return (
     <div className="space-y-4">
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-foreground mb-1">
           {t('AddTeamDialog.name') || 'Name'}
         </label>
         <input
           type="text"
-          className="w-full p-2 border border-gray-300 rounded-md"
+          className="w-full p-2 border border-border rounded-md"
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
@@ -63,11 +63,11 @@ const AddTeamDialog: React.FC = () => {
       </div>
       
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-foreground mb-1">
           {t('AddTeamDialog.description') || 'Description'}
         </label>
         <textarea
-          className="w-full p-2 border border-gray-300 rounded-md"
+          className="w-full p-2 border border-border rounded-md"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={3}
@@ -75,7 +75,7 @@ const AddTeamDialog: React.FC = () => {
       </div>
       
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-foreground mb-1">
           {t('AddTeamDialog.icon') || 'Icon'}
         </label>
         <IconPicker value={icon} onChange={setIcon} />
@@ -84,7 +84,7 @@ const AddTeamDialog: React.FC = () => {
       <div className="flex justify-end space-x-2">
         <button
           type="button"
-          className="px-4 py-2 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300"
+          className="px-4 py-2 bg-accent text-foreground rounded-xl hover:bg-accent"
           onClick={() => emitter.emit(EVENT_CLOSE_MODAL)}
         >
           {t('common.cancel')}
@@ -93,7 +93,7 @@ const AddTeamDialog: React.FC = () => {
           type="button"
           className={`px-4 py-2 rounded-xl ${
             !name || isSubmitting
-              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              ? 'bg-muted-foreground/30 text-muted-foreground cursor-not-allowed'
               : 'bg-primary text-white hover:bg-primary-dark'
           }`}
           onClick={handleSubmit}
