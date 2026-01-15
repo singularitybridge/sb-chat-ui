@@ -10,7 +10,7 @@ import {
 } from '../../components/DynamicForm';
 import { companyFieldConfigs } from '../../store/fieldConfigs/companyFieldConfigs';
 import { useTranslation } from 'react-i18next';
-import AdminPageContainer from '../../components/admin/AdminPageContainer';
+import { PageLayout } from '../../components/admin/PageLayout';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
 
 const EditCompanyPage: React.FC = () => {
@@ -35,17 +35,17 @@ const EditCompanyPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <AdminPageContainer>
+      <PageLayout variant="card">
         <TextComponent text={t('common.pleaseWait')} size="medium" />
-      </AdminPageContainer>
+      </PageLayout>
     );
   }
 
   if (!company) {
     return (
-      <AdminPageContainer>
+      <PageLayout variant="card">
         <TextComponent text="Company not found" size="medium" />
-      </AdminPageContainer>
+      </PageLayout>
     );
   }
 
@@ -109,9 +109,13 @@ const EditCompanyPage: React.FC = () => {
   };
 
   return (
-    <AdminPageContainer>
-      <h1 className="text-2xl font-semibold mb-2">{t('EditCompanyPage.title')}</h1>
-      <p className="text-gray-600 mb-6">{t('EditCompanyPage.description')}</p>
+    <PageLayout
+      variant="card"
+      header={{
+        title: t('EditCompanyPage.title'),
+        description: t('EditCompanyPage.description'),
+      }}
+    >
       <div className="flex w-full space-x-12 rtl:space-x-reverse">
         <div className="w-1/2">
           <DynamicForm
@@ -127,7 +131,7 @@ const EditCompanyPage: React.FC = () => {
           {/* Additional content can be added here if needed */}
         </div>
       </div>
-    </AdminPageContainer>
+    </PageLayout>
   );
 };
 

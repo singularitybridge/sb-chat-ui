@@ -364,11 +364,11 @@ print('Assistant:', response)`;
     if (enabledFeatures.has('streaming')) {
       // Streaming version
       let curlCommand = `# Streaming API - Assistant: ${assistant.name}\ncurl -X POST '${url}' \\\\\n`;
-      curlCommand += `  -H 'Content-Type: application/json' \\\\\n`;
+      curlCommand += '  -H \'Content-Type: application/json\' \\\\\n';
       curlCommand += `  -H 'Authorization: Bearer ${token}' \\\\\n`;
-      curlCommand += `  -H 'Accept: text/event-stream' \\\\\n`;
-      curlCommand += `  -d '${JSON.stringify(payload, null, 2).replace(/'/g, "\\'")}' \\\\\n`;
-      curlCommand += `  --no-buffer`;
+      curlCommand += '  -H \'Accept: text/event-stream\' \\\\\n';
+      curlCommand += `  -d '${JSON.stringify(payload, null, 2).replace(/'/g, '\\\'')}' \\\\\n`;
+      curlCommand += '  --no-buffer';
       
       curlCommand += `
 
@@ -382,7 +382,7 @@ curl -X POST '${url}' \\\\
   -H 'Content-Type: application/json' \\\\
   -H 'Authorization: Bearer ${token}' \\\\
   -H 'Accept: text/event-stream' \\\\
-  -d '${JSON.stringify(payload, null, 2).replace(/'/g, "\\'")}' \\\\
+  -d '${JSON.stringify(payload, null, 2).replace(/'/g, '\\\'')}' \\\\
   --no-buffer | while IFS= read -r line; do
   if [[ \$line == data:* ]]; then
     json_data="\${line:5}"  # Remove "data:" prefix
@@ -394,9 +394,9 @@ done`;
     } else {
       // Non-streaming version
       let curlCommand = `# Stateless API - Assistant: ${assistant.name}\ncurl -X POST '${url}' \\\\\n`;
-      curlCommand += `  -H 'Content-Type: application/json' \\\\\n`;
+      curlCommand += '  -H \'Content-Type: application/json\' \\\\\n';
       curlCommand += `  -H 'Authorization: Bearer ${token}' \\\\\n`;
-      curlCommand += `  -d '${JSON.stringify(payload, null, 2).replace(/'/g, "\\'")}'`;
+      curlCommand += `  -d '${JSON.stringify(payload, null, 2).replace(/'/g, '\\\'')}'`;
 
       return curlCommand;
     }
@@ -636,24 +636,24 @@ done`;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
+      <div className="bg-background rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
         {/* Minimal Header */}
         <div className="flex items-center justify-between px-4 py-2.5">
-          <h2 className="text-sm font-medium text-gray-700">Code Sample</h2>
+          <h2 className="text-sm font-medium text-foreground">Code Sample</h2>
           <button
             onClick={onClose}
-            className="p-1 rounded hover:bg-gray-100 transition-colors"
+            className="p-1 rounded hover:bg-accent transition-colors"
           >
-            <X className="w-3.5 h-3.5 text-gray-400" />
+            <X className="w-3.5 h-3.5 text-muted-foreground" />
           </button>
         </div>
 
         {/* Ultra Minimal Controls Bar */}
-        <div className="px-4 py-2 border-b border-gray-100">
+        <div className="px-4 py-2 border-b border-border">
           <div className="flex items-center justify-between">
             {/* Language Section */}
             <div className="flex items-center gap-3">
-              <span className="text-xs text-gray-500">Language</span>
+              <span className="text-xs text-muted-foreground">Language</span>
               <div className="flex items-center gap-1">
                 {(Object.keys(languageIcons) as CodeLanguage[]).map((lang) => {
                   const { Icon, label, color } = languageIcons[lang];
@@ -662,7 +662,7 @@ done`;
                     <button
                       key={lang}
                       onClick={() => setSelectedLanguage(lang)}
-                      className="p-1.5 rounded transition-all hover:bg-gray-50"
+                      className="p-1.5 rounded transition-all hover:bg-accent"
                       title={label}
                     >
                       <IconComponent 
@@ -680,13 +680,13 @@ done`;
 
             {/* Options Section */}
             <div className="flex items-center gap-3">
-              <span className="text-xs text-gray-500">Options</span>
+              <span className="text-xs text-muted-foreground">Options</span>
               <div className="flex items-center gap-1">
                 {(Object.keys(featureIcons) as CodeFeature[]).map((feature) => (
                   <button
                     key={feature}
                     onClick={() => toggleFeature(feature)}
-                    className="p-1.5 rounded transition-all hover:bg-gray-50"
+                    className="p-1.5 rounded transition-all hover:bg-accent"
                     title={featureIcons[feature].label}
                   >
                     {React.cloneElement(featureIcons[feature].icon, {
@@ -704,14 +704,14 @@ done`;
         </div>
 
         {/* Test Input Section */}
-        <div className="px-4 py-3 border-b border-gray-100 bg-gray-50">
+        <div className="px-4 py-3 border-b border-border bg-secondary">
           <div className="flex items-center gap-2">
             <input
               type="text"
               value={testInput}
               onChange={(e) => setTestInput(e.target.value)}
               placeholder="Enter test message..."
-              className="flex-1 px-3 py-1.5 text-sm border border-gray-200 rounded-md focus:outline-hidden focus:border-purple-400"
+              className="flex-1 px-3 py-1.5 text-sm border border-border rounded-md focus:outline-hidden focus:border-violet/60"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !isTesting) {
                   handleTest();
@@ -723,8 +723,8 @@ done`;
               disabled={isTesting || !activeSession?.assistantId || !testInput.trim()}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
                 isTesting || !activeSession?.assistantId || !testInput.trim()
-                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  : 'bg-purple-600 hover:bg-purple-700 text-white'
+                  ? 'bg-secondary text-muted-foreground cursor-not-allowed'
+                  : 'bg-violet hover:bg-violet/90 text-violet-foreground'
               }`}
             >
               {isTesting ? (
@@ -765,29 +765,29 @@ done`;
           {showTestResult && (
             <div className="border-t border-gray-700 bg-gray-800" style={{ minHeight: '150px', maxHeight: '200px' }}>
               <div className="px-4 py-2 border-b border-gray-700 flex items-center justify-between">
-                <span className="text-xs font-medium text-gray-400">Test Result</span>
+                <span className="text-xs font-medium text-muted-foreground">Test Result</span>
                 <button
                   onClick={() => setShowTestResult(false)}
                   className="p-1 rounded hover:bg-gray-700 transition-colors"
                 >
-                  <X className="w-3 h-3 text-gray-400" />
+                  <X className="w-3 h-3 text-muted-foreground" />
                 </button>
               </div>
               <div className="p-4 overflow-auto" style={{ maxHeight: '160px' }}>
                 {isTesting && !testResult ? (
-                  <div className="flex items-center gap-2 text-gray-400">
+                  <div className="flex items-center gap-2 text-muted-foreground">
                     <Loader2 className="w-4 h-4 animate-spin" />
                     <span className="text-xs">Connecting to API...</span>
                   </div>
                 ) : testResult ? (
                   <pre className={`text-xs whitespace-pre-wrap font-mono ${
-                    testResult.startsWith('● Streaming') 
-                      ? 'text-purple-400' 
+                    testResult.startsWith('● Streaming')
+                      ? 'text-violet' 
                       : testResult.startsWith('✓') 
                       ? 'text-green-400' 
                       : testResult.startsWith('✗') 
                       ? 'text-red-400' 
-                      : 'text-gray-300'
+                      : 'text-muted-foreground'
                   }`}>
                     {testResult.startsWith('● Streaming') && (
                       <span className="inline-block animate-pulse">{testResult.split('\n')[0]}</span>
@@ -797,15 +797,15 @@ done`;
                       : testResult}
                   </pre>
                 ) : (
-                  <span className="text-xs text-gray-500">No result yet</span>
+                  <span className="text-xs text-muted-foreground">No result yet</span>
                 )}
               </div>
             </div>
           )}
 
           {/* Minimal Info Bar */}
-          <div className="px-4 py-2 bg-gray-50 border-t border-gray-100">
-            <div className="flex items-center justify-between text-xs text-gray-500">
+          <div className="px-4 py-2 bg-secondary border-t border-border">
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span className="font-mono">{activeSession?.assistantId ? `ID: ${activeSession.assistantId.slice(0, 8)}...` : 'No assistant selected'}</span>
               {authToken === 'YOUR_API_KEY' && (
                 <span className="text-amber-600">⚠ Replace API key</span>

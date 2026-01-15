@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
+import { toast } from 'react-toastify';
 import { useAssistantStore } from '../../store/useAssistantStore';
 import { IAssistant } from '../../types/entities';
 import {
@@ -17,14 +18,15 @@ import {
 import FileUpload from '../../components/sb-core-ui-kit/FileUpload';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
 import Button from '../../components/sb-core-ui-kit/Button';
-import { FileText, Trash2 as TrashIcon } from 'lucide-react';
+import { FileText, Trash2 as TrashIcon, ArrowLeft } from 'lucide-react';
 import { IconButton } from '../../components/admin/IconButton';
 import { useTranslation } from 'react-i18next';
 import AvatarSelector from '../../components/AvatarSelector';
 import { emitter } from '../../services/mittEmitter';
 import { EVENT_SHOW_EDIT_ASSISTANT_ACTIONS_MODAL } from '../../utils/eventNames';
-import AdminPageContainer from '../../components/admin/AdminPageContainer';
+import { PageLayout } from '../../components/admin/PageLayout';
 import { getAssistantUrl } from '../../utils/assistantUrlUtils';
+import { Button as ShadcnButton } from '../../components/ui/button';
 
 interface UploadedFile {
   fileId: string;
@@ -132,31 +134,28 @@ const EditAssistantPage: React.FC = () => {
       ...values,
       avatarImage: selectedAvatarId,
     };
-    
-    // Debug logging
-    console.log('Form values submitted:', values);
-    console.log('Updated values being sent:', updatedValues);
-    
-    // Check if name has changed (which affects the URL)
-    const oldName = assistant.name;
-    const newName = values.name as string;
-    
-    console.log('Name - Old:', oldName, 'New:', newName);
-    
-    await updateAssistant(key, updatedValues as IAssistant);
 
-    // If name has changed, navigate to the new URL
-    if (newName && newName !== oldName) {
-      const updatedAssistant = getAssistantById(key);
-      console.log('Updated assistant after save:', updatedAssistant);
-      if (updatedAssistant) {
-        const newUrl = getAssistantUrl(updatedAssistant);
-        console.log('Navigating to new URL:', newUrl);
-        navigate(newUrl, { replace: true });
+    try {
+      // Check if name has changed (which affects the URL)
+      const oldName = assistant.name;
+      const newName = values.name as string;
+
+      await updateAssistant(key, updatedValues as IAssistant);
+      toast.success(t('EditAssistantPage.saveSuccess'));
+
+      // If name has changed, navigate to the new URL
+      if (newName && newName !== oldName) {
+        const updatedAssistant = getAssistantById(key);
+        if (updatedAssistant) {
+          const newUrl = getAssistantUrl(updatedAssistant);
+          navigate(newUrl, { replace: true });
+        }
       }
+    } catch (error) {
+      toast.error(t('EditAssistantPage.saveError'));
+    } finally {
+      setIsLoading(false);
     }
-    
-    setIsLoading(false);
   };
 
   const handleFileUpload = async (file: File) => {
@@ -171,8 +170,9 @@ const EditAssistantPage: React.FC = () => {
         filename: response.title,
       };
       setUploadedFiles([...uploadedFiles, newFile]);
+      toast.success(t('EditAssistantPage.fileUploadSuccess'));
     } catch (error) {
-      console.error('Error uploading file:', error);
+      toast.error(t('EditAssistantPage.fileUploadError'));
     } finally {
       setIsUploading(false);
     }
@@ -184,15 +184,21 @@ const EditAssistantPage: React.FC = () => {
     try {
       await deleteFile(assistant._id, fileId);
       setUploadedFiles(uploadedFiles.filter((file) => file.fileId !== fileId));
+      toast.success(t('EditAssistantPage.fileDeleteSuccess'));
     } catch (error) {
-      console.error('Error deleting file:', error);
+      toast.error(t('EditAssistantPage.fileDeleteError'));
     }
   };
 
   return (
-    <AdminPageContainer>
-      <h1 className="text-2xl font-semibold mb-2">{t('EditAssistantPage.title')}</h1>
-      <p className="text-gray-600 mb-6">{t('EditAssistantPage.description')}</p>
+    <PageLayout
+      variant="card"
+      header={{
+        title: t('EditAssistantPage.title'),
+        description: t('EditAssistantPage.description'),
+        backUrl: '/admin/assistants',
+      }}
+    >
       <div className="flex flex-col lg:flex-row space-y-6 lg:space-y-0 lg:space-x-12 rtl:space-x-reverse">
         <div className="w-full lg:w-1/2">
           <DynamicForm
@@ -234,7 +240,7 @@ const EditAssistantPage: React.FC = () => {
                 {uploadedFiles.map((file) => (
                   <li
                     key={file.fileId}
-                    className="flex justify-between items-center text-sm text-gray-600 mb-2 p-2 hover:bg-gray-50"
+                    className="flex justify-between items-center text-sm text-muted-foreground mb-2 p-2 hover:bg-accent"
                   >
                     <div className="flex gap-2 items-center">
                       <FileText size={16} className="text-slate-500" />
@@ -247,7 +253,7 @@ const EditAssistantPage: React.FC = () => {
                     <IconButton
                       icon={<TrashIcon size={16} />}
                       onClick={() => handleFileDelete(file.fileId)}
-                      className="text-gray-400 hover:text-red-400 transition duration-100"
+                      className="text-muted-foreground hover:text-red-400 transition duration-100"
                     />
                   </li>
                 ))}
@@ -256,7 +262,7 @@ const EditAssistantPage: React.FC = () => {
           )}
         </div>
       </div>
-    </AdminPageContainer>
+    </PageLayout>
   );
 };
 

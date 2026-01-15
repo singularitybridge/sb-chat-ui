@@ -58,7 +58,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
               {this.state.error?.stack}
             </pre>
           )}
-          <div className="mt-3 text-xs text-gray-500">
+          <div className="mt-3 text-xs text-muted-foreground">
             Error ID: {this.state.errorId}
           </div>
           {this.props.showRetry !== false && (

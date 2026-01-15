@@ -10,7 +10,7 @@ import { emitter } from '../../services/mittEmitter';
 import {
   EVENT_SHOW_NOTIFICATION,
 } from '../../utils/eventNames';
-import AdminPageContainer from '../../components/admin/AdminPageContainer';
+import { PageLayout } from '../../components/admin/PageLayout';
 import { useTranslation } from 'react-i18next';
 
 const UsersPage: React.FC = () => {
@@ -47,9 +47,13 @@ const UsersPage: React.FC = () => {
   );
 
   return (
-    <AdminPageContainer>
-      <h1 className="text-2xl font-semibold mb-2">{t('UsersPage.title')}</h1>
-      <p className="text-gray-600 mb-6">{t('UsersPage.description')}</p>
+    <PageLayout
+      variant="card"
+      header={{
+        title: t('UsersPage.title'),
+        description: t('UsersPage.description'),
+      }}
+    >
       <Table
         headers={convertToStringArray(headers)}
         data={users}
@@ -57,7 +61,7 @@ const UsersPage: React.FC = () => {
         onRowClick={(row: IUser) => navigate(`/admin/users/${row._id}`)}
         Actions={Actions}
       />
-    </AdminPageContainer>
+    </PageLayout>
   );
 };
 

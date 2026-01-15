@@ -209,7 +209,7 @@ export const ScreenShare: React.FC<ScreenShareProps> = ({
       <button
         onClick={handleToggle}
         className={`inline-flex items-center justify-center h-7 w-7 relative transition-colors ${
-          isCapturing ? 'text-red-500 animate-pulse' : 'text-gray-600 hover:text-gray-800'
+          isCapturing ? 'text-red-500 animate-pulse' : 'text-muted-foreground hover:text-foreground'
         }`}
         title={isCapturing ? 'Stop screen sharing' : 'Start screen sharing'}
       >
@@ -224,7 +224,7 @@ export const ScreenShare: React.FC<ScreenShareProps> = ({
       {!isCapturing && (
         <button
           onClick={() => setShowSettings(!showSettings)}
-          className="absolute -top-8 left-0 p-1 bg-white rounded shadow-sm border text-gray-600 hover:text-gray-800"
+          className="absolute -top-8 left-0 p-1 bg-background rounded shadow-sm border border-border text-muted-foreground hover:text-foreground"
           title="Screen share settings"
         >
           <Settings className="h-3 w-3" />
@@ -233,12 +233,12 @@ export const ScreenShare: React.FC<ScreenShareProps> = ({
 
       {/* Settings panel */}
       {showSettings && !isCapturing && (
-        <div className="absolute bottom-10 left-0 bg-white rounded-lg shadow-lg border p-3 w-48 z-50">
+        <div className="absolute bottom-10 left-0 bg-background rounded-lg shadow-lg border border-border p-3 w-48 z-50">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm font-medium">Capture Interval</span>
             <button
               onClick={() => setShowSettings(false)}
-              className="text-gray-400 hover:text-gray-600"
+              className="text-muted-foreground hover:text-foreground"
             >
               <X className="h-3 w-3" />
             </button>

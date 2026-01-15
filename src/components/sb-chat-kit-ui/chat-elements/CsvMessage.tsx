@@ -93,15 +93,15 @@ const CsvMessage: React.FC<CsvMessageProps> = ({
       <div
         className={`max-w-md md:max-w-lg lg:max-w-xl rounded-2xl shadow-sm ${
           isUser
-            ? 'bg-white border border-gray-200 text-gray-800 rounded-bl-2xl'
-            : 'bg-white border border-gray-200 text-gray-800 rounded-br-2xl'
+            ? 'bg-background border border-border text-foreground rounded-bl-2xl'
+            : 'bg-background border border-border text-foreground rounded-br-2xl'
         }`}
       >
         <div className="p-3">
           <div
             className={`
             rounded-lg p-3 sm:p-4 transition-colors 
-            ${isUser ? 'bg-gray-100' : 'bg-green-50'} 
+            ${isUser ? 'bg-secondary' : 'bg-green-50'} 
           `}
           >
             <div className="flex flex-col space-y-2">
@@ -109,25 +109,25 @@ const CsvMessage: React.FC<CsvMessageProps> = ({
               <div className="flex items-center justify-between">
                 <div className="grow space-y-0.5">
                   <p className={`text-sm font-medium break-all ${
-                    isUser ? 'text-gray-800' : 'text-gray-800' 
+                    isUser ? 'text-foreground' : 'text-foreground'
                   }`}>
                     {fileMetadata.fileName}
                   </p>
                   <div className="flex items-center space-x-1.5 text-xs">
-                    <FileSpreadsheet className={`w-4 h-4 ${isUser ? 'text-gray-500' : 'text-green-500'}`} strokeWidth={1.5} />
+                    <FileSpreadsheet className={`w-4 h-4 ${isUser ? 'text-muted-foreground' : 'text-green-500'}`} strokeWidth={1.5} />
                     <span className={`
                       px-1.5 py-0.5 rounded-full font-medium text-xs
-                      ${isUser ? 'bg-gray-200 text-gray-700' : 'bg-green-100 text-green-700'}
+                      ${isUser ? 'bg-accent text-foreground' : 'bg-green-100 text-green-700'}
                     `}>
                       csv
                     </span>
-                    <span className={isUser ? 'text-gray-500' : 'text-gray-500'}>
+                    <span className={isUser ? 'text-muted-foreground' : 'text-muted-foreground'}>
                       {formatFileSize(fileMetadata.fileSize)}
                     </span>
                     {isLoadingPreview && !rowCount && !csvData.length ? (
-                        <span className="text-xs text-gray-400">Loading info...</span>
+                        <span className="text-xs text-muted-foreground">Loading info...</span>
                     ) : rowCount > 0 ? (
-                       <span className={isUser ? 'text-gray-500' : 'text-gray-500'}>
+                       <span className={isUser ? 'text-muted-foreground' : 'text-muted-foreground'}>
                          {rowCount} rows
                        </span>
                     ) : null}
@@ -139,7 +139,7 @@ const CsvMessage: React.FC<CsvMessageProps> = ({
                   className={`
                     p-1.5 rounded-md transition-colors ml-2 shrink-0
                     ${isUser
-                      ? 'text-gray-500 hover:bg-gray-200 hover:text-gray-700' 
+                      ? 'text-muted-foreground hover:bg-accent hover:text-foreground'
                       : 'text-green-500 hover:bg-green-100 hover:text-green-700'
                     }
                   `}
@@ -151,32 +151,32 @@ const CsvMessage: React.FC<CsvMessageProps> = ({
               {/* CSV Table Preview Restored */}
               {isLoadingPreview && csvData.length === 0 && (
                 <div className="text-center py-4">
-                  <p className={`${isUser ? 'text-gray-600' : 'text-green-700'} text-sm`}>Loading preview...</p>
+                  <p className={`${isUser ? 'text-muted-foreground' : 'text-green-700'} text-sm`}>Loading preview...</p>
                 </div>
               )}
 
               {!isLoadingPreview && csvData.length > 0 && (
-                <div className="overflow-x-auto max-h-48 bg-white rounded-md shadow mt-2"> {/* Added mt-2 */}
+                <div className="overflow-x-auto max-h-48 bg-background rounded-md shadow mt-2"> {/* Added mt-2 */}
                   <table className="min-w-full text-xs">
-                    <thead className="sticky top-0 bg-gray-50 z-10">
+                    <thead className="sticky top-0 bg-secondary z-10">
                       <tr>
                         {headers.map((header, index) => (
                           <th
                             key={index}
-                            className="px-2 py-1.5 text-left font-medium text-gray-500 whitespace-nowrap"
+                            className="px-2 py-1.5 text-left font-medium text-muted-foreground whitespace-nowrap"
                           >
                             {header}
                           </th>
                         ))}
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-background divide-y divide-border">
                       {csvData.map((row, rowIndex) => (
                         <tr key={rowIndex}>
                           {row.map((cell, cellIndex) => (
                             <td
                               key={cellIndex}
-                              className="px-2 py-1.5 text-gray-700 whitespace-nowrap"
+                              className="px-2 py-1.5 text-foreground whitespace-nowrap"
                             >
                               {cell}
                             </td>
@@ -186,8 +186,8 @@ const CsvMessage: React.FC<CsvMessageProps> = ({
                     </tbody>
                   </table>
                   {rowCount > PREVIEW_ROW_LIMIT + 1 && ( // Ensure headers are not counted in "more rows"
-                     <p className="text-center text-xs text-gray-500 py-1 bg-gray-50">
-                       ... and {rowCount - (csvData.length + (headers.length > 0 ? 1: 0) )} more rows 
+                     <p className="text-center text-xs text-muted-foreground py-1 bg-secondary">
+                       ... and {rowCount - (csvData.length + (headers.length > 0 ? 1: 0) )} more rows
                      </p> // Adjusted "more rows" calculation
                   )}
                 </div>
@@ -195,7 +195,7 @@ const CsvMessage: React.FC<CsvMessageProps> = ({
 
               {!isLoadingPreview && csvData.length === 0 && headers.length === 0 && (fileMetadata.url || fileMetadata.gcpStorageUrl) && (
                 <div className="text-center py-2"> {/* Reduced padding */}
-                  <p className={`${isUser ? 'text-gray-500' : 'text-green-600'} text-xs`}>No preview available or file is empty.</p>
+                  <p className={`${isUser ? 'text-muted-foreground' : 'text-green-600'} text-xs`}>No preview available or file is empty.</p>
                 </div>
               )}
               
@@ -204,7 +204,7 @@ const CsvMessage: React.FC<CsvMessageProps> = ({
         </div>
         
         {/* Content prop is not rendered separately */}
-        <div className={`px-4 pt-0 pb-2 text-xs ${isUser ? 'text-gray-400' : 'text-gray-500'}`}>
+        <div className={`px-4 pt-0 pb-2 text-xs ${isUser ? 'text-muted-foreground' : 'text-muted-foreground'}`}>
           {formatDate(createdAt)}
         </div>
       </div>

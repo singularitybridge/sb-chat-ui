@@ -53,15 +53,15 @@ export const UsageChart: React.FC<UsageChartProps> = ({
   const CustomTooltip: React.FC<any> = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-          <p className="text-sm font-semibold">{label}</p>
+        <div className="bg-popover text-popover-foreground p-3 border border-border rounded-lg shadow-lg">
+          <p className="text-sm font-semibold text-foreground">{label}</p>
           {payload.map((entry: any, index: number) => (
             <div key={index} className="text-xs mt-1">
               <span className="font-medium" style={{ color: entry.color }}>
                 {entry.name === 'cost' ? 'Cost: ' : `${entry.name}: `}
               </span>
-              <span>
-                {entry.name === 'cost' 
+              <span className="text-foreground">
+                {entry.name === 'cost'
                   ? formatCost(entry.value)
                   : entry.value.toLocaleString()
                 }
@@ -79,8 +79,8 @@ export const UsageChart: React.FC<UsageChartProps> = ({
       return (
         <div className="flex items-center justify-center h-[300px]">
           <div className="space-y-3">
-            <div className="h-4 w-48 bg-gray-200 rounded animate-pulse" />
-            <div className="h-32 w-64 bg-gray-100 rounded animate-pulse" />
+            <div className="h-4 w-48 bg-accent rounded animate-pulse" />
+            <div className="h-32 w-64 bg-secondary rounded animate-pulse" />
           </div>
         </div>
       );
@@ -88,9 +88,9 @@ export const UsageChart: React.FC<UsageChartProps> = ({
 
     if (!data || data.length === 0) {
       return (
-        <div className="flex items-center justify-center h-[300px] text-gray-500">
+        <div className="flex items-center justify-center h-[300px] text-muted-foreground">
           <div className="text-center">
-            <Calendar className="w-12 h-12 mx-auto mb-2 text-gray-300" />
+            <Calendar className="w-12 h-12 mx-auto mb-2 text-muted-foreground" />
             <p>No cost data available</p>
           </div>
         </div>
@@ -198,13 +198,13 @@ export const UsageChart: React.FC<UsageChartProps> = ({
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
           <CardTitle className="text-lg font-semibold">Daily Cost Trend</CardTitle>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Last {data.length} days • Total: {formatCost(totalCost)} • Avg: {formatCost(avgCost)}/day
           </p>
         </div>
         <div className="flex items-center space-x-2">
-          <TrendingUp className="h-5 w-5 text-gray-400" />
-          <DollarSign className="h-5 w-5 text-gray-400" />
+          <TrendingUp className="h-5 w-5 text-muted-foreground" />
+          <DollarSign className="h-5 w-5 text-muted-foreground" />
         </div>
       </CardHeader>
       <CardContent>

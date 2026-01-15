@@ -130,7 +130,7 @@ const ArtifactEditor: React.FC<ArtifactEditorProps> = ({ artifactId }) => {
   const renderControls = () => (
     <div className="flex justify-between items-center mb-4">
       <div className="flex items-center space-x-2 rtl:space-x-reverse">
-        <h3 className="text-gray-700 font-medium">
+        <h3 className="text-foreground font-medium">
           {t('ArtifactEditor.title')}
         </h3>
         {isEditMode && (
@@ -153,8 +153,8 @@ const ArtifactEditor: React.FC<ArtifactEditorProps> = ({ artifactId }) => {
           onClick={() => setIsEditMode(false)}
           className={`px-3 py-1.5 transition-all duration-200 ease-in-out ${
             !isEditMode
-              ? 'bg-gray-100 text-gray-800 shadow-sm'
-              : 'bg-white text-gray-500 hover:bg-gray-50'
+              ? 'bg-secondary text-foreground shadow-sm'
+              : 'bg-white text-muted-foreground hover:bg-secondary'
           }`}
         >
           {t('ArtifactEditor.preview')}
@@ -163,8 +163,8 @@ const ArtifactEditor: React.FC<ArtifactEditorProps> = ({ artifactId }) => {
           onClick={() => setIsEditMode(true)}
           className={`px-3 py-1.5 transition-all duration-200 ease-in-out ${
             isEditMode
-              ? 'bg-gray-100 text-gray-800 shadow-sm'
-              : 'bg-white text-gray-500 hover:bg-gray-50'
+              ? 'bg-secondary text-foreground shadow-sm'
+              : 'bg-white text-muted-foreground hover:bg-secondary'
           }`}
         >
           {t('ArtifactEditor.code')}
@@ -177,7 +177,7 @@ const ArtifactEditor: React.FC<ArtifactEditorProps> = ({ artifactId }) => {
     if (isLoading) {
       return (
         <div className="flex items-center justify-center h-full">
-          <div className="text-gray-500">{t('ArtifactEditor.loading')}</div>
+          <div className="text-muted-foreground">{t('ArtifactEditor.loading')}</div>
         </div>
       );
     }

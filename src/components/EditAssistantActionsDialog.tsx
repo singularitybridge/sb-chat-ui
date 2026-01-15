@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 import { useAssistantStore } from '../store/useAssistantStore';
 import Button from './sb-core-ui-kit/Button';
 import { useTranslation } from 'react-i18next';
@@ -51,11 +52,12 @@ const EditAssistantActionsDialog: React.FC<EditAssistantActionsDialogProps> = (
           allowedActions: selectedActions
         };
         await updateAssistant(assistantId, updatedAssistant);
+        toast.success(t('assistantActions.saveSuccess'));
       } else {
         throw new Error('Assistant not found');
       }
     } catch (error) {
-      console.error('Failed to update assistant actions:', error);
+      toast.error(t('assistantActions.saveError'));
     } finally {
       setIsLoading(false);
     }

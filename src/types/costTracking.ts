@@ -114,4 +114,5 @@ export interface ApiResponse<T> {
   data?: T;
   error?: string;
   count?: number;
+  totalCount?: number; // Total records for pagination
 }

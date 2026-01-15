@@ -51,7 +51,7 @@ const LiveCodeRenderer: React.FC<LiveCodeRendererProps> = ({
       }
 
       // Evaluate to obtain the function, then invoke with React + scope values
-      // eslint-disable-next-line no-eval
+       
       const fn = (0, eval)(compiled) as (...args: any[]) => React.ReactNode;
       const result = fn(React, ...scopeValues);
 

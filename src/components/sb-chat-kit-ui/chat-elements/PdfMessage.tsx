@@ -50,8 +50,8 @@ const PdfMessage: React.FC<PdfMessageProps> = ({
       <div
         className={`max-w-md md:max-w-lg lg:max-w-xl rounded-2xl shadow-sm ${
           isUser
-            ? 'bg-white border border-gray-200 text-gray-800 rounded-bl-2xl'
-            : 'bg-white border border-gray-200 text-gray-800 rounded-br-2xl'
+            ? 'bg-background border border-border text-foreground rounded-bl-2xl'
+            : 'bg-background border border-border text-foreground rounded-br-2xl'
         }`}
       >
         <div className="p-3"> {/* Reduced padding */}
@@ -65,7 +65,7 @@ const PdfMessage: React.FC<PdfMessageProps> = ({
               {/* File Name and Info Row */}
               <div className="flex items-center justify-between">
                 <div className="grow space-y-0.5">
-                  <p className={`text-sm font-medium break-all ${isUser ? 'text-gray-800' : 'text-gray-800'}`}>
+                  <p className={`text-sm font-medium break-all ${isUser ? 'text-foreground' : 'text-foreground'}`}>
                     {fileMetadata.fileName}
                   </p>
                   <div className="flex items-center space-x-1.5 text-xs">
@@ -76,7 +76,7 @@ const PdfMessage: React.FC<PdfMessageProps> = ({
                     `}>
                       pdf
                     </span>
-                    <span className={isUser ? 'text-gray-500' : 'text-gray-500'}>
+                    <span className={isUser ? 'text-muted-foreground' : 'text-muted-foreground'}>
                       {formatFileSize(fileMetadata.fileSize)}
                     </span>
                   </div>
@@ -85,21 +85,21 @@ const PdfMessage: React.FC<PdfMessageProps> = ({
                   <button
                     onClick={handleViewPdf}
                     title="Open PDF in new tab"
-                    className={`p-1.5 rounded-md transition-colors ${isUser ? 'text-gray-500 hover:bg-gray-200 hover:text-gray-700' : 'text-red-500 hover:bg-red-100 hover:text-red-700'}`}
+                    className={`p-1.5 rounded-md transition-colors ${isUser ? 'text-muted-foreground hover:bg-accent hover:text-foreground' : 'text-red-500 hover:bg-red-100 hover:text-red-700'}`}
                   >
                     <Eye className="h-4 w-4" strokeWidth={2} />
                   </button>
                   <button
                     onClick={() => setIsExpanded(true)}
                     title="View PDF in modal"
-                    className={`p-1.5 rounded-md transition-colors ${isUser ? 'text-gray-500 hover:bg-gray-200 hover:text-gray-700' : 'text-red-500 hover:bg-red-100 hover:text-red-700'}`}
+                    className={`p-1.5 rounded-md transition-colors ${isUser ? 'text-muted-foreground hover:bg-accent hover:text-foreground' : 'text-red-500 hover:bg-red-100 hover:text-red-700'}`}
                   >
                     <Maximize2 className="h-4 w-4" strokeWidth={2} />
                   </button>
                   <button
                     onClick={handleDownload}
                     title="Download PDF"
-                    className={`p-1.5 rounded-md transition-colors ${isUser ? 'text-gray-500 hover:bg-gray-200 hover:text-gray-700' : 'text-red-500 hover:bg-red-100 hover:text-red-700'}`}
+                    className={`p-1.5 rounded-md transition-colors ${isUser ? 'text-muted-foreground hover:bg-accent hover:text-foreground' : 'text-red-500 hover:bg-red-100 hover:text-red-700'}`}
                   >
                     <Download className="h-4 w-4" strokeWidth={2} />
                   </button>
@@ -112,7 +112,7 @@ const PdfMessage: React.FC<PdfMessageProps> = ({
         </div>
 
         {/* Separate content display removed */}
-        <div className={`px-4 pt-0 pb-2 text-xs ${isUser ? 'text-gray-400' : 'text-gray-500'}`}> {/* Adjusted padding for timestamp */}
+        <div className={`px-4 pt-0 pb-2 text-xs ${isUser ? 'text-muted-foreground' : 'text-muted-foreground'}`}> {/* Adjusted padding for timestamp */}
           {formatDate(createdAt)}
         </div>
       </div>
@@ -127,7 +127,7 @@ const PdfMessage: React.FC<PdfMessageProps> = ({
             >
               <X className="h-5 w-5" />
             </button>
-            <div className="w-full h-full bg-gray-100 rounded-lg overflow-hidden shadow-2xl">
+            <div className="w-full h-full bg-secondary rounded-lg overflow-hidden shadow-2xl">
               <iframe
                 src={`${
                   fileMetadata.url || fileMetadata.gcpStorageUrl

@@ -5,7 +5,7 @@ import { InboxMessage } from './InboxMessage';
 import { SessionInfo } from './SessionInfo';
 import { addInboxResponse } from '../../../services/api/inboxService';
 import { useTranslation } from 'react-i18next';
-import AdminPageContainer from '../../../components/admin/AdminPageContainer';
+import { PageLayout } from '../../../components/admin/PageLayout';
 
 const DisplayMessages: React.FC<{ session: IInboxSession }> = ({ session }) => {
   return (
@@ -53,15 +53,19 @@ const InboxPage: React.FC = () => {
   }, [inboxSessions, selectedSession]);
 
   return (
-    <AdminPageContainer>
-      <h1 className="text-2xl font-semibold mb-2">{t('InboxPage.title')}</h1>
-      <p className="text-gray-600 mb-6">{t('InboxPage.description')}</p>
+    <PageLayout
+      variant="card"
+      header={{
+        title: t('InboxPage.title'),
+        description: t('InboxPage.description'),
+      }}
+    >
       <div className="flex w-full justify-center">
         <main className="flex w-full h-full">
           <section className="flex flex-col w-4/12 h-full overflow-y-scroll border-r-2 border-sky-100">
             <label className="px-2">
               <input
-                className="rounded-lg p-4 bg-gray-200 transition duration-200 focus:outline-hidden focus:ring-2 w-full"
+                className="rounded-lg p-4 bg-accent transition duration-200 focus:outline-hidden focus:ring-2 w-full"
                 placeholder={t('InboxPage.placeholder')}
               />
             </label>
@@ -86,7 +90,7 @@ const InboxPage: React.FC = () => {
                     <h3 className="font-semibold text-lg">
                       {selectedSession.userName}
                     </h3>
-                    <p className="text-light text-gray-400">
+                    <p className="text-light text-muted-foreground">
                       topic of the session / short intro
                     </p>
                   </div>
@@ -96,9 +100,9 @@ const InboxPage: React.FC = () => {
 
             {selectedSession && <DisplayMessages session={selectedSession} />}
 
-            <section className="mt-6 border rounded-xl bg-gray-50 mb-3">
+            <section className="mt-6 border border-border rounded-xl bg-secondary mb-3">
               <textarea
-                className="w-full bg-gray-50 p-2 rounded-xl disabled:text-slate-400"
+                className="w-full bg-secondary p-2 rounded-xl disabled:text-muted-foreground"
                 placeholder={t('InboxPage.replyPlaceholder')}
                 rows={3}
                 disabled={isLoading}
@@ -106,7 +110,7 @@ const InboxPage: React.FC = () => {
                 onChange={(e) => setMessage(e.target.value)}
               ></textarea>
               <div className="flex items-center justify-between p-2">
-                <button className="h-6 w-6 text-gray-400">
+                <button className="h-6 w-6 text-muted-foreground">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -124,7 +128,7 @@ const InboxPage: React.FC = () => {
                 <button
                   onClick={handleSendMessage}
                   disabled={isLoading}
-                  className="bg-purple-600 text-white px-6 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-violet text-violet-foreground px-6 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {t('InboxPage.button')}
                 </button>
@@ -133,7 +137,7 @@ const InboxPage: React.FC = () => {
           </section>
         </main>
       </div>
-    </AdminPageContainer>
+    </PageLayout>
   );
 };
 

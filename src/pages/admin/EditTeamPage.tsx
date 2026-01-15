@@ -45,7 +45,7 @@ const EditTeamPage: React.FC = () => {
         setDescription(team.description);
         setIcon(team.icon);
 
-        // Get assistants for this team
+        // Get assistants for this team (handle undefined teams array)
         const assistantsInTeam = assistants.filter(assistant =>
           assistant.teams?.includes(key)
         );
@@ -121,34 +121,34 @@ const EditTeamPage: React.FC = () => {
         <TextComponent text={t('EditTeamPage.title') || 'Edit Team'} size="subtitle" />
         <button
           type="button"
-          className="px-4 py-2 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300"
+          className="px-4 py-2 bg-accent text-foreground rounded-xl hover:bg-accent"
           onClick={() => navigate('/admin/teams')}
         >
           {t('common.back')}
         </button>
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow">
+      <div className="bg-card p-6 rounded-lg shadow">
         <div className="space-y-4">
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-foreground mb-1">
               {t('EditTeamPage.name') || 'Name'}
             </label>
             <input
               type="text"
-              className="w-full p-2 border border-gray-300 rounded-md"
+              className="w-full p-2 border border-border rounded-md bg-background text-foreground"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
             />
           </div>
-          
+
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-foreground mb-1">
               {t('EditTeamPage.description') || 'Description'}
             </label>
             <textarea
-              className="w-full p-2 border border-gray-300 rounded-md"
+              className="w-full p-2 border border-border rounded-md bg-background text-foreground"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
@@ -156,7 +156,7 @@ const EditTeamPage: React.FC = () => {
           </div>
           
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-foreground mb-1">
               {t('EditTeamPage.icon') || 'Icon'}
             </label>
             <IconPicker value={icon} onChange={setIcon} />
@@ -167,7 +167,7 @@ const EditTeamPage: React.FC = () => {
               type="button"
               className={`px-4 py-2 rounded-xl ${
                 !name || isSubmitting
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  ? 'bg-accent text-muted-foreground cursor-not-allowed'
                   : 'bg-primary text-white hover:bg-primary-dark'
               }`}
               onClick={handleSave}
@@ -179,16 +179,16 @@ const EditTeamPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow mt-6">
+      <div className="bg-card p-6 rounded-lg shadow mt-6">
         <TextComponent text={t('EditTeamPage.teamAssistants') || 'Team Assistants'} size="subtitle" />
-        
-        <div className="mt-4 flex items-end space-x-4">
+
+        <div className="mt-4 flex items-end space-x-4 rtl:space-x-reverse">
           <div className="grow">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-foreground mb-1">
               {t('EditTeamPage.addAssistant') || 'Add Assistant'}
             </label>
             <select
-              className="w-full p-2 border border-gray-300 rounded-md"
+              className="w-full p-2 border border-border rounded-md bg-background text-foreground"
               value={selectedAssistantId}
               onChange={(e) => setSelectedAssistantId(e.target.value)}
             >
@@ -204,7 +204,7 @@ const EditTeamPage: React.FC = () => {
             type="button"
             className={`px-4 py-2 rounded-xl ${
               !selectedAssistantId
-                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                ? 'bg-accent text-muted-foreground cursor-not-allowed'
                 : 'bg-primary text-white hover:bg-primary-dark'
             }`}
             onClick={handleAddAssistant}
@@ -217,7 +217,7 @@ const EditTeamPage: React.FC = () => {
         <div className="mt-6">
           <ul className="space-y-4">
             {teamAssistants.map(assistant => (
-              <li key={assistant._id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <li key={assistant._id} className="flex items-center justify-between p-3 bg-secondary rounded-lg">
                 <div className="flex items-center space-x-3">
                   <Avatar
                     imageUrl={getAvatarUrl(assistant.avatarImage)}
@@ -229,12 +229,12 @@ const EditTeamPage: React.FC = () => {
                 <IconButton
                   icon={<X className="w-4 h-4" />}
                   onClick={() => handleRemoveAssistant(assistant._id)}
-                  className="hover:bg-gray-200 rounded-full p-1"
+                  className="hover:bg-accent rounded-full p-1"
                 />
               </li>
             ))}
             {teamAssistants.length === 0 && (
-              <p className="text-gray-500 text-center py-4">
+              <p className="text-muted-foreground text-center py-4">
                 {t('EditTeamPage.noAssistants') || 'No assistants in this team yet'}
               </p>
             )}

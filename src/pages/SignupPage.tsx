@@ -5,7 +5,7 @@ import { TextComponent } from '../components/sb-core-ui-kit/TextComponent';
 
 const SignupPage: React.FC = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-gray-100">
+    <div className="min-h-screen flex flex-col bg-secondary">
       <div className="w-full pt-8 pb-0 px-12">
         <TextComponent
           text="Singularity Bridge"

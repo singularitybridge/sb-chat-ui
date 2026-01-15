@@ -49,19 +49,19 @@ export const JsonViewer: React.FC<JsonViewerProps> = ({ data, maxHeight = '120px
     <div className="relative">
       <button
         onClick={handleCopy}
-        className="absolute top-2 right-2 p-1.5 rounded-full hover:bg-gray-700 transition-colors duration-200 z-10"
+        className="absolute top-2 right-2 p-1.5 rounded-full hover:bg-accent transition-colors duration-200 z-10"
         title="Copy JSON"
       >
-        <LucideIcons.Copy className="w-3.5 h-3.5 text-gray-300" />
+        <LucideIcons.Copy className="w-3.5 h-3.5 text-muted-foreground" />
       </button>
       <button
         onClick={handleUpload}
-        className="absolute top-2 right-10 p-1.5 rounded-full hover:bg-gray-700 transition-colors duration-200 z-10"
+        className="absolute top-2 right-10 p-1.5 rounded-full hover:bg-accent transition-colors duration-200 z-10"
         title="Upload/Save JSON"
       >
-        <LucideIcons.Upload className="w-3.5 h-3.5 text-gray-300" />
+        <LucideIcons.Upload className="w-3.5 h-3.5 text-muted-foreground" />
       </button>
-      <div style={{ maxHeight, overflowY: 'auto', overflowX: 'auto' }} className="bg-gray-800 rounded" dir='ltr'>
+      <div style={{ maxHeight, overflowY: 'auto', overflowX: 'auto' }} className="bg-secondary rounded" dir='ltr'>
         <pre ref={preRef} className="text-xs p-2 rounded mt-1 text-left whitespace-pre-wrap break-words">
           <code className="language-json">
             {formattedJson}

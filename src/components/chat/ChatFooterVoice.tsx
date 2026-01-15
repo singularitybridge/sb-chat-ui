@@ -32,7 +32,7 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
   });
 
   const [isEnabled, setIsEnabled] = useState(false);
-  const primaryActionButtonStyle = 'text-gray-100';
+  const primaryActionButtonStyle = 'text-secondary';
 
   const getActionIcon = () => {
     switch (chatState) {
@@ -109,7 +109,7 @@ const ChatFooterVoice: React.FC<ChatFooterProps> = ({
     return <span>Browser doesn&#39;t support speech recognition.</span>;
   }
 
-  const actionButtonStyle = 'h-5 w-5 text-gray-500';
+  const actionButtonStyle = 'h-5 w-5 text-muted-foreground';
 
   const breathingAnimation = {
     scale: [1, 1.01, 1],

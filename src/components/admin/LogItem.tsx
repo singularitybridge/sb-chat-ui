@@ -38,8 +38,8 @@ const LogItem: React.FC<LogItemProps> = ({
   const statusClasses = clsx(
     'inline-block whitespace-nowrap rounded-xl p-2 text-center align-baseline text-xs font-bold leading-none',
     {
-      'bg-yellow-200  text-gray-600 ': status === 'skip',
-      'bg-lime-200 text-gray-600': status === 'success',
+      'bg-yellow-200  text-muted-foreground ': status === 'skip',
+      'bg-lime-200 text-muted-foreground': status === 'success',
       'bg-red-100': status !== 'skip' && status !== 'success',
     },
   );
@@ -61,7 +61,7 @@ const LogItem: React.FC<LogItemProps> = ({
           className={`flex-1 mb-4 ml-4 block max-w-md rounded-lg ${itemBackgroundColor} p-4 shadow-md shadow-black/5 dark:bg-neutral-700 dark:shadow-black/10`}
         >
           <div className="flex space-x-2 mb-2">
-            <div className="inline-block whitespace-nowrap rounded-full bg-orange-100 p-2 text-center align-baseline text-[0.75em] font-bold leading-none text-gray-600 ">
+            <div className="inline-block whitespace-nowrap rounded-full bg-orange-100 p-2 text-center align-baseline text-[0.75em] font-bold leading-none text-muted-foreground ">
               <ol className="list-reset flex">
                 <li>{name}</li>
                 {title && (

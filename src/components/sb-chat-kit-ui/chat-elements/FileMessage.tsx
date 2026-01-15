@@ -42,11 +42,11 @@ const FileMessage: React.FC<FileMessageProps> = ({
   const isUser = role === 'user';
   const extension = getFileExtension(fileMetadata.fileName);
 
-  let fileTypeIcon = <File className={`w-4 h-4 ${isUser ? 'text-gray-500' : 'text-gray-500'}`} strokeWidth={1.5} />;
+  let fileTypeIcon = <File className={`w-4 h-4 ${isUser ? 'text-muted-foreground' : 'text-muted-foreground'}`} strokeWidth={1.5} />;
   let fileTypeLabel = extension || 'file';
-  let innerBgColor = isUser ? 'bg-gray-100' : 'bg-gray-100';
-  let badgeBgColor = isUser ? 'bg-gray-200 text-gray-700' : 'bg-gray-200 text-gray-700';
-  let iconColor = isUser ? 'text-gray-500' : 'text-gray-500';
+  let innerBgColor = isUser ? 'bg-secondary' : 'bg-secondary';
+  let badgeBgColor = isUser ? 'bg-accent text-foreground' : 'bg-accent text-foreground';
+  let iconColor = isUser ? 'text-muted-foreground' : 'text-muted-foreground';
   // Large icon and clickToViewText are removed as preview area is gone
 
   if (fileMetadata.mimeType === 'application/json') {
@@ -87,8 +87,8 @@ const FileMessage: React.FC<FileMessageProps> = ({
       <div
         className={`max-w-md md:max-w-lg lg:max-w-xl rounded-2xl shadow-sm ${
           isUser
-            ? 'bg-white border border-gray-200 text-gray-800 rounded-bl-2xl'
-            : 'bg-white border border-gray-200 text-gray-800 rounded-br-2xl'
+            ? 'bg-background border border-border text-foreground rounded-bl-2xl'
+            : 'bg-background border border-border text-foreground rounded-br-2xl'
         }`}
       >
         <div className="p-3"> {/* Reduced padding */}
@@ -102,7 +102,7 @@ const FileMessage: React.FC<FileMessageProps> = ({
               {/* File Name and Info Row */}
               <div className="flex items-center justify-between">
                 <div className="grow space-y-0.5">
-                  <p className={`text-sm font-medium break-all ${isUser ? 'text-gray-800' : 'text-gray-800'}`}>
+                  <p className={`text-sm font-medium break-all ${isUser ? 'text-foreground' : 'text-foreground'}`}>
                     {fileMetadata.fileName}
                   </p>
                   <div className="flex items-center space-x-1.5 text-xs">
@@ -113,7 +113,7 @@ const FileMessage: React.FC<FileMessageProps> = ({
                     `}>
                       {fileTypeLabel}
                     </span>
-                    <span className="text-gray-500">
+                    <span className="text-muted-foreground">
                       {formatFileSize(fileMetadata.fileSize)}
                     </span>
                   </div>
@@ -123,7 +123,7 @@ const FileMessage: React.FC<FileMessageProps> = ({
                   title={`Download ${fileTypeLabel}`}
                   className={`
                     p-1.5 rounded-md transition-colors ml-2 shrink-0
-                    ${isUser ? 'text-gray-500 hover:bg-gray-200 hover:text-gray-700' : `${iconColor.replace('text-', 'hover:bg-').replace('-600', '-100').replace('-500', '-100')} ${iconColor.replace('text-', 'hover:text-').replace('-600', '-700').replace('-500', '-700')}`}
+                    ${isUser ? 'text-muted-foreground hover:bg-accent hover:text-foreground' : `${iconColor.replace('text-', 'hover:bg-').replace('-600', '-100').replace('-500', '-100')} ${iconColor.replace('text-', 'hover:text-').replace('-600', '-700').replace('-500', '-700')}`}
                   `}
                 >
                   <Download className="h-4 w-4" strokeWidth={2} />
@@ -135,7 +135,7 @@ const FileMessage: React.FC<FileMessageProps> = ({
         </div>
 
         {/* Separate content display removed */}
-        <div className={`px-4 pt-0 pb-2 text-xs ${isUser ? 'text-gray-400' : 'text-gray-500'}`}> {/* Adjusted padding for timestamp */}
+        <div className={`px-4 pt-0 pb-2 text-xs ${isUser ? 'text-muted-foreground' : 'text-muted-foreground'}`}> {/* Adjusted padding for timestamp */}
           {formatDate(createdAt)}
         </div>
       </div>

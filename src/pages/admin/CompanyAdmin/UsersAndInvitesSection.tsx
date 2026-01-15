@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 import { useUserStore } from '../../../store/useUserStore';
 import { ICompany, IUser } from '../../../types/entities';
 import { Table } from '../../../components/sb-core-ui-kit/Table';
 import { convertToStringArray } from '../../../utils/utils';
 import { TrashIcon, UserPlus, Mail, XCircle, Trash2 } from 'lucide-react';
-import { emitter } from '../../../services/mittEmitter';
-import { EVENT_SHOW_NOTIFICATION } from '../../../utils/eventNames';
 import apiClient from '../../../services/AxiosService';
 import {
   AlertDialog,
@@ -36,6 +36,7 @@ interface UsersAndInvitesSectionProps {
 const UsersAndInvitesSection: React.FC<UsersAndInvitesSectionProps> = (
   { company }
 ) => {
+  const { t } = useTranslation();
   const { users, deleteUser } = useUserStore();
   const [invites, setInvites] = useState<Invite[]>([]);
   const [showInviteForm, setShowInviteForm] = useState(false);
@@ -69,91 +70,70 @@ const UsersAndInvitesSection: React.FC<UsersAndInvitesSectionProps> = (
   };
 
   const handleSetUser = async (_row: IUser) => {
-    emitter.emit(EVENT_SHOW_NOTIFICATION, 'User set successfully');
+    toast.success(t('invites.userSetSuccess'));
   };
 
     const handleCreateInvite = async (e: React.FormEvent) => {
       e.preventDefault();
       if (!inviteEmail) {
-        emitter.emit(EVENT_SHOW_NOTIFICATION, 'Email is required');
+        toast.error(t('invites.emailRequired'));
         return;
       }
 
       setIsLoading(true);
       try {
-        const response = await apiClient.post('/api/invites', {
+        await apiClient.post('/api/invites', {
           email: inviteEmail,
           name: inviteName || undefined,
           role: 'CompanyUser',
         });
 
-        console.log('Invite created:', response.data);
-
-        emitter.emit(EVENT_SHOW_NOTIFICATION, 'Invite sent successfully');
+        toast.success(t('invites.sendSuccess'));
         setInviteEmail('');
         setInviteName('');
         setShowInviteForm(false);
 
         // Refresh invites list
-        console.log('Refreshing invites after create...');
         await fetchInvites();
       } catch (error: any) {
-        console.error('Failed to create invite - Full error:', error);
-        console.error('Error response:', error.response);
-        console.error('Error response data:', error.response?.data);
-
-        const message = error.response?.data?.error || error.message || 'Failed to send invite';
-        emitter.emit(EVENT_SHOW_NOTIFICATION, message);
+        const message = error.response?.data?.error || t('invites.sendError');
+        toast.error(message);
       } finally {
         setIsLoading(false);
       }
     };
 
     const handleRevokeInvite = async (inviteId: string) => {
-      if (!confirm('Are you sure you want to revoke this invite?')) {
+      if (!confirm(t('invites.revokeConfirm'))) {
         return;
       }
 
       try {
-        const response = await apiClient.delete(`/api/invites/${inviteId}/revoke`);
-        console.log('Invite revoked:', response.data);
-
-        emitter.emit(EVENT_SHOW_NOTIFICATION, 'Invite revoked successfully');
+        await apiClient.delete(`/api/invites/${inviteId}/revoke`);
+        toast.success(t('invites.revokeSuccess'));
 
         // Refresh invites list
-        console.log('Refreshing invites after revoke...');
         await fetchInvites();
       } catch (error: any) {
-        console.error('Failed to revoke invite - Full error:', error);
-        console.error('Error response:', error.response);
-        console.error('Error response data:', error.response?.data);
-
-        const message = error.response?.data?.error || error.message || 'Failed to revoke invite';
-        emitter.emit(EVENT_SHOW_NOTIFICATION, message);
+        const message = error.response?.data?.error || t('invites.revokeError');
+        toast.error(message);
       }
     };
 
     const handleDeleteInvite = async (inviteId: string) => {
-      if (!confirm('Are you sure you want to permanently delete this invite? This action cannot be undone.')) {
+      if (!confirm(t('invites.deleteConfirm'))) {
         return;
       }
 
       try {
-        const response = await apiClient.delete(`/api/invites/${inviteId}`);
-        console.log('Invite deleted:', response.data);
-
-        emitter.emit(EVENT_SHOW_NOTIFICATION, 'Invite deleted successfully');
+        await apiClient.delete(`/api/invites/${inviteId}`);
+        toast.success(t('invites.deleteSuccess'));
 
         // Refresh invites list
-        console.log('Refreshing invites after delete...');
         await fetchInvites();
       } catch (error: any) {
-        console.error('Failed to delete invite - Full error:', error);
-        console.error('Error response:', error.response);
-        console.error('Error response data:', error.response?.data);
-
-        const message = error.response?.data?.error || error.message || 'Failed to delete invite';
-        emitter.emit(EVENT_SHOW_NOTIFICATION, message);
+        const message = error.response?.data?.error || t('invites.deleteError');
+        toast.error(message);
       }
     };
 
@@ -164,7 +144,7 @@ const UsersAndInvitesSection: React.FC<UsersAndInvitesSectionProps> = (
           <AlertDialogTrigger asChild>
             <button
               onClick={(event) => event.stopPropagation()}
-              className="inline-flex items-center justify-center rounded-md hover:bg-gray-100 p-2 transition-colors"
+              className="inline-flex items-center justify-center rounded-md hover:bg-accent p-2 transition-colors"
             >
               <TrashIcon className="w-5 h-5 text-red-600" />
             </button>
@@ -196,7 +176,7 @@ const UsersAndInvitesSection: React.FC<UsersAndInvitesSectionProps> = (
         {/* Users Section */}
         <div>
           <h1 className="text-2xl font-semibold mb-2">Users</h1>
-          <p className="text-gray-600 mb-6">
+          <p className="text-muted-foreground mb-6">
             Manage users in your organization
           </p>
           <Table
@@ -213,7 +193,7 @@ const UsersAndInvitesSection: React.FC<UsersAndInvitesSectionProps> = (
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-xl font-semibold">Invites</h2>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-sm text-muted-foreground mt-1">
                 Invite colleagues to join your company
               </p>
             </div>
@@ -221,7 +201,7 @@ const UsersAndInvitesSection: React.FC<UsersAndInvitesSectionProps> = (
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 text-sm"
+                className="px-3 py-2 border border-border rounded-md focus:outline-hidden focus:ring-2 focus:ring-ring text-sm"
               >
                 <option value="pending">Pending Only</option>
                 <option value="all">All Invites</option>
@@ -231,7 +211,7 @@ const UsersAndInvitesSection: React.FC<UsersAndInvitesSectionProps> = (
               </select>
               <button
                 onClick={() => setShowInviteForm(!showInviteForm)}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
               >
                 <UserPlus className="w-4 h-4" />
                 Send Invite
@@ -241,30 +221,30 @@ const UsersAndInvitesSection: React.FC<UsersAndInvitesSectionProps> = (
 
           {/* Invite Form */}
           {showInviteForm && (
-            <div className="bg-gray-50 p-6 rounded-lg mb-6">
+            <div className="bg-secondary p-6 rounded-lg mb-6">
               <form onSubmit={handleCreateInvite} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     Email *
                   </label>
                   <input
                     type="email"
                     value={inviteEmail}
                     onChange={(e) => setInviteEmail(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-border rounded-md focus:outline-hidden focus:ring-2 focus:ring-ring"
                     placeholder="colleague@example.com"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     Name (Optional)
                   </label>
                   <input
                     type="text"
                     value={inviteName}
                     onChange={(e) => setInviteName(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-border rounded-md focus:outline-hidden focus:ring-2 focus:ring-ring"
                     placeholder="John Doe"
                   />
                 </div>
@@ -272,14 +252,14 @@ const UsersAndInvitesSection: React.FC<UsersAndInvitesSectionProps> = (
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isLoading ? 'Sending...' : 'Send Invite'}
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowInviteForm(false)}
-                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
+                    className="px-4 py-2 bg-accent text-foreground rounded-md hover:bg-accent/80 transition-colors"
                   >
                     Cancel
                   </button>
@@ -291,36 +271,36 @@ const UsersAndInvitesSection: React.FC<UsersAndInvitesSectionProps> = (
           {/* Invites Table */}
           {invites.length > 0 ? (
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+              <table className="min-w-full divide-y divide-border">
+                <thead className="bg-secondary">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Email
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Name
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Created
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Expires
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-background divide-y divide-border">
                   {invites.map((invite) => (
                     <tr key={invite._id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
                         {invite.email}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
                         {invite.name || '-'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -330,16 +310,16 @@ const UsersAndInvitesSection: React.FC<UsersAndInvitesSectionProps> = (
                               ? 'bg-yellow-100 text-yellow-800'
                               : invite.status === 'accepted'
                               ? 'bg-green-100 text-green-800'
-                              : 'bg-gray-100 text-gray-800'
+                              : 'bg-secondary text-foreground'
                           }`}
                         >
                           {invite.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                         {new Date(invite.createdAt).toLocaleDateString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                         {new Date(invite.expiresAt).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
@@ -368,7 +348,7 @@ const UsersAndInvitesSection: React.FC<UsersAndInvitesSectionProps> = (
               </table>
             </div>
           ) : (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-muted-foreground">
               <Mail className="w-12 h-12 mx-auto mb-3 opacity-50" />
               <p>No pending invites</p>
               <p className="text-sm mt-1">

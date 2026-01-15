@@ -42,22 +42,22 @@ export const IconPicker: React.FC<IconPickerProps> = ({ value, onChange }) => {
   }, [searchQuery]);
 
   return (
-    <div className="border border-gray-300 rounded-lg overflow-hidden">
+    <div className="border border-border rounded-lg overflow-hidden">
       {/* Search */}
-      <div className="p-3 border-b border-gray-200 bg-gray-50">
+      <div className="p-3 border-b border-border bg-secondary">
         <input
           type="text"
           placeholder="Search icons..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-3 pr-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+          className="w-full pl-3 pr-3 py-2 text-sm border border-border rounded-md bg-background text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring"
         />
       </div>
 
       {/* Icon Grid */}
-      <div className="overflow-y-auto bg-white" style={{ maxHeight: '240px' }}>
+      <div className="overflow-y-auto bg-background" style={{ maxHeight: '240px' }}>
         {filteredIcons.length === 0 ? (
-          <div className="p-8 text-center text-sm text-gray-500">
+          <div className="p-8 text-center text-sm text-muted-foreground">
             No icons found
           </div>
         ) : (
@@ -75,14 +75,14 @@ export const IconPicker: React.FC<IconPickerProps> = ({ value, onChange }) => {
                   type="button"
                   onClick={() => onChange(iconName)}
                   title={iconName}
-                  className={`p-3 rounded-md transition-all hover:bg-gray-100 relative ${
-                    isSelected ? 'bg-blue-50 ring-2 ring-blue-500' : ''
+                  className={`p-3 rounded-md transition-all hover:bg-accent relative ${
+                    isSelected ? 'bg-info ring-2 ring-ring' : ''
                   }`}
                 >
-                  <IconComponent className={`w-5 h-5 ${isSelected ? 'text-blue-600' : 'text-gray-700'}`} />
+                  <IconComponent className={`w-5 h-5 ${isSelected ? 'text-primary' : 'text-foreground'}`} />
                   {isSelected && (
                     <div className="absolute top-0.5 right-0.5">
-                      <svg className="w-3 h-3 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-3 h-3 text-primary" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                       </svg>
                     </div>

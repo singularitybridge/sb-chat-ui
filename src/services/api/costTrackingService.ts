@@ -52,22 +52,23 @@ api.interceptors.response.use(
 /**
  * Get cost summary with aggregated data
  */
-export const getCostSummary = async (startDate?: string, endDate?: string): Promise<CostSummary> => {
-  const key = `cost-summary-${startDate || 'all'}-${endDate || 'all'}`;
-  
+export const getCostSummary = async (startDate?: string, endDate?: string, provider?: string): Promise<CostSummary> => {
+  const key = `cost-summary-${startDate || 'all'}-${endDate || 'all'}-${provider || 'all'}`;
+
   return singleFlight(
     key,
     async () => {
       const params: any = {};
       if (startDate) params.startDate = startDate;
       if (endDate) params.endDate = endDate;
+      if (provider) params.provider = provider;
 
       const response = await api.get<ApiResponse<CostSummary>>('/api/costs/summary', { params });
-      
+
       if (!response.data.success || !response.data.data) {
         throw new Error(response.data.error || 'Failed to fetch cost summary');
       }
-      
+
       return response.data.data;
     }
   );
@@ -76,36 +77,45 @@ export const getCostSummary = async (startDate?: string, endDate?: string): Prom
 /**
  * Get detailed cost records with filtering
  */
-export const getCostRecords = async (filters: CostFilters = {}): Promise<{ records: CostRecord[]; count: number }> => {
+export const getCostRecords = async (filters: CostFilters = {}): Promise<{ records: CostRecord[]; count: number; totalCount: number }> => {
   const response = await api.get<ApiResponse<CostRecord[]>>('/api/costs', { params: filters });
-  
+
   if (!response.data.success || !response.data.data) {
     throw new Error(response.data.error || 'Failed to fetch cost records');
   }
-  
+
   return {
     records: response.data.data,
-    count: response.data.count || response.data.data.length
+    count: response.data.count || response.data.data.length,
+    totalCount: response.data.totalCount || response.data.data.length
   };
 };
 
 /**
  * Get daily cost trend data
  */
-export const getDailyCosts = async (days: number = 30): Promise<DailyCost[]> => {
-  const key = `daily-costs-${days}`;
-  
+export const getDailyCosts = async (
+  days: number = 30,
+  startDate?: string,
+  endDate?: string,
+  provider?: string
+): Promise<DailyCost[]> => {
+  const key = `daily-costs-${days}-${startDate || 'all'}-${endDate || 'all'}-${provider || 'all'}`;
+
   return singleFlight(
     key,
     async () => {
-      const response = await api.get<ApiResponse<DailyCost[]>>('/api/costs/daily', {
-        params: { days }
-      });
-      
+      const params: any = { days };
+      if (startDate) params.startDate = startDate;
+      if (endDate) params.endDate = endDate;
+      if (provider) params.provider = provider;
+
+      const response = await api.get<ApiResponse<DailyCost[]>>('/api/costs/daily', { params });
+
       if (!response.data.success || !response.data.data) {
         throw new Error(response.data.error || 'Failed to fetch daily costs');
       }
-      
+
       return response.data.data;
     }
   );

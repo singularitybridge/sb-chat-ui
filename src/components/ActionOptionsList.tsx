@@ -16,7 +16,7 @@ const ActionOptionsList: React.FC<ActionOptionsListProps> = ({ options, onSelect
           key={option.id}
           onClick={() => onSelect(option.id)}
           onMouseEnter={() => onHover && onHover(option)}
-          className="p-2 hover:bg-gray-100 cursor-pointer"
+          className="p-2 hover:bg-accent cursor-pointer"
         >
           <ActionTag
             iconName={option.iconName}

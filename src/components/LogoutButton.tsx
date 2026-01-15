@@ -16,9 +16,10 @@ const LogoutButton: React.FC = () => {
 
   return (
     <IconButton
-      className="bg-fuchsia-100 hover:bg-fuchsia-200 rounded-full w-9 h-9 m-auto flex items-center justify-center p-2"
-      icon={<LogOutIcon className="w-5 h-5 text-zinc-500" />}
+      className="bg-fuchsia-100 hover:bg-fuchsia-200 dark:bg-fuchsia-900/50 dark:hover:bg-fuchsia-800/60 rounded-full w-9 h-9 flex items-center justify-center p-2 transition-colors"
+      icon={<LogOutIcon className="w-5 h-5 text-fuchsia-700 dark:text-fuchsia-300" />}
       onClick={handleLogout}
+      aria-label="Log out"
     />
   );
 };

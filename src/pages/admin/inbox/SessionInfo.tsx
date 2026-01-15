@@ -26,11 +26,11 @@ export const SessionInfo: React.FC<SessionInfoProps> = ({
         <h3 className="font-semibold text-sm">
           {session.userName}
         </h3>
-        <p className="text-xs text-gray-500">
+        <p className="text-xs text-muted-foreground">
           {moment(session.lastMessageAt).fromNow()}
         </p>
       </div>
-      <div className="text-sm text-gray-500">
+      <div className="text-sm text-muted-foreground">
         {session.messages.length > 0
           ? session.messages[session.messages.length - 1].message
           : 'No messages'}

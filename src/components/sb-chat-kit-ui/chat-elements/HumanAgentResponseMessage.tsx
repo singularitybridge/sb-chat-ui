@@ -9,7 +9,7 @@ interface HumanAgentResponseMessageProps {
 
 const HumanAgentResponseMessage: React.FC<HumanAgentResponseMessageProps> = ({ text }) => {
   return (
-    <MessageWrapper icon={<UserIcon className="w-5 h-5 text-gray-700" />} bgColor="bg-yellow-100" borderColor="bg-yellow-300" role="Support Reviewer">
+    <MessageWrapper icon={<UserIcon className="w-5 h-5 text-foreground" />} bgColor="bg-yellow-100" borderColor="bg-yellow-300" role="Support Reviewer">
       <div className="prose prose-sm">
         <ReactMarkdown>{text}</ReactMarkdown>
       </div>

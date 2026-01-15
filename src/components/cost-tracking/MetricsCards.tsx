@@ -33,15 +33,15 @@ const MetricCard: React.FC<MetricCardProps> = ({
           <div className="flex-1">
             {loading ? (
               <div className="space-y-2">
-                <div className="h-8 w-24 bg-gray-200 rounded animate-pulse" />
-                <div className="h-4 w-16 bg-gray-100 rounded animate-pulse" />
+                <div className="h-8 w-24 bg-accent rounded animate-pulse" />
+                <div className="h-4 w-16 bg-secondary rounded animate-pulse" />
               </div>
             ) : (
               <>
                 <p className="text-2xl font-bold">{value}</p>
-                <p className="text-xs text-gray-500">{title}</p>
+                <p className="text-xs text-muted-foreground">{title}</p>
                 {subtitle && (
-                  <p className="text-xs text-gray-400 mt-1">{subtitle}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>
                 )}
               </>
             )}
@@ -61,7 +61,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
                 )}
               </div>
             )}
-            <div className="p-1.5 bg-gray-100 rounded">
+            <div className="p-1.5 bg-secondary rounded">
               {icon}
             </div>
           </div>
@@ -85,27 +85,27 @@ export const MetricsCards: React.FC<MetricsCardsProps> = ({ summary, loading = f
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       <MetricCard
-        icon={<DollarSign className="w-4 h-4 text-primary-600" />}
+        icon={<DollarSign className="w-4 h-4 text-primary" />}
         title="Total Cost"
         value={totalCost}
         subtitle={`${costPerRequest} per request`}
         loading={loading}
       />
       <MetricCard
-        icon={<BarChart3 className="w-4 h-4 text-blue-600" />}
+        icon={<BarChart3 className="w-4 h-4 text-primary" />}
         title="Total Requests"
         value={totalRequests}
         loading={loading}
       />
       <MetricCard
-        icon={<Hash className="w-4 h-4 text-purple-600" />}
+        icon={<Hash className="w-4 h-4 text-violet" />}
         title="Total Tokens"
         value={totalTokens}
         subtitle={summary ? `${formatTokens(summary.totalInputTokens)} in / ${formatTokens(summary.totalOutputTokens)} out` : undefined}
         loading={loading}
       />
       <MetricCard
-        icon={<Zap className="w-4 h-4 text-yellow-600" />}
+        icon={<Zap className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />}
         title="Avg Response Time"
         value={avgDuration}
         loading={loading}

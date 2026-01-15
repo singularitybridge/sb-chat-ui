@@ -34,7 +34,7 @@ class ApiKeysService {
   }
 
   async listApiKeys(): Promise<ListApiKeysResponse> {
-    const cacheKey = `apiKeys-list`;
+    const cacheKey = 'apiKeys-list';
     return singleFlight(
       cacheKey,
       async () => {

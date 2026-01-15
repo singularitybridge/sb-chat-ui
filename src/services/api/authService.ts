@@ -8,15 +8,10 @@ export const getToken = () => {
 };
 
 export const loginWithGoogle = async (token: string) => {
-  try {
-    const response = await apiClient.post('auth/google/login', {
-      token: token,
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Failed to verify token', error);
-    throw error;
-  }
+  const response = await apiClient.post('auth/google/login', {
+    token: token,
+  });
+  return response.data;
 };
 
 export const verifyToken = () =>

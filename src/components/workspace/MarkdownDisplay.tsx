@@ -45,31 +45,31 @@ export const MarkdownDisplay: React.FC<DisplayComponentProps> = ({
       {/* Content area - minimal, flat */}
       <div className="min-h-[2rem]">
         {loading && showLoading && (
-          <div className="flex items-center gap-2 text-slate-400 text-sm">
-            <div className="w-3 h-3 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
+          <div className="flex items-center gap-2 text-muted-foreground text-sm">
+            <div className="w-3 h-3 border-2 border-muted-foreground border-t-transparent rounded-full animate-spin" />
             <span className="text-xs">Loading...</span>
           </div>
         )}
 
         {error && (
-          <div className="text-red-600 text-sm">
+          <div className="text-destructive text-sm">
             <span className="font-medium">Error:</span> {error}
           </div>
         )}
 
         {!loading && !error && data && (
-          <div className="prose prose-sm max-w-none text-slate-700">
+          <div className="prose prose-sm dark:prose-invert max-w-none">
             <ReactMarkdown>{getText()}</ReactMarkdown>
           </div>
         )}
 
         {!loading && !error && !data && (
-          <div className="text-slate-400 text-sm italic">{fallback}</div>
+          <div className="text-muted-foreground text-sm italic">{fallback}</div>
         )}
       </div>
 
       {/* Data flow info */}
-      <div className="flex items-center gap-1.5 text-[11px] text-slate-500 font-mono">
+      <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground font-mono">
         <span>←</span>
         <span>{dataKey}</span>
       </div>

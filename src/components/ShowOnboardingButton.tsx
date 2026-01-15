@@ -13,9 +13,10 @@ const ShowOnboardingButton: React.FC = () => {
 
   return (
     <IconButton
-      className="bg-lime-200 hover:bg-fuchsia-200 rounded-full w-9 h-9 m-auto flex items-center justify-center p-2"
-      icon={<BotIcon className="w-5 h-5 text-zinc-500" />}
+      className="bg-lime-200 hover:bg-lime-300 dark:bg-lime-900/50 dark:hover:bg-lime-800/60 rounded-full w-9 h-9 flex items-center justify-center p-2 transition-colors"
+      icon={<BotIcon className="w-5 h-5 text-lime-700 dark:text-lime-300" />}
       onClick={handleShowOnboarding}
+      aria-label="Show onboarding"
     />
   );
 };

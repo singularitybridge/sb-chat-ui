@@ -48,14 +48,14 @@ export const JsonDisplay: React.FC<DisplayComponentProps> = ({
   return (
     <div className={className}>
       {loading && showLoading && (
-        <div className="flex items-center gap-2 text-blue-600 p-4">
-          <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+        <div className="flex items-center gap-2 text-primary p-4">
+          <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
           <span>Loading JSON data...</span>
         </div>
       )}
 
       {error && (
-        <div className="text-red-600 bg-red-50 p-4 rounded border border-red-200">
+        <div className="text-destructive bg-destructive/10 p-4 rounded border border-destructive/30">
           <strong>Error:</strong> {error}
         </div>
       )}
@@ -65,7 +65,7 @@ export const JsonDisplay: React.FC<DisplayComponentProps> = ({
       )}
 
       {!loading && !error && !data && (
-        <div className="text-gray-500 italic p-4 border border-gray-200 rounded">
+        <div className="text-muted-foreground italic p-4 border border-border rounded">
           {fallback}
         </div>
       )}

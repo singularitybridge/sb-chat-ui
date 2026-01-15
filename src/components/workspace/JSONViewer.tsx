@@ -18,17 +18,17 @@ export const JSONViewer: React.FC<JSONViewerProps> = ({ content }) => {
     return json.replace(
       /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
       (match) => {
-        let cls = 'text-purple-600'; // numbers
+        let cls = 'text-violet'; // numbers
         if (/^"/.test(match)) {
           if (/:$/.test(match)) {
-            cls = 'text-blue-600 font-medium'; // keys
+            cls = 'text-primary font-medium'; // keys
           } else {
-            cls = 'text-green-600'; // strings
+            cls = 'text-success-foreground'; // strings
           }
         } else if (/true|false/.test(match)) {
-          cls = 'text-orange-600'; // booleans
+          cls = 'text-warning-foreground'; // booleans
         } else if (/null/.test(match)) {
-          cls = 'text-red-600'; // null
+          cls = 'text-destructive'; // null
         }
         return `<span class="${cls}">${match}</span>`;
       }
@@ -37,7 +37,7 @@ export const JSONViewer: React.FC<JSONViewerProps> = ({ content }) => {
 
   return (
     <div className="p-6">
-      <pre className="text-sm bg-gray-50 rounded-lg p-4 overflow-auto border border-gray-200">
+      <pre className="text-sm bg-secondary rounded-lg p-4 overflow-auto border border-border">
         <code
           dangerouslySetInnerHTML={{
             __html: syntaxHighlight(content),

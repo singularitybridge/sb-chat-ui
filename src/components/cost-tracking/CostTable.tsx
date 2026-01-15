@@ -32,12 +32,14 @@ interface CostTableProps {
   data: CostRecord[];
   loading?: boolean;
   pageSize?: number;
+  totalCount?: number; // Total records in database (for showing accurate count)
 }
 
-export const CostTable: React.FC<CostTableProps> = ({ 
-  data, 
+export const CostTable: React.FC<CostTableProps> = ({
+  data,
   loading = false,
-  pageSize = 10 
+  pageSize = 10,
+  totalCount
 }) => {
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'timestamp', desc: true }
@@ -50,7 +52,7 @@ export const CostTable: React.FC<CostTableProps> = ({
       accessorKey: 'timestamp',
       header: ({ column }) => (
         <button
-          className="flex items-center gap-2 hover:text-primary-600"
+          className="flex items-center gap-2 hover:text-primary"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           <Clock className="h-4 w-4" />
@@ -68,7 +70,7 @@ export const CostTable: React.FC<CostTableProps> = ({
       accessorKey: 'assistantName',
       header: ({ column }) => (
         <button
-          className="flex items-center gap-2 hover:text-primary-600"
+          className="flex items-center gap-2 hover:text-primary"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           <Bot className="h-4 w-4" />
@@ -78,7 +80,7 @@ export const CostTable: React.FC<CostTableProps> = ({
       ),
       cell: ({ row }) => (
         <div className="flex items-center gap-2">
-          <Bot className="h-4 w-4 text-gray-400" />
+          <Bot className="h-4 w-4 text-muted-foreground" />
           <span className="text-sm font-medium">
             {row.getValue('assistantName') || 'Unknown'}
           </span>
@@ -89,7 +91,7 @@ export const CostTable: React.FC<CostTableProps> = ({
       accessorKey: 'modelName',
       header: ({ column }) => (
         <button
-          className="flex items-center gap-2 hover:text-primary-600"
+          className="flex items-center gap-2 hover:text-primary"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           <Cpu className="h-4 w-4" />
@@ -117,9 +119,9 @@ export const CostTable: React.FC<CostTableProps> = ({
         const record = row.original;
         return (
           <div className="text-right text-sm">
-            <span className="text-gray-500">↓</span> {formatTokens(record.inputTokens)}
-            <span className="mx-1 text-gray-400">/</span>
-            <span className="text-gray-500">↑</span> {formatTokens(record.outputTokens)}
+            <span className="text-muted-foreground">↓</span> {formatTokens(record.inputTokens)}
+            <span className="mx-1 text-muted-foreground">/</span>
+            <span className="text-muted-foreground">↑</span> {formatTokens(record.outputTokens)}
           </div>
         );
       },
@@ -128,7 +130,7 @@ export const CostTable: React.FC<CostTableProps> = ({
       accessorKey: 'totalCost',
       header: ({ column }) => (
         <button
-          className="flex items-center justify-end gap-2 hover:text-primary-600 w-full"
+          className="flex items-center justify-end gap-2 hover:text-primary w-full"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           <DollarSign className="h-4 w-4" />
@@ -146,7 +148,7 @@ export const CostTable: React.FC<CostTableProps> = ({
       accessorKey: 'duration',
       header: ({ column }) => (
         <button
-          className="flex items-center justify-end gap-2 hover:text-primary-600 w-full"
+          className="flex items-center justify-end gap-2 hover:text-primary w-full"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           <Timer className="h-4 w-4" />
@@ -155,7 +157,7 @@ export const CostTable: React.FC<CostTableProps> = ({
         </button>
       ),
       cell: ({ row }) => (
-        <div className="text-right text-sm text-gray-600">
+        <div className="text-right text-sm text-muted-foreground">
           {formatDuration(row.getValue('duration'))}
         </div>
       ),
@@ -165,11 +167,11 @@ export const CostTable: React.FC<CostTableProps> = ({
       header: 'Type',
       cell: ({ row }) => {
         const type = row.getValue('requestType') as string;
-        const bgColor = type === 'streaming' 
-          ? 'bg-blue-100 text-blue-800' 
+        const bgColor = type === 'streaming'
+          ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
           : type === 'stateless'
-          ? 'bg-green-100 text-green-800'
-          : 'bg-gray-100 text-gray-800';
+          ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+          : 'bg-secondary text-foreground';
         
         return (
           <span className={`px-2 py-1 text-xs rounded-full ${bgColor}`}>
@@ -207,7 +209,7 @@ export const CostTable: React.FC<CostTableProps> = ({
       <div className="w-full">
         <div className="space-y-3">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="h-12 bg-gray-100 rounded animate-pulse" />
+            <div key={i} className="h-12 bg-secondary rounded animate-pulse" />
           ))}
         </div>
       </div>
@@ -223,23 +225,25 @@ export const CostTable: React.FC<CostTableProps> = ({
           placeholder="Search costs..."
           value={globalFilter ?? ''}
           onChange={(e) => setGlobalFilter(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-primary-500"
+          className="px-4 py-2 border border-border rounded-lg bg-background focus:outline-hidden focus:ring-2 focus:ring-ring"
         />
-        <div className="text-sm text-gray-500">
-          {table.getFilteredRowModel().rows.length} records
+        <div className="text-sm text-muted-foreground">
+          {totalCount !== undefined && totalCount > data.length
+            ? `${table.getFilteredRowModel().rows.length} of ${totalCount} records`
+            : `${table.getFilteredRowModel().rows.length} records`}
         </div>
       </div>
 
       {/* Table */}
       <div className="border rounded-lg overflow-hidden">
         <table className="w-full">
-          <thead className="bg-gray-50 border-b">
+          <thead className="bg-secondary border-b">
             {table.getHeaderGroups().map(headerGroup => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map(header => (
                   <th
                     key={header.id}
-                    className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider"
+                    className="px-4 py-3 text-left text-xs font-medium text-foreground uppercase tracking-wider"
                   >
                     {header.isPlaceholder
                       ? null
@@ -252,16 +256,16 @@ export const CostTable: React.FC<CostTableProps> = ({
               </tr>
             ))}
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-background divide-y divide-border">
             {table.getRowModel().rows.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} className="px-4 py-8 text-center text-gray-500">
+                <td colSpan={columns.length} className="px-4 py-8 text-center text-muted-foreground">
                   No cost records found
                 </td>
               </tr>
             ) : (
               table.getRowModel().rows.map(row => (
-                <tr key={row.id} className="hover:bg-gray-50">
+                <tr key={row.id} className="hover:bg-accent">
                   {row.getVisibleCells().map(cell => (
                     <td key={cell.id} className="px-4 py-3 whitespace-nowrap">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -276,26 +280,29 @@ export const CostTable: React.FC<CostTableProps> = ({
 
       {/* Pagination */}
       <div className="flex items-center justify-between">
-        <div className="text-sm text-gray-700">
+        <div className="text-sm text-foreground">
           Showing {table.getState().pagination.pageIndex * pageSize + 1} to{' '}
           {Math.min(
             (table.getState().pagination.pageIndex + 1) * pageSize,
             table.getFilteredRowModel().rows.length
           )}{' '}
           of {table.getFilteredRowModel().rows.length} results
+          {totalCount !== undefined && totalCount > data.length && (
+            <span className="text-muted-foreground"> (total: {totalCount})</span>
+          )}
         </div>
         <div className="flex items-center space-x-2">
           <button
             onClick={() => table.setPageIndex(0)}
             disabled={!table.getCanPreviousPage()}
-            className="p-1 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-1 rounded hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronsLeft className="h-5 w-5" />
           </button>
           <button
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
-            className="p-1 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-1 rounded hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
@@ -306,14 +313,14 @@ export const CostTable: React.FC<CostTableProps> = ({
           <button
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
-            className="p-1 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-1 rounded hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronRight className="h-5 w-5" />
           </button>
           <button
             onClick={() => table.setPageIndex(table.getPageCount() - 1)}
             disabled={!table.getCanNextPage()}
-            className="p-1 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-1 rounded hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronsRight className="h-5 w-5" />
           </button>

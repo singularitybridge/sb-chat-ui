@@ -27,8 +27,8 @@ const SideMenuItem: React.FC<SideMenuItemProps> = ({
 }) => (
   <div className="hover:bg-slate-300 h-12 cursor-pointer" onClick={onClick}>
     <div className="flex mb-4 p-5 items-center"> {/* Added items-center for better alignment */}
-      <Icon className="h-5 w-5 text-gray-600 mr-3" /> {/* Adjusted icon size and color */}
-      <li className="text-sm text-gray-700">{text}</li> {/* Adjusted text style */}
+      <Icon className="h-5 w-5 text-muted-foreground mr-3" /> {/* Adjusted icon size and color */}
+      <li className="text-sm text-foreground">{text}</li> {/* Adjusted text style */}
     </div>
   </div>
 );

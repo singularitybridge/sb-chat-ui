@@ -41,7 +41,7 @@ export const TestList: React.FC<TestListProps> = ({
         return 'bg-blue-100 text-blue-700';
       case 'pending':
       default:
-        return 'bg-gray-100 text-gray-600';
+        return 'bg-secondary text-muted-foreground';
     }
   };
 
@@ -64,26 +64,26 @@ export const TestList: React.FC<TestListProps> = ({
       {testItems.map((test, index) => (
         <div
           key={index}
-          className="bg-white p-4 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors"
+          className="bg-card p-4 rounded-lg border border-border hover:border-border/80 transition-colors"
         >
           <div className="flex items-start gap-4">
             {/* Radio button / Circle indicator */}
             <div className="shrink-0 mt-1">
-              <div className="w-5 h-5 rounded-full border-2 border-gray-300"></div>
+              <div className="w-5 h-5 rounded-full border-2 border-border"></div>
             </div>
 
             {/* Test content */}
             <div className="grow min-w-0">
               <div className="flex items-start justify-between gap-4">
                 <div className="grow min-w-0">
-                  <h3 className="text-base font-semibold text-gray-900 mb-1">
+                  <h3 className="text-base font-semibold text-foreground mb-1">
                     {test.title}
                   </h3>
-                  <p className="text-sm text-gray-600 mb-2">
+                  <p className="text-sm text-muted-foreground mb-2">
                     {test.description}
                   </p>
                   {(test.method || test.endpoint) && (
-                    <div className="flex items-center gap-2 text-xs text-gray-500 font-mono">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono">
                       {test.method && <span className="font-semibold">{test.method}</span>}
                       {test.method && test.endpoint && <span>•</span>}
                       {test.endpoint && <span>{test.endpoint}</span>}

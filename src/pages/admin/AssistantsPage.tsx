@@ -4,7 +4,7 @@ import { useAssistantStore } from '../../store/useAssistantStore';
 import { useTeamStore } from '../../store/useTeamStore';
 import { useLanguageStore } from '../../store/useLanguageStore';
 import { IAssistant } from '../../types/entities';
-import { Plus, Settings, X, ChevronRight, ChevronLeft, Copy, Search } from 'lucide-react';
+import { Plus, Settings, X, ChevronRight, ChevronLeft, Copy, Search, ArrowLeft, MessageSquare } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { IconButton } from '../../components/admin/IconButton';
 import { ModelIndicator } from '../../components/ModelIndicator';
@@ -32,6 +32,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '../../components/ui/alert-dialog';
+import { Button } from '../../components/ui/button';
+// Note: Mobile view toggle uses CSS classes (md:hidden, md:block) for better performance
+// JS state is only used for toggling between views on mobile, not for detecting screen size
 
 
 const AssistantsPage: React.FC = () => {
@@ -48,6 +51,9 @@ const AssistantsPage: React.FC = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
   const [assistantToDelete, setAssistantToDelete] = useState<IAssistant | null>(null);
   const { setOpen: setCommandPaletteOpen } = useCommandPalette();
+  // mobileView state only controls which panel is visible on mobile (<768px)
+  // On desktop (>=768px), both panels are always visible via CSS
+  const [mobileView, setMobileView] = useState<'list' | 'chat'>('list');
 
   const { t } = useTranslation();
 
@@ -107,6 +113,8 @@ const AssistantsPage: React.FC = () => {
 
   const handleSetAssistant = async (assistant: IAssistant) => {
     emitter.emit(EVENT_SET_ACTIVE_ASSISTANT, assistant._id);
+    // Switch to chat view when selecting an assistant (only affects mobile via CSS)
+    setMobileView('chat');
   };
 
   const handleAddAssistant = () => {
@@ -140,19 +148,20 @@ const AssistantsPage: React.FC = () => {
 
   return (
     <div className="flex justify-center h-full">
-      <div className="flex w-full space-x-7 rtl:space-x-reverse">
-        <div className="flex flex-col rounded-lg max-w-sm w-full">
-          <div className="flex flex-row justify-between items-center w-full mb-8">
+      <div className="flex flex-col md:flex-row w-full gap-4 md:gap-7">
+        {/* Assistant List - hidden on mobile when in chat view, always visible on desktop */}
+        <div className={`flex flex-col rounded-lg md:max-w-sm w-full overflow-hidden ${mobileView === 'chat' ? 'hidden' : 'flex'} md:flex`}>
+          <div className="flex flex-row justify-between items-center w-full mb-4 md:mb-8">
             <div className="flex items-center">
               {teamId ? (
                 <div className="flex items-center">
-                  <span 
+                  <span
                     onClick={() => navigate('/admin/teams')}
                     className="cursor-pointer"
                   >
-                    <TextComponent 
-                      text={t('Navigation.teams')} 
-                      size="subtitle" 
+                    <TextComponent
+                      text={t('Navigation.teams')}
+                      size="subtitle"
                     />
                   </span>
                   <span className="mx-2">
@@ -162,33 +171,44 @@ const AssistantsPage: React.FC = () => {
                       <ChevronRight className="w-5 h-5 inline-block" />
                     )}
                   </span>
-                  <TextComponent 
-                    text={teamName} 
-                    size="subtitle" 
+                  <TextComponent
+                    text={teamName}
+                    size="subtitle"
                   />
                 </div>
               ) : (
-                <TextComponent 
-                  text={t('AssistantsPage.title')} 
-                  size="subtitle" 
+                <TextComponent
+                  text={t('AssistantsPage.title')}
+                  size="subtitle"
                 />
               )}
             </div>
             <div className="flex items-center gap-2">
               <IconButton
-                icon={<Search className="w-6 h-6 text-gray-600" />}
+                icon={<Search className="w-6 h-6 text-muted-foreground" />}
                 onClick={() => setCommandPaletteOpen(true)}
               />
               <IconButton
-                icon={<Plus className="w-7 h-7 text-gray-600" />}
+                icon={<Plus className="w-7 h-7 text-muted-foreground" />}
                 onClick={handleAddAssistant}
               />
+              {/* Mobile: Show chat toggle when there's an active session */}
+              {activeSession && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setMobileView('chat')}
+                  className="md:hidden"
+                >
+                  <MessageSquare className="w-6 h-6" />
+                </Button>
+              )}
             </div>
           </div>
 
-          <ul className="space-y-6 grow overflow-y-auto">
+          <ul className="space-y-6 grow overflow-y-auto pe-4">
             {isLoading ? (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-muted-foreground">
                 <p>{t('common.pleaseWait')}</p>
               </div>
             ) : (
@@ -202,17 +222,17 @@ const AssistantsPage: React.FC = () => {
               return (
                 <li
                   key={assistant._id}
-                  className={`group rounded-lg p-4 cursor-pointer hover:bg-blue-200 relative ${
+                  className={`group rounded-lg p-4 cursor-pointer hover:bg-accent relative ${
                     isActive
-                      ? 'bg-blue-200 bg-opacity-80'
-                      : 'bg-slate-100 bg-opacity-80'
+                      ? 'bg-accent'
+                      : 'bg-secondary'
                   }`}
                   onClick={() => handleSetAssistant(assistant)}
                   onMouseEnter={() => setHoveredAssistantId(assistant._id)}
                   onMouseLeave={() => setHoveredAssistantId(null)}
                 >
                   <div className="flex flex-col space-y-2.5">
-                    <div className="flex items-start space-x-4 rtl:space-x-reverse">
+                    <div className="flex items-start gap-4">
                       <div className="shrink-0">
                         <Avatar
                           imageUrl={getAvatarUrl(assistant.avatarImage)}
@@ -225,7 +245,7 @@ const AssistantsPage: React.FC = () => {
                           <h4 className="font-bold text-base truncate text-right rtl:text-left">
                             {assistant.name}
                           </h4>
-                          <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                          <div className="flex items-center gap-2">
                             <AnimatePresence>
                               {hoveredAssistantId === assistant._id && (
                                 <motion.div
@@ -233,13 +253,13 @@ const AssistantsPage: React.FC = () => {
                                   animate={{ opacity: 1, x: 0 }}
                                   exit={{ opacity: 0, x: -10 }}
                                   transition={{ duration: 0.2 }}
-                                  className="flex space-x-2 rtl:space-x-reverse"
+                                  className="flex gap-2"
                                 >
                                   <IconButton
                                     icon={
-                                      <Copy className="w-4 h-4 text-gray-500" />
+                                      <Copy className="w-4 h-4 text-muted-foreground" />
                                     }
-                                    className="p-1.5 rounded-full hover:bg-gray-300 bg-white"
+                                    className="p-1.5 rounded-full hover:bg-accent bg-background"
                                     onClick={(event) => {
                                       event.stopPropagation();
                                       handleCopyAssistantId(assistant._id);
@@ -247,17 +267,17 @@ const AssistantsPage: React.FC = () => {
                                   />
                                   <IconButton
                                     icon={
-                                      <Settings className="w-4 h-4 text-gray-500" />
+                                      <Settings className="w-4 h-4 text-muted-foreground" />
                                     }
-                                    className="p-1.5 rounded-full hover:bg-gray-300 bg-white"
+                                    className="p-1.5 rounded-full hover:bg-accent bg-background"
                                     onClick={(event) => {
                                       event.stopPropagation();
                                       handleEditAssistant(assistant);
                                     }}
                                   />
                                   <IconButton
-                                    icon={<X className="w-4 h-4 text-gray-500" />}
-                                    className="p-1.5 rounded-full hover:bg-gray-300 bg-white"
+                                    icon={<X className="w-4 h-4 text-muted-foreground" />}
+                                    className="p-1.5 rounded-full hover:bg-accent bg-background"
                                     onClick={(event) => {
                                       event.stopPropagation();
                                       handleDeleteClick(assistant);
@@ -269,7 +289,7 @@ const AssistantsPage: React.FC = () => {
                             <ModelIndicator modelName={assistant.llmModel} size="medium" />
                           </div>
                         </div>
-                        <p className="text-sm text-gray-600 line-clamp-2">
+                        <p className="text-sm text-muted-foreground line-clamp-2">
                           {assistant.description}
                         </p>
                       </div>
@@ -287,14 +307,29 @@ const AssistantsPage: React.FC = () => {
               })
             )}
             {!isLoading && (teamId ? teamAssistants.length === 0 : assistants.length === 0) && (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-muted-foreground">
                 <p>{teamId ? t('teamAssistants.noAssistants') : t('teamAssistants.noAssistantsFound')}</p>
               </div>
             )}
           </ul>
         </div>
-        <div className="grow min-w-0">
-          <ChatContainer />
+        {/* Chat Container - hidden on mobile when in list view, always visible on desktop */}
+        <div className={`grow min-w-0 flex flex-col ${mobileView === 'list' ? 'hidden' : ''} md:flex`}>
+          {/* Mobile: Back to list button - only visible on mobile */}
+          <div className="flex items-center gap-2 mb-4 md:hidden">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setMobileView('list')}
+              className="gap-2"
+            >
+              <ArrowLeft className="w-4 h-4 rtl:rotate-180" />
+              {t('common.back')}
+            </Button>
+          </div>
+          <div className="flex-1 min-h-0">
+            <ChatContainer />
+          </div>
         </div>
       </div>
 

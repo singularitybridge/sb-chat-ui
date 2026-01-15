@@ -69,12 +69,12 @@ const TeamsPage: React.FC = () => {
 
   return (
     <div className="flex justify-center h-full">
-      <div className="flex w-full max-w-7xl">
-        <div className="flex flex-col rounded-lg max-w-sm w-full">
+      <div className="flex flex-col md:flex-row w-full gap-4 md:gap-7">
+        <div className="flex flex-col rounded-lg md:max-w-sm w-full overflow-hidden">
           <div className="flex flex-row justify-between items-center w-full mb-8">
             <TextComponent text={t('TeamsPage.title') || 'Teams'} size="subtitle" />
             <IconButton
-              icon={<Plus className="w-7 h-7 text-gray-600" />}
+              icon={<Plus className="w-7 h-7 text-muted-foreground" />}
               onClick={handleAddTeam}
             />
           </div>
@@ -84,7 +84,7 @@ const TeamsPage: React.FC = () => {
               return (
                 <li
                   key={team._id}
-                  className="group rounded-lg p-4 cursor-pointer hover:bg-blue-200 relative bg-slate-100 bg-opacity-80"
+                  className="group rounded-lg p-4 cursor-pointer hover:bg-accent relative bg-secondary"
                   onClick={() => handleTeamClick(team._id)}
                   onMouseEnter={() => setHoveredTeamId(team._id)}
                   onMouseLeave={() => setHoveredTeamId(null)}
@@ -93,7 +93,7 @@ const TeamsPage: React.FC = () => {
                     <div className="flex items-start space-x-4 rtl:space-x-reverse">
                       <div className="shrink-0">
                         {team.icon && (
-                          <div className="w-12 h-12 flex items-center justify-center bg-gray-200 rounded-full">
+                          <div className="w-12 h-12 flex items-center justify-center bg-accent rounded-full">
                             {(() => {
                               // Try to find a matching icon name in LucideIcons (case-insensitive)
                               const iconName = team.icon;
@@ -103,7 +103,7 @@ const TeamsPage: React.FC = () => {
                               if (iconName in LucideIcons) {
                                 return React.createElement(
                                   LucideIcons[iconName as keyof typeof LucideIcons] as React.FC<React.SVGProps<SVGSVGElement>>,
-                                  { className: 'w-6 h-6 text-gray-700' }
+                                  { className: 'w-6 h-6 text-foreground' }
                                 );
                               }
                               
@@ -115,18 +115,18 @@ const TeamsPage: React.FC = () => {
                               if (matchingKey) {
                                 return React.createElement(
                                   LucideIcons[matchingKey as keyof typeof LucideIcons] as React.FC<React.SVGProps<SVGSVGElement>>,
-                                  { className: 'w-6 h-6 text-gray-700' }
+                                  { className: 'w-6 h-6 text-foreground' }
                                 );
                               }
                               
                               // Fallback to text
-                              return <span className="text-xl">{iconName.length === 1 ? iconName : team.name.charAt(0)}</span>;
+                              return <span className="text-xl text-foreground">{iconName.length === 1 ? iconName : team.name.charAt(0)}</span>;
                             })()}
                           </div>
                         )}
                         {!team.icon && (
-                          <div className="w-12 h-12 flex items-center justify-center bg-blue-100 rounded-full">
-                            <span className="text-xl">{team.name.charAt(0)}</span>
+                          <div className="w-12 h-12 flex items-center justify-center bg-accent rounded-full">
+                            <span className="text-xl text-foreground">{team.name.charAt(0)}</span>
                           </div>
                         )}
                       </div>
@@ -147,17 +147,17 @@ const TeamsPage: React.FC = () => {
                                 >
                                   <IconButton
                                     icon={
-                                      <Settings className="w-4 h-4 text-gray-500" />
+                                      <Settings className="w-4 h-4 text-muted-foreground" />
                                     }
-                                    className="p-1.5 rounded-full hover:bg-gray-300 bg-white"
+                                    className="p-1.5 rounded-full hover:bg-accent bg-background"
                                     onClick={(event) => {
                                       event.stopPropagation();
                                       handleEditTeam(team._id);
                                     }}
                                   />
                                   <IconButton
-                                    icon={<X className="w-4 h-4 text-gray-500" />}
-                                    className="p-1.5 rounded-full hover:bg-gray-300 bg-white"
+                                    icon={<X className="w-4 h-4 text-muted-foreground" />}
+                                    className="p-1.5 rounded-full hover:bg-accent bg-background"
                                     onClick={(event) => {
                                       event.stopPropagation();
                                       handleDeleteClick(team);
@@ -168,7 +168,7 @@ const TeamsPage: React.FC = () => {
                             </AnimatePresence>
                           </div>
                         </div>
-                        <p className="text-sm text-gray-600 line-clamp-2">
+                        <p className="text-sm text-muted-foreground line-clamp-2">
                           {team.description}
                         </p>
                       </div>
@@ -178,7 +178,7 @@ const TeamsPage: React.FC = () => {
               );
             })}
             {teams.length === 0 && (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-muted-foreground">
                 <p>{t('TeamsPage.noTeams') || 'No teams found'}</p>
                 <p className="mt-2 text-sm">
                   {t('TeamsPage.createTeamPrompt') || 'Click the + button to create a team'}

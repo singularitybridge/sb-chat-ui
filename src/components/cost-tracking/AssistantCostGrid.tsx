@@ -88,13 +88,13 @@ export const AssistantCostGrid: React.FC<AssistantCostGridProps> = ({
         {[...Array(4)].map((_, i) => (
           <Card key={i} className="animate-pulse">
             <CardHeader className="pb-2">
-              <div className="h-4 w-32 bg-gray-200 rounded" />
+              <div className="h-4 w-32 bg-accent rounded" />
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                <div className="h-8 w-24 bg-gray-200 rounded" />
-                <div className="h-3 w-full bg-gray-100 rounded" />
-                <div className="h-3 w-20 bg-gray-100 rounded" />
+                <div className="h-8 w-24 bg-accent rounded" />
+                <div className="h-3 w-full bg-secondary rounded" />
+                <div className="h-3 w-20 bg-secondary rounded" />
               </div>
             </CardContent>
           </Card>
@@ -107,8 +107,8 @@ export const AssistantCostGrid: React.FC<AssistantCostGridProps> = ({
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <Bot className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500">No assistant cost data available</p>
+          <Bot className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+          <p className="text-muted-foreground">No assistant cost data available</p>
         </div>
       </div>
     );
@@ -122,10 +122,10 @@ export const AssistantCostGrid: React.FC<AssistantCostGridProps> = ({
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500">Total Assistants</p>
+                <p className="text-sm text-muted-foreground">Total Assistants</p>
                 <p className="text-2xl font-bold">{enrichedStats.length}</p>
               </div>
-              <Bot className="h-8 w-8 text-gray-300" />
+              <Bot className="h-8 w-8 text-muted-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -133,15 +133,15 @@ export const AssistantCostGrid: React.FC<AssistantCostGridProps> = ({
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500">Most Expensive</p>
+                <p className="text-sm text-muted-foreground">Most Expensive</p>
                 <p className="text-lg font-bold">
                   {enrichedStats[0]?.assistantName || 'N/A'}
                 </p>
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-muted-foreground">
                   {enrichedStats[0] ? formatCost(enrichedStats[0].totalCost) : '$0'}
                 </p>
               </div>
-              <DollarSign className="h-8 w-8 text-gray-300" />
+              <DollarSign className="h-8 w-8 text-muted-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -149,15 +149,15 @@ export const AssistantCostGrid: React.FC<AssistantCostGridProps> = ({
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500">Most Used</p>
+                <p className="text-sm text-muted-foreground">Most Used</p>
                 <p className="text-lg font-bold">
                   {enrichedStats.sort((a, b) => b.requestCount - a.requestCount)[0]?.assistantName || 'N/A'}
                 </p>
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-muted-foreground">
                   {enrichedStats[0] ? `${enrichedStats[0].requestCount} requests` : '0 requests'}
                 </p>
               </div>
-              <BarChart3 className="h-8 w-8 text-gray-300" />
+              <BarChart3 className="h-8 w-8 text-muted-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -179,7 +179,7 @@ export const AssistantCostGrid: React.FC<AssistantCostGridProps> = ({
                 <CardTitle className="text-sm font-medium truncate">
                   {assistant.assistantName}
                 </CardTitle>
-                <Bot className="h-4 w-4 text-gray-400" />
+                <Bot className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -187,20 +187,20 @@ export const AssistantCostGrid: React.FC<AssistantCostGridProps> = ({
                     <div className="text-2xl font-bold">
                       {formatCost(assistant.totalCost)}
                     </div>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-muted-foreground">
                       {assistant.requestCount} requests • {formatCost(costPerRequest)}/req
                     </p>
                   </div>
                   
                   <div className="space-y-1">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="text-gray-500">Avg Response</span>
+                      <span className="text-muted-foreground">Avg Response</span>
                       <span className="font-medium">
                         {formatDuration(assistant.avgResponseTime)}
                       </span>
                     </div>
                     <div className="flex items-center justify-between text-xs">
-                      <span className="text-gray-500">Primary Model</span>
+                      <span className="text-muted-foreground">Primary Model</span>
                       <span className="font-medium truncate ml-2">
                         {assistant.primaryModel}
                       </span>
@@ -208,7 +208,7 @@ export const AssistantCostGrid: React.FC<AssistantCostGridProps> = ({
                   </div>
 
                   <div className="pt-2 border-t">
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-muted-foreground">
                       Last used {new Date(assistant.lastUsed).toLocaleDateString()}
                     </p>
                   </div>

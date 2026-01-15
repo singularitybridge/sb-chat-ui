@@ -57,11 +57,11 @@ const AssistantActionsSelector: React.FC<AssistantActionsSelectorProps> = ({
     <div className="space-y-4">
       <div>
         <h2 className="text-xl font-semibold">{title}</h2>
-        <p className="text-sm text-gray-600">{description}</p>
+        <p className="text-sm text-muted-foreground">{description}</p>
       </div>
-      <div className="border border-gray-300 rounded-lg p-4 space-y-4">
+      <div className="border border-border rounded-lg p-4 space-y-4">
         {selectedActions.length === 0 ? (
-          <p className="text-gray-500">{t('CompaniesPage.noActionSelected')}</p>
+          <p className="text-muted-foreground">{t('CompaniesPage.noActionSelected')}</p>
         ) : (
           <div className="space-y-2">
             {selectedActions.map((actionId) => {
@@ -79,7 +79,7 @@ const AssistantActionsSelector: React.FC<AssistantActionsSelectorProps> = ({
             })}
           </div>
         )}
-        <div className="pt-4 border-t border-gray-200">
+        <div className="pt-4 border-t border-border">
           <ActionSelect
             label={t('CompaniesPage.addAction')}
             options={actionOptions}

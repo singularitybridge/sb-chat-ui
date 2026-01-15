@@ -94,38 +94,38 @@ export const DataProcessor: React.FC<ProcessingComponentProps> = ({
   }, [inputData, autoExecute, inputLoading, query, isProcessing]);
 
   return (
-    <div className={`border border-gray-200 rounded-lg p-4 ${className}`}>
+    <div className={`border border-border rounded-lg p-4 ${className}`}>
       <div className="flex items-center gap-2 mb-2">
-        <Zap className="w-4 h-4 text-purple-600" />
-        <span className="text-sm font-medium text-gray-700">
+        <Zap className="w-4 h-4 text-violet" />
+        <span className="text-sm font-medium text-foreground">
           Data Processor
         </span>
       </div>
 
       <div className="text-xs space-y-1">
         <div className="flex gap-2">
-          <span className="text-gray-500">Input:</span>
-          <span className="font-mono text-purple-600">{dataKey}</span>
+          <span className="text-muted-foreground">Input:</span>
+          <span className="font-mono text-violet">{dataKey}</span>
         </div>
         <div className="flex gap-2">
-          <span className="text-gray-500">Output:</span>
-          <span className="font-mono text-blue-600">{outputKey}</span>
+          <span className="text-muted-foreground">Output:</span>
+          <span className="font-mono text-primary">{outputKey}</span>
         </div>
         <div className="flex gap-2">
-          <span className="text-gray-500">Agent:</span>
-          <span className="font-mono text-gray-700">{agentName}</span>
+          <span className="text-muted-foreground">Agent:</span>
+          <span className="font-mono text-foreground">{agentName}</span>
         </div>
       </div>
 
       {isProcessing && (
-        <div className="mt-2 text-sm text-blue-600 flex items-center gap-2">
-          <div className="w-3 h-3 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+        <div className="mt-2 text-sm text-primary flex items-center gap-2">
+          <div className="w-3 h-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />
           Processing...
         </div>
       )}
 
       {(localError || inputError) && (
-        <div className="mt-2 text-sm text-red-600">
+        <div className="mt-2 text-sm text-destructive">
           Error: {localError || inputError}
         </div>
       )}
@@ -139,7 +139,7 @@ export const DataProcessor: React.FC<ProcessingComponentProps> = ({
       {!autoExecute && inputData && !isProcessing && (
         <button
           onClick={() => processData(inputData)}
-          className="mt-2 text-sm px-3 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors"
+          className="mt-2 text-sm px-3 py-1 bg-violet text-violet-foreground rounded hover:bg-violet/90 transition-colors"
         >
           Process Now
         </button>

@@ -60,9 +60,9 @@ const FilePreview: React.FC<FilePreviewProps> = ({
   }
 
   return (
-    <div className={`bg-gray-50 border border-gray-200 rounded-lg p-3 ${className}`}>
+    <div className={`bg-secondary border border-border rounded-lg p-3 ${className}`}>
       <div className="flex items-center justify-between mb-2">
-        <span className="text-sm font-medium text-gray-700">
+        <span className="text-sm font-medium text-foreground">
           {files.length} file{files.length > 1 ? 's' : ''} selected
         </span>
         <button
@@ -72,7 +72,7 @@ const FilePreview: React.FC<FilePreviewProps> = ({
             setThumbnails({});
             files.forEach(f => onRemoveFile(f.id));
           }}
-          className="text-xs text-gray-500 hover:text-gray-700"
+          className="text-xs text-muted-foreground hover:text-foreground"
         >
           Clear all
         </button>
@@ -137,31 +137,31 @@ const FilePreviewItemComponent: React.FC<FilePreviewItemComponentProps> = ({
 
   return (
     <>
-      <div className="flex items-center space-x-3 p-2 bg-white rounded border hover:bg-gray-50 transition-colors">
+      <div className="flex items-center space-x-3 p-2 bg-background rounded border border-border hover:bg-accent transition-colors">
         <div className="shrink-0 relative group">
           {isImage && thumbnailUrl ? (
             <img
               src={thumbnailUrl}
               alt={file.name}
-              className="w-10 h-10 object-cover rounded border cursor-pointer"
+              className="w-10 h-10 object-cover rounded border border-border cursor-pointer"
               onClick={() => setOpenLightbox(true)}
             />
           ) : file.type === 'text/csv' ? (
-            <div className="w-10 h-10 bg-gray-100 rounded border flex items-center justify-center">
+            <div className="w-10 h-10 bg-secondary rounded border border-border flex items-center justify-center">
               <FileSpreadsheet className="w-6 h-6 text-green-600" />
             </div>
           ) : (
-            <div className="w-10 h-10 bg-gray-100 rounded border flex items-center justify-center text-lg">
+            <div className="w-10 h-10 bg-secondary rounded border border-border flex items-center justify-center text-lg">
               {getFileIcon(file.type)}
             </div>
           )}
         </div>
 
         <div className="grow min-w-0">
-          <p className="text-sm font-medium text-gray-900 truncate">
+          <p className="text-sm font-medium text-foreground truncate">
             {file.name}
           </p>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-muted-foreground">
             {formatFileSize(file.size)}
           </p>
         </div>
@@ -171,14 +171,14 @@ const FilePreviewItemComponent: React.FC<FilePreviewItemComponentProps> = ({
             <>
               <button
                 onClick={() => setOpenLightbox(true)}
-                className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                className="p-1 text-muted-foreground hover:text-foreground transition-colors"
                 title="View image"
               >
                 <Search className="h-4 w-4" />
               </button>
               <button
                 onClick={handleDirectDownload}
-                className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                className="p-1 text-muted-foreground hover:text-foreground transition-colors"
                 title="Download image"
               >
                 <LucideDownload className="h-4 w-4" />
@@ -187,7 +187,7 @@ const FilePreviewItemComponent: React.FC<FilePreviewItemComponentProps> = ({
           ) : null } {/* Explicitly returning null if not an image with thumbnail */}
           <button
             onClick={onRemove}
-            className="p-1 text-gray-400 hover:text-red-500 transition-colors"
+            className="p-1 text-muted-foreground hover:text-red-500 transition-colors"
             title="Remove file"
           >
             <X className="h-4 w-4" />

@@ -133,12 +133,12 @@ export const GlobalCommandPalette: React.FC = () => {
                     </div>
                     <div className="grow min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="font-semibold text-sm text-gray-900 truncate">
+                        <span className="font-semibold text-sm text-foreground truncate">
                           {assistant.name}
                         </span>
                         <ModelIndicator modelName={assistant.llmModel} size="small" />
                       </div>
-                      <p className="text-xs text-gray-700 line-clamp-1">
+                      <p className="text-xs text-muted-foreground line-clamp-1">
                         {assistant.description}
                       </p>
                       {integrationNames.length > 0 && (
@@ -151,7 +151,7 @@ export const GlobalCommandPalette: React.FC = () => {
                         </div>
                       )}
                     </div>
-                    <CornerDownLeft className="w-4 h-4 text-gray-400 shrink-0" />
+                    <CornerDownLeft className="w-4 h-4 text-muted-foreground shrink-0" />
                   </CommandItem>
                 );
               })}
@@ -175,15 +175,15 @@ export const GlobalCommandPalette: React.FC = () => {
                     <Layers className="w-4 h-4 text-blue-600 shrink-0" />
                     <div className="grow min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="font-semibold text-sm text-gray-900 truncate">
+                        <span className="font-semibold text-sm text-foreground truncate">
                           {team.name}
                         </span>
                       </div>
-                      <p className="text-xs text-gray-700 line-clamp-1">
+                      <p className="text-xs text-muted-foreground line-clamp-1">
                         {team.description}
                       </p>
                     </div>
-                    <CornerDownLeft className="w-4 h-4 text-gray-400 shrink-0" />
+                    <CornerDownLeft className="w-4 h-4 text-muted-foreground shrink-0" />
                   </CommandItem>
                 );
               })}
@@ -195,8 +195,8 @@ export const GlobalCommandPalette: React.FC = () => {
         {/* Workspace Items Group */}
         {isLoadingWorkspace && (
           <CommandGroup heading={t('CommandPalette.workspace', 'Workspace')}>
-            <div className="flex items-center gap-2 px-2 py-3 text-gray-500">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-400"></div>
+            <div className="flex items-center gap-2 px-2 py-3 text-muted-foreground">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-muted-foreground"></div>
               <span className="text-sm">Loading workspace files...</span>
             </div>
           </CommandGroup>
@@ -214,15 +214,15 @@ export const GlobalCommandPalette: React.FC = () => {
                   <FileText className="w-4 h-4 text-green-600 shrink-0" />
                   <div className="grow min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="font-semibold text-sm text-gray-950 truncate">
+                      <span className="font-semibold text-sm text-foreground truncate">
                         {getWorkspaceItemTitle(item)}
                       </span>
                     </div>
-                    <p className="text-xs text-gray-800 line-clamp-1">
+                    <p className="text-xs text-muted-foreground line-clamp-1">
                       {getWorkspaceItemDescription(item)}
                     </p>
                   </div>
-                  <CornerDownLeft className="w-4 h-4 text-gray-400 shrink-0" />
+                  <CornerDownLeft className="w-4 h-4 text-muted-foreground shrink-0" />
                 </CommandItem>
               );
             })}
@@ -231,16 +231,16 @@ export const GlobalCommandPalette: React.FC = () => {
       </CommandList>
 
       {/* Keyboard Shortcut Hint */}
-      <div className="border-t px-3 py-2 text-xs text-gray-600 flex items-center justify-between">
+      <div className="border-t px-3 py-2 text-xs text-muted-foreground flex items-center justify-between">
         <span>
           {t('CommandPalette.hint', 'Press')}{' '}
-          <kbd className="px-1.5 py-0.5 text-xs bg-gray-100 border border-gray-300 rounded">
+          <kbd className="px-1.5 py-0.5 text-xs bg-secondary border border-border rounded">
             {getKeyboardShortcut()}
           </kbd>{' '}
           {t('CommandPalette.hintToOpen', 'to open')}
         </span>
         <span className="flex items-center gap-1">
-          <kbd className="px-1.5 py-0.5 text-xs bg-gray-100 border border-gray-300 rounded">
+          <kbd className="px-1.5 py-0.5 text-xs bg-secondary border border-border rounded">
             ↑↓
           </kbd>
           {t('CommandPalette.navigate', 'to navigate')}
@@ -249,11 +249,11 @@ export const GlobalCommandPalette: React.FC = () => {
 
       {/* Loading Overlay */}
       {isChangingAssistant && (
-        <div className="absolute inset-0 bg-white/95 backdrop-blur-sm z-50 flex items-center justify-center">
+        <div className="absolute inset-0 bg-background/95 backdrop-blur-sm z-50 flex items-center justify-center">
           <div className="text-center space-y-3">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div>
-            <p className="text-sm font-medium text-gray-900">Switching assistant...</p>
-            <p className="text-xs text-gray-500">This will only take a moment</p>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-violet mx-auto"></div>
+            <p className="text-sm font-medium text-foreground">Switching assistant...</p>
+            <p className="text-xs text-muted-foreground">This will only take a moment</p>
           </div>
         </div>
       )}

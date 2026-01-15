@@ -82,7 +82,7 @@ const MemoryPage: React.FC = () => {
       value={filters.entryType || ''}
       onChange={handleEntryTypeChange}
       placeholder={t('MemoryPage.filterByTypePlaceholder') || 'Filter by type...'}
-      className="p-2 border rounded-md bg-white text-sm w-40" // Added w-40 for consistent width
+      className="p-2 border border-border rounded-md bg-background text-sm w-40" // Added w-40 for consistent width
     />
   );
 
@@ -90,7 +90,7 @@ const MemoryPage: React.FC = () => {
     <select
       value={filters.scope || 'user'}
       onChange={(e) => handleFilterChange('scope', e.target.value as 'user' | 'company')}
-      className="p-2 border rounded-md bg-white text-sm"
+      className="p-2 border border-border rounded-md bg-background text-sm"
     >
       <option value="user">My Entries</option>
       <option value="company">Company Entries</option>
@@ -105,7 +105,7 @@ const MemoryPage: React.FC = () => {
         <p className="text-sm">{error}</p>
         <button 
           onClick={() => { clearError(); loadEntries(); }}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90"
         >
           {t('MemoryPage.tryAgain') || 'Try Again'}
         </button>
@@ -131,7 +131,7 @@ const MemoryPage: React.FC = () => {
               // className="grow" // SearchInput already has w-full
             />
             <div className="flex items-center space-x-2">
-              <Filter className="w-5 h-5 text-gray-500" />
+              <Filter className="w-5 h-5 text-muted-foreground" />
               {renderEntryTypeFilter()}
               {renderScopeFilter()}
             </div>
@@ -139,7 +139,7 @@ const MemoryPage: React.FC = () => {
           
           {isLoading && entries.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full">
-              <Loader2 className="w-12 h-12 animate-spin text-blue-500" />
+              <Loader2 className="w-12 h-12 animate-spin text-primary" />
               <TextComponent text={t('MemoryPage.loading') || 'Loading entries...'} size="normal" className="mt-4" />
             </div>
           ) : (
@@ -148,7 +148,7 @@ const MemoryPage: React.FC = () => {
                 return (
                   <li
                     key={item._id}
-                    className="group rounded-lg p-4 cursor-pointer hover:bg-blue-100 relative bg-white shadow"
+                    className="group rounded-lg p-4 cursor-pointer hover:bg-accent relative bg-background shadow"
                     onClick={() => handleItemClick(item._id)}
                     onMouseEnter={() => setHoveredItemId(item._id)}
                     onMouseLeave={() => setHoveredItemId(null)}
@@ -166,17 +166,17 @@ const MemoryPage: React.FC = () => {
                               {/* Displaying content snippet as title if no specific title field */}
                               {item.content.substring(0, 50)}{item.content.length > 50 ? '...' : ''}
                             </h4>
-                            <span className="text-xs text-gray-500 whitespace-nowrap ml-2">
+                            <span className="text-xs text-muted-foreground whitespace-nowrap ml-2">
                               {item.friendlyTimestamp || new Date(item.timestamp).toLocaleDateString()}
                             </span>
                           </div>
-                          <p className="text-sm text-gray-700 mt-1 line-clamp-2">
+                          <p className="text-sm text-foreground mt-1 line-clamp-2">
                             {item.content}
                           </p>
                           <div className="mt-2 flex items-center justify-between">
                             <div className="flex items-center space-x-2">
                               <span className="text-xs px-2 py-0.5 bg-sky-100 text-sky-700 rounded-full">{item.entryType}</span>
-                              {item.userName && <span className="text-xs text-gray-500">by {item.userName}</span>}
+                              {item.userName && <span className="text-xs text-muted-foreground">by {item.userName}</span>}
                             </div>
                             {/* Action buttons (edit, delete) can be added here, visible on hover */}
                           </div>
@@ -187,8 +187,8 @@ const MemoryPage: React.FC = () => {
                 );
               })}
               {!isLoading && entries.length === 0 && (
-                <div className="text-center py-10 text-gray-500">
-                  <Filter className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                <div className="text-center py-10 text-muted-foreground">
+                  <Filter className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
                   <p>{t('MemoryPage.noItems') || 'No journal entries found for the current filters.'}</p>
                   <p className="mt-1 text-sm">
                     {t('MemoryPage.tryAdjustingFilters') || 'Try adjusting your search or filters.'}

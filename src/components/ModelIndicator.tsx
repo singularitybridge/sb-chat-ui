@@ -1,6 +1,6 @@
 import React from 'react';
 import { Icon } from '@iconify/react';
-import Badge from './Badge';
+import { Badge } from './ui/badge';
 
 interface ModelIndicatorProps {
   modelName: string;
@@ -10,10 +10,12 @@ interface ModelIndicatorProps {
 }
 
 const ProviderIcon = ({ provider, size = 16 }: { provider: string, size?: number }) => {
+  // Using simple-icons for all providers - they use currentColor
+  // which properly adapts to light/dark mode
   const iconMap: { [key: string]: string } = {
-    openai: 'logos:openai-icon',
-    gemini: 'ri:gemini-fill',
-    anthropic: 'logos:anthropic-icon',
+    openai: 'simple-icons:openai',
+    gemini: 'simple-icons:googlegemini',
+    anthropic: 'simple-icons:anthropic',
   };
 
   const icon = iconMap[provider];
@@ -79,7 +81,7 @@ export const ModelIndicator: React.FC<ModelIndicatorProps> = ({
     return (
       <Badge
         variant="success"
-        className={`whitespace-nowrap flex items-center space-x-1.5 rtl:space-x-reverse ${sizeConfig.text} ${className}`}
+        className={`${sizeConfig.text} ${className}`}
       >
         <ProviderIcon provider={modelInfo.provider} size={sizeConfig.icon} />
         <span>{modelInfo.name}</span>
@@ -88,9 +90,9 @@ export const ModelIndicator: React.FC<ModelIndicatorProps> = ({
   }
 
   return (
-    <div className={`flex items-center space-x-1.5 rtl:space-x-reverse ${sizeConfig.text} ${className}`}>
+    <div className={`flex items-center gap-1.5 ${sizeConfig.text} ${className}`}>
       <ProviderIcon provider={modelInfo.provider} size={sizeConfig.icon} />
-      <span className="text-gray-600">{modelInfo.name}</span>
+      <span className="text-muted-foreground">{modelInfo.name}</span>
     </div>
   );
 };

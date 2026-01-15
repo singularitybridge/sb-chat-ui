@@ -24,8 +24,8 @@ export const useLanguageStore = create<LanguageStoreState>((set, get) => ({
       // Update document direction for RTL support
       document.documentElement.dir = language === 'he' ? 'rtl' : 'ltr';
       
-      // Store preference
-      localStorage.setItem('preferredLanguage', language);
+      // Store preference - use 'appLanguage' to match i18n.ts
+      localStorage.setItem('appLanguage', language);
     } catch (error) {
       logger.error('Failed to change language', error);
       throw error;
@@ -39,8 +39,8 @@ export const useLanguageStore = create<LanguageStoreState>((set, get) => ({
   },
   
   initializeLanguage: () => {
-    // Check for stored preference
-    const storedLanguage = localStorage.getItem('preferredLanguage') as Language;
+    // Check for stored preference - use 'appLanguage' to match i18n.ts
+    const storedLanguage = localStorage.getItem('appLanguage') as Language;
     if (storedLanguage && ['en', 'he'].includes(storedLanguage)) {
       get().setLanguage(storedLanguage);
     } else {

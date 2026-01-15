@@ -24,7 +24,7 @@ const LanguageToggle: React.FC = () => {
       await new Promise(resolve => setTimeout(resolve, 100));
 
       // Verify language was persisted before reload
-      const storedLang = localStorage.getItem('preferredLanguage');
+      const storedLang = localStorage.getItem('appLanguage');
       if (storedLang === newLanguage) {
         window.location.reload();
       } else {
@@ -36,12 +36,13 @@ const LanguageToggle: React.FC = () => {
   };
 
   return (
-    <div
+    <button
       onClick={toggleLanguage}
-      className='bg-blue-100 rounded-full px-3 py-2 text-xs mx-2 cursor-pointer flex items-center justify-center min-w-[2rem] min-h-[2rem]'
+      className='bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/50 dark:hover:bg-blue-800/60 rounded-full w-9 h-9 text-xs cursor-pointer flex items-center justify-center transition-colors text-blue-700 dark:text-blue-300 font-medium'
+      aria-label="Toggle language"
     >
-      {language === 'en' ? 'en' : 'עברית'}
-    </div>
+      {language === 'en' ? 'en' : 'he'}
+    </button>
   );
 };
 

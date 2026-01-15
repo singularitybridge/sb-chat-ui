@@ -237,7 +237,7 @@ const EmbedChatPage: React.FC = () => {
   }
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-zinc-50">
+    <div className="h-screen w-screen flex flex-col bg-background">
       <ChatContainer />
     </div>
   );

@@ -25,6 +25,28 @@ interface ModelComparisonProps {
 
 const COLORS = ['#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#6366f1', '#ec4899'];
 
+// Custom tooltip for dark mode support
+const CustomTooltip: React.FC<any> = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-popover text-popover-foreground p-3 border border-border rounded-lg shadow-lg">
+        <p className="text-sm font-semibold text-foreground">{label || payload[0]?.name}</p>
+        {payload.map((entry: any, index: number) => (
+          <div key={index} className="text-xs mt-1">
+            <span className="font-medium" style={{ color: entry.color || entry.fill }}>
+              {entry.name}:
+            </span>
+            <span className="text-foreground ml-1">
+              {typeof entry.value === 'number' ? formatCost(entry.value) : entry.value}
+            </span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
+
 export const ModelComparison: React.FC<ModelComparisonProps> = ({
   summary,
   records,
@@ -103,18 +125,18 @@ export const ModelComparison: React.FC<ModelComparisonProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card className="animate-pulse">
             <CardHeader>
-              <div className="h-4 w-32 bg-gray-200 rounded" />
+              <div className="h-4 w-32 bg-accent rounded" />
             </CardHeader>
             <CardContent>
-              <div className="h-64 bg-gray-100 rounded" />
+              <div className="h-64 bg-secondary rounded" />
             </CardContent>
           </Card>
           <Card className="animate-pulse">
             <CardHeader>
-              <div className="h-4 w-32 bg-gray-200 rounded" />
+              <div className="h-4 w-32 bg-accent rounded" />
             </CardHeader>
             <CardContent>
-              <div className="h-64 bg-gray-100 rounded" />
+              <div className="h-64 bg-secondary rounded" />
             </CardContent>
           </Card>
         </div>
@@ -126,8 +148,8 @@ export const ModelComparison: React.FC<ModelComparisonProps> = ({
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <Cpu className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500">No model cost data available</p>
+          <Cpu className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+          <p className="text-muted-foreground">No model cost data available</p>
         </div>
       </div>
     );
@@ -141,10 +163,10 @@ export const ModelComparison: React.FC<ModelComparisonProps> = ({
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500">Total Models</p>
+                <p className="text-sm text-muted-foreground">Total Models</p>
                 <p className="text-2xl font-bold">{modelStats.length}</p>
               </div>
-              <Cpu className="h-8 w-8 text-gray-300" />
+              <Cpu className="h-8 w-8 text-muted-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -152,12 +174,12 @@ export const ModelComparison: React.FC<ModelComparisonProps> = ({
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500">Most Used Model</p>
+                <p className="text-sm text-muted-foreground">Most Used Model</p>
                 <p className="text-lg font-bold truncate">
                   {modelStats[0]?.model || 'N/A'}
                 </p>
               </div>
-              <Hash className="h-8 w-8 text-gray-300" />
+              <Hash className="h-8 w-8 text-muted-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -165,12 +187,12 @@ export const ModelComparison: React.FC<ModelComparisonProps> = ({
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500">Cheapest per Request</p>
+                <p className="text-sm text-muted-foreground">Cheapest per Request</p>
                 <p className="text-lg font-bold truncate">
                   {modelStats.sort((a, b) => a.avgCost - b.avgCost)[0]?.model || 'N/A'}
                 </p>
               </div>
-              <DollarSign className="h-8 w-8 text-gray-300" />
+              <DollarSign className="h-8 w-8 text-muted-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -178,12 +200,12 @@ export const ModelComparison: React.FC<ModelComparisonProps> = ({
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500">Fastest Model</p>
+                <p className="text-sm text-muted-foreground">Fastest Model</p>
                 <p className="text-lg font-bold truncate">
                   {performanceMetrics[0]?.model || 'N/A'}
                 </p>
               </div>
-              <Zap className="h-8 w-8 text-gray-300" />
+              <Zap className="h-8 w-8 text-muted-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -214,7 +236,7 @@ export const ModelComparison: React.FC<ModelComparisonProps> = ({
                     <CellTyped key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </PieTyped>
-                <TooltipTyped formatter={(value: any) => formatCost(value)} />
+                <TooltipTyped content={<CustomTooltip />} />
                 <LegendTyped />
               </PieChartTyped>
             </ResponsiveContainer>
@@ -239,7 +261,7 @@ export const ModelComparison: React.FC<ModelComparisonProps> = ({
                   fontSize={12}
                 />
                 <YAxisTyped fontSize={12} tickFormatter={(value: any) => `$${value}`} />
-                <TooltipTyped formatter={(value: any) => formatCost(value)} />
+                <TooltipTyped content={<CustomTooltip />} />
                 <BarTyped dataKey="cost" fill="#8b5cf6" />
               </BarChartTyped>
             </ResponsiveContainer>
@@ -269,7 +291,7 @@ export const ModelComparison: React.FC<ModelComparisonProps> = ({
                 {modelStats.map((model) => {
                   const perf = performanceMetrics.find(p => p.model === model.model);
                   return (
-                    <tr key={model.model} className="hover:bg-gray-50">
+                    <tr key={model.model} className="hover:bg-accent">
                       <td className="py-3">
                         <ModelIndicator modelName={model.model} size="small" />
                       </td>

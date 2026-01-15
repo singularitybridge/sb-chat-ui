@@ -52,12 +52,12 @@ const Button: React.FC<ButtonProps> = ({
 
   const variantClasses = {
     primary: {
-      default: 'bg-primary text-white hover:bg-primary-dark',
-      disabled: 'bg-gray-300 text-gray-500',
+      default: 'bg-primary text-primary-foreground hover:bg-primary/90',
+      disabled: 'bg-muted text-muted-foreground',
     },
     secondary: {
-      default: 'bg-gray-200 text-gray-700 hover:bg-gray-300',
-      disabled: 'bg-gray-100 text-gray-400',
+      default: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+      disabled: 'bg-muted text-muted-foreground',
     },
   };
 

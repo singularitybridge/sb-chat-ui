@@ -10,7 +10,7 @@ const ContentContainer: React.FC<ContentContainerProps> = ({
   className,
 }) => {
   // Set a default value for the className prop, then add any additional classes from the passed-in className
-  const defaultClasses = 'flex-1 overflow-y-scroll antialiased';
+  const defaultClasses = 'flex-1 overflow-y-auto antialiased';
   const mergedClasses = className
     ? `${defaultClasses} ${className}`
     : defaultClasses;

@@ -1,12 +1,12 @@
 import React from 'react';
-import AdminPageContainer from '../../components/admin/AdminPageContainer';
+import { PageLayout } from '../../components/admin/PageLayout';
 import { CostTrackingDashboard } from '../../components/cost-tracking/CostTrackingDashboard';
 
 const CostsPage: React.FC = () => {
   return (
-    <AdminPageContainer>
+    <PageLayout variant="card">
       <CostTrackingDashboard />
-    </AdminPageContainer>
+    </PageLayout>
   );
 };
 

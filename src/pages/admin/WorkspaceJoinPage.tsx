@@ -1,5 +1,5 @@
 import React from 'react';
-import AdminPageContainer from '../../components/admin/AdminPageContainer';
+import { PageLayout } from '../../components/admin/PageLayout';
 import { WandIcon } from 'lucide-react';
 
 const FeatureCard: React.FC<{ title: string; description: string }> = ({ title, description }) => (
@@ -84,7 +84,7 @@ export const WorkspaceJoinPage: React.FC = () => {
   ];
 
   return (
-    <AdminPageContainer>
+    <PageLayout variant="card">
       <div className="relative">
         {/* Content */}
         <div className="relative z-10">
@@ -136,7 +136,7 @@ export const WorkspaceJoinPage: React.FC = () => {
           </div>
         </div>
       </div>
-    </AdminPageContainer>
+    </PageLayout>
   );
 };
 

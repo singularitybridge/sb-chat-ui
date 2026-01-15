@@ -58,24 +58,24 @@ const ExtendedInfo: React.FC<ExtendedInfoProps> = ({ action, isExpanded }) => {
 
   return (
     <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? 'max-h-[500px]' : 'max-h-0'}`}>
-      <div className="bg-gray-100 p-3 rounded-b">
+      <div className="bg-secondary p-3 rounded-b">
         <h4 className="mb-2 font-light text-lg">Parameters</h4>
         {parameterEntries.length > 0 ? (
           <div className="space-y-2">
             {parameterEntries.map(([name, prop]) => (
-              <div key={name} className="border-b border-gray-200 pb-2">
+              <div key={name} className="border-b border-border pb-2">
                 <div className="flex justify-between items-center">
                   <span className="text-sm">{name}</span>
                   {action.parameters.required?.includes(name) && (
                     <span className="text-red-500 font-light text-lg">*</span>
                   )}
                 </div>
-                <p className="text-xs text-gray-600 mt-1">{prop.description}</p>
+                <p className="text-xs text-muted-foreground mt-1">{prop.description}</p>
               </div>
             ))}
           </div>
         ) : (
-          <p className="text-sm text-gray-600">This action does not require any parameters.</p>
+          <p className="text-sm text-muted-foreground">This action does not require any parameters.</p>
         )}
       </div>
     </div>
@@ -174,8 +174,8 @@ const ActionsGallery: React.FC<ActionsGalleryProps> = ({
           <div
             className={`p-3 flex flex-col items-start w-full cursor-pointer ${
               isSelected
-                ? 'bg-[#e0fcd6] text-gray-800'
-                : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                ? 'bg-[#e0fcd6] text-foreground'
+                : 'bg-secondary text-foreground hover:bg-accent'
             }`}
             onClick={() => handleToggleAction(action.value)}
           >
@@ -190,7 +190,7 @@ const ActionsGallery: React.FC<ActionsGalleryProps> = ({
                     e.stopPropagation();
                     handleCopyIntegrationDetails(action);
                   }}
-                  className={`p-1 rounded-full hover:bg-gray-400 transition-colors ${
+                  className={`p-1 rounded-full hover:bg-accent transition-colors ${
                     copiedActionId === action.id ? 'bg-green-200 text-green-700' : ''
                   }`}
                   title={copiedActionId === action.id ? 'Copied!' : 'Copy integration details as JSON'}
@@ -206,7 +206,7 @@ const ActionsGallery: React.FC<ActionsGalleryProps> = ({
                     e.stopPropagation();
                     handleToggleExtendedInfo(action.id);
                   }}
-                  className="p-1 rounded-full hover:bg-gray-400"
+                  className="p-1 rounded-full hover:bg-accent"
                   title="Show/hide parameters"
                 >
                   <LucideIcons.Info size={16} />
@@ -252,7 +252,7 @@ const ActionsGallery: React.FC<ActionsGalleryProps> = ({
         {searchTerm && (
           <button
             onClick={() => setSearchTerm('')}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
           >
             <LucideIcons.X size={16} />
           </button>

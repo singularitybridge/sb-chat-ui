@@ -8,7 +8,7 @@ interface NotificationMessageProps {
 
 const NotificationMessage: React.FC<NotificationMessageProps> = ({ text }) => {
   return (
-    <MessageWrapper icon={<BellIcon className="w-5 h-5 text-gray-700" />} bgColor="" borderColor="bg-gray-300" role="Notification">
+    <MessageWrapper icon={<BellIcon className="w-5 h-5 text-foreground" />} bgColor="" borderColor="bg-accent" role="Notification">
       {text}
     </MessageWrapper>
   );

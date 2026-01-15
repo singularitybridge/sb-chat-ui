@@ -33,7 +33,7 @@ export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
       {leftLabel && (
         <span className={cn(
           'text-sm font-medium transition-opacity',
-          !checked ? 'text-gray-900 opacity-100' : 'text-gray-500 opacity-70'
+          !checked ? 'text-foreground opacity-100' : 'text-muted-foreground opacity-70'
         )}>
           {leftLabel}
         </span>
@@ -45,8 +45,8 @@ export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
         aria-checked={checked}
         onClick={() => onChange(!checked)}
         className={cn(
-          'relative inline-flex h-7 w-14 items-center rounded-full transition-colors focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
-          checked ? 'bg-blue-600' : 'bg-gray-300'
+          'relative inline-flex h-7 w-14 items-center rounded-full transition-colors focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2',
+          checked ? 'bg-primary' : 'bg-muted-foreground/30'
         )}
       >
         <span
@@ -60,7 +60,7 @@ export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
       {rightLabel && (
         <span className={cn(
           'text-sm font-medium transition-opacity',
-          checked ? 'text-gray-900 opacity-100' : 'text-gray-500 opacity-70'
+          checked ? 'text-foreground opacity-100' : 'text-muted-foreground opacity-70'
         )}>
           {rightLabel}
         </span>

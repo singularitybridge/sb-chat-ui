@@ -25,11 +25,11 @@ const TextComponent: React.FC<TextComponentProps> = ({
   };
 
   const colorClasses = {
-    normal: 'text-[#111828]',
-    secondary: ' text-gray-600',
-    alert: 'text-red-500',
-    info: 'text-[#111828] opacity-50',
-    bright: 'text-white'
+    normal: 'text-foreground',
+    secondary: 'text-muted-foreground',
+    alert: 'text-destructive',
+    info: 'text-muted-foreground',
+    bright: 'text-primary-foreground'
   };
 
   const alignClasses = {
