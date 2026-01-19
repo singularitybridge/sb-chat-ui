@@ -199,9 +199,9 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
                 <a
                   onClick={(e) => {
                     e.preventDefault();
-                    // @ts-ignore - global function
+                    // @ts-expect-error global function on window
                     if (window.loadWorkspaceFile) {
-                      // @ts-ignore
+                      // @ts-expect-error global function on window
                       window.loadWorkspaceFile(href);
                     }
                   }}
@@ -324,9 +324,9 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
                 }
               : dataMessage
                 ? () => {
-                    // @ts-ignore - global function
+                    // @ts-expect-error global function on window
                     if (window.sendWorkspaceMessage) {
-                      // @ts-ignore
+                      // @ts-expect-error global function on window
                       window.sendWorkspaceMessage(dataMessage);
                     }
                   }

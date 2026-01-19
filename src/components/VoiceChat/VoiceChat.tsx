@@ -211,7 +211,7 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ className = '', compact = false }
             exit={{ opacity: 0, y: -10 }}
             className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg dark:bg-green-900/20 dark:border-green-800"
           >
-            <p className="text-sm font-medium text-green-800 dark:text-green-300 mb-1">You're saying:</p>
+            <p className="text-sm font-medium text-green-800 dark:text-green-300 mb-1">You&apos;re saying:</p>
             <p className="text-foreground">{currentTranscript}</p>
             <div className="flex items-center gap-2 mt-2">
               <Loader2 className="w-4 h-4 animate-spin text-violet" />

@@ -369,7 +369,8 @@ print('Assistant:', response)`;
       curlCommand += '  -H \'Accept: text/event-stream\' \\\\\n';
       curlCommand += `  -d '${JSON.stringify(payload, null, 2).replace(/'/g, '\\\'')}' \\\\\n`;
       curlCommand += '  --no-buffer';
-      
+
+      /* eslint-disable no-useless-escape */
       curlCommand += `
 
 # Expected output format:
@@ -389,6 +390,7 @@ curl -X POST '${url}' \\\\
     echo "\$json_data" | jq -r 'select(.type == "token") | .value' 2>/dev/null | tr -d '\\n'
   fi
 done`;
+      /* eslint-enable no-useless-escape */
 
       return curlCommand;
     } else {

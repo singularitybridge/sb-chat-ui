@@ -14,15 +14,16 @@ const IntegrationIcons: React.FC<IntegrationIconsProps> = ({
   isActive = false,
   className = ''
 }) => {
-  // Access cached integrations from context/query
-  const { data: integrationData = [] } = useIntegrations();
+  // Access cached integrations from context/query (may be undefined if not authenticated)
+  const integrationsQuery = useIntegrations();
+  const integrationData = integrationsQuery?.data ?? [];
 
   return (
     <div className={`flex flex-wrap gap-1.5 ${className}`}>
       {integrations.map((integration, index) => {
-        const integrationInfo = integrationData.find(info => info.id.toLowerCase() === integration.toLowerCase());
+        const integrationInfo = integrationData.find((info) => info.id.toLowerCase() === integration.toLowerCase());
         const iconName = integrationInfo?.icon || 'help-circle';
-        const IconComponent = (LucideIcons as any)[iconName.split('-').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('')] || LucideIcons.HelpCircle;
+        const IconComponent = (LucideIcons as any)[iconName.split('-').map((part: string) => part.charAt(0).toUpperCase() + part.slice(1)).join('')] || LucideIcons.HelpCircle;
 
         return (
           <Badge

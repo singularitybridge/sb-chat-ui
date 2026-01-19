@@ -415,7 +415,7 @@
     "save": "צור צוות"
   },
   "dialogTitles" : {
-    "newAssistant": "צור עוזר חדש",
+    "newAssistant": "צור סוכן חדש",
     "newCompany": "צור חברה חדשה",
     "newAction": "צור פעולה חדשה",
     "newUser": "צור משתמש חדש",
@@ -437,7 +437,8 @@
     "create": "צור",
     "back": "חזור",
     "done": "סיום",
-    "delete": "מחק"
+    "delete": "מחק",
+    "saveFailed": "השמירה נכשלה"
   },
   "breadcrumbs": {
     "teamAssistants": "סוכנים בצוות"

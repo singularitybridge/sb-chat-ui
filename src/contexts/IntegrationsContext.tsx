@@ -11,6 +11,8 @@ export const IntegrationsProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   // Include language in query key so cache is invalidated on language change
   const language = localStorage.getItem('appLanguage') || 'en';
+  // Only fetch integrations when user is authenticated
+  const isAuthenticated = !!localStorage.getItem('userToken');
 
   const integrationsQuery = useQuery<IntegrationInfo[], Error>({
     queryKey: ['integrations', language],
@@ -19,7 +21,8 @@ export const IntegrationsProvider: React.FC<{ children: React.ReactNode }> = ({
       clearIntegrationCache();
       return getLeanIntegrations();
     },
-    staleTime: 10 * 60_000 // 10-min cache
+    staleTime: 10 * 60_000, // 10-min cache
+    enabled: isAuthenticated // Only run when user is logged in
   });
 
   return (
@@ -31,8 +34,7 @@ export const IntegrationsProvider: React.FC<{ children: React.ReactNode }> = ({
 
 export const useIntegrations = () => {
   const ctx = useContext(IntegrationsCtx);
-  if (!ctx) {
-    throw new Error('useIntegrations must be used within IntegrationsProvider');
-  }
+  // Return undefined if not within provider or not authenticated
+  // Components using this hook should handle the undefined case
   return ctx;
 };

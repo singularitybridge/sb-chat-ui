@@ -3,14 +3,18 @@ import { SelectListOption } from '../../components/sb-core-ui-kit/SelectList';
 import { TagsInput } from '../../components/TagsInput';
 import apiCaller from '../../services/AxiosService';
 
-const voiceOptions: SelectListOption[] = [
-  { value: 'alloy', label: 'Alloy' },
-  { value: 'echo', label: 'Echo' },
-  { value: 'fable', label: 'Fable' },
-  { value: 'onyx', label: 'Onyx' },
-  { value: 'nova', label: 'Nova' },
-  { value: 'shimmer', label: 'Shimmer' },
-];
+/**
+ * Transform function to sanitize name to URL-safe format.
+ * Only allows lowercase letters, numbers, and hyphens.
+ */
+const sanitizeToUrlSafe = (value: string): string => {
+  return value
+    .toLowerCase()
+    .replace(/\s+/g, '-')           // Replace spaces with hyphens
+    .replace(/[^a-z0-9-]/g, '')     // Remove any non-alphanumeric except hyphens
+    .replace(/-+/g, '-')            // Replace multiple hyphens with single
+    .replace(/^-|-$/g, '');         // Remove leading/trailing hyphens
+};
 
 const languageOptions: SelectListOption[] = [
   { value: 'he', label: 'Hebrew' },
@@ -178,6 +182,7 @@ export const getAssistantFieldConfigs = async (
       key: 'name',
       type: 'input',
       value: 'new-assistant',
+      transform: sanitizeToUrlSafe,
       visibility: { create: true, view: true, update: true },
     },
     {
@@ -186,15 +191,6 @@ export const getAssistantFieldConfigs = async (
       label: 'Description',
       type: 'textarea',
       value: 'This is a new assistant.',
-      visibility: { create: true, view: true, update: true },
-    },
-    {
-      id: 'voice',
-      key: 'voice',
-      label: 'Voice',
-      type: 'dropdown',
-      value: 'alloy',
-      options: voiceOptions,
       visibility: { create: true, view: true, update: true },
     },
     {
@@ -254,7 +250,7 @@ export const getAssistantFieldConfigs = async (
         availableTags: allowedActionOptions,
         selectedTags: [],
       },
-      visibility: { create: true, view: true, update: true },
+      visibility: { create: false, view: true, update: true },
     },
     {
       id: 'conversationStarters',
@@ -278,6 +274,7 @@ export const defaultAssistantFieldConfigs: FieldConfig[] = [
     key: 'name',
     type: 'input',
     value: 'new-assistant',
+    transform: sanitizeToUrlSafe,
     visibility: { create: true, view: true, update: true },
   },
   {
@@ -286,15 +283,6 @@ export const defaultAssistantFieldConfigs: FieldConfig[] = [
     label: 'Description',
     type: 'textarea',
     value: 'This is a new assistant.',
-    visibility: { create: true, view: true, update: true },
-  },
-  {
-    id: 'voice',
-    key: 'voice',
-    label: 'Voice',
-    type: 'dropdown',
-    value: 'alloy',
-    options: voiceOptions,
     visibility: { create: true, view: true, update: true },
   },
   {
@@ -354,7 +342,7 @@ export const defaultAssistantFieldConfigs: FieldConfig[] = [
       availableTags: [],
       selectedTags: [],
     },
-    visibility: { create: true, view: true, update: true },
+    visibility: { create: false, view: true, update: true },
   },
   {
     id: 'conversationStarters',

@@ -352,7 +352,7 @@ const UsersAndInvitesSection: React.FC<UsersAndInvitesSectionProps> = (
               <Mail className="w-12 h-12 mx-auto mb-3 opacity-50" />
               <p>No pending invites</p>
               <p className="text-sm mt-1">
-                Click "Send Invite" to invite team members
+                Click &quot;Send Invite&quot; to invite team members
               </p>
             </div>
           )}

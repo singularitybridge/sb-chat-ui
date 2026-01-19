@@ -40,6 +40,8 @@ export interface BaseFieldConfig {
 export interface InputFieldConfig extends BaseFieldConfig {
   type: 'input';
   value: string;
+  transform?: (value: string) => string;
+  placeholder?: string;
 }
 
 export interface NumberFieldConfig extends BaseFieldConfig {
@@ -96,8 +98,7 @@ export type FieldConfig =
   | TagsFieldConfig
   | NumberFieldConfig;
 
-export interface FormValues
-  extends Record<string, string | number | KeyValue[] | ApiKey[] | string[]> {}
+export type FormValues = Record<string, string | number | KeyValue[] | ApiKey[] | string[]>;
 
 export interface DynamicFormProps {
   fields: FieldConfig[];
@@ -107,6 +108,10 @@ export interface DynamicFormProps {
   isLoading?: boolean;
   formType: 'create' | 'update';
   formContext?: string;
+  /** Optional form ID for external submit buttons using the form attribute */
+  formId?: string;
+  /** Hide the built-in submit button (useful when using external submit button) */
+  hideSubmitButton?: boolean;
 }
 
 const DynamicForm: React.FC<DynamicFormProps> = ({
@@ -117,6 +122,8 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   isLoading,
   formType,
   formContext = 'common',
+  formId,
+  hideSubmitButton = false,
 }) => {
   const [filteredFields, setFilteredFields] = useState<FieldConfig[]>([]);
   const [values, setValues] = useState<FormValues>({});
@@ -144,7 +151,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   }, [fields, formType]);
 
   const handleRefreshToken = () => {
-    refreshToken ? refreshToken(values) : null;
+    if (refreshToken) refreshToken(values);
   };
 
   const handleChange = (
@@ -189,6 +196,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
 
   return (
     <form
+      id={formId}
       className="flex flex-col space-y-4 p-4"
       onSubmit={(e) => {
         e.preventDefault();
@@ -312,7 +320,8 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                 onChange={(newValue) => handleChange(field.id, Number(newValue))}
               />
             );
-          default:
+          default: {
+            const inputField = field as InputFieldConfig;
             return (
               <InputWithLabel
                 key={field.id}
@@ -320,19 +329,27 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                 label={t(labelKey)}
                 id={field.id}
                 value={values[field.id] as string}
-                onChange={(newValue) => handleChange(field.id, newValue)}
+                onChange={(newValue) => {
+                  const transformedValue = inputField.transform
+                    ? inputField.transform(newValue)
+                    : newValue;
+                  handleChange(field.id, transformedValue);
+                }}
               />
             );
+          }
         }
       })}
 
-      <LoadingButton
-        additionalClassName="mt-2"
-        type="submit"
-        isLoading={isLoading || false}
-      >
-        {t(`${formContext}.save`)}
-      </LoadingButton>
+      {!hideSubmitButton && (
+        <LoadingButton
+          additionalClassName="mt-2"
+          type="submit"
+          isLoading={isLoading || false}
+        >
+          {t(`${formContext}.save`)}
+        </LoadingButton>
+      )}
     </form>
   );
 };

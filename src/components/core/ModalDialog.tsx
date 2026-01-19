@@ -13,7 +13,7 @@ const ModalDialog: React.FC<ModalDialogProps> = ({
   onClose,
   isOpen,
 }) => {
-  const { title, component, width = 'normal' } = dialogData;
+  const { title, component, width = 'normal', footer } = dialogData;
   const dialogRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
 
@@ -90,6 +90,13 @@ const ModalDialog: React.FC<ModalDialogProps> = ({
 
         {/* Body - scrollable */}
         <div ref={bodyRef} className="p-4 overflow-y-auto flex-1">{component}</div>
+
+        {/* Footer - fixed at bottom (optional) */}
+        {footer && (
+          <div className="p-4 border-t border-neutral-200 dark:border-neutral-700 shrink-0">
+            {footer}
+          </div>
+        )}
       </div>
     </div>
   );

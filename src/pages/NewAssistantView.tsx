@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useId } from 'react';
 import {
   DynamicForm,
   FieldConfig,
@@ -13,6 +13,7 @@ import { EVENT_SET_ASSISTANT_VALUES } from '../utils/eventNames';
 import AvatarSelector from '../components/AvatarSelector';
 import { TextComponent } from '../components/sb-core-ui-kit/TextComponent';
 import { useTranslation } from 'react-i18next';
+import LoadingButton from '../components/core/LoadingButton';
 
 const NewAssistantView: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -21,6 +22,7 @@ const NewAssistantView: React.FC = () => {
   const [formFields, setFormFields] = useState<FieldConfig[]>(defaultAssistantFieldConfigs);
   const [isFieldConfigsLoading, setIsFieldConfigsLoading] = useState(true);
   const [selectedAvatarId, setSelectedAvatarId] = useState<string | null>('avatar2');
+  const formId = useId();
 
   const handleUpdateFormFields = (data: {
     name: string;
@@ -96,21 +98,36 @@ const NewAssistantView: React.FC = () => {
   }
 
   return (
-    <div className="w-full">
-      <div className="mb-6">
-        <TextComponent text={t('EditAssistantPage.selectAvatar')} size="normal" className="mb-4" />
-        <AvatarSelector
-          selectedAvatarId={selectedAvatarId}
-          onSelectAvatar={setSelectedAvatarId}
+    <div className="flex flex-col h-[70vh]">
+      {/* Scrollable content */}
+      <div className="flex-1 overflow-y-auto pr-2">
+        <div className="mb-6">
+          <TextComponent text={t('EditAssistantPage.selectAvatar')} size="normal" className="mb-4" />
+          <AvatarSelector
+            selectedAvatarId={selectedAvatarId}
+            onSelectAvatar={setSelectedAvatarId}
+          />
+        </div>
+        <DynamicForm
+          formId={formId}
+          formContext="assistantFieldConfigs"
+          fields={formFields}
+          onSubmit={handleSubmit}
+          isLoading={isLoading}
+          formType="create"
+          hideSubmitButton={true}
         />
       </div>
-      <DynamicForm
-        formContext="assistantFieldConfigs"
-        fields={formFields}
-        onSubmit={handleSubmit}
-        isLoading={isLoading}
-        formType="create"
-      />
+      {/* Sticky footer */}
+      <div className="shrink-0 pt-4 border-t border-neutral-200 dark:border-neutral-700 mt-2">
+        <LoadingButton
+          type="submit"
+          form={formId}
+          isLoading={isLoading}
+        >
+          {t('common.create')}
+        </LoadingButton>
+      </div>
     </div>
   );
 };

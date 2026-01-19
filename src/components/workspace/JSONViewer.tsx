@@ -16,7 +16,7 @@ export const JSONViewer: React.FC<JSONViewerProps> = ({ content }) => {
 
     // Syntax highlighting with colors
     return json.replace(
-      /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+      /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?)/g,
       (match) => {
         let cls = 'text-violet'; // numbers
         if (/^"/.test(match)) {

@@ -66,7 +66,7 @@ const NewTeamView: React.FC = () => {
         </div>
         <h3 className="text-lg font-semibold">Name your team</h3>
         <p className="text-sm text-muted-foreground">
-          Choose a name that reflects your team's purpose
+          Choose a name that reflects your team&apos;s purpose
         </p>
       </div>
 

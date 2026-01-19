@@ -220,7 +220,6 @@ export const ModelComparison: React.FC<ModelComparisonProps> = ({
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              {/* @ts-ignore */}
               <PieChartTyped>
                 <PieTyped
                   data={providerStats}
@@ -250,7 +249,6 @@ export const ModelComparison: React.FC<ModelComparisonProps> = ({
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              {/* @ts-ignore */}
               <BarChartTyped data={modelStats.slice(0, 5)}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxisTyped 

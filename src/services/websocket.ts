@@ -4,6 +4,9 @@
  * Provides bidirectional real-time communication with backend for:
  * - UI state updates (frontend → backend)
  * - UI control commands (backend → frontend)
+ *
+ * Uses reference counting to handle React StrictMode's double-invocation
+ * of useEffect hooks gracefully.
  */
 
 import { io, Socket } from 'socket.io-client';
@@ -11,16 +14,45 @@ import { logger } from './LoggingService';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
+// Delay before actually disconnecting (survives StrictMode remount)
+const DISCONNECT_DELAY_MS = 100;
+
 class WebSocketService {
   private socket: Socket | null = null;
   private reconnectAttempts = 0;
   private maxReconnectAttempts = 5;
   private commandHandlers: Map<string, (data: any) => void> = new Map();
+  private connectionRefCount = 0;
+  private disconnectTimer: ReturnType<typeof setTimeout> | null = null;
+  private isConnecting = false;
 
   /**
    * Connect to WebSocket server with JWT authentication
+   * Uses reference counting - safe to call multiple times
    */
   connect(): void {
+    // Increment ref count
+    this.connectionRefCount++;
+    logger.debug(`WebSocket: Connect called (refCount: ${this.connectionRefCount})`);
+
+    // Cancel any pending disconnect
+    if (this.disconnectTimer) {
+      clearTimeout(this.disconnectTimer);
+      this.disconnectTimer = null;
+      logger.debug('WebSocket: Cancelled pending disconnect');
+    }
+
+    // Already connected or connecting
+    if (this.socket?.connected) {
+      logger.debug('WebSocket: Already connected');
+      return;
+    }
+
+    if (this.isConnecting) {
+      logger.debug('WebSocket: Connection already in progress');
+      return;
+    }
+
     const token = localStorage.getItem('userToken');
 
     if (!token) {
@@ -28,12 +60,8 @@ class WebSocketService {
       return;
     }
 
-    if (this.socket?.connected) {
-      logger.debug('WebSocket: Already connected');
-      return;
-    }
-
     logger.info('WebSocket: Connecting to backend...');
+    this.isConnecting = true;
 
     this.socket = io(API_BASE_URL, {
       auth: { token },
@@ -54,6 +82,7 @@ class WebSocketService {
     if (!this.socket) return;
 
     this.socket.on('connect', () => {
+      this.isConnecting = false;
       logger.info('WebSocket: Connected successfully', {
         socketId: this.socket?.id,
       });
@@ -272,11 +301,50 @@ class WebSocketService {
   }
 
   /**
-   * Disconnect from WebSocket server
+   * Request disconnect from WebSocket server
+   * Uses reference counting - safe to call multiple times
+   * Actual disconnect is delayed to survive StrictMode remount
    */
   disconnect(): void {
+    // Decrement ref count
+    this.connectionRefCount = Math.max(0, this.connectionRefCount - 1);
+    logger.debug(`WebSocket: Disconnect called (refCount: ${this.connectionRefCount})`);
+
+    // Only schedule disconnect if no more references
+    if (this.connectionRefCount > 0) {
+      logger.debug('WebSocket: Other references exist, not disconnecting');
+      return;
+    }
+
+    // Schedule disconnect with delay (survives StrictMode remount)
+    if (this.disconnectTimer) {
+      clearTimeout(this.disconnectTimer);
+    }
+
+    this.disconnectTimer = setTimeout(() => {
+      this.disconnectTimer = null;
+      if (this.connectionRefCount === 0 && this.socket) {
+        logger.info('WebSocket: Disconnecting (no active references)...');
+        this.socket.disconnect();
+        this.socket = null;
+        this.commandHandlers.clear();
+        this.isConnecting = false;
+      }
+    }, DISCONNECT_DELAY_MS);
+  }
+
+  /**
+   * Force immediate disconnect (for cleanup/logout)
+   */
+  forceDisconnect(): void {
+    if (this.disconnectTimer) {
+      clearTimeout(this.disconnectTimer);
+      this.disconnectTimer = null;
+    }
+    this.connectionRefCount = 0;
+    this.isConnecting = false;
     if (this.socket) {
-      logger.info('WebSocket: Disconnecting...');
+      logger.info('WebSocket: Force disconnecting...');
       this.socket.disconnect();
       this.socket = null;
       this.commandHandlers.clear();
@@ -295,6 +363,66 @@ class WebSocketService {
    */
   getSocket(): Socket | null {
     return this.socket;
+  }
+
+  /**
+   * Subscribe to a session room for real-time messages
+   * Replaces Pusher channel subscription
+   */
+  subscribeToSession(sessionId: string): void {
+    if (!this.socket?.connected) {
+      logger.warn('WebSocket: Not connected, cannot subscribe to session');
+      return;
+    }
+
+    this.socket.emit('session:subscribe', sessionId);
+    logger.info(`WebSocket: Subscribed to session ${sessionId}`);
+  }
+
+  /**
+   * Unsubscribe from a session room
+   * Replaces Pusher channel unsubscription
+   */
+  unsubscribeFromSession(sessionId: string): void {
+    if (!this.socket?.connected) {
+      logger.debug('WebSocket: Not connected, cannot unsubscribe from session');
+      return;
+    }
+
+    this.socket.emit('session:unsubscribe', sessionId);
+    logger.info(`WebSocket: Unsubscribed from session ${sessionId}`);
+  }
+
+  /**
+   * Register a handler for session events
+   * Replaces Pusher event binding
+   */
+  onSessionEvent(event: string, callback: (data: any) => void): void {
+    if (!this.socket) {
+      logger.warn(`WebSocket: Not initialized, cannot register handler for ${event}`);
+      return;
+    }
+
+    this.socket.on(event, callback);
+    logger.debug(`WebSocket: Registered handler for event: ${event}`);
+  }
+
+  /**
+   * Remove a handler for session events
+   * Replaces Pusher event unbinding
+   */
+  offSessionEvent(event: string, callback?: (data: any) => void): void {
+    if (!this.socket) {
+      logger.debug(`WebSocket: Not initialized, cannot remove handler for ${event}`);
+      return;
+    }
+
+    if (callback) {
+      this.socket.off(event, callback);
+    } else {
+      this.socket.off(event);
+    }
+    logger.debug(`WebSocket: Removed handler for event: ${event}`);
   }
 }
 

@@ -10,6 +10,8 @@ export interface ButtonProps {
   size?: 'small' | 'normal' | 'large';
   disabled?: boolean;
   variant?: 'primary' | 'secondary';
+  /** Form ID for external form submission (HTML5 form attribute) */
+  form?: string;
 }
 
 const ArrowIcon: React.FC<{ size: 'small' | 'normal' | 'large' }> = ({ size }) => {
@@ -43,6 +45,7 @@ const Button: React.FC<ButtonProps> = ({
   size = 'normal',
   disabled = false,
   variant = 'primary',
+  form,
 }) => {
   const sizeClasses = {
     small: 'text-sm px-4 py-2',
@@ -80,6 +83,7 @@ const Button: React.FC<ButtonProps> = ({
       onClick={disabled ? undefined : onClick}
       className={className}
       disabled={disabled}
+      form={form}
     >
       <span className="flex items-center rtl:flex-row-reverse gap-2">
         {isArrowButton && <ArrowIcon size={size} />}

@@ -21,12 +21,15 @@ const queryClient = new QueryClient({
     }
   }
 });
-/* Prefetch integrations once so first render never blocks */
+/* Prefetch integrations once so first render never blocks (only when authenticated) */
 const appLanguage = localStorage.getItem('appLanguage') || 'en';
-queryClient.prefetchQuery({
-  queryKey: ['integrations', appLanguage],
-  queryFn: () => import('./services/integrationService').then(m => m.getLeanIntegrations())
-});
+const userToken = localStorage.getItem('userToken');
+if (userToken) {
+  queryClient.prefetchQuery({
+    queryKey: ['integrations', appLanguage],
+    queryFn: () => import('./services/integrationService').then(m => m.getLeanIntegrations())
+  });
+}
 
 // Render the app immediately since i18n is already initialized in i18n.ts
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(

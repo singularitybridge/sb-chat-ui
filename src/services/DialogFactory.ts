@@ -23,6 +23,8 @@ export interface DialogComponentEventData {
   title: string;
   component: React.ReactElement;
   width?: 'normal' | 'wide';
+  /** Optional footer element for sticky bottom actions */
+  footer?: React.ReactElement;
 }
 
 const dialogComponentFactory = (

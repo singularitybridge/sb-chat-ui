@@ -391,7 +391,7 @@
     "save": "Create Team"
   },
   "dialogTitles" : {
-    "newAssistant": "Create New Assistant",
+    "newAssistant": "Create New Agent",
     "newCompany": "Create New Company",
     "newAction": "Create New Action",
     "newUser": "Create New User",
@@ -413,7 +413,8 @@
     "create": "Create",
     "back": "Back",
     "done": "Done",
-    "delete": "Delete"
+    "delete": "Delete",
+    "saveFailed": "Failed to save changes"
   },
   "breadcrumbs": {
     "teamAssistants": "Team Assistants"

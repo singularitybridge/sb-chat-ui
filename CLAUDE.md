@@ -47,7 +47,7 @@ API services in `src/services/api/` use:
 ### Session & Message Management
 - **Sessions**: Zustand store manages active session state
 - **Messages**: Zustand store handles chat messages with streaming support
-- **Real-time**: Pusher integration for live updates
+- **Real-time**: Socket.IO integration for live updates
 - **Audio**: TTS integration with audio state management
 
 ### Component Architecture
@@ -60,7 +60,7 @@ API services in `src/services/api/` use:
 - **Event Communication**: `mittEmitter` for cross-component events
 - **i18n**: React-i18next for internationalization (English/Hebrew RTL)
 - **Authentication**: Google OAuth with JWT tokens
-- **Real-time**: Pusher for chat messages and notifications
+- **Real-time**: Socket.IO for chat messages and notifications
 
 ### Teams Feature
 Teams organize assistants into logical groups with many-to-many relationships:
@@ -264,3 +264,20 @@ A comprehensive code sample generator dialog accessible via a button in the chat
 - Always use singular `/assistant/` in the route, not `/assistants/`
 - Test feature excludes file attachments for simplicity
 - Code samples are for stateless execute endpoint only (no session management)
+
+## Documentation Maintenance
+
+### Updating Docs Before Pushing
+**IMPORTANT**: Before pushing significant changes to remote, update the documentation project:
+
+1. Navigate to `/Users/avio/dev/sb/sb-docs`
+2. Update `/docs/changelog.md` with your changes under `[Unreleased]`
+3. Update relevant documentation pages if UI/features changed
+4. Run `npm run build` to verify no broken links
+
+### Categories for Changelog
+- **Added** - New features, components, pages
+- **Changed** - Modified behavior, UI changes, refactoring
+- **Fixed** - Bug fixes
+- **Removed** - Deprecated components
+- **Security** - Security improvements

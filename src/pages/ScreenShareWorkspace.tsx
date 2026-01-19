@@ -818,21 +818,21 @@ const ScreenShareWorkspace: React.FC = () => {
 
   // Expose global function for MDX/HTML buttons to trigger messages
   useEffect(() => {
-    // @ts-ignore - adding global function
+    // @ts-expect-error adding global function to window
     window.sendWorkspaceMessage = (message: string) => {
       console.log('📨 [ScreenShareWorkspace] Sending message from workspace button:', message);
       handleSendMessage(message);
     };
 
     return () => {
-      // @ts-ignore - cleanup
+      // @ts-expect-error cleanup global function
       delete window.sendWorkspaceMessage;
     };
   }, []); // Empty deps - handleSendMessage is stable enough
 
   // Expose global function for MDX links to load workspace files
   useEffect(() => {
-    // @ts-ignore - adding global function
+    // @ts-expect-error adding global function to window
     window.loadWorkspaceFile = (path: string) => {
       if (!assistantName) return;
 
@@ -842,7 +842,7 @@ const ScreenShareWorkspace: React.FC = () => {
     };
 
     return () => {
-      // @ts-ignore - cleanup
+      // @ts-expect-error cleanup global function
       delete window.loadWorkspaceFile;
     };
   }, [assistantName, navigate]);
@@ -1509,7 +1509,7 @@ Feel free to customize this page or create new files using the workspace!
                         </div>
                         <h3 className="text-lg md:text-xl font-semibold text-foreground mb-2 md:mb-3">Welcome to Your Workspace</h3>
                         <p className="text-xs md:text-sm text-muted-foreground mb-4 md:mb-6 leading-relaxed">
-                          This workspace doesn't have a home page yet. Create one to get started with organizing your work,
+                          This workspace doesn&apos;t have a home page yet. Create one to get started with organizing your work,
                           documenting projects, or building interactive dashboards.
                         </p>
                         <button

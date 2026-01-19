@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router';
 import { useCompanyStore } from '../../store/useCompanyStore';
-import { useAuthStore } from '../../store/useAuthStore';
 import { ICompany } from '../../types/entities';
 import {
   DynamicForm,
@@ -12,20 +11,22 @@ import { companyFieldConfigs } from '../../store/fieldConfigs/companyFieldConfig
 import { useTranslation } from 'react-i18next';
 import { PageLayout } from '../../components/admin/PageLayout';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
+import { emitter } from '../../services/mittEmitter';
+import { EVENT_SHOW_NOTIFICATION } from '../../utils/eventNames';
 
 const EditCompanyPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { companiesLoaded, loadCompanies, getCompanyById, updateCompany, refreshToken } = useCompanyStore();
-  const { loadUserSessionInfo } = useAuthStore();
+  const { companiesLoaded, getCompanyById, updateCompany, refreshToken } = useCompanyStore();
   const [company, setCompany] = useState<ICompany | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const { t } = useTranslation();
 
   const fetchCompany = async () => {
     if (id) {
       const fetchedCompany = getCompanyById(id);
       setCompany(fetchedCompany || null);
-      setIsLoading(false);
+      setIsInitialLoading(false);
     }
   };
 
@@ -33,7 +34,7 @@ const EditCompanyPage: React.FC = () => {
     fetchCompany();
   }, [id, companiesLoaded]);
 
-  if (isLoading) {
+  if (isInitialLoading) {
     return (
       <PageLayout variant="card">
         <TextComponent text={t('common.pleaseWait')} size="medium" />
@@ -49,49 +50,64 @@ const EditCompanyPage: React.FC = () => {
     );
   }
 
-  const formFields: FieldConfig[] = companyFieldConfigs.map((config) => {
-    const fieldKeyString = String(config.key);
-    let fieldValue;
+  const formFields: FieldConfig[] = useMemo(() => {
+    return companyFieldConfigs.map((config) => {
+      const fieldKeyString = String(config.key);
+      let fieldValue;
 
-    if (config.id === 'api_keys') {
-      const companyApiKeys = company ? company.api_keys || [] : [];
-      const companyApiKeysMap = new Map(companyApiKeys.map(k => [k.key, k.value]));
+      if (config.id === 'api_keys') {
+        const companyApiKeys = company ? company.api_keys || [] : [];
+        const companyApiKeysMap = new Map(companyApiKeys.map(k => [k.key, k.value]));
 
-      // config.value here is the default list of ApiKey objects from companyFieldConfigs
-      fieldValue = (config.value as { key: string; value: string }[]).map(defaultApiKey => ({
-        ...defaultApiKey,
-        value: companyApiKeysMap.get(defaultApiKey.key) || defaultApiKey.value,
-      }));
-    } else {
-      fieldValue = company ? (company as any)[fieldKeyString] : config.value;
-    }
+        // config.value here is the default list of ApiKey objects from companyFieldConfigs
+        fieldValue = (config.value as { key: string; value: string }[]).map(defaultApiKey => ({
+          ...defaultApiKey,
+          value: companyApiKeysMap.get(defaultApiKey.key) || defaultApiKey.value,
+        }));
+      } else {
+        fieldValue = company ? (company as any)[fieldKeyString] : config.value;
+      }
 
-    return {
-      ...config,
-      value: fieldValue,
-      // Ensure options is always an array, even if not explicitly in config
-      options: (config as any).options || [],
-    } as FieldConfig;
-  });
+      return {
+        ...config,
+        value: fieldValue,
+        // Ensure options is always an array, even if not explicitly in config
+        options: (config as any).options || [],
+      } as FieldConfig;
+    });
+  }, [company]);
 
   const handleSubmit = async (values: FormValues) => {
     if (!id) {
       return;
     }
 
-    setIsLoading(true);
-    await updateCompany(id, values as unknown as ICompany);
-    await loadCompanies();
-    await fetchCompany();
-    await loadUserSessionInfo();
-    setIsLoading(false);
+    setIsSaving(true);
+    try {
+      await updateCompany(id, values as unknown as ICompany);
+      // Note: Don't call loadCompanies()/fetchCompany()/loadUserSessionInfo() here -
+      // these would cause state changes that remount the component and reset the form.
+      // The store already has the updated data from updateCompany().
+      emitter.emit(EVENT_SHOW_NOTIFICATION, {
+        message: t('EditCompanyPage.emitterMessage'),
+        type: 'success',
+      });
+    } catch (error) {
+      console.error('[EditCompanyPage] Error:', error);
+      emitter.emit(EVENT_SHOW_NOTIFICATION, {
+        message: t('common.saveFailed'),
+        type: 'error',
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleRefreshToken = async () => {
     if (!id) {
       return;
     }
-    setIsLoading(true);
+    setIsSaving(true);
     try {
       await refreshToken(id);
       // Reload company data after token refresh
@@ -105,7 +121,7 @@ const EditCompanyPage: React.FC = () => {
     } catch (error) {
       console.error('Failed to refresh token:', error);
     }
-    setIsLoading(false);
+    setIsSaving(false);
   };
 
   return (
@@ -123,7 +139,7 @@ const EditCompanyPage: React.FC = () => {
             formContext="EditCompanyPage"
             onSubmit={handleSubmit}
             refreshToken={handleRefreshToken}
-            isLoading={isLoading}
+            isLoading={isSaving}
             formType="update"
           />
         </div>

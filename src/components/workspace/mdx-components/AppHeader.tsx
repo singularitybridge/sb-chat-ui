@@ -66,10 +66,10 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
                     // Check if we're in an iframe
                     const isInIframe = window.self !== window.parent;
 
-                    // @ts-ignore - global function
+                    // @ts-expect-error global function on window
                     if (window.loadWorkspaceFile) {
                       // Use direct function call if available (same window context)
-                      // @ts-ignore
+                      // @ts-expect-error global function on window
                       window.loadWorkspaceFile(item.href);
                     } else if (isInIframe) {
                       // For iframe/embed context, use postMessage for cross-origin communication
@@ -80,9 +80,9 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
                       }, '*');
                     } else {
                       // Standalone mode - navigate directly via loadWorkspaceFile
-                      // @ts-ignore
+                      // @ts-expect-error global function on window
                       if (typeof window.loadWorkspaceFile === 'function') {
-                        // @ts-ignore
+                        // @ts-expect-error global function on window
                         window.loadWorkspaceFile(item.href);
                       } else {
                         // Fallback: manually trigger navigation by reloading with new path

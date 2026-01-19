@@ -6,7 +6,7 @@ import { useEventEmitter } from './services/mittEmitter';
 import { DialogManager } from './components/admin/DialogManager';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import AuthManager from './components/AuthManager';
-import PusherManager from './components/PusherManager';
+import SessionManager from './components/SessionManager';
 import { UiContextTracker } from './components/UiContextTracker';
 import { CommandPaletteProvider } from './contexts/CommandPaletteContext';
 import { GlobalCommandPalette } from './components/GlobalCommandPalette';
@@ -63,7 +63,7 @@ const App: React.FC = () => {
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID}>
       <AuthManager>
         <CommandPaletteProvider>
-          <PusherManager />
+          <SessionManager />
           <UiContextTracker />
           <div className="h-screen flex flex-col font-noto-sans-hebrew">
             <ToastContainer position="bottom-right" />

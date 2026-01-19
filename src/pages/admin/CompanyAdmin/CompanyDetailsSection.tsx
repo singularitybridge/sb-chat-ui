@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { useCompanyStore } from '../../../store/useCompanyStore';
-import { useAuthStore } from '../../../store/useAuthStore';
 import { ICompany } from '../../../types/entities';
 import {
   DynamicForm,
@@ -9,6 +8,8 @@ import {
 } from '../../../components/DynamicForm';
 import { companyFieldConfigs } from '../../../store/fieldConfigs/companyFieldConfigs';
 import { useTranslation } from 'react-i18next';
+import { emitter } from '../../../services/mittEmitter';
+import { EVENT_SHOW_NOTIFICATION } from '../../../utils/eventNames';
 
 interface CompanyDetailsSectionProps {
   company: ICompany;
@@ -20,47 +21,59 @@ interface CompanyDetailsSectionProps {
 const CompanyDetailsSection: React.FC<CompanyDetailsSectionProps> = (
   { company, onUpdate, isLoading, setIsLoading }
 ) => {
-  const { updateCompany, loadCompanies, refreshToken, getCompanyById } = useCompanyStore();
-  const { loadUserSessionInfo } = useAuthStore();
+  const { updateCompany, refreshToken, getCompanyById } = useCompanyStore();
   const { t } = useTranslation();
+  const [isSaving, setIsSaving] = useState(false);
 
-  const formFields: FieldConfig[] = companyFieldConfigs.map((config) => {
-    const fieldKeyString = String(config.key);
-    let fieldValue;
+  const formFields: FieldConfig[] = useMemo(() => {
+    return companyFieldConfigs.map((config) => {
+      const fieldKeyString = String(config.key);
+      let fieldValue;
 
-    if (config.id === 'api_keys') {
-      const companyApiKeys = company ? company.api_keys || [] : [];
-      const companyApiKeysMap = new Map(
-        companyApiKeys.map((k) => [k.key, k.value])
-      );
+      if (config.id === 'api_keys') {
+        const companyApiKeys = company ? company.api_keys || [] : [];
+        const companyApiKeysMap = new Map(
+          companyApiKeys.map((k) => [k.key, k.value])
+        );
 
-      fieldValue = (config.value as { key: string; value: string }[]).map(
-        (defaultApiKey) => ({
-          ...defaultApiKey,
-          value:
-            companyApiKeysMap.get(defaultApiKey.key) || defaultApiKey.value,
-        })
-      );
-    } else {
-      fieldValue = company
-        ? (company as any)[fieldKeyString]
-        : config.value;
-    }
+        fieldValue = (config.value as { key: string; value: string }[]).map(
+          (defaultApiKey) => ({
+            ...defaultApiKey,
+            value:
+              companyApiKeysMap.get(defaultApiKey.key) || defaultApiKey.value,
+          })
+        );
+      } else {
+        fieldValue = company
+          ? (company as any)[fieldKeyString]
+          : config.value;
+      }
 
-    return {
-      ...config,
-      value: fieldValue,
-      options: (config as any).options || [],
-    } as FieldConfig;
-  });
+      return {
+        ...config,
+        value: fieldValue,
+        options: (config as any).options || [],
+      } as FieldConfig;
+    });
+  }, [company]);
 
   const handleSubmit = async (values: FormValues) => {
-    setIsLoading(true);
-    await updateCompany(company._id, values as unknown as ICompany);
-    await loadCompanies();
-    await onUpdate();
-    await loadUserSessionInfo();
-    setIsLoading(false);
+    setIsSaving(true);
+    try {
+      await updateCompany(company._id, values as unknown as ICompany);
+      emitter.emit(EVENT_SHOW_NOTIFICATION, {
+        message: t('EditCompanyPage.emitterMessage'),
+        type: 'success',
+      });
+    } catch (error) {
+      console.error('[CompanyDetailsSection] Error:', error);
+      emitter.emit(EVENT_SHOW_NOTIFICATION, {
+        message: t('common.saveFailed'),
+        type: 'error',
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleRefreshToken = async () => {
@@ -95,7 +108,7 @@ const CompanyDetailsSection: React.FC<CompanyDetailsSectionProps> = (
           formContext="EditCompanyPage"
           onSubmit={handleSubmit}
           refreshToken={handleRefreshToken}
-          isLoading={isLoading}
+          isLoading={isSaving}
           formType="update"
         />
       </div>

@@ -106,7 +106,6 @@ export const UsageChart: React.FC<UsageChartProps> = ({
       case 'line':
         return (
           <ResponsiveContainer width="100%" height={height}>
-            {/* @ts-ignore */}
             <LineChartTyped {...commonProps}>
               <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
               <XAxisTyped dataKey="date" fontSize={12} />
@@ -139,7 +138,6 @@ export const UsageChart: React.FC<UsageChartProps> = ({
       case 'bar':
         return (
           <ResponsiveContainer width="100%" height={height}>
-            {/* @ts-ignore */}
             <BarChartTyped {...commonProps}>
               <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
               <XAxisTyped dataKey="date" fontSize={12} />
@@ -157,7 +155,6 @@ export const UsageChart: React.FC<UsageChartProps> = ({
       default:
         return (
           <ResponsiveContainer width="100%" height={height}>
-            {/* @ts-ignore */}
             <AreaChartTyped {...commonProps}>
               <defs>
                 <linearGradient id="colorCost" x1="0" y1="0" x2="0" y2="1">

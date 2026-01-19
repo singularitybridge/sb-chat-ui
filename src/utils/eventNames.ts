@@ -6,6 +6,7 @@ export const EVENT_SHOW_EDIT_ASSISTANT_ACTIONS_MODAL = 'show-edit-assistant-acti
 
 // Chat session events
 export const EVENT_CHAT_SESSION_DELETED = 'chat-session-deleted';
+export const EVENT_CHAT_MESSAGE = 'chat-message';
 
 // Notification events
 export const EVENT_SHOW_NOTIFICATION = 'show-notification';
@@ -32,6 +33,7 @@ export type EventType =
   | typeof EVENT_SHOW_ADD_ASSISTANT_MODAL
   | typeof EVENT_SHOW_EDIT_ASSISTANT_ACTIONS_MODAL
   | typeof EVENT_CHAT_SESSION_DELETED
+  | typeof EVENT_CHAT_MESSAGE
   | typeof EVENT_SHOW_NOTIFICATION
   | typeof EVENT_SHOW_ADD_COMPANY_MODAL
   | typeof EVENT_SHOW_ADD_USER_MODAL

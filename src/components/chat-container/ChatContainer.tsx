@@ -4,11 +4,11 @@ import { useSessionStore } from '../../store/useSessionStore';
 import { useAudioStore } from '../../store/useAudioStore';
 import { useAssistantStore } from '../../store/useAssistantStore';
 import { useLanguageStore } from '../../store/useLanguageStore';
-import { addEventHandler, removeEventHandler } from '../../services/PusherService';
 import {
   EVENT_SET_ACTIVE_ASSISTANT,
   EVENT_ACTION_EXECUTION,
   EVENT_ADD_IFRAME_MESSAGE,
+  EVENT_CHAT_MESSAGE,
 } from '../../utils/eventNames';
 import { useEventEmitter } from '../../services/mittEmitter';
 import { IAssistant } from '../../types/entities';
@@ -95,38 +95,33 @@ const ChatContainer: React.FC = () => {
   }, [activeSession?._id, storeLoadMessages, isClearing]);
 
 
-  useEffect(() => {
-    if (activeSession?._id) {
-      const handlePusherChatMessage = (pusherMessage: any) => {
-        // Special handling for action execution messages
-        if (pusherMessage.message_type === 'action_execution' && pusherMessage.data?.status) {
-          console.log('🎯 [CHAT_CONTAINER] Handling action execution message:', {
-            status: pusherMessage.data.status,
-            messageId: pusherMessage.data.messageId,
-            actionId: pusherMessage.data.actionId
-          });
-          
-          // Only add as new message if status is 'started'
-          // Updates for 'completed' and 'failed' are handled by EVENT_ACTION_EXECUTION
-          if (pusherMessage.data.status === 'started') {
-            console.log('📥 [CHAT_CONTAINER] Adding new action execution message (started)');
-            storeAddPusherMessage(pusherMessage, assistant?._id);
-          } else {
-            console.log('⏭️ [CHAT_CONTAINER] Skipping addPusherMessage for action execution update (status: ' + pusherMessage.data.status + ')');
-          }
-        } else {
-          // All other message types get added normally
-          storeAddPusherMessage(pusherMessage, assistant?._id);
-        }
-      };
+  // Handle chat messages from SessionManager via mitt emitter
+  const handleChatMessage = React.useCallback((chatMessage: any) => {
+    if (!activeSession?._id) return;
 
-      addEventHandler('chat_message', handlePusherChatMessage);
-      
-      return () => {
-        removeEventHandler('chat_message', handlePusherChatMessage);
-      };
+    // Special handling for action execution messages
+    if (chatMessage.message_type === 'action_execution' && chatMessage.data?.status) {
+      console.log('🎯 [CHAT_CONTAINER] Handling action execution message:', {
+        status: chatMessage.data.status,
+        messageId: chatMessage.data.messageId,
+        actionId: chatMessage.data.actionId
+      });
+
+      // Only add as new message if status is 'started'
+      // Updates for 'completed' and 'failed' are handled by EVENT_ACTION_EXECUTION
+      if (chatMessage.data.status === 'started') {
+        console.log('📥 [CHAT_CONTAINER] Adding new action execution message (started)');
+        storeAddPusherMessage(chatMessage, assistant?._id);
+      } else {
+        console.log('⏭️ [CHAT_CONTAINER] Skipping addPusherMessage for action execution update (status: ' + chatMessage.data.status + ')');
+      }
+    } else {
+      // All other message types get added normally
+      storeAddPusherMessage(chatMessage, assistant?._id);
     }
-  }, [assistant?._id, activeSession?._id, storeAddPusherMessage]);
+  }, [activeSession?._id, assistant?._id, storeAddPusherMessage]);
+
+  useEventEmitter(EVENT_CHAT_MESSAGE, handleChatMessage);
 
   const handleAssistantUpdated = async (newAssistantId: string) => {
     await zustandChangeAssistant(newAssistantId); // Use Zustand action
