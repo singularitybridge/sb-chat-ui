@@ -193,7 +193,9 @@
     "copySuccess": "מזהה הסוכן הועתק ללוח!",
     "copyFailed": "נכשל בהעתקת מזהה הסוכן.",
     "deleteConfirmTitle": "מחיקת סוכן AI",
-    "deleteConfirmMessage": "האם אתה בטוח שברצונך למחוק את '{{name}}'? פעולה זו אינה ניתנת לביטול."
+    "deleteConfirmMessage": "האם אתה בטוח שברצונך למחוק את '{{name}}'? פעולה זו אינה ניתנת לביטול.",
+    "deleteSuccess": "הסוכן נמחק בהצלחה",
+    "deleteFailed": "נכשל במחיקת הסוכן"
   },
   "UsersPage": {
     "title": "משתמשים",

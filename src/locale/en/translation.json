@@ -190,10 +190,12 @@
         "description": "description",
         "voice": "voice"
       },
-      "copySuccess": "Assistant ID copied to clipboard!",
-      "copyFailed": "Failed to copy Assistant ID.",
-      "deleteConfirmTitle": "Delete AI Assistant",
-      "deleteConfirmMessage": "Are you sure you want to delete '{{name}}'? This action cannot be undone."
+      "copySuccess": "Agent ID copied to clipboard!",
+      "copyFailed": "Failed to copy Agent ID.",
+      "deleteConfirmTitle": "Delete AI Agent",
+      "deleteConfirmMessage": "Are you sure you want to delete '{{name}}'? This action cannot be undone.",
+      "deleteSuccess": "Agent deleted successfully",
+      "deleteFailed": "Failed to delete agent"
     },
   "UsersPage": {
     "title": "Users",

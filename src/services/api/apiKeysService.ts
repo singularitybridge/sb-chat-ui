@@ -38,7 +38,10 @@ class ApiKeysService {
     return singleFlight(
       cacheKey,
       async () => {
-        const response = await apiClient.get<ListApiKeysResponse>(this.basePath);
+        // Bypass axios-cache-interceptor since singleFlight handles caching
+        const response = await apiClient.get<ListApiKeysResponse>(this.basePath, {
+          cache: false
+        });
         return response.data;
       },
       5 * 60 * 1000 // 5 minute cache

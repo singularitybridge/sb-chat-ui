@@ -98,11 +98,24 @@ const AssistantsPage: React.FC = () => {
     setDeleteDialogOpen(true);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (assistantToDelete) {
-      deleteAssistant(assistantToDelete._id);
-      setDeleteDialogOpen(false);
-      setAssistantToDelete(null);
+      try {
+        await deleteAssistant(assistantToDelete._id);
+        emitter.emit(EVENT_SHOW_NOTIFICATION, {
+          message: t('AssistantsPage.deleteSuccess'),
+          type: 'success',
+        });
+      } catch (error) {
+        console.error('Failed to delete assistant:', error);
+        emitter.emit(EVENT_SHOW_NOTIFICATION, {
+          message: t('AssistantsPage.deleteFailed'),
+          type: 'error',
+        });
+      } finally {
+        setDeleteDialogOpen(false);
+        setAssistantToDelete(null);
+      }
     }
   };
 
