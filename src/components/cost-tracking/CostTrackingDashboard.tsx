@@ -3,7 +3,6 @@ import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import * as Tabs from '@radix-ui/react-tabs';
 import {
-  DollarSign,
   TrendingUp,
   Bot,
   Cpu,
@@ -13,6 +12,7 @@ import {
   Filter,
   List
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { MetricsCards } from './MetricsCards';
 import { UsageChart } from './UsageChart';
 import { CostTable } from './CostTable';
@@ -49,11 +49,29 @@ const PROVIDER_LABELS: Record<string, string> = {
   google: 'Google'
 };
 
-interface CostTrackingDashboardProps {
-  className?: string;
+export interface CostDashboardFooterProps {
+  refetch: () => void;
+  isLoading: boolean;
+  records: any[] | undefined;
+  totalRecordCount: number;
+  lastUpdatedAt: Date | null;
+  summary: any;
+  handleExport: () => void;
 }
 
-export const CostTrackingDashboard: React.FC<CostTrackingDashboardProps> = ({ className = '' }) => {
+interface CostTrackingDashboardProps {
+  className?: string;
+  /**
+   * Optional render prop for footer. When provided, the internal footer is hidden
+   * and the parent can render it externally (e.g., in StickyFormLayout's footer).
+   */
+  renderFooter?: (props: CostDashboardFooterProps) => React.ReactNode;
+}
+
+export const CostTrackingDashboard: React.FC<CostTrackingDashboardProps> = ({
+  className = '',
+  renderFooter
+}) => {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('overview');
   const [pageSize, setPageSize] = useState<number>(10);
@@ -71,7 +89,6 @@ export const CostTrackingDashboard: React.FC<CostTrackingDashboardProps> = ({ cl
   const {
     summary,
     records,
-    recordCount,
     totalRecordCount,
     dailyCosts,
     isLoading,
@@ -84,7 +101,6 @@ export const CostTrackingDashboard: React.FC<CostTrackingDashboardProps> = ({ cl
     if (!records || records.length === 0) return;
 
     try {
-      // Convert records to CSV
       const headers = ['Timestamp', 'Assistant', 'Model', 'Provider', 'Input Tokens', 'Output Tokens', 'Cost', 'Duration'];
       const csvContent = [
         headers.join(','),
@@ -100,7 +116,6 @@ export const CostTrackingDashboard: React.FC<CostTrackingDashboardProps> = ({ cl
         ].join(','))
       ].join('\n');
 
-      // Download CSV
       const blob = new Blob([csvContent], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -112,7 +127,7 @@ export const CostTrackingDashboard: React.FC<CostTrackingDashboardProps> = ({ cl
       window.URL.revokeObjectURL(url);
 
       toast.success(t('costTracking.exportSuccess'));
-    } catch (error) {
+    } catch (err) {
       toast.error(t('costTracking.exportError'));
     }
   };
@@ -163,40 +178,11 @@ export const CostTrackingDashboard: React.FC<CostTrackingDashboardProps> = ({ cl
   }
 
   return (
-    <div className={className}>
-      {/* Header */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-2xl font-bold flex items-center gap-2">
-              <DollarSign className="h-6 w-6" />
-              AI Cost Analytics
-            </h1>
-            <p className="text-muted-foreground text-sm mt-1">
-              Monitor and optimize your AI usage costs
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => refetch()}
-              className="p-2 hover:bg-accent rounded-lg transition-colors"
-              title="Refresh data"
-            >
-              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-            </button>
-            <button
-              onClick={handleExport}
-              className="p-2 hover:bg-accent rounded-lg transition-colors"
-              title="Export to CSV"
-              disabled={!records || records.length === 0}
-            >
-              <Download className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-
-        {/* Date Range Filters */}
-        <div className="flex items-center gap-4 mb-4 flex-wrap">
+    <div className={`flex flex-col h-full overflow-hidden ${className}`}>
+      {/* Main scrollable content */}
+      <div className="flex-1 min-h-0 overflow-y-auto">
+        {/* Filters Section */}
+        <div className="flex items-center gap-4 mb-6 flex-wrap">
           <div className="flex items-center gap-2">
             <span className="text-sm text-muted-foreground">From</span>
             <DatePicker
@@ -248,98 +234,128 @@ export const CostTrackingDashboard: React.FC<CostTrackingDashboardProps> = ({ cl
             </Select>
           </div>
         </div>
+
+        {/* Metrics Cards */}
+        <MetricsCards summary={summary} loading={isLoading} />
+
+        {/* Tabs */}
+        <Tabs.Root value={activeTab} onValueChange={setActiveTab}>
+          <Tabs.List className="flex border-b mb-6">
+            <Tabs.Trigger
+              value="overview"
+              className="px-4 py-2 text-sm font-medium hover:text-primary data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary"
+            >
+              <div className="flex items-center gap-2">
+                <TrendingUp className="h-4 w-4" />
+                Overview
+              </div>
+            </Tabs.Trigger>
+            <Tabs.Trigger
+              value="assistants"
+              className="px-4 py-2 text-sm font-medium hover:text-primary data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary"
+            >
+              <div className="flex items-center gap-2">
+                <Bot className="h-4 w-4" />
+                Assistants
+              </div>
+            </Tabs.Trigger>
+            <Tabs.Trigger
+              value="models"
+              className="px-4 py-2 text-sm font-medium hover:text-primary data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary"
+            >
+              <div className="flex items-center gap-2">
+                <Cpu className="h-4 w-4" />
+                Models
+              </div>
+            </Tabs.Trigger>
+            <Tabs.Trigger
+              value="details"
+              className="px-4 py-2 text-sm font-medium hover:text-primary data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary"
+            >
+              <div className="flex items-center gap-2">
+                <FileSpreadsheet className="h-4 w-4" />
+                Details
+              </div>
+            </Tabs.Trigger>
+          </Tabs.List>
+
+          {/* Tab Content */}
+          <Tabs.Content value="overview" className="space-y-6">
+            <UsageChart data={dailyCosts} loading={isLoading} />
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-medium text-muted-foreground">Recent Activity</h3>
+                <span className="text-sm text-muted-foreground">{totalRecordCount} total records</span>
+              </div>
+              <CostTable data={records} loading={isLoading} pageSize={pageSize} totalCount={totalRecordCount} />
+            </div>
+          </Tabs.Content>
+
+          <Tabs.Content value="assistants">
+            <AssistantCostGrid
+              summary={summary}
+              records={records}
+              loading={isLoading}
+            />
+          </Tabs.Content>
+
+          <Tabs.Content value="models">
+            <ModelComparison
+              summary={summary}
+              records={records}
+              loading={isLoading}
+            />
+          </Tabs.Content>
+
+          <Tabs.Content value="details">
+            <CostTable data={records} loading={isLoading} pageSize={pageSize} totalCount={totalRecordCount} />
+          </Tabs.Content>
+        </Tabs.Root>
       </div>
 
-      {/* Metrics Cards */}
-      <MetricsCards summary={summary} loading={isLoading} />
-
-      {/* Tabs */}
-      <Tabs.Root value={activeTab} onValueChange={setActiveTab}>
-        <Tabs.List className="flex border-b mb-6">
-          <Tabs.Trigger
-            value="overview"
-            className="px-4 py-2 text-sm font-medium hover:text-primary data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary"
-          >
+      {/* Footer - fixed at bottom of flex container */}
+      {!renderFooter && (
+        <div className="shrink-0 pt-4 pb-2 border-t bg-card">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4" />
-              Overview
+              <Button
+                variant="outline"
+                size="default"
+                onClick={() => refetch()}
+                disabled={isLoading}
+              >
+                <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+                Refresh
+              </Button>
+              <Button
+                variant="outline"
+                size="default"
+                onClick={handleExport}
+                disabled={!records || records.length === 0}
+              >
+                <Download className="h-4 w-4" />
+                Export CSV
+              </Button>
             </div>
-          </Tabs.Trigger>
-          <Tabs.Trigger
-            value="assistants"
-            className="px-4 py-2 text-sm font-medium hover:text-primary data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary"
-          >
-            <div className="flex items-center gap-2">
-              <Bot className="h-4 w-4" />
-              Assistants
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <span>Last updated: {lastUpdatedAt?.toLocaleTimeString() ?? 'Loading...'}</span>
+              <span>•</span>
+              <span>{totalRecordCount} records</span>
+              <span>•</span>
+              <span>Total: {summary ? formatCost(summary.totalCost) : '$0.00'}</span>
             </div>
-          </Tabs.Trigger>
-          <Tabs.Trigger
-            value="models"
-            className="px-4 py-2 text-sm font-medium hover:text-primary data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary"
-          >
-            <div className="flex items-center gap-2">
-              <Cpu className="h-4 w-4" />
-              Models
-            </div>
-          </Tabs.Trigger>
-          <Tabs.Trigger
-            value="details"
-            className="px-4 py-2 text-sm font-medium hover:text-primary data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary"
-          >
-            <div className="flex items-center gap-2">
-              <FileSpreadsheet className="h-4 w-4" />
-              Details
-            </div>
-          </Tabs.Trigger>
-        </Tabs.List>
-
-        {/* Tab Content */}
-        <Tabs.Content value="overview" className="space-y-6">
-          <UsageChart data={dailyCosts} loading={isLoading} />
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-muted-foreground">Recent Activity</h3>
-              <span className="text-sm text-muted-foreground">{totalRecordCount} total records</span>
-            </div>
-            <CostTable data={records} loading={isLoading} pageSize={pageSize} totalCount={totalRecordCount} />
-          </div>
-        </Tabs.Content>
-
-        <Tabs.Content value="assistants">
-          <AssistantCostGrid 
-            summary={summary} 
-            records={records}
-            loading={isLoading} 
-          />
-        </Tabs.Content>
-
-        <Tabs.Content value="models">
-          <ModelComparison 
-            summary={summary}
-            records={records} 
-            loading={isLoading} 
-          />
-        </Tabs.Content>
-
-        <Tabs.Content value="details">
-          <CostTable data={records} loading={isLoading} pageSize={pageSize} totalCount={totalRecordCount} />
-        </Tabs.Content>
-      </Tabs.Root>
-
-      {/* Footer Stats */}
-      {summary && (
-        <div className="mt-8 pt-4 border-t flex items-center justify-between text-sm text-muted-foreground">
-          <div>
-            Last updated: {lastUpdatedAt?.toLocaleTimeString() ?? 'Loading...'}
-          </div>
-          <div className="flex items-center gap-4">
-            <span>Total records: {totalRecordCount}</span>
-            <span>•</span>
-            <span>Period total: {formatCost(summary.totalCost)}</span>
           </div>
         </div>
       )}
+      {renderFooter && renderFooter({
+        refetch,
+        isLoading,
+        records,
+        totalRecordCount,
+        lastUpdatedAt,
+        summary,
+        handleExport
+      })}
     </div>
   );
 };

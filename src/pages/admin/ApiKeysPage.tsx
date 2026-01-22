@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageLayout } from '../../components/admin/PageLayout';
+import { StickyFormLayout } from '../../components/admin/StickyFormLayout';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
+import { Button } from '../../components/ui/button';
 import { emitter } from '../../services/mittEmitter';
 import { EVENT_SHOW_ADD_API_KEY_MODAL } from '../../utils/eventNames';
 import { apiKeysService } from '../../services/api/apiKeysService';
@@ -107,20 +108,14 @@ export const ApiKeysPage: React.FC = () => {
 
 
   return (
-    <PageLayout
-      variant="card"
-      header={{
-        title: t('apiKeys.title'),
-        description: t('apiKeys.description', 'Manage your API keys for programmatic access'),
-        action: (
-          <button
-            onClick={handleAddApiKey}
-            className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90"
-          >
-            {t('apiKeys.createNew')}
-          </button>
-        ),
-      }}
+    <StickyFormLayout
+      title={t('apiKeys.title')}
+      subtitle={t('apiKeys.description', 'Manage your API keys for programmatic access')}
+      headerAction={
+        <Button onClick={handleAddApiKey}>
+          {t('apiKeys.createNew')}
+        </Button>
+      }
     >
       {isLoading ? (
         <div className="flex justify-center p-8">
@@ -180,6 +175,6 @@ export const ApiKeysPage: React.FC = () => {
           </div>
         </div>
       )}
-    </PageLayout>
+    </StickyFormLayout>
   );
 };

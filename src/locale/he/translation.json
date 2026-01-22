@@ -130,6 +130,8 @@
     "deleteError": "שגיאה במחיקת ההזמנה"
   },
   "costTracking": {
+    "title": "ניתוח עלויות AI",
+    "subtitle": "ניטור ואופטימיזציה של עלויות השימוש ב-AI",
     "exportSuccess": "נתוני עלויות יוצאו בהצלחה",
     "exportError": "שגיאה בייצוא נתוני עלויות"
   },
@@ -387,7 +389,6 @@
     "description": "תיאור",
     "introMessage": "הודעת פתיחה",
     "voice": "קול",
-    "language": "שפה",
     "llmModel": "מודל LLM",
     "llmProvider": "ספק LLM",
     "llmPrompt": "פרומפט LLM",
@@ -434,6 +435,7 @@
     "back": "חזור",
     "done": "סיום",
     "delete": "מחק",
+    "clear": "נקה",
     "saveFailed": "השמירה נכשלה"
   },
   "breadcrumbs": {

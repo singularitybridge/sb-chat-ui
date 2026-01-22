@@ -149,6 +149,8 @@
     "deleteError": "Failed to delete invite"
   },
   "costTracking": {
+    "title": "AI Cost Analytics",
+    "subtitle": "Monitor and optimize your AI usage costs",
     "exportSuccess": "Cost data exported successfully",
     "exportError": "Failed to export cost data"
   },
@@ -366,7 +368,6 @@
     "description": "Description",
     "introMessage": "Intro Message",
     "voice": "Voice",
-    "language": "Language",
     "llmModel": "LLM Model",
     "llmProvider": "LLM Provider",
     "llmPrompt": "LLM Prompt",
@@ -413,6 +414,7 @@
     "back": "Back",
     "done": "Done",
     "delete": "Delete",
+    "clear": "Clear",
     "saveFailed": "Failed to save changes"
   },
   "breadcrumbs": {

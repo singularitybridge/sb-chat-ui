@@ -16,11 +16,6 @@ const sanitizeToUrlSafe = (value: string): string => {
     .replace(/^-|-$/g, '');         // Remove leading/trailing hyphens
 };
 
-const languageOptions: SelectListOption[] = [
-  { value: 'he', label: 'Hebrew' },
-  { value: 'en', label: 'English' },
-];
-
 // Models grouped by provider
 const openaiModels: SelectListOption[] = [
   // GPT-5.x family (stable)
@@ -194,15 +189,6 @@ export const getAssistantFieldConfigs = async (
       visibility: { create: true, view: true, update: true },
     },
     {
-      id: 'language',
-      key: 'language',
-      label: 'Language',
-      type: 'dropdown',
-      value: language,
-      options: languageOptions,
-      visibility: { create: true, view: true, update: true },
-    },
-    {
       id: 'llmProvider',
       key: 'llmProvider',
       label: 'assistant.llmProvider',
@@ -286,16 +272,7 @@ export const defaultAssistantFieldConfigs: FieldConfig[] = [
     visibility: { create: true, view: true, update: true },
   },
   {
-    id: 'language',
-    key: 'language',
-    label: 'Language',
-    type: 'dropdown',
-    value: 'en',
-    options: languageOptions,
-      visibility: { create: true, view: true, update: true },
-    },
-    {
-      id: 'llmProvider',
+    id: 'llmProvider',
       key: 'llmProvider',
       label: 'assistant.llmProvider',
       type: 'dropdown',

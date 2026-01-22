@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router';
+import { useParams } from 'react-router';
 import { useCompanyStore } from '../../store/useCompanyStore';
 import { ICompany } from '../../types/entities';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
@@ -13,7 +13,6 @@ type SectionType = 'details' | 'users-invites';
 
 const CompanyAdminPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const { companiesLoaded, getCompanyById } = useCompanyStore();
   const [company, setCompany] = useState<ICompany | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -129,7 +128,7 @@ const CompanyAdminPage: React.FC = () => {
           </div>
 
           {/* Content */}
-          <div className="bg-card rounded-lg p-6 border border-border">
+          <div className="bg-card rounded-lg border border-border h-full flex flex-col overflow-hidden">
             {activeSection === 'details' && (
               <CompanyDetailsSection
                 company={company}
@@ -139,7 +138,9 @@ const CompanyAdminPage: React.FC = () => {
               />
             )}
             {activeSection === 'users-invites' && (
-              <UsersAndInvitesSection company={company} />
+              <div className="p-6">
+                <UsersAndInvitesSection company={company} />
+              </div>
             )}
           </div>
         </div>

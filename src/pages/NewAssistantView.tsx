@@ -88,6 +88,7 @@ const NewAssistantView: React.FC = () => {
     const assistantData = {
       ...values,
       avatarImage: selectedAvatarId,
+      language: 'en', // Default language (field removed from UI)
     } as unknown as IAssistant;
     await addAssistant(assistantData);
     setIsLoading(false);

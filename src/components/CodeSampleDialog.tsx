@@ -8,6 +8,10 @@ import { EVENT_SHOW_NOTIFICATION } from '../utils/eventNames';
 import { useTranslation } from 'react-i18next';
 import { getToken } from '../services/api/authService';
 import { getGlobalEmbedApiKey } from '../services/AxiosService';
+import {
+  Dialog,
+  DialogContent,
+} from '@/components/ui/dialog';
 
 interface CodeSampleDialogProps {
   isOpen: boolean;
@@ -608,23 +612,18 @@ done`;
     }
   };
 
-  if (!isOpen) return null;
-
   const languageIcons = {
-    javascript: { 
+    javascript: {
       Icon: SiJavascript,
       label: 'JavaScript',
-      color: '#F7DF1E'
     },
-    python: { 
+    python: {
       Icon: SiPython,
       label: 'Python',
-      color: '#3776AB'
     },
-    curl: { 
+    curl: {
       Icon: SiCurl,
       label: 'cURL',
-      color: '#073551'
     }
   };
 
@@ -637,8 +636,8 @@ done`;
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-background rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="sm:max-w-5xl max-h-[85vh] p-0 gap-0 flex flex-col overflow-hidden" showCloseButton={false}>
         {/* Minimal Header */}
         <div className="flex items-center justify-between px-4 py-2.5">
           <h2 className="text-sm font-medium text-foreground">Code Sample</h2>
@@ -658,7 +657,7 @@ done`;
               <span className="text-xs text-muted-foreground">Language</span>
               <div className="flex items-center gap-1">
                 {(Object.keys(languageIcons) as CodeLanguage[]).map((lang) => {
-                  const { Icon, label, color } = languageIcons[lang];
+                  const { Icon, label } = languageIcons[lang];
                   const IconComponent = Icon as any;
                   return (
                     <button
@@ -746,7 +745,7 @@ done`;
 
         {/* Code Display */}
         <div className="flex-1 flex flex-col min-h-0">
-          <div className="relative flex-1 bg-gray-900 overflow-auto" style={{ minHeight: showTestResult ? '200px' : '300px', maxHeight: showTestResult ? '300px' : '450px' }}>
+          <div className="relative flex-1 bg-gray-900 overflow-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800" style={{ minHeight: showTestResult ? '200px' : '300px', maxHeight: showTestResult ? '300px' : '450px' }}>
             <button
               onClick={handleCopy}
               className="absolute top-2 right-2 z-10 p-1.5 rounded transition-all hover:bg-gray-800"
@@ -775,7 +774,7 @@ done`;
                   <X className="w-3 h-3 text-muted-foreground" />
                 </button>
               </div>
-              <div className="p-4 overflow-auto" style={{ maxHeight: '160px' }}>
+              <div className="p-4 overflow-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-700" style={{ maxHeight: '160px' }}>
                 {isTesting && !testResult ? (
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -804,19 +803,19 @@ done`;
               </div>
             </div>
           )}
+        </div>
 
-          {/* Minimal Info Bar */}
-          <div className="px-4 py-2 bg-secondary border-t border-border">
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <span className="font-mono">{activeSession?.assistantId ? `ID: ${activeSession.assistantId.slice(0, 8)}...` : 'No assistant selected'}</span>
-              {authToken === 'YOUR_API_KEY' && (
-                <span className="text-amber-600">⚠ Replace API key</span>
-              )}
-            </div>
+        {/* Minimal Info Bar */}
+        <div className="px-4 py-2 bg-secondary border-t border-border">
+          <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <span className="font-mono">{activeSession?.assistantId ? `ID: ${activeSession.assistantId.slice(0, 8)}...` : 'No assistant selected'}</span>
+            {authToken === 'YOUR_API_KEY' && (
+              <span className="text-amber-600">⚠ Replace API key</span>
+            )}
           </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 

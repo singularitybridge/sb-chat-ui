@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useAssistantStore } from '../store/useAssistantStore';
-import Button from './sb-core-ui-kit/Button';
+import { Button } from './ui/button';
 import { useTranslation } from 'react-i18next';
 import { IAssistant } from '../types/entities';
 import { fetchAllowedActionOptions, ActionOption } from '../store/fieldConfigs/assistantFieldConfigs';
@@ -78,11 +78,11 @@ const EditAssistantActionsDialog: React.FC<EditAssistantActionsDialogProps> = (
       </div>
       <div className="mt-4 flex justify-end gap-2">
         <Button
+          variant="outline"
           onClick={handleClear}
           disabled={isLoading || selectedActions.length === 0}
-          variant="secondary"
         >
-          {t('common.clear') || 'Clear'}
+          {t('common.clear')}
         </Button>
         <Button onClick={handleSave} disabled={isLoading}>
           {t('common.save')}

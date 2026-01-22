@@ -17,16 +17,16 @@ import {
 } from '../../services/api/fileService';
 import FileUpload from '../../components/sb-core-ui-kit/FileUpload';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
-import Button from '../../components/sb-core-ui-kit/Button';
-import { FileText, Trash2 as TrashIcon, ArrowLeft } from 'lucide-react';
+import { FileText, Trash2 as TrashIcon } from 'lucide-react';
 import { IconButton } from '../../components/admin/IconButton';
 import { useTranslation } from 'react-i18next';
 import AvatarSelector from '../../components/AvatarSelector';
 import { emitter } from '../../services/mittEmitter';
 import { EVENT_SHOW_EDIT_ASSISTANT_ACTIONS_MODAL } from '../../utils/eventNames';
-import { PageLayout } from '../../components/admin/PageLayout';
+import { StickyFormLayout } from '../../components/admin/StickyFormLayout';
 import { getAssistantUrl } from '../../utils/assistantUrlUtils';
-import { Button as ShadcnButton } from '../../components/ui/button';
+import { Button } from '../../components/ui/button';
+import LoadingButton from '../../components/core/LoadingButton';
 
 interface UploadedFile {
   fileId: string;
@@ -46,6 +46,8 @@ const EditAssistantPage: React.FC = () => {
   const [selectedAvatarId, setSelectedAvatarId] = useState<string | null>(null);
   const [fieldConfigs, setFieldConfigs] = useState<FieldConfig[]>(defaultAssistantFieldConfigs);
   const [isFieldConfigsLoading, setIsFieldConfigsLoading] = useState(true);
+
+  const formId = 'edit-assistant-form';
 
   useEffect(() => {
     const fetchFieldConfigs = async () => {
@@ -191,28 +193,36 @@ const EditAssistantPage: React.FC = () => {
   };
 
   return (
-    <PageLayout
-      variant="card"
-      header={{
-        title: t('EditAssistantPage.title'),
-        description: t('EditAssistantPage.description'),
-        backUrl: '/admin/assistants',
-      }}
+    <StickyFormLayout
+      title={t('EditAssistantPage.title')}
+      subtitle={t('EditAssistantPage.description')}
+      backUrl="/admin/assistants"
+      footer={
+        <div className="flex items-center gap-3">
+          <LoadingButton
+            type="submit"
+            form={formId}
+            isLoading={isLoading}
+          >
+            {t('common.save')}
+          </LoadingButton>
+          <Button variant="outline" onClick={showActionsModal}>
+            {t('EditAssistantPage.editAllowedActions')}
+          </Button>
+        </div>
+      }
     >
       <div className="flex flex-col lg:flex-row space-y-6 lg:space-y-0 lg:space-x-12 rtl:space-x-reverse">
         <div className="w-full lg:w-1/2">
           <DynamicForm
+            formId={formId}
             formContext="assistantFieldConfigs"
             fields={formFields}
             onSubmit={handleSubmit}
             isLoading={isLoading}
             formType="update"
+            hideSubmitButton={true}
           />
-          <div className="mt-4">
-            <Button onClick={showActionsModal}>
-              {t('EditAssistantPage.editAllowedActions')}
-            </Button>
-          </div>
         </div>
         <div className="w-full lg:w-1/2">
           <div className="mb-6">
@@ -262,7 +272,7 @@ const EditAssistantPage: React.FC = () => {
           )}
         </div>
       </div>
-    </PageLayout>
+    </StickyFormLayout>
   );
 };
 

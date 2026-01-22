@@ -1,34 +1,47 @@
 import React from 'react';
-import clsx from 'clsx';
-import { ButtonProps } from '../sb-core-ui-kit/Button';
 import { useTranslation } from 'react-i18next';
+import { Button, buttonVariants } from '../ui/button';
+import { Loader2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { type VariantProps } from 'class-variance-authority';
 
-interface LoadingButtonProps extends ButtonProps {
+interface LoadingButtonProps
+  extends React.ComponentProps<'button'>,
+    VariantProps<typeof buttonVariants> {
   isLoading: boolean;
+  loadingText?: string;
+  asChild?: boolean;
 }
 
 const LoadingButton: React.FC<LoadingButtonProps> = ({
   isLoading,
+  loadingText,
   children,
-  additionalClassName,
+  className,
+  variant = 'default',
+  size = 'default',
+  disabled,
   ...props
 }) => {
   const { t } = useTranslation();
-  const className = clsx(
-    'bg-primary',
-    'text-white',
-    'px-2.5',
-    'py-1.5',
-    'mr-2 mb-2',
-    'rounded-md',
-    'text-base',
-    additionalClassName
-  );
 
   return (
-    <button {...props} disabled={isLoading} className={className}>
-      {isLoading ? t('common.pleaseWait') : children}
-    </button>
+    <Button
+      variant={variant}
+      size={size}
+      disabled={isLoading || disabled}
+      className={cn(className)}
+      {...props}
+    >
+      {isLoading ? (
+        <>
+          <Loader2 className="animate-spin" />
+          {loadingText || t('common.pleaseWait')}
+        </>
+      ) : (
+        children
+      )}
+    </Button>
   );
 };
 

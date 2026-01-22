@@ -343,7 +343,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
 
       {!hideSubmitButton && (
         <LoadingButton
-          additionalClassName="mt-2"
+          className="mt-2"
           type="submit"
           isLoading={isLoading || false}
         >
