@@ -249,10 +249,7 @@
       "placeholders": {
         "openai_api_key": "הזן כאן את מפתח ה-API של OpenAI",
         "gcp_key": "הזן כאן את מפתח ה-GCP שלך",        
-        "labs11_api_key": "הזן כאן את מפתח ה-API של 11Labs",
-        "jsonbin_api_key" : "הזן כאן את מפתח ה-API של Jsonbin",
-        "twilio_account_sid": "הזן כאן את SID של חשבון Twilio שלך",
-        "twilio_auth_token": "הזן כאן את אסימון האימות של Twilio שלך"
+        "labs11_api_key": "הזן כאן את מפתח ה-API של 11Labs"
       }
     },
     "Identifiers": {
@@ -301,9 +298,6 @@
         "openai_api_key": "הזן כאן את מפתח ה-API של OpenAI",
         "gcp_key": "הזן כאן את מפתח ה-GCP שלך",        
         "labs11_api_key": "הזן כאן את מפתח ה-API של 11Labs",
-        "jsonbin_api_key" : "הזן כאן את מפתח ה-API של Json",
-        "twilio_account_sid": "הזן כאן את SID של חשבון Twilio שלך",
-        "twilio_auth_token": "הזן כאן את אסימון האימות של Twilio שלך",
         "jira_api_token": "הזן כאן את Jira API Token",
         "jira_domain": "הזן כאן את הדומיין/כתובת ה-Jira שלך (לדוגמה: yourcompany.atlassian.net)",
         "jira_email": "הזן כאן את האימייל/שם המשתמש שלך ב-Jira",

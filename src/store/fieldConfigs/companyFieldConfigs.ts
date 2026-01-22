@@ -36,14 +36,6 @@ export const companyFieldConfigs: FieldConfig[] = [
         value: '-',
       },
       {
-        key: 'twilio_api_key',
-        value: '-',
-      },
-      {
-        key: 'jsonbin_api_key',
-        value: '-',
-      },
-      {
         key: 'getimg_api_key',
         value: '-',
       },
@@ -57,10 +49,6 @@ export const companyFieldConfigs: FieldConfig[] = [
       },
       {
         key: 'photoroom_api_key',
-        value: '-',
-      },
-      {
-        key: 'telegram_bot_api_key',
         value: '-',
       },
       {
