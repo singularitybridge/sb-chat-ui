@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Copy, Check, FileCode, Link, FileText, Play, Loader2, Zap, Braces } from 'lucide-react';
+import { X, Copy, Check, FileCode, Link, FileText, Play, Loader2, Zap, Braces, Wrench } from 'lucide-react';
 import { SiJavascript, SiPython, SiCurl } from 'react-icons/si';
 import { useSessionStore } from '../store/useSessionStore';
 import { useAssistantStore } from '../store/useAssistantStore';
@@ -19,7 +19,8 @@ interface CodeSampleDialogProps {
 }
 
 type CodeLanguage = 'javascript' | 'python' | 'curl';
-type CodeFeature = 'file' | 'url' | 'prompt' | 'streaming' | 'json';
+type CodeFeature = 'file' | 'url' | 'prompt' | 'streaming' | 'json' | 'toolcalls';
+type ResultViewMode = 'formatted' | 'raw';
 
 const CodeSampleDialog: React.FC<CodeSampleDialogProps> = ({ isOpen, onClose }) => {
   const [selectedLanguage, setSelectedLanguage] = useState<CodeLanguage>('javascript');
@@ -28,6 +29,8 @@ const CodeSampleDialog: React.FC<CodeSampleDialogProps> = ({ isOpen, onClose }) 
   const [generatedCode, setGeneratedCode] = useState('');
   const [testInput, setTestInput] = useState('Hello, how can you help me today?');
   const [testResult, setTestResult] = useState('');
+  const [rawResponse, setRawResponse] = useState('');
+  const [resultViewMode, setResultViewMode] = useState<ResultViewMode>('formatted');
   const [isTesting, setIsTesting] = useState(false);
   const [showTestResult, setShowTestResult] = useState(false);
   
@@ -109,6 +112,9 @@ const CodeSampleDialog: React.FC<CodeSampleDialogProps> = ({ isOpen, onClose }) 
     const responseFormat = enabledFeatures.has('json') ? `,
     responseFormat: { type: 'json_object' }` : '';
 
+    const includeToolCalls = enabledFeatures.has('toolcalls') ? `,
+    includeToolCalls: true  // Include tool call details in response` : '';
+
     if (enabledFeatures.has('streaming')) {
       // Streaming version
       const streamingCode = `// Streaming API - Assistant: ${assistant.name}
@@ -117,7 +123,7 @@ const apiKey = '${token}';
 
 async function sendMessageWithStreaming(userInput) {
   const payload = {
-    userInput: userInput${attachments}${promptOverride}${responseFormat}
+    userInput: userInput${attachments}${promptOverride}${responseFormat}${includeToolCalls}
   };
 
   const response = await fetch(apiUrl, {
@@ -187,7 +193,7 @@ const apiKey = '${token}';
 
 async function sendMessage(userInput) {
   const payload = {
-    userInput: userInput${attachments}${promptOverride}${responseFormat}
+    userInput: userInput${attachments}${promptOverride}${responseFormat}${includeToolCalls}
   };
 
   const response = await fetch(apiUrl, {
@@ -245,6 +251,9 @@ sendMessage('Hello, how can you help me today?')
     const responseFormat = enabledFeatures.has('json') ? `,
         'responseFormat': {'type': 'json_object'}` : '';
 
+    const includeToolCallsPy = enabledFeatures.has('toolcalls') ? `,
+        'includeToolCalls': True  # Include tool call details in response` : '';
+
     if (enabledFeatures.has('streaming')) {
       // Streaming version
       const streamingCode = `# Streaming API - Assistant: ${assistant.name}
@@ -256,7 +265,7 @@ api_key = '${token}'
 
 def send_message_with_streaming(user_input):
     payload = {
-        'userInput': user_input${attachments}${promptOverride}${responseFormat}
+        'userInput': user_input${attachments}${promptOverride}${responseFormat}${includeToolCallsPy}
     }
     
     headers = {
@@ -309,14 +318,14 @@ api_key = '${token}'
 
 def send_message(user_input):
     payload = {
-        'userInput': user_input${attachments}${promptOverride}${responseFormat}
+        'userInput': user_input${attachments}${promptOverride}${responseFormat}${includeToolCallsPy}
     }
-    
+
     headers = {
         'Content-Type': 'application/json',
         'Authorization': f'Bearer {api_key}'
     }
-    
+
     response = requests.post(api_url, json=payload, headers=headers)
     
     if response.status_code != 200:
@@ -363,6 +372,10 @@ print('Assistant:', response)`;
 
     if (enabledFeatures.has('json')) {
       payload.responseFormat = { type: 'json_object' };
+    }
+
+    if (enabledFeatures.has('toolcalls')) {
+      payload.includeToolCalls = true;
     }
 
     if (enabledFeatures.has('streaming')) {
@@ -447,6 +460,7 @@ done`;
     setIsTesting(true);
     setShowTestResult(true);
     setTestResult('');
+    setRawResponse('');
 
     try {
       // Always use /execute endpoint with assistant name
@@ -465,6 +479,11 @@ done`;
       // Add response format if JSON mode enabled
       if (enabledFeatures.has('json')) {
         payload.responseFormat = { type: 'json_object' };
+      }
+
+      // Add includeToolCalls if enabled
+      if (enabledFeatures.has('toolcalls')) {
+        payload.includeToolCalls = true;
       }
 
       const headers: any = {
@@ -576,12 +595,15 @@ done`;
         // Handle regular JSON response
         const data = await response.json();
 
-        // If JSON mode is enabled, show full response
+        // Always store the raw response for "Raw" view mode
+        const prettyJson = JSON.stringify(data, null, 2);
+        setRawResponse(prettyJson);
+
+        // If JSON mode is enabled, show full response in formatted view too
         if (enabledFeatures.has('json')) {
-          const prettyJson = JSON.stringify(data, null, 2);
           setTestResult(prettyJson);
         } else {
-          // Extract the actual content from the response
+          // Extract the actual content from the response for formatted view
           let resultText = '';
           if (typeof data === 'string') {
             resultText = data;
@@ -632,7 +654,8 @@ done`;
     url: { icon: <Link className="w-4 h-4" />, label: 'URL Attachment' },
     prompt: { icon: <FileCode className="w-4 h-4" />, label: 'Prompt Override' },
     streaming: { icon: <Zap className="w-4 h-4" />, label: 'Streaming Mode' },
-    json: { icon: <Braces className="w-4 h-4" />, label: 'JSON Response' }
+    json: { icon: <Braces className="w-4 h-4" />, label: 'JSON Response' },
+    toolcalls: { icon: <Wrench className="w-4 h-4" />, label: 'Show Tool Calls' }
   };
 
   return (
@@ -640,7 +663,7 @@ done`;
       <DialogContent className="sm:max-w-5xl max-h-[85vh] p-0 gap-0 flex flex-col overflow-hidden" showCloseButton={false}>
         {/* Minimal Header */}
         <div className="flex items-center justify-between px-4 py-2.5">
-          <h2 className="text-sm font-medium text-foreground">Code Sample</h2>
+          <h2 className="text-sm font-medium text-foreground">API Integration</h2>
           <button
             onClick={onClose}
             className="p-1 rounded hover:bg-accent transition-colors"
@@ -766,7 +789,34 @@ done`;
           {showTestResult && (
             <div className="border-t border-gray-700 bg-gray-800" style={{ minHeight: '150px', maxHeight: '200px' }}>
               <div className="px-4 py-2 border-b border-gray-700 flex items-center justify-between">
-                <span className="text-xs font-medium text-muted-foreground">Test Result</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-medium text-muted-foreground">Test Result</span>
+                  {/* View Mode Toggle */}
+                  {(testResult || rawResponse) && !isTesting && (
+                    <div className="flex items-center gap-1 bg-gray-900 rounded-md p-0.5">
+                      <button
+                        onClick={() => setResultViewMode('formatted')}
+                        className={`px-2 py-0.5 text-xs rounded transition-all ${
+                          resultViewMode === 'formatted'
+                            ? 'bg-gray-700 text-white'
+                            : 'text-muted-foreground hover:text-white'
+                        }`}
+                      >
+                        Response
+                      </button>
+                      <button
+                        onClick={() => setResultViewMode('raw')}
+                        className={`px-2 py-0.5 text-xs rounded transition-all ${
+                          resultViewMode === 'raw'
+                            ? 'bg-gray-700 text-white'
+                            : 'text-muted-foreground hover:text-white'
+                        }`}
+                      >
+                        Raw JSON
+                      </button>
+                    </div>
+                  )}
+                </div>
                 <button
                   onClick={() => setShowTestResult(false)}
                   className="p-1 rounded hover:bg-gray-700 transition-colors"
@@ -780,20 +830,24 @@ done`;
                     <Loader2 className="w-4 h-4 animate-spin" />
                     <span className="text-xs">Connecting to API...</span>
                   </div>
+                ) : (resultViewMode === 'raw' && rawResponse) ? (
+                  <pre className="text-xs whitespace-pre-wrap font-mono text-muted-foreground">
+                    {rawResponse}
+                  </pre>
                 ) : testResult ? (
                   <pre className={`text-xs whitespace-pre-wrap font-mono ${
                     testResult.startsWith('● Streaming')
-                      ? 'text-violet' 
-                      : testResult.startsWith('✓') 
-                      ? 'text-green-400' 
-                      : testResult.startsWith('✗') 
-                      ? 'text-red-400' 
+                      ? 'text-violet'
+                      : testResult.startsWith('✓')
+                      ? 'text-green-400'
+                      : testResult.startsWith('✗')
+                      ? 'text-red-400'
                       : 'text-muted-foreground'
                   }`}>
                     {testResult.startsWith('● Streaming') && (
                       <span className="inline-block animate-pulse">{testResult.split('\n')[0]}</span>
                     )}
-                    {testResult.startsWith('● Streaming') 
+                    {testResult.startsWith('● Streaming')
                       ? '\n\n' + testResult.split('\n\n').slice(1).join('\n\n')
                       : testResult}
                   </pre>
