@@ -39,7 +39,7 @@ const NewUserView: React.FC = () => {
     try {
       await addUser(values as unknown as IUser);
       toast.success(t('user.createSuccess'));
-    } catch (error) {
+    } catch (_error) {
       toast.error(t('user.createError'));
     } finally {
       setIsLoading(false);

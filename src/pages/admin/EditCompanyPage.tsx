@@ -16,7 +16,7 @@ import { EVENT_SHOW_NOTIFICATION } from '../../utils/eventNames';
 
 const EditCompanyPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { companiesLoaded, getCompanyById, updateCompany, refreshToken } = useCompanyStore();
+  const { companiesLoaded, getCompanyById, updateCompany } = useCompanyStore();
   const [company, setCompany] = useState<ICompany | null>(null);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -53,25 +53,11 @@ const EditCompanyPage: React.FC = () => {
   const formFields: FieldConfig[] = useMemo(() => {
     return companyFieldConfigs.map((config) => {
       const fieldKeyString = String(config.key);
-      let fieldValue;
-
-      if (config.id === 'api_keys') {
-        const companyApiKeys = company ? company.api_keys || [] : [];
-        const companyApiKeysMap = new Map(companyApiKeys.map(k => [k.key, k.value]));
-
-        // config.value here is the default list of ApiKey objects from companyFieldConfigs
-        fieldValue = (config.value as { key: string; value: string }[]).map(defaultApiKey => ({
-          ...defaultApiKey,
-          value: companyApiKeysMap.get(defaultApiKey.key) || defaultApiKey.value,
-        }));
-      } else {
-        fieldValue = company ? (company as any)[fieldKeyString] : config.value;
-      }
+      const fieldValue = company ? (company as any)[fieldKeyString] : config.value;
 
       return {
         ...config,
         value: fieldValue,
-        // Ensure options is always an array, even if not explicitly in config
         options: (config as any).options || [],
       } as FieldConfig;
     });
@@ -85,9 +71,6 @@ const EditCompanyPage: React.FC = () => {
     setIsSaving(true);
     try {
       await updateCompany(id, values as unknown as ICompany);
-      // Note: Don't call loadCompanies()/fetchCompany()/loadUserSessionInfo() here -
-      // these would cause state changes that remount the component and reset the form.
-      // The store already has the updated data from updateCompany().
       emitter.emit(EVENT_SHOW_NOTIFICATION, {
         message: t('EditCompanyPage.emitterMessage'),
         type: 'success',
@@ -101,27 +84,6 @@ const EditCompanyPage: React.FC = () => {
     } finally {
       setIsSaving(false);
     }
-  };
-
-  const handleRefreshToken = async () => {
-    if (!id) {
-      return;
-    }
-    setIsSaving(true);
-    try {
-      await refreshToken(id);
-      // Reload company data after token refresh
-      const updatedCompany = getCompanyById(id);
-      if (updatedCompany) {
-        setCompany(updatedCompany);
-        if (updatedCompany.token?.value) {
-          localStorage.setItem('userToken', updatedCompany.token.value);
-        }
-      }
-    } catch (error) {
-      console.error('Failed to refresh token:', error);
-    }
-    setIsSaving(false);
   };
 
   return (
@@ -138,7 +100,6 @@ const EditCompanyPage: React.FC = () => {
             fields={formFields}
             formContext="EditCompanyPage"
             onSubmit={handleSubmit}
-            refreshToken={handleRefreshToken}
             isLoading={isSaving}
             formType="update"
           />

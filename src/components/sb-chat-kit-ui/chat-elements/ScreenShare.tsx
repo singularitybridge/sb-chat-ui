@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Monitor, StopCircle, Settings, X } from 'lucide-react';
-import { validateFile, createFileMetadata } from '../../../utils/fileUtils';
 
 interface ScreenShareProps {
   onScreenCapture: (file: File, metadata?: any) => void;

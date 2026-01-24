@@ -16,16 +16,11 @@ const NewCompanyView: React.FC = () => {
     try {
       await addCompany(values as unknown as ICompany);
       toast.success(t('company.createSuccess'));
-    } catch (error) {
+    } catch (_error) {
       toast.error(t('company.createError'));
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleVerfication = async (value: string): Promise<boolean> => {
-    console.log('Verifying', value);
-    return true;
   };
 
   return (
@@ -33,7 +28,6 @@ const NewCompanyView: React.FC = () => {
       fields={companyFieldConfigs}
       formContext='EditCompanyPage'
       onSubmit={handleSubmit}
-      onVerify={handleVerfication}
       isLoading={isLoading}
       formType="create"
     />

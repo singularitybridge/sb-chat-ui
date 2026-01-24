@@ -16,7 +16,7 @@ const EmbedChatPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const { setApiKey: setEmbedApiKey } = useEmbedAuth();
   const { language, setLanguage } = useLanguageStore();
-  const { assistants, assistantsLoaded, loadAssistants, getAssistantById } = useAssistantStore();
+  const { assistants: _assistants, assistantsLoaded, loadAssistants, getAssistantById } = useAssistantStore();
   const {
     activeSession,
     fetchActiveSession,

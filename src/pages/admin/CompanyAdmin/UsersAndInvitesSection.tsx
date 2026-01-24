@@ -34,7 +34,7 @@ interface UsersAndInvitesSectionProps {
 }
 
 const UsersAndInvitesSection: React.FC<UsersAndInvitesSectionProps> = (
-  { company }
+  { company: _company }
 ) => {
   const { t } = useTranslation();
   const { users, deleteUser } = useUserStore();
@@ -69,7 +69,7 @@ const UsersAndInvitesSection: React.FC<UsersAndInvitesSectionProps> = (
     deleteUser(row._id);
   };
 
-  const handleSetUser = async (_row: IUser) => {
+  const _handleSetUser = async (_row: IUser) => {
     toast.success(t('invites.userSetSuccess'));
   };
 

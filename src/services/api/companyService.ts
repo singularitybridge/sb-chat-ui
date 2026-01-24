@@ -37,16 +37,6 @@ export const updateCompany = async (company: Partial<ICompany>): Promise<ICompan
   }
 };
 
-export const refreshCompanyToken = async (): Promise<ICompany> => {
-  try {
-    const response = await apiClient.put('company/refresh-token');
-    return response.data;
-  } catch (error) {
-    console.error('Failed to refresh company token', error);
-    throw error;
-  }
-};
-
 export const updateCompanyInfo = async (companyInfo: {
   companyName: string;
   companyDescription: string;

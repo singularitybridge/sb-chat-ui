@@ -12,7 +12,7 @@ interface FileMessageProps {
 
 const FileMessage: React.FC<FileMessageProps> = ({
   fileMetadata,
-  content, // Not rendered separately anymore
+  content: _content, // Not rendered separately anymore
   role,
   createdAt,
 }) => {

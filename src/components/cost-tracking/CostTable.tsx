@@ -109,7 +109,7 @@ export const CostTable: React.FC<CostTableProps> = ({
     },
     {
       id: 'tokens',
-      header: ({ column }) => (
+      header: () => (
         <div className="flex items-center justify-end gap-2">
           <ArrowDownUp className="h-4 w-4" />
           Tokens

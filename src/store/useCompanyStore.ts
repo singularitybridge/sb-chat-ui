@@ -4,35 +4,28 @@ import {
   addCompany,
   updateCompany,
   deleteCompany,
-  refreshCompanyToken,
 } from '../services/api/companyService';
-import { ICompany, IApiKey, IToken, IIdentifier, CompanyKeys as CompanyKeyType } from '../types/entities';
+import { ICompany } from '../types/entities';
 import { logger } from '../services/LoggingService';
 
 // Re-export types for convenience
 export type Company = ICompany;
-export type ApiKey = IApiKey;
-export type Token = IToken;
-export type Identifier = IIdentifier;
 
 export const CompanyKeys = {
   name: 'name',
   description: 'description',
-  api_keys: 'api_keys',
-  identifiers: 'identifiers',
 } as const;
 
 interface CompanyStoreState {
   companies: Company[];
   companiesLoaded: boolean;
   isLoading: boolean;
-  
+
   // Actions
   loadCompanies: () => Promise<void>;
   addCompany: (companyData: Partial<Company>) => Promise<Company>;
   updateCompany: (companyId: string, updates: Partial<Company>) => Promise<void>;
   deleteCompany: (companyId: string) => Promise<void>;
-  refreshToken: (companyId: string) => Promise<void>;
   updateCompanyApiKey: (apiKey: string) => Promise<void>;
   
   // Getters
@@ -117,24 +110,7 @@ export const useCompanyStore = create<CompanyStoreState>((set, get) => ({
       throw error;
     }
   },
-  
-  refreshToken: async (companyId) => {
-    set({ isLoading: true });
-    try {
-      const updatedCompany = await refreshCompanyToken();
-      set(state => ({
-        companies: state.companies.map(c => 
-          c._id === companyId ? updatedCompany : c
-        ),
-        isLoading: false
-      }));
-    } catch (error) {
-      logger.error('Failed to refresh company token', error);
-      set({ isLoading: false });
-      throw error;
-    }
-  },
-  
+
   updateCompanyApiKey: async (apiKey) => {
     const activeCompany = get().activeCompany;
     if (!activeCompany) {

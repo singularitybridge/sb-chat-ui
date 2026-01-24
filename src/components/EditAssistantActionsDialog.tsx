@@ -56,7 +56,7 @@ const EditAssistantActionsDialog: React.FC<EditAssistantActionsDialogProps> = (
       } else {
         throw new Error('Assistant not found');
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error(t('assistantActions.saveError'));
     } finally {
       setIsLoading(false);

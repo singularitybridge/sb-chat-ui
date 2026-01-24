@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router';
-import { User, Laptop, Bot, RefreshCw, FileText, Trash2, PanelLeftClose, PanelLeft, Share2, FolderOpen, FolderClosed, Database, Sparkles, Monitor, ArrowLeft } from 'lucide-react';
+import { User, Bot, RefreshCw, FileText, Trash2, PanelLeftClose, PanelLeft, Share2, FolderOpen, FolderClosed, Database, Sparkles, Monitor, ArrowLeft } from 'lucide-react';
 import { useScreenShareStore } from '../store/useScreenShareStore';
 import { useChatStore } from '../store/chatStore';
 import { useSessionStore } from '../store/useSessionStore';
@@ -31,7 +31,7 @@ const ScreenShareWorkspace: React.FC = () => {
   const { assistantName } = useParams<{ assistantName: string }>();
   const location = useLocation();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t: _t } = useTranslation();
   const { getAssistantById } = useAssistantStore();
   const { userSessionInfo, isAuthenticated } = useAuthStore();
 
@@ -93,11 +93,11 @@ const ScreenShareWorkspace: React.FC = () => {
   const {
     setData: setWorkspaceData,
     getData: getWorkspaceData,
-    setLoading: setWorkspaceLoading,
-    setError: setWorkspaceError,
+    setLoading: _setWorkspaceLoading,
+    setError: _setWorkspaceError,
     subscribe: subscribeToWorkspaceData,
-    setContext: setWorkspaceContext,
-    getContext: getWorkspaceContext
+    setContext: _setWorkspaceContext,
+    getContext: _getWorkspaceContext
   } = useWorkspaceDataStore();
 
   // UI context tracking
@@ -344,7 +344,7 @@ const ScreenShareWorkspace: React.FC = () => {
             try {
               const parsed = JSON.parse(data.response);
               data = parsed; // Replace data with parsed object
-            } catch (e) {
+            } catch (_e) {
               // If parse fails, it's a plain text response
               return data.response;
             }
@@ -360,7 +360,7 @@ const ScreenShareWorkspace: React.FC = () => {
             try {
               const parsed = JSON.parse(data.message);
               data = parsed;
-            } catch (e) {
+            } catch (_e) {
               return data.message;
             }
           } else {
@@ -609,7 +609,7 @@ const ScreenShareWorkspace: React.FC = () => {
         const { key } = event.data.payload;
 
         // Subscribe to data changes and forward to iframe
-        const unsubscribe = subscribeToWorkspaceData(key, (dataState) => {
+        const _unsubscribe = subscribeToWorkspaceData(key, (dataState) => {
           if (event.source) {
             (event.source as Window).postMessage({
               type: 'workspace-data-changed',
@@ -848,7 +848,7 @@ const ScreenShareWorkspace: React.FC = () => {
   }, [assistantName, navigate]);
 
   // Handle file selection from explorer
-  const handleFileSelect = (path: string, content: string, type: string) => {
+  const handleFileSelect = (path: string, _content: string, _type: string) => {
     // Update URL to include file path
     if (assistantName) {
       navigate(`/admin/assistants/${assistantName}/workspace${path}`);

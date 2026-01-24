@@ -2,7 +2,6 @@
 import axios from 'axios';
 import { setupCache } from 'axios-cache-interceptor';
 import { getToken } from './api/authService';
-import { useEmbedAuth } from '../contexts/EmbedAuthContext'; // Import useEmbedAuth
 const apiUrl = import.meta.env.VITE_API_URL;
 
 // A way to access the EmbedAuthContext outside of a React component.

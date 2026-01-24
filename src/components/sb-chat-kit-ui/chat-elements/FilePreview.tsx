@@ -39,7 +39,7 @@ const FilePreview: React.FC<FilePreviewProps> = ({
           try {
             const thumbnail = await generateImageThumbnail(fileItem.file);
             newThumbnails[fileItem.id] = thumbnail;
-          } catch (error) {
+          } catch (_error) {
             console.warn('Failed to generate thumbnail for', fileItem.file.name);
             newThumbnails[fileItem.id] = createPreviewUrl(fileItem.file);
           }

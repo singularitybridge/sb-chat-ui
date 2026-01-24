@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { getCompletion } from '../services/api/assistantService';
 import { uploadContentFile } from '../services/api/contentFileService';
 import { getToken } from '../services/api/authService';
 

@@ -258,7 +258,7 @@ export const searchWorkspaceItems = async (
             agentId,
             agentName: undefined, // Will be populated by caller if needed
           };
-        } catch (error) {
+        } catch (_error) {
           return {
             path,
             metadata: {},

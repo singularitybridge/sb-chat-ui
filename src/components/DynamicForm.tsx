@@ -2,10 +2,8 @@ import React, { useEffect, useState } from 'react';
 import InputWithLabel from './sb-core-ui-kit/InputWithLabel';
 import { TextareaWithLabel } from './sb-core-ui-kit/TextareaWithLabel';
 import { KeyValue, KeyValueList } from './sb-core-ui-kit/KeyValueList';
-import { ApiKey, ApiKeyList } from './ApiKeyList';
 import LoadingButton from './core/LoadingButton';
 import { AssistantKeys, CompanyKeys, UserKeys, TeamKeys } from '../types/entities';
-import TokenInput from './admin/TokenInput';
 import { useTranslation } from 'react-i18next';
 import { useAIAssistedStore } from '../store/useAIAssistedStore';
 import { AIAssistedTextareaContainer } from './sb-core-ui-kit/AIAssistedTextareaContainer';
@@ -17,8 +15,6 @@ export type FieldType =
   | 'textarea'
   | 'key-value-list'
   | 'verified-input'
-  | 'api-key-list'
-  | 'token-input'
   | 'dropdown'
   | 'tags'
   | 'number';
@@ -54,19 +50,9 @@ export interface TextareaFieldConfig extends BaseFieldConfig {
   value: string;
 }
 
-export interface ApiKeysListFieldConfig extends BaseFieldConfig {
-  type: 'api-key-list';
-  value: ApiKey[];
-}
-
 export interface KeyValueListFieldConfig extends BaseFieldConfig {
   type: 'key-value-list';
   value: KeyValue[];
-}
-
-export interface TokenInputFieldConfig extends BaseFieldConfig {
-  type: 'token-input';
-  value: string;
 }
 
 export interface DropdownFieldConfig extends BaseFieldConfig {
@@ -92,19 +78,15 @@ export type FieldConfig =
   | InputFieldConfig
   | TextareaFieldConfig
   | KeyValueListFieldConfig
-  | ApiKeysListFieldConfig
-  | TokenInputFieldConfig
   | DropdownFieldConfig
   | TagsFieldConfig
   | NumberFieldConfig;
 
-export type FormValues = Record<string, string | number | KeyValue[] | ApiKey[] | string[]>;
+export type FormValues = Record<string, string | number | KeyValue[] | string[]>;
 
 export interface DynamicFormProps {
   fields: FieldConfig[];
   onSubmit: (values: FormValues) => void;
-  refreshToken?: (values: FormValues) => void;
-  onVerify?: (value: string) => Promise<boolean>;
   isLoading?: boolean;
   formType: 'create' | 'update';
   formContext?: string;
@@ -117,8 +99,6 @@ export interface DynamicFormProps {
 const DynamicForm: React.FC<DynamicFormProps> = ({
   fields,
   onSubmit,
-  onVerify,
-  refreshToken,
   isLoading,
   formType,
   formContext = 'common',
@@ -150,13 +130,9 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     setValues(initialValues);
   }, [fields, formType]);
 
-  const handleRefreshToken = () => {
-    if (refreshToken) refreshToken(values);
-  };
-
   const handleChange = (
     id: string,
-    newValue: string | number | KeyValue[] | ApiKey[] | string[]
+    newValue: string | number | KeyValue[] | string[]
   ) => {
     setValues((prevValues) => {
       const newValues = { ...prevValues, [id]: newValue };
@@ -228,18 +204,6 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                 onChange={(newValue) => handleChange(field.id, newValue)}
               />
             );
-          case 'api-key-list':
-            return (
-              <ApiKeyList
-                key={field.id}
-                title={t(`${formContext}.APIKeys.title`)}
-                description={t(`${formContext}.APIKeys.description`)}
-                initialData={values[field.id] as ApiKey[]}
-                allApiKeysConfig={(field as ApiKeysListFieldConfig).value} // Pass the config for all API keys
-                onVerify={onVerify || (() => Promise.resolve(true))}
-                onDataChange={(newValue) => handleChange(field.id, newValue)}
-              />
-            );
           case 'key-value-list':
             return (
               <KeyValueList
@@ -248,22 +212,6 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                 description={t(`${formContext}.identifiers.description`)}
                 initialData={(values[field.id] as KeyValue[]) || []}
                 onDataChange={(newValue) => handleChange(field.id, newValue)}
-              />
-            );
-          case 'token-input':
-            return (
-              <TokenInput
-                key={field.id}
-                label={t(labelKey)}
-                id={field.id}
-                type="password"
-                value={values[field.id] as string}
-                onChange={(newValue: string) =>
-                  handleChange(field.id, newValue)
-                }
-                onRefresh={() => {
-                  handleRefreshToken();
-                }}
               />
             );
           case 'dropdown': {

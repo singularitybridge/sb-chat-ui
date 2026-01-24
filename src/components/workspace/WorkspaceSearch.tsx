@@ -43,7 +43,7 @@ const injectWorkspaceAPI = (html: string): string => {
  */
 export const WorkspaceSearch: React.FC<WorkspaceSearchProps> = ({
   assistantId = 'integration-expert',
-  sessionId,
+  sessionId: _sessionId,
   saveToPath,
   autoSave = false,
 }) => {

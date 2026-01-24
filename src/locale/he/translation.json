@@ -11,7 +11,26 @@
     "Actions": "פעולות",
     "Home": "בית",
     "Memory": "זיכרון",
-    "ApiKeys": "מפתחות API"
+    "ApiKeys": "מפתחות API",
+    "Integrations": "אינטגרציות"
+  },
+  "integrations": {
+    "title": "אינטגרציות",
+    "subtitle": "הגדר מפתחות API והגדרות עבור האינטגרציות שלך",
+    "search": "חפש אינטגרציות...",
+    "allCategories": "כל הקטגוריות",
+    "noResults": "לא נמצאו אינטגרציות",
+    "clearSearch": "נסה לנקות את החיפוש או לשנות מסננים",
+    "configured": "מוגדר",
+    "needsSetup": "דורש הגדרה",
+    "apiKeys": "מפתחות API",
+    "alreadySet": "כבר מוגדר",
+    "enterNewValue": "הזן ערך חדש לעדכון",
+    "availableActions": "פעולות זמינות",
+    "noConfigRequired": "אינטגרציה זו אינה דורשת הגדרות.",
+    "removeConfig": "הסר הגדרות",
+    "deleteConfirmTitle": "הסר הגדרות אינטגרציה",
+    "deleteConfirmMessage": "פעולה זו תסיר את כל מפתחות ה-API וההגדרות עבור אינטגרציה זו. פעולות המשתמשות באינטגרציה זו יפסיקו לעבוד עד להגדרה מחדש."
   },
   "DynamicCodeRenderer": {
     "title": "בדיקה - עורך קנבס",

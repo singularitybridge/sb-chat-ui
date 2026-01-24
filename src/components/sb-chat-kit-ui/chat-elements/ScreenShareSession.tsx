@@ -6,10 +6,10 @@ interface ScreenShareSessionProps {
   onScreenCapture?: (blob: Blob, analysis?: any) => void;
 }
 
-export const ScreenShareSession: React.FC<ScreenShareSessionProps> = ({ onScreenCapture }) => {
+export const ScreenShareSession: React.FC<ScreenShareSessionProps> = ({ onScreenCapture: _onScreenCapture }) => {
   const {
     isActive,
-    status,
+    status: _status,
     startSession,
     stopSession
   } = useScreenShareStore();

@@ -129,7 +129,6 @@ export async function handleUserInputStream(
   onChunk: (payload: StreamPayload) => void,
   abortSignal?: AbortSignal,
 ): Promise<void> {
-  let doneTimer: NodeJS.Timeout | undefined;
   try {
     const headers: HeadersInit = {
       'Content-Type': 'application/json',

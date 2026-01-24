@@ -16,13 +16,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '../ui/sheet';
-import { useIsMobile } from '../../hooks/useMediaQuery';
-
 export const Menu: React.FC = () => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const isMobile = useIsMobile();
   const menuItems = [
     { name: 'Agents', link: '/admin/assistants' },
+    { name: 'Integrations', link: '/admin/integrations' },
     { name: 'Teams', link: '/admin/teams' },
     { name: 'ApiKeys', link: '/admin/api-keys' },
     { name: 'Costs', link: '/admin/costs' },

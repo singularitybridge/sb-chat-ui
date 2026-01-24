@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Bot, DollarSign, BarChart3, Zap, TrendingUp } from 'lucide-react';
+import { Bot, DollarSign, BarChart3 } from 'lucide-react';
 import { CostSummary, CostRecord } from '../../types/costTracking';
 import { formatCost, formatDuration } from '../../services/api/costTrackingService';
 

@@ -46,7 +46,7 @@ export const DataList: React.FC<ListComponentProps> = ({
   const items = getArray();
 
   // Default item renderer
-  const defaultRenderItem = (item: any, index: number) => {
+  const defaultRenderItem = (item: any, _index: number) => {
     if (typeof item === 'string') {
       return <div className="text-foreground">{item}</div>;
     }

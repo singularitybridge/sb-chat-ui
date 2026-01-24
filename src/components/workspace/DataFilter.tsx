@@ -37,7 +37,7 @@ export const DataFilter: React.FC<DataFilterProps> = ({
 }) => {
   // Use Zustand hook for reactive data binding (cleaner than manual subscriptions)
   const { data: inputData, loading: inputLoading, error: inputError } = useWorkspaceData(dataKey);
-  const { setData, setLoading, setError } = useWorkspaceDataStore();
+  const { setData, setLoading: _setLoading, setError } = useWorkspaceDataStore();
 
   const [isFiltering, setIsFiltering] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);

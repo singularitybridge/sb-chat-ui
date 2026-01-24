@@ -24,7 +24,6 @@ const WorkspaceEmbedDialog: React.FC<WorkspaceEmbedDialogProps> = ({
   const [embedPreviewUrl, setEmbedPreviewUrl] = useState('');
 
   const baseUrl = window.location.origin;
-  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
   const userToken = getToken();
 
   // For demo purposes, we'll use the user's current token

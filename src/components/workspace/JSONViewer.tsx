@@ -10,7 +10,7 @@ export const JSONViewer: React.FC<JSONViewerProps> = ({ content }) => {
       // Try to parse and format JSON
       const obj = JSON.parse(json);
       json = JSON.stringify(obj, null, 2);
-    } catch (e) {
+    } catch (_e) {
       // If parsing fails, use original content
     }
 

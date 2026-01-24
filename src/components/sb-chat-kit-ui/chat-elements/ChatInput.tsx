@@ -21,10 +21,10 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
   const [message, setMessage] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<FilePreviewItem[]>([]);
-  const [uploadProgress, setUploadProgress] = useState<{[key: string]: number}>({});
+  const [_uploadProgress, setUploadProgress] = useState<{[key: string]: number}>({});
   const [uploadErrors, setUploadErrors] = useState<{[key: string]: string}>({});
   const [isDragging, setIsDragging] = useState(false);
-  const [dragCounter, setDragCounter] = useState(0);
+  const [_dragCounter, setDragCounter] = useState(0);
   const { t } = useTranslation();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -217,7 +217,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
     }
   };
 
-  const handleScreenCapture = async (blob: Blob, metadata?: any) => {
+  const _handleScreenCapture = async (blob: Blob, _metadata?: any) => {
     // Create a File from the Blob with session ID
     const fileName = screenShareSessionId 
       ? `${screenShareSessionId}-screenshare.png`
@@ -251,7 +251,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
         }
       }
       
-      const message = `Screen capture #${metadata?.captureNumber || 1} at ${new Date().toLocaleTimeString()}`;
+      const message = `Screen capture #${_metadata?.captureNumber || 1} at ${new Date().toLocaleTimeString()}`;
       
       // Sending screen capture message with attachment
       onSendMessage(message, [attachment]);

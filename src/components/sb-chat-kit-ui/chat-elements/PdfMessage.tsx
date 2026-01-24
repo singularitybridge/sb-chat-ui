@@ -12,7 +12,7 @@ interface PdfMessageProps {
 
 const PdfMessage: React.FC<PdfMessageProps> = ({
   fileMetadata,
-  content, // Not rendered separately anymore
+  content: _content, // Not rendered separately anymore
   role,
   createdAt,
 }) => {

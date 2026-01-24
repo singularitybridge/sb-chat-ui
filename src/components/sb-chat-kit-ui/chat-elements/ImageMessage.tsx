@@ -1,14 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
-  ArrowDownTrayIcon,
-  MagnifyingGlassIcon,
-  XMarkIcon,
   UserIcon,
 } from '@heroicons/react/24/outline';
 import Lightbox from 'yet-another-react-lightbox';
 import 'yet-another-react-lightbox/styles.css';
 import Download from 'yet-another-react-lightbox/plugins/download'; // Corrected quotes
-import { formatFileSize } from '../../../utils/fileUtils';
 import { FileMetadata } from '../../../types/chat';
 import { MessageWrapper } from './MessageWrapper'; // Import MessageWrapper
 import { formatRelativeTime } from '../../../utils/dateUtils'; // For timestamp
@@ -62,9 +58,9 @@ const ImageMessage: React.FC<ImageMessageProps> = ({
     setHasError(true);
   };
 
-  // Note: handleDownload is not used by the simplified preview, but kept for lightbox if needed by older plugin versions or direct calls.
+  // Note: _handleDownload is not used by the simplified preview, but kept for lightbox if needed by older plugin versions or direct calls.
   // The current lightbox download uses saveAs.
-  const handleDownload = () => {
+  const _handleDownload = () => {
     if (fileMetadata.url || fileMetadata.gcpStorageUrl) {
       const link = document.createElement('a');
       link.href = fileMetadata.url || fileMetadata.gcpStorageUrl || '';

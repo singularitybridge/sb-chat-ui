@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { Send, RefreshCw, Sparkles } from 'lucide-react';
+import { Send, RefreshCw } from 'lucide-react';
 import { InputComponentProps } from './types';
 import { useWorkspaceDataStore } from '../../store/useWorkspaceDataStore';
 import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
 
 /**
  * UserInput - Interactive input component that executes AI agents

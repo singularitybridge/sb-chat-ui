@@ -542,7 +542,7 @@ done`;
                     setTestResult(`✗ Stream error: ${data.message || 'Unknown error'}\n\n${fullMessage}`);
                     break;
                   }
-                } catch (e) {
+                } catch (_e) {
                   // Skip invalid JSON lines
                   console.debug('Skipping invalid SSE line:', line);
                   continue;
@@ -560,7 +560,7 @@ done`;
                 fullMessage += data.value;
                 setTestResult(`✓ Stream completed\n\n${fullMessage}`);
               }
-            } catch (e) {
+            } catch (_e) {
               // Ignore
             }
           }

@@ -13,7 +13,7 @@ interface CodeBlockProps {
 export const CodeBlock: React.FC<CodeBlockProps> = ({
   children,
   syntax = '',
-  showLineNumbers = false
+  showLineNumbers: _showLineNumbers = false
 }) => {
   return (
     <div className="relative my-4">

@@ -10,12 +10,13 @@ import { CompaniesPage } from './pages/admin/CompaniesPage';
 import { CostsPage } from './pages/admin/CostsPage';
 import { UsersPage } from './pages/admin/UsersPage';
 import { InboxPage } from './pages/admin/inbox/InboxPage';
-import { EditCompanyPage } from './pages/admin/EditCompanyPage';
 import { CompanyAdminPage } from './pages/admin/CompanyAdminPage';
 import { TeamsPage } from './pages/admin/TeamsPage';
 import { EditTeamPage } from './pages/admin/EditTeamPage';
 import { MemoryPage } from './pages/admin/MemoryPage'; // Added import for MemoryPage
 import { ApiKeysPage } from './pages/admin/ApiKeysPage';
+import { IntegrationsPage } from './pages/admin/IntegrationsPage';
+import { IntegrationDetailPage } from './pages/admin/IntegrationDetailPage';
 import { SignupPage } from './pages/SignupPage';
 import { ChatKitTestPage } from './pages/test/ChatKitTestPage';
 import { UIKitTestPage } from './pages/test/UIKitTestPage';
@@ -144,6 +145,14 @@ export const browserRouter = createBrowserRouter(
           {
             path: 'api-keys',
             element: <ApiKeysPage />,
+          },
+          {
+            path: 'integrations',
+            element: <IntegrationsPage />,
+          },
+          {
+            path: 'integrations/:id',
+            element: <IntegrationDetailPage />,
           },
         ],
       },

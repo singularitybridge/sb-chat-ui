@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IAssistant } from '../types/entities';
 import { useFuzzySearch } from '../hooks/useFuzzySearch';
@@ -121,7 +121,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         </CommandGroup>
 
         {/* Disabled Groups */}
-        {commandGroups.slice(1).map((group, index) => (
+        {commandGroups.slice(1).map((group) => (
           <React.Fragment key={group.id}>
             <CommandSeparator />
             <CommandGroup heading={group.label}>

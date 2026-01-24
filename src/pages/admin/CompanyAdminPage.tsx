@@ -130,12 +130,7 @@ const CompanyAdminPage: React.FC = () => {
           {/* Content */}
           <div className="bg-card rounded-lg border border-border h-full flex flex-col overflow-hidden">
             {activeSection === 'details' && (
-              <CompanyDetailsSection
-                company={company}
-                onUpdate={fetchCompany}
-                isLoading={isLoading}
-                setIsLoading={setIsLoading}
-              />
+              <CompanyDetailsSection company={company} />
             )}
             {activeSection === 'users-invites' && (
               <div className="p-6">

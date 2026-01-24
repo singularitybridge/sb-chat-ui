@@ -127,7 +127,7 @@ export const CostTrackingDashboard: React.FC<CostTrackingDashboardProps> = ({
       window.URL.revokeObjectURL(url);
 
       toast.success(t('costTracking.exportSuccess'));
-    } catch (err) {
+    } catch (_err) {
       toast.error(t('costTracking.exportError'));
     }
   };

@@ -6,13 +6,8 @@ import {
   getCostsByAssistant,
   getCostsByModel
 } from '../services/api/costTrackingService';
-import {
-  CostSummary,
-  CostRecord,
-  DailyCost,
-  CostFilters,
-  AssistantCostData,
-  ModelCostData
+import type {
+  CostFilters
 } from '../types/costTracking';
 
 // Query keys for cache management

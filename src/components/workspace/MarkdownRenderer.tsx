@@ -313,7 +313,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
             // Convert string onclick to function (check both camelCase and lowercase)
             const onclickStr = onclick || onClick;
             const handleClick = (typeof onclickStr === 'string')
-              ? (e: React.MouseEvent<HTMLButtonElement>) => {
+              ? (_e: React.MouseEvent<HTMLButtonElement>) => {
                   try {
                     // Execute the onclick string as JavaScript
                      
@@ -339,7 +339,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
             const handleMouseOver = (typeof onmouseoverStr === 'string')
               ? (e: React.MouseEvent<HTMLButtonElement>) => {
                   try {
-                     
+
                     const fn = new Function('event', onmouseoverStr);
                     fn.call(e.currentTarget, e);
                   } catch (error) {
@@ -355,7 +355,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
             const handleMouseOut = (typeof onmouseoutStr === 'string')
               ? (e: React.MouseEvent<HTMLButtonElement>) => {
                   try {
-                     
+
                     const fn = new Function('event', onmouseoutStr);
                     fn.call(e.currentTarget, e);
                   } catch (error) {
@@ -388,151 +388,151 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
             // rehypeRaw converts camelCase to kebab-case, not lowercase
             const dataKey = props['data-key'] || props.dataKey || props.datakey;
             const agentName = props['agent-name'] || props.agentName || props.agentname;
-            const { 'data-key': _, 'agent-name': __, datakey, agentname, ...rest } = props;
+            const { 'data-key': _, 'agent-name': __, datakey: _datakey, agentname: _agentname, ...rest } = props;
             return <UserInput {...rest} dataKey={dataKey} agentName={agentName} />;
           },
           userinput: (props: any) => {
             // rehypeRaw converts camelCase to kebab-case, not lowercase
             const dataKey = props['data-key'] || props.dataKey || props.datakey;
             const agentName = props['agent-name'] || props.agentName || props.agentname;
-            const { 'data-key': _, 'agent-name': __, datakey, agentname, ...rest } = props;
+            const { 'data-key': _, 'agent-name': __, datakey: _datakey, agentname: _agentname, ...rest } = props;
             return <UserInput {...rest} dataKey={dataKey} agentName={agentName} />;
           },
           AgentExecute: (props: any) => {
             const dataKey = props['data-key'] || props.dataKey || props.datakey;
             const agentName = props['agent-name'] || props.agentName || props.agentname;
-            const { 'data-key': _, 'agent-name': __, datakey, agentname, ...rest } = props;
+            const { 'data-key': _, 'agent-name': __, datakey: _datakey, agentname: _agentname, ...rest } = props;
             return <AgentExecute {...rest} dataKey={dataKey} agentName={agentName} />;
           },
           agentexecute: (props: any) => {
             const dataKey = props['data-key'] || props.dataKey || props.datakey;
             const agentName = props['agent-name'] || props.agentName || props.agentname;
-            const { 'data-key': _, 'agent-name': __, datakey, agentname, ...rest } = props;
+            const { 'data-key': _, 'agent-name': __, datakey: _datakey, agentname: _agentname, ...rest } = props;
             return <AgentExecute {...rest} dataKey={dataKey} agentName={agentName} />;
           },
           AgentExecuteButton: (props: any) => {
             const dataKey = props['data-key'] || props.dataKey || props.datakey;
             const agentName = props['agent-name'] || props.agentName || props.agentname;
             const buttonText = props['button-text'] || props.buttonText || props.buttontext;
-            const { 'data-key': _, 'agent-name': __, 'button-text': ___, datakey, agentname, buttontext, ...rest } = props;
+            const { 'data-key': _, 'agent-name': __, 'button-text': ___, datakey: _datakey, agentname: _agentname, buttontext: _buttontext, ...rest } = props;
             return <AgentExecuteButton {...rest} dataKey={dataKey} agentName={agentName} buttonText={buttonText} />;
           },
           agentexecutebutton: (props: any) => {
             const dataKey = props['data-key'] || props.dataKey || props.datakey;
             const agentName = props['agent-name'] || props.agentName || props.agentname;
             const buttonText = props['button-text'] || props.buttonText || props.buttontext;
-            const { 'data-key': _, 'agent-name': __, 'button-text': ___, datakey, agentname, buttontext, ...rest } = props;
+            const { 'data-key': _, 'agent-name': __, 'button-text': ___, datakey: _datakey, agentname: _agentname, buttontext: _buttontext, ...rest } = props;
             return <AgentExecuteButton {...rest} dataKey={dataKey} agentName={agentName} buttonText={buttonText} />;
           },
           // Reactive display components
           TextDisplay: (props: any) => {
             const dataKey = props['data-key'] || props.dataKey || props.datakey;
-            const { 'data-key': _, datakey, ...rest } = props;
+            const { 'data-key': _, datakey: _datakey, ...rest } = props;
             return <TextDisplay {...rest} dataKey={dataKey} />;
           },
           textdisplay: (props: any) => {
             const dataKey = props['data-key'] || props.dataKey || props.datakey;
-            const { 'data-key': _, datakey, ...rest } = props;
+            const { 'data-key': _, datakey: _datakey, ...rest } = props;
             return <TextDisplay {...rest} dataKey={dataKey} />;
           },
           JsonDisplay: (props: any) => {
             const dataKey = props['data-key'] || props.dataKey || props.datakey;
-            const { 'data-key': _, datakey, ...rest } = props;
+            const { 'data-key': _, datakey: _datakey, ...rest } = props;
             return <JsonDisplay {...rest} dataKey={dataKey} />;
           },
           jsondisplay: (props: any) => {
             const dataKey = props['data-key'] || props.dataKey || props.datakey;
-            const { 'data-key': _, datakey, ...rest } = props;
+            const { 'data-key': _, datakey: _datakey, ...rest } = props;
             return <JsonDisplay {...rest} dataKey={dataKey} />;
           },
           StreamingText: (props: any) => {
             const dataKey = props['data-key'] || props.dataKey || props.datakey;
-            const { 'data-key': _, datakey, ...rest } = props;
+            const { 'data-key': _, datakey: _datakey, ...rest } = props;
             return <StreamingText {...rest} dataKey={dataKey} />;
           },
           streamingtext: (props: any) => {
             const dataKey = props['data-key'] || props.dataKey || props.datakey;
-            const { 'data-key': _, datakey, ...rest } = props;
+            const { 'data-key': _, datakey: _datakey, ...rest } = props;
             return <StreamingText {...rest} dataKey={dataKey} />;
           },
           MarkdownDisplay: (props: any) => {
             const dataKey = props['data-key'] || props.dataKey || props.datakey;
             const showLoading = props['show-loading'] || props.showLoading || props.showloading;
-            const { 'data-key': _, 'show-loading': __, datakey, showloading, ...rest } = props;
+            const { 'data-key': _, 'show-loading': __, datakey: _datakey, showloading: _showloading, ...rest } = props;
             return <MarkdownDisplay {...rest} dataKey={dataKey} showLoading={showLoading} />;
           },
           markdowndisplay: (props: any) => {
             const dataKey = props['data-key'] || props.dataKey || props.datakey;
             const showLoading = props['show-loading'] || props.showLoading || props.showloading;
-            const { 'data-key': _, 'show-loading': __, datakey, showloading, ...rest } = props;
+            const { 'data-key': _, 'show-loading': __, datakey: _datakey, showloading: _showloading, ...rest } = props;
             return <MarkdownDisplay {...rest} dataKey={dataKey} showLoading={showLoading} />;
           },
           // Reactive processing components
           DataProcessor: (props: any) => {
             const dataKey = props['data-key'] || props.dataKey || props.datakey;
             const sourceKey = props['source-key'] || props.sourceKey || props.sourcekey;
-            const { 'data-key': _, 'source-key': __, datakey, sourcekey, ...rest } = props;
+            const { 'data-key': _, 'source-key': __, datakey: _datakey, sourcekey: _sourcekey, ...rest } = props;
             return <DataProcessor {...rest} dataKey={dataKey} sourceKey={sourceKey} />;
           },
           dataprocessor: (props: any) => {
             const dataKey = props['data-key'] || props.dataKey || props.datakey;
             const sourceKey = props['source-key'] || props.sourceKey || props.sourcekey;
-            const { 'data-key': _, 'source-key': __, datakey, sourcekey, ...rest } = props;
+            const { 'data-key': _, 'source-key': __, datakey: _datakey, sourcekey: _sourcekey, ...rest } = props;
             return <DataProcessor {...rest} dataKey={dataKey} sourceKey={sourceKey} />;
           },
           JsonParser: (props: any) => {
             const dataKey = props['data-key'] || props.dataKey || props.datakey;
             const sourceKey = props['source-key'] || props.sourceKey || props.sourcekey;
-            const { 'data-key': _, 'source-key': __, datakey, sourcekey, ...rest } = props;
+            const { 'data-key': _, 'source-key': __, datakey: _datakey, sourcekey: _sourcekey, ...rest } = props;
             return <JsonParser {...rest} dataKey={dataKey} sourceKey={sourceKey} />;
           },
           jsonparser: (props: any) => {
             const dataKey = props['data-key'] || props.dataKey || props.datakey;
             const sourceKey = props['source-key'] || props.sourceKey || props.sourcekey;
-            const { 'data-key': _, 'source-key': __, datakey, sourcekey, ...rest } = props;
+            const { 'data-key': _, 'source-key': __, datakey: _datakey, sourcekey: _sourcekey, ...rest } = props;
             return <JsonParser {...rest} dataKey={dataKey} sourceKey={sourceKey} />;
           },
           DataFilter: (props: any) => {
             const dataKey = props['data-key'] || props.dataKey || props.datakey;
             const sourceKey = props['source-key'] || props.sourceKey || props.sourcekey;
-            const { 'data-key': _, 'source-key': __, datakey, sourcekey, ...rest } = props;
+            const { 'data-key': _, 'source-key': __, datakey: _datakey, sourcekey: _sourcekey, ...rest } = props;
             return <DataFilter {...rest} dataKey={dataKey} sourceKey={sourceKey} />;
           },
           datafilter: (props: any) => {
             const dataKey = props['data-key'] || props.dataKey || props.datakey;
             const sourceKey = props['source-key'] || props.sourceKey || props.sourcekey;
-            const { 'data-key': _, 'source-key': __, datakey, sourcekey, ...rest } = props;
+            const { 'data-key': _, 'source-key': __, datakey: _datakey, sourcekey: _sourcekey, ...rest } = props;
             return <DataFilter {...rest} dataKey={dataKey} sourceKey={sourceKey} />;
           },
           // Reactive list/table components
           DataList: (props: any) => {
             const dataKey = props['data-key'] || props.dataKey || props.datakey;
-            const { 'data-key': _, datakey, ...rest } = props;
+            const { 'data-key': _, datakey: _datakey, ...rest } = props;
             return <DataList {...rest} dataKey={dataKey} />;
           },
           datalist: (props: any) => {
             const dataKey = props['data-key'] || props.dataKey || props.datakey;
-            const { 'data-key': _, datakey, ...rest } = props;
+            const { 'data-key': _, datakey: _datakey, ...rest } = props;
             return <DataList {...rest} dataKey={dataKey} />;
           },
           DataTable: (props: any) => {
             const dataKey = props['data-key'] || props.dataKey || props.datakey;
-            const { 'data-key': _, datakey, ...rest } = props;
+            const { 'data-key': _, datakey: _datakey, ...rest } = props;
             return <DataTable {...rest} dataKey={dataKey} />;
           },
           datatable: (props: any) => {
             const dataKey = props['data-key'] || props.dataKey || props.datakey;
-            const { 'data-key': _, datakey, ...rest } = props;
+            const { 'data-key': _, datakey: _datakey, ...rest } = props;
             return <DataTable {...rest} dataKey={dataKey} />;
           },
           ProductList: (props: any) => {
             const dataKey = props['data-key'] || props.dataKey || props.datakey;
-            const { 'data-key': _, datakey, ...rest } = props;
+            const { 'data-key': _, datakey: _datakey, ...rest } = props;
             return <ProductList {...rest} dataKey={dataKey} />;
           },
           productlist: (props: any) => {
             const dataKey = props['data-key'] || props.dataKey || props.datakey;
-            const { 'data-key': _, datakey, ...rest } = props;
+            const { 'data-key': _, datakey: _datakey, ...rest } = props;
             return <ProductList {...rest} dataKey={dataKey} />;
           },
           // Utility components

@@ -11,7 +11,26 @@
     "Actions": "Actions",
     "Home": "Home",
     "Memory": "Memory",
-    "ApiKeys": "API Keys"
+    "ApiKeys": "API Keys",
+    "Integrations": "Integrations"
+  },
+  "integrations": {
+    "title": "Integrations",
+    "subtitle": "Configure API keys and settings for your integrations",
+    "search": "Search integrations...",
+    "allCategories": "All Categories",
+    "noResults": "No integrations found",
+    "clearSearch": "Try clearing your search or changing filters",
+    "configured": "Configured",
+    "needsSetup": "Needs setup",
+    "apiKeys": "API Keys",
+    "alreadySet": "Already set",
+    "enterNewValue": "Enter new value to update",
+    "availableActions": "Available actions",
+    "noConfigRequired": "This integration does not require any configuration.",
+    "removeConfig": "Remove Configuration",
+    "deleteConfirmTitle": "Remove Integration Configuration",
+    "deleteConfirmMessage": "This will remove all API keys and settings for this integration. Actions using this integration will stop working until reconfigured."
   },
   "DynamicCodeRenderer": {
     "title": "Test - Canvas Editor",

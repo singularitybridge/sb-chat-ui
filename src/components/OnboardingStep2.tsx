@@ -34,7 +34,7 @@ const OnboardingStep2: React.FC<OnboardingStep2Props> = ({
         setButtonState('error');
         setErrorMessage(t('Onboarding.apiKeyInvalid'));
       }
-    } catch (error) {
+    } catch (_error) {
       setButtonState('error');
       setErrorMessage(t('Onboarding.apiKeyVerificationError'));
     }

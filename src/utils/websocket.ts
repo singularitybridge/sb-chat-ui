@@ -11,13 +11,13 @@ import { logger } from '../services/LoggingService';
 
 let ws: WebSocket | null = null;
 let reconnectTimer: NodeJS.Timeout | null = null;
-const RECONNECT_DELAY = 5000; // 5 seconds
+const _RECONNECT_DELAY = 5000; // 5 seconds - TODO: use in Phase 2 reconnect logic
 
 /**
  * Initialize WebSocket connection
  * Currently a stub - will be fully implemented in Phase 2
  */
-export const initializeWebSocket = (token: string): void => {
+export const initializeWebSocket = (_token: string): void => {
   logger.info('[WebSocket] Initialize called (Phase 1 stub)');
 
   // Phase 1: No-op stub

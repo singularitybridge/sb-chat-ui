@@ -14,15 +14,10 @@ import { Button } from '../../../components/ui/button';
 
 interface CompanyDetailsSectionProps {
   company: ICompany;
-  onUpdate: () => Promise<void>;
-  isLoading: boolean;
-  setIsLoading: (loading: boolean) => void;
 }
 
-const CompanyDetailsSection: React.FC<CompanyDetailsSectionProps> = (
-  { company, onUpdate, isLoading, setIsLoading }
-) => {
-  const { updateCompany, refreshToken, getCompanyById } = useCompanyStore();
+const CompanyDetailsSection: React.FC<CompanyDetailsSectionProps> = ({ company }) => {
+  const { updateCompany } = useCompanyStore();
   const { t } = useTranslation();
   const [isSaving, setIsSaving] = useState(false);
   const formId = useId();
@@ -30,26 +25,9 @@ const CompanyDetailsSection: React.FC<CompanyDetailsSectionProps> = (
   const formFields: FieldConfig[] = useMemo(() => {
     return companyFieldConfigs.map((config) => {
       const fieldKeyString = String(config.key);
-      let fieldValue;
-
-      if (config.id === 'api_keys') {
-        const companyApiKeys = company ? company.api_keys || [] : [];
-        const companyApiKeysMap = new Map(
-          companyApiKeys.map((k) => [k.key, k.value])
-        );
-
-        fieldValue = (config.value as { key: string; value: string }[]).map(
-          (defaultApiKey) => ({
-            ...defaultApiKey,
-            value:
-              companyApiKeysMap.get(defaultApiKey.key) || defaultApiKey.value,
-          })
-        );
-      } else {
-        fieldValue = company
-          ? (company as any)[fieldKeyString]
-          : config.value;
-      }
+      const fieldValue = company
+        ? (company as any)[fieldKeyString]
+        : config.value;
 
       return {
         ...config,
@@ -78,21 +56,6 @@ const CompanyDetailsSection: React.FC<CompanyDetailsSectionProps> = (
     }
   };
 
-  const handleRefreshToken = async () => {
-    setIsLoading(true);
-    try {
-      await refreshToken(company._id);
-      const updatedCompany = getCompanyById(company._id);
-      if (updatedCompany?.token?.value) {
-        localStorage.setItem('userToken', updatedCompany.token.value);
-        await onUpdate();
-      }
-    } catch (error) {
-      console.error('Failed to refresh token:', error);
-    }
-    setIsLoading(false);
-  };
-
   return (
     <div className="flex flex-col h-full">
       {/* Sticky Header */}
@@ -113,7 +76,6 @@ const CompanyDetailsSection: React.FC<CompanyDetailsSectionProps> = (
             fields={formFields}
             formContext="EditCompanyPage"
             onSubmit={handleSubmit}
-            refreshToken={handleRefreshToken}
             isLoading={isSaving}
             formType="update"
             hideSubmitButton={true}

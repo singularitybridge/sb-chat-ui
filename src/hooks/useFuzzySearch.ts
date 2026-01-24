@@ -11,7 +11,7 @@ export const useFuzzySearch = (
   items: IAssistant[],
   options: UseFuzzySearchOptions = {}
 ) => {
-  const { threshold = 0.3, keys = ['name', 'description', 'llmModel'] } = options;
+  const { threshold = 0.3, keys: _keys = ['name', 'description', 'llmModel'] } = options;
   const [searchQuery, setSearchQuery] = useState('');
 
   // Create Fuse instance with memoization

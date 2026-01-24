@@ -13,7 +13,7 @@ const MDXRenderer: React.FC<MDXRendererProps> = ({ content, className = '' }) =>
     <div className={`prose prose-invert max-w-none ${className}`}>
       <ReactMarkdown
         components={{
-          code({ node, className, children, ...props }: any) {
+          code({ node: _node, className, children, ...props }: any) {
             const inline = !className;
             const match = /language-(\w+)/.exec(className || '');
             return !inline && match ? (

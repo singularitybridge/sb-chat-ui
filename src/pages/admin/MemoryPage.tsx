@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { BookText, Search, Filter, Loader2, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { BookText, Filter, Loader2, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
 // import { useNavigate } from 'react-router'; // Not used currently
@@ -23,7 +23,7 @@ const MemoryPage: React.FC = () => {
   const { isUserDataLoaded } = useAuthStore(); 
   
   // const navigate = useNavigate(); // Keep for future actions
-  const [hoveredItemId, setHoveredItemId] = useState<string | null>(null);
+  const [_hoveredItemId, setHoveredItemId] = useState<string | null>(null);
   const [localSearchTerm, setLocalSearchTerm] = useState(filters.searchTerm || '');
   const { t } = useTranslation();
 

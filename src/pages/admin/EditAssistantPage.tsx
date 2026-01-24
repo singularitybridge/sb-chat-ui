@@ -153,7 +153,7 @@ const EditAssistantPage: React.FC = () => {
           navigate(newUrl, { replace: true });
         }
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error(t('EditAssistantPage.saveError'));
     } finally {
       setIsLoading(false);
@@ -173,7 +173,7 @@ const EditAssistantPage: React.FC = () => {
       };
       setUploadedFiles([...uploadedFiles, newFile]);
       toast.success(t('EditAssistantPage.fileUploadSuccess'));
-    } catch (error) {
+    } catch (_error) {
       toast.error(t('EditAssistantPage.fileUploadError'));
     } finally {
       setIsUploading(false);
@@ -187,7 +187,7 @@ const EditAssistantPage: React.FC = () => {
       await deleteFile(assistant._id, fileId);
       setUploadedFiles(uploadedFiles.filter((file) => file.fileId !== fileId));
       toast.success(t('EditAssistantPage.fileDeleteSuccess'));
-    } catch (error) {
+    } catch (_error) {
       toast.error(t('EditAssistantPage.fileDeleteError'));
     }
   };
