@@ -22,6 +22,7 @@ export const Menu: React.FC = () => {
     { name: 'Agents', link: '/admin/assistants' },
     { name: 'Integrations', link: '/admin/integrations' },
     { name: 'Teams', link: '/admin/teams' },
+    { name: 'Workspace', link: '/admin/workspace' },
     { name: 'ApiKeys', link: '/admin/api-keys' },
     { name: 'Costs', link: '/admin/costs' },
   ];

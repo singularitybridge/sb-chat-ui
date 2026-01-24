@@ -27,26 +27,82 @@ import { useWorkspaceKeyboard } from '../hooks/useWorkspaceKeyboard';
 import { useWorkspaceDataStore } from '../store/useWorkspaceDataStore';
 import { useUiContextStore } from '../store/useUiContextStore';
 
+// Types for workspace scope
+type WorkspaceScope = 'company' | 'agent' | 'session';
+
 const ScreenShareWorkspace: React.FC = () => {
-  const { assistantName } = useParams<{ assistantName: string }>();
+  // Support both old route (assistantName) and new routes (agentId, sessionId)
+  const { assistantName, agentId, sessionId: routeSessionId } = useParams<{
+    assistantName?: string;
+    agentId?: string;
+    sessionId?: string;
+  }>();
   const location = useLocation();
   const navigate = useNavigate();
   const { t: _t } = useTranslation();
   const { getAssistantById } = useAssistantStore();
   const { userSessionInfo, isAuthenticated } = useAuthStore();
 
-  // Parse file path from URL (everything after /workspace/)
+  // Determine scope from URL path
+  const getWorkspaceScope = (): { scope: WorkspaceScope; scopeId?: string } => {
+    const path = location.pathname;
+
+    // New routes: /admin/workspace/company, /admin/workspace/agent/:id, /admin/workspace/session/:id
+    if (path.includes('/workspace/company')) {
+      return { scope: 'company' };
+    }
+    if (path.includes('/workspace/agent/') && agentId) {
+      return { scope: 'agent', scopeId: agentId };
+    }
+    if (path.includes('/workspace/session/') && routeSessionId) {
+      return { scope: 'session', scopeId: routeSessionId };
+    }
+
+    // Legacy route: /admin/assistants/:assistantName/workspace/*
+    if (assistantName) {
+      return { scope: 'agent' };
+    }
+
+    // Default to company scope
+    return { scope: 'company' };
+  };
+
+  const { scope: workspaceScope, scopeId: scopeIdFromRoute } = getWorkspaceScope();
+
+  // Parse file path from URL (everything after /workspace/ or /workspace/scope/id/)
   const getFilePathFromUrl = (): string | null => {
-    const workspaceIndex = location.pathname.indexOf('/workspace/');
+    const path = location.pathname;
+
+    // New routes pattern: /admin/workspace/company/*, /admin/workspace/agent/:id/*, /admin/workspace/session/:id/*
+    if (path.includes('/workspace/company')) {
+      const match = path.match(/\/workspace\/company(\/.*)?$/);
+      if (match && match[1] && match[1] !== '/') return match[1];
+      return null;
+    }
+    if (path.includes('/workspace/agent/') && agentId) {
+      const regex = new RegExp(`/workspace/agent/${agentId}(/.*)?$`);
+      const match = path.match(regex);
+      if (match && match[1] && match[1] !== '/') return match[1];
+      return null;
+    }
+    if (path.includes('/workspace/session/') && routeSessionId) {
+      const regex = new RegExp(`/workspace/session/${routeSessionId}(/.*)?$`);
+      const match = path.match(regex);
+      if (match && match[1] && match[1] !== '/') return match[1];
+      return null;
+    }
+
+    // Legacy route: /admin/assistants/:assistantName/workspace/*
+    const workspaceIndex = path.indexOf('/workspace/');
     if (workspaceIndex === -1) return null;
-    const filePath = location.pathname.slice(workspaceIndex + '/workspace'.length);
-    // Return null if empty or just a slash
+    const filePath = path.slice(workspaceIndex + '/workspace'.length);
     if (!filePath || filePath === '/') return null;
     return filePath;
   };
 
-  // Find assistant by name (getAssistantById supports both ID and name)
+  // Find assistant by name or ID
   const assistantByName = assistantName ? getAssistantById(assistantName) : null;
+  const assistantById = agentId ? getAssistantById(agentId) : null;
 
   // Background configuration - same as Admin pages
   const backgroundProps = setDynamicBackground(
@@ -105,9 +161,58 @@ const ScreenShareWorkspace: React.FC = () => {
 
   // Get current assistant - prioritize URL parameter over active session
   // This allows viewing any assistant's workspace regardless of active session
-  const currentAssistant = assistantByName || (activeSession?.assistantId
+  const currentAssistant = assistantByName || assistantById || (activeSession?.assistantId
     ? getAssistantById(activeSession.assistantId)
     : null);
+
+  // Compute the effective scopeId for API calls
+  const effectiveScopeId = (() => {
+    switch (workspaceScope) {
+      case 'company':
+        return undefined; // Company scope doesn't need an ID
+      case 'agent':
+        return scopeIdFromRoute || currentAssistant?._id;
+      case 'session':
+        return scopeIdFromRoute || activeSession?._id;
+      default:
+        return currentAssistant?._id;
+    }
+  })();
+
+  // Helper to build navigation path based on current scope
+  const buildWorkspacePath = (filePath: string): string => {
+    if (assistantName) {
+      // Legacy route
+      return `/admin/assistants/${assistantName}/workspace${filePath}`;
+    }
+    switch (workspaceScope) {
+      case 'company':
+        return `/admin/workspace/company${filePath}`;
+      case 'agent':
+        return `/admin/workspace/agent/${effectiveScopeId}${filePath}`;
+      case 'session':
+        return `/admin/workspace/session/${effectiveScopeId}${filePath}`;
+      default:
+        return `/admin/workspace/company${filePath}`;
+    }
+  };
+
+  // Get base workspace path (no file)
+  const getBaseWorkspacePath = (): string => {
+    if (assistantName) {
+      return `/admin/assistants/${assistantName}/workspace`;
+    }
+    switch (workspaceScope) {
+      case 'company':
+        return '/admin/workspace/company';
+      case 'agent':
+        return `/admin/workspace/agent/${effectiveScopeId}`;
+      case 'session':
+        return `/admin/workspace/session/${effectiveScopeId}`;
+      default:
+        return '/admin/workspace/company';
+    }
+  };
 
   // Workspace layout hooks
   const { panels, togglePanel } = useWorkspaceLayout();
@@ -213,14 +318,21 @@ const ScreenShareWorkspace: React.FC = () => {
   // Auto-load file from URL path or default entry file
   useEffect(() => {
     const loadFile = async () => {
-      if (!currentAssistant?._id) return;
+      // For company scope, don't require an assistant
+      // For agent/session scope, need the appropriate ID
+      if (workspaceScope === 'agent' && !effectiveScopeId) return;
+      if (workspaceScope === 'session' && !effectiveScopeId) return;
 
       try {
         // Get file path from URL
         const urlFilePath = getFilePathFromUrl();
 
         // If no URL path, find default entry file
-        const finalPath = urlFilePath || await findDefaultEntryFile(currentAssistant._id, activeSession?._id);
+        const finalPath = urlFilePath || await findDefaultEntryFile(
+          workspaceScope === 'agent' ? effectiveScopeId : undefined,
+          activeSession?._id,
+          workspaceScope
+        );
 
         if (finalPath) {
           // Determine file extension first
@@ -230,7 +342,7 @@ const ScreenShareWorkspace: React.FC = () => {
           // For HTML files, use raw endpoint to avoid JSON wrapping issues with large files
           if (extension === 'html') {
             try {
-              const content = await getWorkspaceRawContent(finalPath, 'agent', currentAssistant._id, activeSession?._id);
+              const content = await getWorkspaceRawContent(finalPath, workspaceScope, effectiveScopeId, activeSession?._id);
               setSelectedFilePath(finalPath);
               setSelectedFileContent(content);
               setSelectedFileType(extension);
@@ -240,7 +352,7 @@ const ScreenShareWorkspace: React.FC = () => {
             }
           } else {
             // Load the file using regular endpoint
-            const response = await getWorkspaceItem(finalPath, 'agent', currentAssistant._id, activeSession?._id);
+            const response = await getWorkspaceItem(finalPath, workspaceScope, effectiveScopeId, activeSession?._id);
 
             if (response.found && response.content) {
               let content: string;
@@ -275,7 +387,7 @@ const ScreenShareWorkspace: React.FC = () => {
     };
 
     loadFile();
-  }, [currentAssistant?._id, activeSession?._id, location.pathname]); // Load when assistant, session, or URL changes
+  }, [workspaceScope, effectiveScopeId, activeSession?._id, location.pathname]); // Load when scope, scopeId, session, or URL changes
 
   // Update UI context when workspace file changes
   useEffect(() => {
@@ -724,19 +836,20 @@ const ScreenShareWorkspace: React.FC = () => {
         const { path } = event.data.payload;
         const requestId = event.data.requestId;
 
-        if (!currentAssistant?._id) {
+        // For agent/session scope, need scope ID
+        if ((workspaceScope === 'agent' || workspaceScope === 'session') && !effectiveScopeId) {
           if (event.source) {
             (event.source as Window).postMessage({
               type: 'workspace-load-file-response',
               requestId,
-              error: 'No active assistant'
+              error: 'No scope ID available'
             }, '*');
           }
           return;
         }
 
         try {
-          const response = await getWorkspaceItem(path, 'agent', currentAssistant._id, activeSession?._id);
+          const response = await getWorkspaceItem(path, workspaceScope, effectiveScopeId, activeSession?._id);
 
           if (response.found && response.content) {
             let content: string;
@@ -781,10 +894,8 @@ const ScreenShareWorkspace: React.FC = () => {
       if (event.data.type === 'workspace-navigate') {
         const { path } = event.data.payload;
 
-        if (assistantName) {
-          console.log(`🧭 [ScreenShareWorkspace] Navigating to: ${path}`);
-          navigate(`/admin/assistants/${assistantName}/workspace${path}`);
-        }
+        console.log(`🧭 [ScreenShareWorkspace] Navigating to: ${path}`);
+        navigate(buildWorkspacePath(path));
       }
 
       // Handle workspace-get-context
@@ -834,31 +945,29 @@ const ScreenShareWorkspace: React.FC = () => {
   useEffect(() => {
     // @ts-expect-error adding global function to window
     window.loadWorkspaceFile = (path: string) => {
-      if (!assistantName) return;
-
       console.log('📂 [ScreenShareWorkspace] Loading workspace file:', path);
       // Navigate to file path - useEffect will handle loading
-      navigate(`/admin/assistants/${assistantName}/workspace${path}`);
+      navigate(buildWorkspacePath(path));
     };
 
     return () => {
       // @ts-expect-error cleanup global function
       delete window.loadWorkspaceFile;
     };
-  }, [assistantName, navigate]);
+  }, [workspaceScope, effectiveScopeId, assistantName, navigate]);
 
   // Handle file selection from explorer
   const handleFileSelect = (path: string, _content: string, _type: string) => {
     // Update URL to include file path
-    if (assistantName) {
-      navigate(`/admin/assistants/${assistantName}/workspace${path}`);
-    }
+    navigate(buildWorkspacePath(path));
     // State will be updated by the useEffect that watches location.pathname
   };
 
   // Handle file deletion
   const handleDeleteFile = async () => {
-    if (!selectedFilePath || !currentAssistant?._id) return;
+    if (!selectedFilePath) return;
+    // For agent/session scope, need scope ID
+    if ((workspaceScope === 'agent' || workspaceScope === 'session') && !effectiveScopeId) return;
 
     const confirmDelete = window.confirm(`Are you sure you want to delete "${selectedFilePath.split('/').pop()}"?`);
     if (!confirmDelete) return;
@@ -866,15 +975,13 @@ const ScreenShareWorkspace: React.FC = () => {
     try {
       await deleteWorkspaceItem(
         selectedFilePath,
-        'agent',
-        currentAssistant._id,
+        workspaceScope,
+        effectiveScopeId,
         activeSession?._id
       );
 
       // Navigate back to workspace root (no file selected)
-      if (assistantName) {
-        navigate(`/admin/assistants/${assistantName}/workspace`);
-      }
+      navigate(getBaseWorkspacePath());
 
       // Clear selection
       setSelectedFilePath(null);
@@ -896,17 +1003,19 @@ const ScreenShareWorkspace: React.FC = () => {
 
   // Handle file reload
   const handleReloadFile = async () => {
-    if (!selectedFilePath || !currentAssistant?._id) return;
+    if (!selectedFilePath) return;
+    // For agent/session scope, need scope ID
+    if ((workspaceScope === 'agent' || workspaceScope === 'session') && !effectiveScopeId) return;
 
     try {
       setIsReloadingFile(true);
 
       // For HTML files, use raw endpoint to avoid JSON wrapping issues
       if (selectedFileType === 'html') {
-        const content = await getWorkspaceRawContent(selectedFilePath, 'agent', currentAssistant._id, activeSession?._id);
+        const content = await getWorkspaceRawContent(selectedFilePath, workspaceScope, effectiveScopeId, activeSession?._id);
         setSelectedFileContent(content);
       } else {
-        const response = await getWorkspaceItem(selectedFilePath, 'agent', currentAssistant._id, activeSession?._id);
+        const response = await getWorkspaceItem(selectedFilePath, workspaceScope, effectiveScopeId, activeSession?._id);
 
         if (response.found && response.content) {
           let content: string;
@@ -1079,19 +1188,27 @@ const ScreenShareWorkspace: React.FC = () => {
   };
 
   const handleCreateHomePage = async () => {
-    if (!currentAssistant?._id) return;
+    // For agent/session scope, need scope ID
+    if ((workspaceScope === 'agent' || workspaceScope === 'session') && !effectiveScopeId) return;
 
     setIsCreatingHomePage(true);
     try {
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
+      // Determine workspace name based on scope
+      const workspaceName = workspaceScope === 'company'
+        ? 'Company'
+        : workspaceScope === 'session'
+          ? 'Session'
+          : currentAssistant?.name || 'AI';
+
       // Default home page content
       const defaultContent = `---
-title: ${currentAssistant.name} Workspace
+title: ${workspaceName} Workspace
 description: Welcome to your AI workspace
 ---
 
-# Welcome to ${currentAssistant.name} Workspace
+# Welcome to ${workspaceName} Workspace
 
 This is your workspace home page. You can use this space to organize your work, create documentation, and interact with your AI assistant.
 
@@ -1100,7 +1217,7 @@ This is your workspace home page. You can use this space to organize your work, 
 - Use the file explorer on the left to create and organize files
 - Create markdown files (.md/.mdx) for documentation
 - Create HTML files for interactive dashboards
-- All files are private to this assistant
+- All files are scoped to ${workspaceScope === 'company' ? 'your company' : workspaceScope === 'session' ? 'this session' : 'this assistant'}
 
 ## Quick Actions
 
@@ -1117,10 +1234,10 @@ Feel free to customize this page or create new files using the workspace!
         body: JSON.stringify({
           itemPath: '/README.mdx',
           content: defaultContent,
-          scope: 'agent',
-          scopeId: currentAssistant._id,
+          scope: workspaceScope,
+          scopeId: effectiveScopeId,
           metadata: {
-            title: `${currentAssistant.name} Workspace`,
+            title: `${workspaceName} Workspace`,
             description: 'Workspace home page',
             contentType: 'text/mdx',
           }
@@ -1262,7 +1379,11 @@ Feel free to customize this page or create new files using the workspace!
                   <ArrowLeft className="h-5 w-5 text-muted-foreground rtl:rotate-180" />
                 </button>
                 <h3 className="text-sm font-semibold text-foreground">
-                  {currentAssistant?.name || 'AI'} Workspace
+                  {workspaceScope === 'company'
+                    ? 'Company Workspace'
+                    : workspaceScope === 'session'
+                      ? 'Session Workspace'
+                      : `${currentAssistant?.name || 'AI'} Workspace`}
                 </h3>
 
                 {/* Icon Workspace Switcher */}
@@ -1325,7 +1446,11 @@ Feel free to customize this page or create new files using the workspace!
             <div className="md:hidden px-3 py-2 flex items-center justify-between border-b border-border bg-background">
               <div className="flex items-center gap-2">
                 <h3 className="text-sm font-semibold text-foreground truncate">
-                  {currentAssistant?.name || 'AI'} Workspace
+                  {workspaceScope === 'company'
+                    ? 'Company Workspace'
+                    : workspaceScope === 'session'
+                      ? 'Session Workspace'
+                      : `${currentAssistant?.name || 'AI'} Workspace`}
                 </h3>
                 {/* Icon Workspace Switcher */}
                 <div className="inline-flex items-center rounded-lg bg-violet/10 px-1.5 py-0.5 gap-1">
@@ -1382,19 +1507,22 @@ Feel free to customize this page or create new files using the workspace!
                   )}
                   style={{ willChange: 'transform, opacity' }}
                 >
-                  {currentAssistant?._id ? (
+                  {(workspaceScope === 'company' || effectiveScopeId) ? (
                     <WorkspaceFileExplorer
                       key={fileExplorerKey}
-                      agentId={currentAssistant._id}
-                      agentName={currentAssistant.name}
+                      agentId={workspaceScope === 'agent' ? effectiveScopeId : undefined}
+                      agentName={currentAssistant?.name}
                       sessionId={activeSession?._id}
+                      scope={workspaceScope}
                       selectedPath={selectedFilePath}
                       onFileSelect={handleFileSelect}
                       onFileDeleted={handleFileDeleted}
                     />
                   ) : (
                     <div className="flex items-center justify-center h-full p-6">
-                      <p className="text-sm text-muted-foreground">No assistant selected</p>
+                      <p className="text-sm text-muted-foreground">
+                        {workspaceScope === 'agent' ? 'No assistant selected' : 'No scope ID available'}
+                      </p>
                     </div>
                   )}
                 </div>

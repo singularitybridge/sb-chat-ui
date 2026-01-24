@@ -12,7 +12,8 @@
     "Home": "בית",
     "Memory": "זיכרון",
     "ApiKeys": "מפתחות API",
-    "Integrations": "אינטגרציות"
+    "Integrations": "אינטגרציות",
+    "Workspace": "סביבת עבודה"
   },
   "integrations": {
     "title": "אינטגרציות",

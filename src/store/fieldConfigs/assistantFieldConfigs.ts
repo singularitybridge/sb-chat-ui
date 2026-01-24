@@ -20,6 +20,7 @@ const sanitizeToUrlSafe = (value: string): string => {
 const openaiModels: SelectListOption[] = [
   // GPT-5.x family (stable)
   { value: 'gpt-5.2', label: 'GPT-5.2' },
+  { value: 'gpt-5.1', label: 'GPT-5.1' },
   { value: 'gpt-5', label: 'GPT-5' },
   { value: 'gpt-5-mini', label: 'GPT-5 Mini' },
   { value: 'gpt-5-nano', label: 'GPT-5 Nano' },
@@ -27,8 +28,6 @@ const openaiModels: SelectListOption[] = [
   { value: 'gpt-4.1', label: 'GPT-4.1' },
   { value: 'gpt-4.1-mini', label: 'GPT-4.1 Mini' },
   { value: 'gpt-4.1-nano', label: 'GPT-4.1 Nano' },
-  { value: 'gpt-4o', label: 'GPT-4o' },
-  { value: 'gpt-4o-mini', label: 'GPT-4o Mini' },
 ];
 
 const googleModels: SelectListOption[] = [
@@ -73,8 +72,8 @@ export const modelsByProvider: Record<string, SelectListOption[]> = {
 
 // Default model for each provider
 export const defaultModelByProvider: Record<string, string> = {
-  openai: 'gpt-4.1-mini',
-  google: 'gemini-2.5-flash',
+  openai: 'gpt-5.1',
+  google: 'gemini-3-flash-preview',
   anthropic: 'claude-sonnet-4-5',
 };
 
@@ -202,7 +201,7 @@ export const getAssistantFieldConfigs = async (
       key: 'llmModel',
       label: 'LLM Model',
       type: 'dropdown',
-      value: 'gpt-4.1-mini',
+      value: 'gpt-5.1',
       options: llmModelOptions,
       dependsOn: 'llmProvider',
       optionsByDependency: modelsByProvider,
@@ -285,7 +284,7 @@ export const defaultAssistantFieldConfigs: FieldConfig[] = [
       key: 'llmModel',
       label: 'LLM Model',
       type: 'dropdown',
-      value: 'gpt-4.1-mini',
+      value: 'gpt-5.1',
       options: llmModelOptions,
       dependsOn: 'llmProvider',
       optionsByDependency: modelsByProvider,

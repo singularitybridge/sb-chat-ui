@@ -13,9 +13,10 @@ import {
 import { listWorkspaceItems } from '../../services/api/workspaceService';
 
 interface WorkspaceFileExplorerProps {
-  agentId: string;
+  agentId?: string;
   agentName?: string;
   sessionId?: string;
+  scope?: 'company' | 'session' | 'agent' | 'team';
   selectedPath?: string | null; // Currently selected file path
   onFileSelect: (path: string, content: string, type: string) => void;
   onFileDeleted?: () => void; // Callback when file is deleted
@@ -37,6 +38,7 @@ export const WorkspaceFileExplorer: React.FC<WorkspaceFileExplorerProps> = ({
   agentId,
   agentName: _agentName,
   sessionId,
+  scope = 'agent',
   selectedPath,
   onFileSelect,
   onFileDeleted: _onFileDeleted
@@ -57,7 +59,7 @@ export const WorkspaceFileExplorer: React.FC<WorkspaceFileExplorerProps> = ({
 
   useEffect(() => {
     loadFiles();
-  }, [agentId, sessionId]);
+  }, [agentId, sessionId, scope]);
 
   // Build tree structure from items with metadata
   const buildFileTree = (items: Array<{ path: string; metadata: any }>): FileItem[] => {
@@ -122,7 +124,7 @@ export const WorkspaceFileExplorer: React.FC<WorkspaceFileExplorerProps> = ({
     try {
       setLoading(true);
       // Request with metadata to get real timestamps
-      const response = await listWorkspaceItems('agent', '', agentId, sessionId, undefined, true);
+      const response = await listWorkspaceItems(scope, '', agentId, sessionId, undefined, true);
 
       if (response.success) {
         // Use items with metadata if available, fallback to paths for backwards compatibility

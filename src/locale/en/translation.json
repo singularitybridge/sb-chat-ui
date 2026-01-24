@@ -12,7 +12,8 @@
     "Home": "Home",
     "Memory": "Memory",
     "ApiKeys": "API Keys",
-    "Integrations": "Integrations"
+    "Integrations": "Integrations",
+    "Workspace": "Workspace"
   },
   "integrations": {
     "title": "Integrations",

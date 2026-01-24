@@ -106,6 +106,35 @@ export const browserRouter = createBrowserRouter(
             path: 'assistants/:assistantName/workspace/*',
             element: <ScreenShareWorkspace />,
           },
+          // New unified workspace routes
+          {
+            path: 'workspace',
+            element: <Navigate to="/admin/workspace/company" replace />,
+          },
+          {
+            path: 'workspace/company',
+            element: <ScreenShareWorkspace />,
+          },
+          {
+            path: 'workspace/company/*',
+            element: <ScreenShareWorkspace />,
+          },
+          {
+            path: 'workspace/agent/:agentId',
+            element: <ScreenShareWorkspace />,
+          },
+          {
+            path: 'workspace/agent/:agentId/*',
+            element: <ScreenShareWorkspace />,
+          },
+          {
+            path: 'workspace/session/:sessionId',
+            element: <ScreenShareWorkspace />,
+          },
+          {
+            path: 'workspace/session/:sessionId/*',
+            element: <ScreenShareWorkspace />,
+          },
           {
             path: 'assistants/:key',
             element: <EditAssistantPage />,

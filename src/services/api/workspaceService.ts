@@ -342,17 +342,18 @@ export const searchWorkspaceItemsMultiScope = async (
 };
 
 /**
- * Find default entry file in agent workspace
+ * Find default entry file in workspace
  * Supports: HTML, MDX, MD files
  * Looks for: README first (root), then index files (root), then other entry files
  */
 export const findDefaultEntryFile = async (
-  agentId: string,
-  sessionId?: string
+  agentId?: string,
+  sessionId?: string,
+  scope: 'company' | 'session' | 'agent' | 'team' = 'agent'
 ): Promise<string | null> => {
   try {
-    // List all files in agent workspace
-    const listResponse = await listWorkspaceItems('agent', '', agentId, sessionId);
+    // List all files in workspace with the specified scope
+    const listResponse = await listWorkspaceItems(scope, '', agentId, sessionId);
 
     if (!listResponse.success || listResponse.paths?.length === 0) {
       return null;
