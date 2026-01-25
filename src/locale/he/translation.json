@@ -118,11 +118,14 @@
   },
   "TeamsPage": {
     "title": "צוותים",
+    "subtitle": "הסוכנים שלך בעבודה",
     "addTeam": "הוסף צוות",
     "noTeams": "לא נמצאו צוותים",
     "createTeamPrompt": "לחץ על כפתור + כדי ליצור צוות",
     "deleteConfirmTitle": "מחיקת צוות",
-    "deleteConfirmMessage": "האם אתה בטוח שברצונך למחוק את הצוות '{{name}}'? פעולה זו אינה ניתנת לביטול."
+    "deleteConfirmMessage": "האם אתה בטוח שברצונך למחוק את הצוות '{{name}}'? פעולה זו אינה ניתנת לביטול.",
+    "agent": "סוכן",
+    "agents": "סוכנים"
   },
   "teams": {
     "createSuccess": "הצוות נוצר בהצלחה",

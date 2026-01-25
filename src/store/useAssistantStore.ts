@@ -135,10 +135,10 @@ export const useAssistantStore = create<AssistantStoreState>((set, get) => ({
   },
   
   getAssistantsByTeam: (teamId) => {
-    return get().assistants.filter(a => a.teams.includes(teamId));
+    return get().assistants.filter(a => a.teams?.includes(teamId));
   },
-  
+
   getAssistantsByAction: (actionId) => {
-    return get().assistants.filter(a => a.allowedActions.includes(actionId));
+    return get().assistants.filter(a => a.allowedActions?.includes(actionId));
   },
 }));

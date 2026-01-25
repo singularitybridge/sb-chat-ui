@@ -137,11 +137,14 @@
   },
   "TeamsPage": {
     "title": "Teams",
+    "subtitle": "Your AI agents at work",
     "addTeam": "Add Team",
     "noTeams": "No teams found",
     "createTeamPrompt": "Click the + button to create a team",
     "deleteConfirmTitle": "Delete Team",
-    "deleteConfirmMessage": "Are you sure you want to delete the team '{{name}}'? This action cannot be undone."
+    "deleteConfirmMessage": "Are you sure you want to delete the team '{{name}}'? This action cannot be undone.",
+    "agent": "agent",
+    "agents": "agents"
   },
   "teams": {
     "createSuccess": "Team created successfully",

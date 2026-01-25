@@ -237,7 +237,7 @@ const AssistantsPage: React.FC = () => {
                   key={assistant._id}
                   className={`group rounded-lg p-4 cursor-pointer hover:bg-accent relative ${
                     isActive
-                      ? 'bg-accent'
+                      ? 'bg-[oklch(0.93_0.03_250)] dark:bg-zinc-700'
                       : 'bg-secondary'
                   }`}
                   onClick={() => handleSetAssistant(assistant)}
