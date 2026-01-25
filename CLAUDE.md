@@ -59,7 +59,7 @@ API services in `src/services/api/` use:
 ### Key Integration Patterns
 - **Event Communication**: `mittEmitter` for cross-component events
 - **i18n**: React-i18next for internationalization (English/Hebrew RTL)
-- **Authentication**: Google OAuth with JWT tokens
+- **Authentication**: Clerk authentication with JWT tokens
 - **Real-time**: Socket.IO for chat messages and notifications
 
 ### Teams Feature

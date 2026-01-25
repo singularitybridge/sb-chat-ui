@@ -4,7 +4,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useEventEmitter } from './services/mittEmitter';
 import { DialogManager } from './components/admin/DialogManager';
-import { GoogleOAuthProvider } from '@react-oauth/google';
 import AuthManager from './components/AuthManager';
 import SessionManager from './components/SessionManager';
 import { UiContextTracker } from './components/UiContextTracker';
@@ -60,22 +59,20 @@ const App: React.FC = () => {
   }, [direction]);
 
   return (
-    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID}>
-      <AuthManager>
-        <CommandPaletteProvider>
-          <SessionManager />
-          <UiContextTracker />
-          <div className="h-screen flex flex-col font-noto-sans-hebrew">
-            <ToastContainer position="bottom-right" />
-            <DialogManager />
-            <GlobalCommandPalette />
-            <div className="flex-1 min-h-0">
-              <Outlet />
-            </div>
+    <AuthManager>
+      <CommandPaletteProvider>
+        <SessionManager />
+        <UiContextTracker />
+        <div className="h-screen flex flex-col font-noto-sans-hebrew">
+          <ToastContainer position="bottom-right" />
+          <DialogManager />
+          <GlobalCommandPalette />
+          <div className="flex-1 min-h-0">
+            <Outlet />
           </div>
-        </CommandPaletteProvider>
-      </AuthManager>
-    </GoogleOAuthProvider>
+        </div>
+      </CommandPaletteProvider>
+    </AuthManager>
   );
 };
 

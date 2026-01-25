@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router';
+import { useAuth } from '@clerk/clerk-react';
 import { useAuthStore } from '../store/useAuthStore';
 import { useSessionStore } from '../store/useSessionStore';
 import { useAssistantStore } from '../store/useAssistantStore';
@@ -17,9 +18,13 @@ const AuthManager: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
   const [loading, setLoading] = useState(true);
   const initialDataLoadedRef = useRef(false);
+  const authInProgressRef = useRef(false);
+
+  // Clerk auth state
+  const { isLoaded: clerkLoaded, isSignedIn, getToken } = useAuth();
 
   // Subscribe to auth state
-  const { isAuthenticated, checkAuthStatus, loadUserSessionInfo } = useAuthStore();
+  const { isAuthenticated, checkAuthStatus, loadUserSessionInfo, authenticateWithClerk } = useAuthStore();
 
   const loadInitialData = async () => {
     if (initialDataLoadedRef.current) {
@@ -58,45 +63,104 @@ const AuthManager: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     const checkAuth = async () => {
+      // Wait for Clerk to load
+      if (!clerkLoaded) return;
+
+      // Prevent concurrent auth attempts
+      if (authInProgressRef.current) return;
+
       const isEmbedRoute = location.pathname.startsWith('/embed/assistants/');
       const isDevRoute = location.pathname.startsWith('/dev');
       const isTestRoute = location.pathname.startsWith('/test/');
-      if (isEmbedRoute || isDevRoute || isTestRoute || location.pathname === '/health') {
-        // For embed/dev/test routes, we might not require full user authentication
-        // but we still need to load essential data if an API key is present or for public assistants
+      const isSSOCallback = location.pathname === '/sso-callback';
+
+      if (isEmbedRoute || isDevRoute || isTestRoute || location.pathname === '/health' || isSSOCallback) {
         setLoading(false);
         return;
       }
 
-      const authenticated = await checkAuthStatus();
-      if (!authenticated && location.pathname !== '/signup' && location.pathname !== '/health') {
-        navigate('/signup');
-        setLoading(false);
-      } else if (authenticated) {
+      // Check if user is signed in with Clerk
+      if (isSignedIn) {
+        // If already authenticated with backend, just load data
+        if (isAuthenticated) {
+          if (!initialDataLoadedRef.current) {
+            try {
+              await loadInitialData();
+            } catch (error) {
+              logger.error('Failed to load initial data', error);
+              logout();
+              navigate('/signup');
+              setLoading(false);
+            }
+          } else {
+            setLoading(false);
+          }
+          return;
+        }
+
+        // Need to authenticate with backend
+        authInProgressRef.current = true;
         try {
-          await loadInitialData();
+          const token = await getToken();
+          if (token) {
+            await authenticateWithClerk(token);
+            await loadInitialData();
+          }
         } catch (error) {
-          logger.error('Failed to load initial data', error);
+          logger.error('Failed to authenticate with Clerk', error);
           logout();
           navigate('/signup');
           setLoading(false);
+        } finally {
+          authInProgressRef.current = false;
         }
       } else {
-        // On /signup or /health without auth
-        setLoading(false);
+        // Check legacy token auth (for existing sessions)
+        const authenticated = await checkAuthStatus();
+        if (!authenticated && location.pathname !== '/signup') {
+          navigate('/signup');
+          setLoading(false);
+        } else if (authenticated) {
+          try {
+            await loadInitialData();
+          } catch (error) {
+            logger.error('Failed to load initial data', error);
+            logout();
+            navigate('/signup');
+            setLoading(false);
+          }
+        } else {
+          // On /signup without auth
+          setLoading(false);
+        }
       }
     };
     checkAuth();
-  }, [navigate, location.pathname, checkAuthStatus, loadUserSessionInfo]);
+  }, [navigate, location.pathname, clerkLoaded, isSignedIn, getToken, checkAuthStatus, loadUserSessionInfo, authenticateWithClerk, isAuthenticated]);
 
   useEffect(() => {
+    if (!clerkLoaded) return;
+
     const isEmbedRoute = location.pathname.startsWith('/embed/assistants/');
     const isDevRoute = location.pathname.startsWith('/dev');
     const isTestRoute = location.pathname.startsWith('/test/');
-    if (!isEmbedRoute && !isDevRoute && !isTestRoute && !isAuthenticated && location.pathname !== '/signup' && location.pathname !== '/health') {
+    const isSSOCallback = location.pathname === '/sso-callback';
+
+    // Don't redirect if Clerk says we're signed in or we have a legacy token
+    const shouldRedirectToSignup =
+      !isEmbedRoute &&
+      !isDevRoute &&
+      !isTestRoute &&
+      !isSSOCallback &&
+      !isAuthenticated &&
+      !isSignedIn &&
+      location.pathname !== '/signup' &&
+      location.pathname !== '/health';
+
+    if (shouldRedirectToSignup) {
       navigate('/signup');
     }
-  }, [isAuthenticated, navigate, location.pathname]);
+  }, [clerkLoaded, isAuthenticated, isSignedIn, navigate, location.pathname]);
 
   if (loading) {
     return (

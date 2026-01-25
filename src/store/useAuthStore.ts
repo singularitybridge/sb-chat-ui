@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import {
-  loginWithGoogle,
+  loginWithClerk,
   verifyToken,
 } from '../services/api/authService';
 import { logger } from '../services/LoggingService';
@@ -27,7 +27,7 @@ interface AuthStoreState {
   setUserSessionInfo: (info: Partial<UserSessionInfo>) => void;
   checkAuthStatus: () => Promise<boolean>;
   loadUserSessionInfo: () => Promise<void>;
-  authenticate: (credential: string) => Promise<string>;
+  authenticateWithClerk: (clerkToken: string) => Promise<string>;
   logout: () => boolean;
 }
 
@@ -97,9 +97,9 @@ export const useAuthStore = create<AuthStoreState>()(
     }
   },
   
-  authenticate: async (credential: string) => {
+  authenticateWithClerk: async (clerkToken: string) => {
     try {
-      const response = await loginWithGoogle(credential);
+      const response = await loginWithClerk(clerkToken);
       const { user, sessionToken } = response;
       localStorage.setItem('userToken', sessionToken);
       set({ isAuthenticated: true });

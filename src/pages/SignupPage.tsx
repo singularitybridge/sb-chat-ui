@@ -1,6 +1,6 @@
 /// file_path= src/pages/SignupPage.tsx
 import React from 'react';
-import LoginWithGoogle from '../components/LoginWithGoogle';
+import LoginWithClerk from '../components/LoginWithClerk';
 import { TextComponent } from '../components/sb-core-ui-kit/TextComponent';
 
 const SignupPage: React.FC = () => {
@@ -18,18 +18,10 @@ const SignupPage: React.FC = () => {
         <div className="flex flex-col items-center justify-center">
           <img
             src="assets/sb-welcome.png"
-            className="mb-2 mx-auto"
+            className="mb-6 mx-auto"
             alt="Welcome"
           />
-          <TextComponent
-            text="כניסה ל- Singularity Bridge"
-            size="title"
-            className="mb-2"
-          />
-
-          <div className="flex justify-center mt-10">
-            <LoginWithGoogle />
-          </div>
+          <LoginWithClerk />
         </div>
       </div>
     </div>

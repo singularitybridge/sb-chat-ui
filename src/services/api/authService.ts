@@ -7,9 +7,9 @@ export const getToken = () => {
   return localStorage.getItem('userToken');
 };
 
-export const loginWithGoogle = async (token: string) => {
-  const response = await apiClient.post('auth/google/login', {
-    token: token,
+export const loginWithClerk = async (clerkToken: string) => {
+  const response = await apiClient.post('auth/clerk/login', {
+    token: clerkToken,
   });
   return response.data;
 };

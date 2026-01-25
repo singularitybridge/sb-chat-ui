@@ -72,7 +72,8 @@ export interface IUser {
   name: string;
   nickname?: string;
   email: string;
-  googleId: string;
+  googleId?: string;  // Legacy - kept for backwards compatibility
+  clerkId?: string;   // New Clerk authentication
   role: string;
   companyId: string;
   identifiers: IIdentifier[];
@@ -86,7 +87,8 @@ export type UserKeys = keyof IUser;
 
 export interface ISystemUser {
   _id: string;
-  googleId: string;
+  googleId?: string;  // Legacy
+  clerkId?: string;   // New Clerk authentication
   name: string;
   email: string;
   companyId: string;

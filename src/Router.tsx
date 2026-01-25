@@ -18,6 +18,7 @@ import { ApiKeysPage } from './pages/admin/ApiKeysPage';
 import { IntegrationsPage } from './pages/admin/IntegrationsPage';
 import { IntegrationDetailPage } from './pages/admin/IntegrationDetailPage';
 import { SignupPage } from './pages/SignupPage';
+import SSOCallbackPage from './pages/SSOCallbackPage';
 import { ChatKitTestPage } from './pages/test/ChatKitTestPage';
 import { UIKitTestPage } from './pages/test/UIKitTestPage';
 import JsonViewerTestPage from './pages/test/JsonViewerTestPage';
@@ -57,6 +58,10 @@ export const browserRouter = createBrowserRouter(
       {
         path: 'signup',
         element: <SignupPage />,
+      },
+      {
+        path: 'sso-callback',
+        element: <SSOCallbackPage />,
       },
       {
         index: true,
