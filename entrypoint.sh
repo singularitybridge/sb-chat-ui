@@ -27,14 +27,14 @@ replace_placeholders() {
         echo "Warning: VITE_API_URL environment variable is not set"
     fi
     
-    # Replace VITE_GOOGLE_AUTH_CLIENT_ID placeholder
-    if [ -n "$VITE_GOOGLE_AUTH_CLIENT_ID" ]; then
-        local escaped_client_id=$(escape_for_sed "$VITE_GOOGLE_AUTH_CLIENT_ID")
-        echo "Replacing %VITE_GOOGLE_AUTH_CLIENT_ID% with $VITE_GOOGLE_AUTH_CLIENT_ID"
-        find "$dist_dir" -type f -name "*.js" -exec sed -i "s|%VITE_GOOGLE_AUTH_CLIENT_ID%|$escaped_client_id|g" {} \;
-        find "$dist_dir" -type f -name "*.html" -exec sed -i "s|%VITE_GOOGLE_AUTH_CLIENT_ID%|$escaped_client_id|g" {} \;
+    # Replace VITE_CLERK_PUBLISHABLE_KEY placeholder
+    if [ -n "$VITE_CLERK_PUBLISHABLE_KEY" ]; then
+        local escaped_clerk_key=$(escape_for_sed "$VITE_CLERK_PUBLISHABLE_KEY")
+        echo "Replacing %VITE_CLERK_PUBLISHABLE_KEY% with $VITE_CLERK_PUBLISHABLE_KEY"
+        find "$dist_dir" -type f -name "*.js" -exec sed -i "s|%VITE_CLERK_PUBLISHABLE_KEY%|$escaped_clerk_key|g" {} \;
+        find "$dist_dir" -type f -name "*.html" -exec sed -i "s|%VITE_CLERK_PUBLISHABLE_KEY%|$escaped_clerk_key|g" {} \;
     else
-        echo "Warning: VITE_GOOGLE_AUTH_CLIENT_ID environment variable is not set"
+        echo "Warning: VITE_CLERK_PUBLISHABLE_KEY environment variable is not set"
     fi
     
     # Replace VITE_PUSHER_APP_KEY placeholder
