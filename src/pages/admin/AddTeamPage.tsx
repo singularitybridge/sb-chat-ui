@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router';
+import { useNavigate } from 'react-router';
 import { useTeamStore } from '../../store/useTeamStore';
 import { useAssistantStore } from '../../store/useAssistantStore';
 import { useAuthStore } from '../../store/useAuthStore';
@@ -17,70 +17,69 @@ import { EVENT_SHOW_NOTIFICATION } from '../../utils/eventNames';
 
 const MAX_TEAM_AGENTS = 5;
 
-const EditTeamPage: React.FC = () => {
-  const { key } = useParams<{ key: string }>();
-  const { teamsLoaded, loadTeams, getTeamById, updateTeam, assignAssistant, removeAssistant } = useTeamStore();
+const AddTeamPage: React.FC = () => {
+  const { addTeam } = useTeamStore();
   const { assistantsLoaded, loadAssistants, assistants } = useAssistantStore();
   const { userSessionInfo } = useAuthStore();
+  const navigate = useNavigate();
   const { t } = useTranslation();
 
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [teamAssistants, setTeamAssistants] = useState<IAssistant[]>([]);
-  const [availableAssistants, setAvailableAssistants] = useState<IAssistant[]>([]);
+  const [selectedAgents, setSelectedAgents] = useState<IAssistant[]>([]);
+  const [availableAgents, setAvailableAgents] = useState<IAssistant[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [agentPickerOpen, setAgentPickerOpen] = useState(false);
 
   useEffect(() => {
-    if (!teamsLoaded) {
-      loadTeams();
-    }
     if (!assistantsLoaded) {
       loadAssistants();
     }
-  }, [teamsLoaded, assistantsLoaded, loadTeams, loadAssistants]);
+  }, [assistantsLoaded, loadAssistants]);
 
   useEffect(() => {
-    if (key && teamsLoaded && assistantsLoaded) {
-      const team = getTeamById(key);
-      if (team) {
-        setName(team.name);
-        setDescription(team.description || '');
-
-        // Get assistants for this team
-        const assistantsInTeam = assistants.filter(assistant =>
-          assistant.teams?.includes(key)
-        );
-        setTeamAssistants(assistantsInTeam);
-
-        // Get available assistants (those not in the team)
-        const availableAssts = assistants.filter(assistant =>
-          !assistant.teams?.includes(key)
-        );
-        setAvailableAssistants(availableAssts);
-      }
+    if (assistantsLoaded) {
+      // All assistants are available initially
+      setAvailableAgents(assistants);
     }
-  }, [key, teamsLoaded, assistantsLoaded, getTeamById, assistants]);
+  }, [assistantsLoaded, assistants]);
 
   const handleSave = async () => {
-    if (!key || !name) return;
+    if (!name) return;
 
     setIsSubmitting(true);
     try {
-      await updateTeam(key, {
-        _id: key,
+      // Only include description if it has a value
+      const teamData: { name: string; description?: string; companyId: string } = {
         name,
-        description,
         companyId: userSessionInfo.companyId,
-      });
+      };
+      if (description.trim()) {
+        teamData.description = description;
+      }
+
+      const newTeam = await addTeam(teamData);
+
+      // Assign selected agents to the new team
+      if (newTeam && selectedAgents.length > 0) {
+        const { assignAssistant } = useTeamStore.getState();
+        for (const agent of selectedAgents) {
+          await assignAssistant(newTeam._id, agent._id);
+        }
+      }
+
+      // Always reload assistants to update their teams array before navigating
+      await loadAssistants();
+
       emitter.emit(EVENT_SHOW_NOTIFICATION, {
-        message: t('EditTeamPage.saveSuccess') || 'Team saved successfully',
+        message: t('AddTeamPage.createSuccess') || 'Team created successfully',
         type: 'success',
       });
+      navigate('/admin/teams');
     } catch (error) {
-      console.error('Failed to update team:', error);
+      console.error('Failed to create team:', error);
       emitter.emit(EVENT_SHOW_NOTIFICATION, {
-        message: t('EditTeamPage.saveError') || 'Failed to save team',
+        message: t('AddTeamPage.createError') || 'Failed to create team',
         type: 'error',
       });
     } finally {
@@ -88,9 +87,8 @@ const EditTeamPage: React.FC = () => {
     }
   };
 
-  const handleAddAgent = async (agent: IAssistant) => {
-    if (!key) return;
-    if (teamAssistants.length >= MAX_TEAM_AGENTS) {
+  const handleAddAgent = (agent: IAssistant) => {
+    if (selectedAgents.length >= MAX_TEAM_AGENTS) {
       emitter.emit(EVENT_SHOW_NOTIFICATION, {
         message: t('EditTeamPage.maxAgentsReached') || `Maximum ${MAX_TEAM_AGENTS} agents per team`,
         type: 'warning',
@@ -98,48 +96,16 @@ const EditTeamPage: React.FC = () => {
       return;
     }
 
-    try {
-      await assignAssistant(key, agent._id);
-      setTeamAssistants([...teamAssistants, agent]);
-      setAvailableAssistants(availableAssistants.filter(a => a._id !== agent._id));
-      // Reload assistants to update their teams array for other pages
-      loadAssistants();
-      emitter.emit(EVENT_SHOW_NOTIFICATION, {
-        message: t('EditTeamPage.agentAdded') || 'Agent added to team',
-        type: 'success',
-      });
-    } catch (error) {
-      console.error('Failed to assign assistant to team:', error);
-      emitter.emit(EVENT_SHOW_NOTIFICATION, {
-        message: t('EditTeamPage.agentAddFailed') || 'Failed to add agent',
-        type: 'error',
-      });
-    }
+    setSelectedAgents([...selectedAgents, agent]);
+    setAvailableAgents(availableAgents.filter(a => a._id !== agent._id));
   };
 
-  const handleRemoveAgent = async (agent: IAssistant) => {
-    if (!key) return;
-
-    try {
-      await removeAssistant(key, agent._id);
-      setTeamAssistants(teamAssistants.filter(a => a._id !== agent._id));
-      setAvailableAssistants([...availableAssistants, agent]);
-      // Reload assistants to update their teams array for other pages
-      loadAssistants();
-      emitter.emit(EVENT_SHOW_NOTIFICATION, {
-        message: t('EditTeamPage.agentRemoved') || 'Agent removed from team',
-        type: 'success',
-      });
-    } catch (error) {
-      console.error('Failed to remove assistant from team:', error);
-      emitter.emit(EVENT_SHOW_NOTIFICATION, {
-        message: t('EditTeamPage.agentRemoveFailed') || 'Failed to remove agent',
-        type: 'error',
-      });
-    }
+  const handleRemoveAgent = (agent: IAssistant) => {
+    setSelectedAgents(selectedAgents.filter(a => a._id !== agent._id));
+    setAvailableAgents([...availableAgents, agent]);
   };
 
-  if (!teamsLoaded || !assistantsLoaded) {
+  if (!assistantsLoaded) {
     return (
       <div className="flex items-center justify-center h-full">
         <p className="text-muted-foreground">{t('common.pleaseWait')}</p>
@@ -147,20 +113,11 @@ const EditTeamPage: React.FC = () => {
     );
   }
 
-  const team = key ? getTeamById(key) : null;
-  if (!team) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-muted-foreground">{t('EditTeamPage.teamNotFound') || 'Team not found'}</p>
-      </div>
-    );
-  }
-
   return (
     <>
       <StickyFormLayout
-        title={t('EditTeamPage.title') || 'Edit Team'}
-        subtitle={t('EditTeamPage.subtitle') || 'Manage your team settings and members'}
+        title={t('AddTeamPage.title') || 'Create Team'}
+        subtitle={t('AddTeamPage.subtitle') || 'Set up a new team with agents'}
         backUrl="/admin/teams"
         footer={
           <div className="flex justify-end">
@@ -169,7 +126,7 @@ const EditTeamPage: React.FC = () => {
               isLoading={isSubmitting}
               disabled={!name}
             >
-              {t('common.save')}
+              {t('AddTeamPage.create') || 'Create Team'}
             </LoadingButton>
           </div>
         }
@@ -179,8 +136,8 @@ const EditTeamPage: React.FC = () => {
           <div className="w-full lg:w-1/2">
             <div className="rounded-xl overflow-hidden bg-secondary">
               <TeamScene
-                agents={teamAssistants}
-                teamName={name || t('EditTeamPage.untitled') || 'Untitled Team'}
+                agents={selectedAgents}
+                teamName={name || t('AddTeamPage.untitled') || 'New Team'}
                 teamDescription={description}
                 editMode={true}
                 maxAgents={MAX_TEAM_AGENTS}
@@ -189,8 +146,8 @@ const EditTeamPage: React.FC = () => {
               />
             </div>
             <p className="text-xs text-muted-foreground mt-2 text-center">
-              {t('EditTeamPage.agentCount', { count: teamAssistants.length, max: MAX_TEAM_AGENTS }) ||
-                `${teamAssistants.length} of ${MAX_TEAM_AGENTS} agents`}
+              {t('EditTeamPage.agentCount', { count: selectedAgents.length, max: MAX_TEAM_AGENTS }) ||
+                `${selectedAgents.length} of ${MAX_TEAM_AGENTS} agents`}
             </p>
           </div>
 
@@ -223,11 +180,11 @@ const EditTeamPage: React.FC = () => {
       <AgentPickerDialog
         open={agentPickerOpen}
         onOpenChange={setAgentPickerOpen}
-        availableAgents={availableAssistants}
+        availableAgents={availableAgents}
         onSelectAgent={handleAddAgent}
       />
     </>
   );
 };
 
-export { EditTeamPage };
+export { AddTeamPage };

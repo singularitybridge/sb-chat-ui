@@ -13,6 +13,7 @@ import { InboxPage } from './pages/admin/inbox/InboxPage';
 import { CompanyAdminPage } from './pages/admin/CompanyAdminPage';
 import { TeamsPage } from './pages/admin/TeamsPage';
 import { EditTeamPage } from './pages/admin/EditTeamPage';
+import { AddTeamPage } from './pages/admin/AddTeamPage';
 import { MemoryPage } from './pages/admin/MemoryPage'; // Added import for MemoryPage
 import { ApiKeysPage } from './pages/admin/ApiKeysPage';
 import { IntegrationsPage } from './pages/admin/IntegrationsPage';
@@ -163,6 +164,10 @@ export const browserRouter = createBrowserRouter(
           {
             path: 'teams',
             element: <TeamsPage />,
+          },
+          {
+            path: 'teams/new',
+            element: <AddTeamPage />,
           },
           {
             path: 'teams/:key',

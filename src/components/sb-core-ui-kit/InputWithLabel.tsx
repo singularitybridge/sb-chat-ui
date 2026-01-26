@@ -1,6 +1,7 @@
 import React from 'react';
-import { Input } from './Input';
-import { TextComponent } from './TextComponent';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { cn } from '../../lib/utils';
 
 interface InputWithLabelProps {
   id: string;
@@ -14,6 +15,8 @@ interface InputWithLabelProps {
   autoFocus?: boolean;
   error?: string;
   disabled?: boolean;
+  placeholder?: string;
+  className?: string;
 }
 
 const InputWithLabel: React.FC<InputWithLabelProps> = ({
@@ -28,24 +31,32 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
   autoFocus,
   error,
   disabled,
+  placeholder,
+  className,
 }) => {
   return (
-    <div>
-      <div className="mb-1">
-        <TextComponent text={label} size="small" color="normal" />
-      </div>
+    <div className={cn('space-y-2', className)}>
+      <Label htmlFor={id}>{label}</Label>
       <Input
         id={id}
         type={type}
         value={value || ''}
-        onChange={onChange}
+        onChange={(e) => onChange(e.target.value)}
         onFocus={onFocus}
         onBlur={onBlur}
         onKeyDown={onKeyDown}
         autoFocus={autoFocus}
-        error={error}
         disabled={disabled}
+        placeholder={placeholder}
+        aria-invalid={!!error}
+        className={cn(
+          'h-11',
+          error && 'border-destructive focus-visible:ring-destructive/50'
+        )}
       />
+      {error && (
+        <p className="text-sm text-destructive">{error}</p>
+      )}
     </div>
   );
 };

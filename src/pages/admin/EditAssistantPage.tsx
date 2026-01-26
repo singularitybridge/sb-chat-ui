@@ -10,15 +10,7 @@ import {
   DropdownFieldConfig,
 } from '../../components/DynamicForm';
 import { getAssistantFieldConfigs, defaultAssistantFieldConfigs } from '../../store/fieldConfigs/assistantFieldConfigs';
-import {
-  uploadFile,
-  listAssistantFiles,
-  deleteFile,
-} from '../../services/api/fileService';
-import FileUpload from '../../components/sb-core-ui-kit/FileUpload';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
-import { FileText, Trash2 as TrashIcon } from 'lucide-react';
-import { IconButton } from '../../components/admin/IconButton';
 import { useTranslation } from 'react-i18next';
 import AvatarSelector from '../../components/AvatarSelector';
 import { emitter } from '../../services/mittEmitter';
@@ -28,12 +20,6 @@ import { getAssistantUrl } from '../../utils/assistantUrlUtils';
 import { Button } from '../../components/ui/button';
 import LoadingButton from '../../components/core/LoadingButton';
 
-interface UploadedFile {
-  fileId: string;
-  openaiFileId: string;
-  filename: string;
-}
-
 const EditAssistantPage: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { key } = useParams<{ key: string }>();
@@ -41,8 +27,6 @@ const EditAssistantPage: React.FC = () => {
   const { assistantsLoaded, getAssistantById, updateAssistant } = useAssistantStore();
   const assistant = key ? getAssistantById(key) : null;
   const [isLoading, setIsLoading] = useState(false);
-  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
-  const [isUploading, setIsUploading] = useState(false);
   const [selectedAvatarId, setSelectedAvatarId] = useState<string | null>(null);
   const [fieldConfigs, setFieldConfigs] = useState<FieldConfig[]>(defaultAssistantFieldConfigs);
   const [isFieldConfigsLoading, setIsFieldConfigsLoading] = useState(true);
@@ -63,26 +47,10 @@ const EditAssistantPage: React.FC = () => {
 
     fetchFieldConfigs();
 
-    // Use assistant._id for file operations, not the route key
-    if (assistant && assistant._id) {
-      fetchAssistantFiles();
-    }
     if (assistant) {
       setSelectedAvatarId(assistant.avatarImage || null);
     }
   }, [key, assistant, i18n.language]);
-
-  const fetchAssistantFiles = async () => {
-    // Use the actual assistant._id, not the route key
-    if (assistant && assistant._id) {
-      try {
-        const files = await listAssistantFiles(assistant._id);
-        setUploadedFiles(files);
-      } catch (error) {
-        console.error('Failed to fetch assistant files', error);
-      }
-    }
-  };
 
   const showActionsModal = () => {
     if (assistant) {
@@ -160,38 +128,6 @@ const EditAssistantPage: React.FC = () => {
     }
   };
 
-  const handleFileUpload = async (file: File) => {
-    if (!assistant || !assistant._id) return;
-
-    setIsUploading(true);
-    try {
-      const response = await uploadFile(assistant._id, file);
-      const newFile: UploadedFile = {
-        fileId: response.fileId,
-        openaiFileId: response.openaiFileId,
-        filename: response.title,
-      };
-      setUploadedFiles([...uploadedFiles, newFile]);
-      toast.success(t('EditAssistantPage.fileUploadSuccess'));
-    } catch (_error) {
-      toast.error(t('EditAssistantPage.fileUploadError'));
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-  const handleFileDelete = async (fileId: string) => {
-    if (!assistant || !assistant._id) return;
-
-    try {
-      await deleteFile(assistant._id, fileId);
-      setUploadedFiles(uploadedFiles.filter((file) => file.fileId !== fileId));
-      toast.success(t('EditAssistantPage.fileDeleteSuccess'));
-    } catch (_error) {
-      toast.error(t('EditAssistantPage.fileDeleteError'));
-    }
-  };
-
   return (
     <StickyFormLayout
       title={t('EditAssistantPage.title')}
@@ -225,51 +161,13 @@ const EditAssistantPage: React.FC = () => {
           />
         </div>
         <div className="w-full lg:w-1/2">
-          <div className="mb-6">
+          <div>
             <TextComponent text={t('EditAssistantPage.selectAvatar')} size="subtitle" className="mb-4" />
             <AvatarSelector
               selectedAvatarId={selectedAvatarId}
               onSelectAvatar={setSelectedAvatarId}
             />
           </div>
-          <div className="mb-6">
-            <TextComponent text={t('EditAssistantPage.uploadFile')} size="subtitle" className="mb-4" />
-            <FileUpload
-              onFileUpload={handleFileUpload}
-              isUploading={isUploading}
-            />
-          </div>
-          {uploadedFiles.length > 0 && (
-            <div>
-              <TextComponent
-                text={t('EditAssistantPage.uploadedFiles')}
-                size="subtitle"
-                className="mb-2"
-              />
-              <ul className="bg-white rounded-lg shadow-sm p-4">
-                {uploadedFiles.map((file) => (
-                  <li
-                    key={file.fileId}
-                    className="flex justify-between items-center text-sm text-muted-foreground mb-2 p-2 hover:bg-accent"
-                  >
-                    <div className="flex gap-2 items-center">
-                      <FileText size={16} className="text-slate-500" />
-                      <TextComponent
-                        text={file.filename}
-                        size="small"
-                        color="secondary"
-                      />
-                    </div>
-                    <IconButton
-                      icon={<TrashIcon size={16} />}
-                      onClick={() => handleFileDelete(file.fileId)}
-                      className="text-muted-foreground hover:text-red-400 transition duration-100"
-                    />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
         </div>
       </div>
     </StickyFormLayout>

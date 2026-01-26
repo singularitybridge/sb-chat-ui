@@ -174,13 +174,38 @@
   },
   "EditTeamPage": {
     "title": "ערוך צוות",
-    "name": "שם",
+    "subtitle": "נהל את הגדרות הצוות והחברים",
+    "name": "שם הצוות",
+    "namePlaceholder": "הזן שם צוות",
     "description": "תיאור",
+    "descriptionPlaceholder": "תאר את תפקיד הצוות",
     "icon": "אייקון",
     "iconPlaceholder": "הזן אימוג'י או שם אייקון",
     "teamAssistants": "סוכנים בצוות",
     "addAssistant": "הוסף סוכן",
-    "noAssistants": "אין עדיין סוכנים בצוות זה"
+    "addAgentToTeam": "הוסף סוכן לצוות",
+    "searchAgents": "חפש סוכנים...",
+    "noAssistants": "אין עדיין סוכנים בצוות זה",
+    "noAgentsFound": "לא נמצאו סוכנים",
+    "noAvailableAgents": "אין סוכנים זמינים",
+    "untitled": "צוות ללא שם",
+    "agentCount": "{{count}} מתוך {{max}} סוכנים",
+    "saveSuccess": "הצוות נשמר בהצלחה",
+    "saveError": "שמירת הצוות נכשלה",
+    "agentAdded": "הסוכן נוסף לצוות",
+    "agentAddFailed": "הוספת הסוכן נכשלה",
+    "agentRemoved": "הסוכן הוסר מהצוות",
+    "agentRemoveFailed": "הסרת הסוכן נכשלה",
+    "maxAgentsReached": "מקסימום 5 סוכנים לצוות",
+    "teamNotFound": "הצוות לא נמצא"
+  },
+  "AddTeamPage": {
+    "title": "יצירת צוות",
+    "subtitle": "הגדר צוות חדש עם סוכנים",
+    "untitled": "צוות חדש",
+    "create": "צור צוות",
+    "createSuccess": "הצוות נוצר בהצלחה",
+    "createError": "יצירת הצוות נכשלה"
   },
   "AddTeamDialog": {
     "name": "שם",
@@ -348,19 +373,10 @@
   "EditAssistantPage": {
     "title": "עריכת סוכן",
     "description": "עדכן כאן את הפרטים של הסוכן שלך",
-    "uploadFile" : "ידע והנחיות",
-    "uploadedFiles" : "קבצי ידע והנחיות שהועלו",
-    "uploading" : "מעלה...",
-    "dropFile" : "גרור קובץ לכאן",
-    "dragFileHere" : "גרור קובץ לכאן, או לחץ כדי לבחור",
     "selectAvatar": "בחר אווטאר",
     "editAllowedActions": "ערוך פעולות מורשות",
     "saveSuccess": "הסוכן עודכן בהצלחה",
-    "saveError": "שגיאה בעדכון הסוכן",
-    "fileUploadSuccess": "הקובץ הועלה בהצלחה",
-    "fileUploadError": "שגיאה בהעלאת הקובץ",
-    "fileDeleteSuccess": "הקובץ נמחק בהצלחה",
-    "fileDeleteError": "שגיאה במחיקת הקובץ"
+    "saveError": "שגיאה בעדכון הסוכן"
   },
   "ChatContainer": {
     "input": {

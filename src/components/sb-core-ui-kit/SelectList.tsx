@@ -1,7 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { ChevronDownIcon } from '@heroicons/react/24/solid';
-import clsx from 'clsx';
-import { TextComponent } from './TextComponent';
+import React from 'react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select';
+import { Label } from '../ui/label';
+import { cn } from '../../lib/utils';
 
 export type SelectListOption = {
   value: string | number;
@@ -28,113 +34,45 @@ export const SelectList: React.FC<SelectListProps> = ({
   disabled,
   className,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedValue, setSelectedValue] = useState<string | number | undefined>(initialValue);
-  const [isFocused, setIsFocused] = useState(false);
-  const selectRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    setSelectedValue(initialValue);
-  }, [initialValue]);
-
-  useEffect(() => {
-    const handleOutsideClick = (event: MouseEvent) => {
-      if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-        setIsFocused(false);
-      }
-    };
-
-    const handleEscapeKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setIsOpen(false);
-        setIsFocused(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleOutsideClick);
-    document.addEventListener('keydown', handleEscapeKey);
-
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-      document.removeEventListener('keydown', handleEscapeKey);
-    };
-  }, []);
-
-  const toggleSelect = (event: React.MouseEvent) => {
-    event.stopPropagation();
-    if (!disabled && options.length > 0) {
-      setIsOpen(!isOpen);
-      setIsFocused(!isOpen);
+  const handleValueChange = (value: string) => {
+    // Try to preserve the original type (number or string)
+    const originalOption = options.find(opt => String(opt.value) === value);
+    if (originalOption) {
+      onSelect(originalOption.value);
+    } else {
+      onSelect(value);
     }
   };
 
-  const handleSelect = (value: string | number) => {
-    setSelectedValue(value);
-    onSelect(value);
-    setIsOpen(false);
-    setIsFocused(false);
-  };
-
-  const selectedOption = options.find((option) => option.value === selectedValue);
-  const displayText = selectedOption ? selectedOption.label : placeholder;
-
   return (
-    <div>
-      <div className="mb-1">
-        <TextComponent text={label} size="small" color="normal" />
-      </div>
-
-      <div className="flex flex-col w-full" ref={selectRef}>
-        <div
-          className={clsx(
-            'relative flex py-3 px-5 justify-between items-center gap-2 self-stretch bg-background rounded-lg transition-all duration-200',
-            {
-              'border border-ring': isFocused,
-              'border border-input': !isFocused,
-              'opacity-50': disabled,
-            },
-            className
-          )}
-          onClick={toggleSelect}
-        >
-          <div
-            className={clsx(
-              'w-full text-base font-normal leading-[140%] tracking-[0.56px] cursor-pointer',
-              {
-                'text-foreground': selectedValue && !disabled,
-                'text-muted-foreground': !selectedValue || disabled,
-              }
-            )}
-          >
-            {displayText}
-          </div>
-          <ChevronDownIcon
-            className={clsx(
-              'w-5 h-5 text-muted-foreground transition-transform duration-200 cursor-pointer',
-              {
-                'transform rotate-180': isOpen,
-              }
-            )}
-          />
-          {isOpen && options.length > 0 && (
-            <div className="absolute left-0 right-0 z-10 mt-1 bg-popover border border-border rounded-lg shadow-lg top-full">
-              {options.map((option) => (
-                <div
-                  key={option.value}
-                  className="p-3 hover:bg-accent cursor-pointer text-base"
-                  onClick={() => handleSelect(option.value)}
-                >
-                  <div className="text-foreground">{option.label}</div>
-                  {option.description && (
-                    <div className="text-sm text-muted-foreground">{option.description}</div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
+    <div className={cn('space-y-2', className)}>
+      <Label>{label}</Label>
+      <Select
+        value={initialValue !== undefined ? String(initialValue) : undefined}
+        onValueChange={handleValueChange}
+        disabled={disabled || options.length === 0}
+      >
+        <SelectTrigger className="w-full h-11">
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+        <SelectContent>
+          {options.map((option) => (
+            <SelectItem
+              key={String(option.value)}
+              value={String(option.value)}
+            >
+              <div className="flex flex-col">
+                <span>{option.label}</span>
+                {option.description && (
+                  <span className="text-xs text-muted-foreground">
+                    {option.description}
+                  </span>
+                )}
+              </div>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 };

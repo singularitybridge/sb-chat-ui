@@ -193,13 +193,38 @@
   },
   "EditTeamPage": {
     "title": "Edit Team",
-    "name": "Name",
+    "subtitle": "Manage your team settings and members",
+    "name": "Team Name",
+    "namePlaceholder": "Enter team name",
     "description": "Description",
+    "descriptionPlaceholder": "Describe what this team does",
     "icon": "Icon",
     "iconPlaceholder": "Enter an emoji or icon name",
     "teamAssistants": "Team Assistants",
     "addAssistant": "Add Assistant",
-    "noAssistants": "No assistants in this team yet"
+    "addAgentToTeam": "Add Agent to Team",
+    "searchAgents": "Search agents...",
+    "noAssistants": "No assistants in this team yet",
+    "noAgentsFound": "No agents found",
+    "noAvailableAgents": "No available agents",
+    "untitled": "Untitled Team",
+    "agentCount": "{{count}} of {{max}} agents",
+    "saveSuccess": "Team saved successfully",
+    "saveError": "Failed to save team",
+    "agentAdded": "Agent added to team",
+    "agentAddFailed": "Failed to add agent",
+    "agentRemoved": "Agent removed from team",
+    "agentRemoveFailed": "Failed to remove agent",
+    "maxAgentsReached": "Maximum 5 agents per team",
+    "teamNotFound": "Team not found"
+  },
+  "AddTeamPage": {
+    "title": "Create Team",
+    "subtitle": "Set up a new team with agents",
+    "untitled": "New Team",
+    "create": "Create Team",
+    "createSuccess": "Team created successfully",
+    "createError": "Failed to create team"
   },
   "AddTeamDialog": {
     "name": "Name",
@@ -327,19 +352,10 @@
   "EditAssistantPage": {
     "title": "Edit AI Assistant",
     "description": "update your ai agents here",
-    "uploadFile" : "Knowledge and Instructions Files",
-    "uploadedFiles" : "Knowledge and Instructions Files Uploaded",
-    "uploading" : "Uploading...",
-    "dropFile" : "Drop file here",
-    "dragFileHere" : "Drag file here, or click to upload",
     "selectAvatar": "Select Avatar",
     "editAllowedActions": "Edit Allowed Actions",
     "saveSuccess": "Assistant updated successfully",
-    "saveError": "Failed to update assistant",
-    "fileUploadSuccess": "File uploaded successfully",
-    "fileUploadError": "Failed to upload file",
-    "fileDeleteSuccess": "File deleted successfully",
-    "fileDeleteError": "Failed to delete file"
+    "saveError": "Failed to update assistant"
   },
   "ChatContainer": {
     "input": {

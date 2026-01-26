@@ -18,7 +18,7 @@ import {
 import { ChatContainer } from '../../components/chat-container/ChatContainer';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
 import { useNavigate, useParams } from 'react-router';
-import { Avatar, AvatarStyles, getAvatarUrl } from '../../components/Avatar';
+import { getAvatarUrl } from '../../components/Avatar';
 import IntegrationIcons from '../../components/IntegrationIcons';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getAssistantUrl } from '../../utils/assistantUrlUtils';
@@ -36,6 +36,132 @@ import { Button } from '../../components/ui/button';
 // Note: Mobile view toggle uses CSS classes (md:hidden, md:block) for better performance
 // JS state is only used for toggling between views on mobile, not for detecting screen size
 
+// Chair colors for variety
+const CHAIR_COLORS = ['#b8c4ce', '#bcc8c0', '#c4bcc8', '#c8c4b8'];
+
+// Workstation Card Component - 1/3 scene + 2/3 info layout
+interface WorkstationCardProps {
+  assistant: IAssistant;
+  isActive: boolean;
+  isHovered: boolean;
+  integrationNames: string[];
+  onSelect: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+  onCopyId: () => void;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
+  index: number;
+}
+
+const WorkstationCard: React.FC<WorkstationCardProps> = ({
+  assistant,
+  isActive,
+  isHovered,
+  integrationNames,
+  onSelect,
+  onEdit,
+  onDelete,
+  onCopyId,
+  onMouseEnter,
+  onMouseLeave,
+  index,
+}) => {
+  const chairColor = CHAIR_COLORS[index % CHAIR_COLORS.length];
+
+  return (
+    <motion.li
+      className={`group rounded-xl overflow-hidden cursor-pointer flex ${
+        isActive
+          ? 'ring-2 ring-primary/30 bg-[oklch(0.96_0.02_250)]'
+          : 'bg-secondary hover:bg-accent'
+      }`}
+      onClick={onSelect}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      whileHover={{ y: -1 }}
+      transition={{ duration: 0.15 }}
+    >
+      {/* Left 1/3: Agent with Computer */}
+      <div className="w-1/3 shrink-0 flex items-end min-h-[140px]" style={{ backgroundColor: isActive ? '#e0e8f0' : '#e8ece8' }}>
+        <svg viewBox="0 0 100 100" className="w-full" preserveAspectRatio="xMidYMax meet">
+          {/* Chair */}
+          <rect x="28" y="28" width="44" height="50" rx="5" fill={chairColor} />
+
+          {/* Avatar */}
+          <foreignObject x="22" y="12" width="56" height="56">
+            <img
+              src={getAvatarUrl(assistant.avatarImage)}
+              alt={assistant.name}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+                filter: isHovered ? 'brightness(1.15) saturate(1.1)' : 'none',
+              }}
+            />
+          </foreignObject>
+
+          {/* Monitor - extends to bottom */}
+          <rect x="8" y="66" width="84" height="34" rx="2" fill="#4b5563" />
+          <rect x="10" y="68" width="80" height="30" fill="#374151" />
+        </svg>
+      </div>
+
+      {/* Right 2/3: Agent Info */}
+      <div className="flex-1 p-4 flex flex-col justify-center min-w-0 relative">
+        {/* Hover actions - Top Right */}
+        <AnimatePresence>
+          {isHovered && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute top-2 right-2 flex gap-1"
+            >
+              <IconButton
+                icon={<Copy className="w-3.5 h-3.5" />}
+                className="p-1.5 rounded-full bg-background/80 hover:bg-background shadow-sm"
+                onClick={(e) => { e.stopPropagation(); onCopyId(); }}
+              />
+              <IconButton
+                icon={<Settings className="w-3.5 h-3.5" />}
+                className="p-1.5 rounded-full bg-background/80 hover:bg-background shadow-sm"
+                onClick={(e) => { e.stopPropagation(); onEdit(); }}
+              />
+              <IconButton
+                icon={<X className="w-3.5 h-3.5 text-red-500" />}
+                className="p-1.5 rounded-full bg-background/80 hover:bg-background shadow-sm"
+                onClick={(e) => { e.stopPropagation(); onDelete(); }}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Name + Model */}
+        <div className="flex items-center gap-2 mb-1">
+          <h4 className="font-semibold text-base truncate flex-1">{assistant.name}</h4>
+          <ModelIndicator modelName={assistant.llmModel} size="small" />
+        </div>
+
+        {/* Description */}
+        <p className="text-xs text-muted-foreground line-clamp-2 mb-3">
+          {assistant.description}
+        </p>
+
+        {/* Integrations */}
+        <div className="mt-auto">
+          <IntegrationIcons
+            integrations={integrationNames}
+            isActive={isActive}
+            size="small"
+            className="opacity-70 group-hover:opacity-100 transition-opacity"
+          />
+        </div>
+      </div>
+    </motion.li>
+  );
+};
 
 const AssistantsPage: React.FC = () => {
   const activeSession = useSessionStore(state => state.activeSession);
@@ -219,103 +345,30 @@ const AssistantsPage: React.FC = () => {
             </div>
           </div>
 
-          <ul className="space-y-6 grow overflow-y-auto pe-4">
+          <ul className="space-y-3 grow overflow-y-auto pe-4">
             {isLoading ? (
               <div className="text-center py-8 text-muted-foreground">
                 <p>{t('common.pleaseWait')}</p>
               </div>
             ) : (
-              (teamId ? teamAssistants : assistants).map((assistant) => {
-              const isActive =
-                activeSession?.assistantId === // Use activeSession from Zustand
-                assistant._id;
-              const integrationNames = extractIntegrationNames(
-                assistant.allowedActions
-              );
+              (teamId ? teamAssistants : assistants).map((assistant, index) => {
+              const isActive = activeSession?.assistantId === assistant._id;
+              const integrationNames = extractIntegrationNames(assistant.allowedActions);
               return (
-                <li
+                <WorkstationCard
                   key={assistant._id}
-                  className={`group rounded-lg p-4 cursor-pointer hover:bg-accent relative ${
-                    isActive
-                      ? 'bg-[oklch(0.93_0.03_250)] dark:bg-zinc-700'
-                      : 'bg-secondary'
-                  }`}
-                  onClick={() => handleSetAssistant(assistant)}
+                  assistant={assistant}
+                  isActive={isActive}
+                  isHovered={hoveredAssistantId === assistant._id}
+                  integrationNames={integrationNames}
+                  onSelect={() => handleSetAssistant(assistant)}
+                  onEdit={() => handleEditAssistant(assistant)}
+                  onDelete={() => handleDeleteClick(assistant)}
+                  onCopyId={() => handleCopyAssistantId(assistant._id)}
                   onMouseEnter={() => setHoveredAssistantId(assistant._id)}
                   onMouseLeave={() => setHoveredAssistantId(null)}
-                >
-                  <div className="flex flex-col space-y-2.5">
-                    <div className="flex items-start gap-4">
-                      <div className="shrink-0">
-                        <Avatar
-                          imageUrl={getAvatarUrl(assistant.avatarImage)}
-                          avatarStyle={AvatarStyles.avatar}
-                          active={isActive}
-                        />
-                      </div>
-                      <div className="grow min-w-0 flex flex-col space-y-2">
-                        <div className="flex justify-between items-center">
-                          <h4 className="font-bold text-base truncate text-right rtl:text-left">
-                            {assistant.name}
-                          </h4>
-                          <div className="flex items-center gap-2">
-                            <AnimatePresence>
-                              {hoveredAssistantId === assistant._id && (
-                                <motion.div
-                                  initial={{ opacity: 0, x: -10 }}
-                                  animate={{ opacity: 1, x: 0 }}
-                                  exit={{ opacity: 0, x: -10 }}
-                                  transition={{ duration: 0.2 }}
-                                  className="flex gap-2"
-                                >
-                                  <IconButton
-                                    icon={
-                                      <Copy className="w-4 h-4 text-muted-foreground" />
-                                    }
-                                    className="p-1.5 rounded-full hover:bg-accent bg-background"
-                                    onClick={(event) => {
-                                      event.stopPropagation();
-                                      handleCopyAssistantId(assistant._id);
-                                    }}
-                                  />
-                                  <IconButton
-                                    icon={
-                                      <Settings className="w-4 h-4 text-muted-foreground" />
-                                    }
-                                    className="p-1.5 rounded-full hover:bg-accent bg-background"
-                                    onClick={(event) => {
-                                      event.stopPropagation();
-                                      handleEditAssistant(assistant);
-                                    }}
-                                  />
-                                  <IconButton
-                                    icon={<X className="w-4 h-4 text-muted-foreground" />}
-                                    className="p-1.5 rounded-full hover:bg-accent bg-background"
-                                    onClick={(event) => {
-                                      event.stopPropagation();
-                                      handleDeleteClick(assistant);
-                                    }}
-                                  />
-                                </motion.div>
-                              )}
-                            </AnimatePresence>
-                            <ModelIndicator modelName={assistant.llmModel} size="medium" />
-                          </div>
-                        </div>
-                        <p className="text-sm text-muted-foreground line-clamp-2">
-                          {assistant.description}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="w-full rounded-xl p-2">
-                      <IntegrationIcons 
-                        integrations={integrationNames} 
-                        isActive={isActive}
-                        className="group-hover:opacity-80 transition-opacity duration-200"
-                      />
-                    </div>
-                  </div>
-                </li>
+                  index={index}
+                />
               );
               })
             )}

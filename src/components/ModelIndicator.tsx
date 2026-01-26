@@ -70,7 +70,7 @@ export const ModelIndicator: React.FC<ModelIndicatorProps> = ({
   if (!modelInfo.name) return null;
 
   const sizeMap = {
-    small: { icon: 14, text: 'text-xs' },
+    small: { icon: 12, text: 'text-[10px]' },
     medium: { icon: 16, text: 'text-sm' },
     large: { icon: 20, text: 'text-base' }
   };
@@ -92,7 +92,7 @@ export const ModelIndicator: React.FC<ModelIndicatorProps> = ({
   return (
     <div className={`flex items-center gap-1.5 ${sizeConfig.text} ${className}`}>
       <ProviderIcon provider={modelInfo.provider} size={sizeConfig.icon} />
-      <span className="text-muted-foreground">{modelInfo.name}</span>
+      <span>{modelInfo.name}</span>
     </div>
   );
 };
