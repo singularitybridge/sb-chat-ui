@@ -43,6 +43,7 @@ export interface IAssistant {
   allowedActions: string[];
   conversationStarters: IIdentifier[];
   teams: string[];
+  lastAccessedAt?: string; // ISO date string - when the agent was last used
 }
 
 export type AssistantKeys = keyof IAssistant;
@@ -102,8 +103,8 @@ export interface ISystemUser {
 export interface ITeam {
   _id: string;
   name: string;
-  description: string;
-  icon: string;
+  description?: string;
+  icon?: string;
   companyId: string;
 }
 

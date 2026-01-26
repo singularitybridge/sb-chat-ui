@@ -237,8 +237,8 @@ export async function handleUserInputStream(
 
 
 export const getAssistants = (): Promise<IAssistant[]> =>
-  singleFlight('GET /assistant', () =>
-    apiClient.get('assistant').then((res) => res.data)
+  singleFlight('GET /assistant?sortBy=lastUsed', () =>
+    apiClient.get('assistant?sortBy=lastUsed').then((res) => res.data)
   );
 
 export async function deleteAssistant(id: string): Promise<void> {
