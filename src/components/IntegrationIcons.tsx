@@ -2,6 +2,7 @@ import React from 'react';
 import { useIntegrations } from '../contexts/IntegrationsContext';
 import { Badge } from './ui/badge';
 import * as LucideIcons from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface IntegrationIconsProps {
   integrations: string[];
@@ -16,17 +17,18 @@ const IntegrationIcons: React.FC<IntegrationIconsProps> = ({
   className = '',
   size = 'default'
 }) => {
-  // Access cached integrations from context/query (may be undefined if not authenticated)
   const integrationsQuery = useIntegrations();
   const integrationData = integrationsQuery?.data ?? [];
 
-  const iconSize = size === 'small' ? 'w-2.5 h-2.5' : 'w-3 h-3';
-  const textSize = size === 'small' ? 'text-[10px]' : '';
+  // Aligned with ModelIndicator sizing
+  const iconSize = size === 'small' ? 'w-3 h-3' : 'w-3.5 h-3.5';
+  const textSize = size === 'small' ? 'text-[11px]' : 'text-xs';
   const gapSize = size === 'small' ? 'gap-1' : 'gap-1.5';
-  const badgePadding = size === 'small' ? 'px-1.5 py-0' : '';
+  const badgeHeight = size === 'small' ? 'h-5' : 'h-6';
+  const badgePx = size === 'small' ? 'px-2' : 'px-2.5';
 
   return (
-    <div className={`flex flex-wrap ${gapSize} ${className}`}>
+    <div className={cn('flex flex-wrap', gapSize, className)}>
       {integrations.map((integration, index) => {
         const integrationInfo = integrationData.find((info) => info.id.toLowerCase() === integration.toLowerCase());
         const iconName = integrationInfo?.icon || 'help-circle';
@@ -35,12 +37,21 @@ const IntegrationIcons: React.FC<IntegrationIconsProps> = ({
         return (
           <Badge
             key={integrationInfo?.name || index}
-            variant={isActive ? 'info' : 'secondary'}
+            variant="secondary"
             title={integrationInfo?.description || ''}
-            className={`${badgePadding} ${textSize} ${!isActive ? 'bg-muted-foreground/15' : ''}`}
+            className={cn(
+              'gap-1 font-medium font-inter rounded-full',
+              badgeHeight,
+              badgePx,
+              textSize,
+              // Distinct color from ModelIndicator (which uses neutral gray)
+              isActive
+                ? 'bg-primary/15 text-primary border border-primary/20'
+                : 'bg-primary/10 text-primary/80 border border-primary/10'
+            )}
           >
             <IconComponent className={iconSize} />
-            <span>{(integrationInfo?.name || integration).toLowerCase()}</span>
+            <span className="capitalize">{(integrationInfo?.name || integration).toLowerCase()}</span>
           </Badge>
         );
       })}

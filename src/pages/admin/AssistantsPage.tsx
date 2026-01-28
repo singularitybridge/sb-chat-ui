@@ -140,7 +140,7 @@ const WorkstationCard: React.FC<WorkstationCardProps> = ({
 
         {/* Name + Model */}
         <div className="flex items-center gap-2 mb-1">
-          <h4 className="font-semibold text-base truncate flex-1">{assistant.name}</h4>
+          <h4 className="font-medium text-base truncate flex-1">{assistant.name}</h4>
           <ModelIndicator modelName={assistant.llmModel} size="small" />
         </div>
 

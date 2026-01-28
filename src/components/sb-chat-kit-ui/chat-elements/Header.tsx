@@ -147,7 +147,7 @@ const Header: React.FC<HeaderProps> = ({
             <div className="flex-1 min-w-0">
               {/* Row 1: Name + Actions */}
               <div className="flex items-center justify-between mb-2">
-                <h2 className="font-semibold text-base tracking-tight truncate">{title}</h2>
+                <h2 className="font-medium text-base tracking-tight truncate">{title}</h2>
                 <div className="flex items-center gap-1 shrink-0 ms-2">
                   <Button
                     variant="ghost"
@@ -253,7 +253,7 @@ const Header: React.FC<HeaderProps> = ({
         {/* Center: Name, Description, Integrations */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <h2 className="font-semibold text-lg tracking-tight truncate">{title}</h2>
+            <h2 className="font-medium text-lg tracking-tight truncate">{title}</h2>
             {modelName && (
               <ModelIndicator modelName={modelName} size="small" />
             )}

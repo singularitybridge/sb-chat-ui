@@ -10,6 +10,9 @@ layer(base);
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
+/* Include Streamdown styles for AI markdown rendering */
+@source "../node_modules/streamdown/dist/*.js";
+
 /* Typography plugin - Tailwind v4 CSS-based configuration */
 @plugin "@tailwindcss/typography";
 
@@ -26,12 +29,13 @@ layer(base);
    ============================================ */
 @theme inline {
   /* Font Families */
-  --font-sans: 'Roboto', sans-serif;
-  --font-roboto: 'Roboto', sans-serif;
+  /* Inter with Noto Sans Hebrew fallback for bilingual support */
+  --font-sans: 'Inter', 'Noto Sans Hebrew', sans-serif;
+  --font-roboto: 'Roboto', 'Noto Sans Hebrew', sans-serif;
   --font-assistant: 'Assistant', sans-serif;
   --font-noto-sans-hebrew: 'Noto Sans Hebrew', sans-serif;
-  --font-inter: 'Inter', sans-serif;
-  --font-jakarta: 'Plus Jakarta Sans', sans-serif;
+  --font-inter: 'Inter', 'Noto Sans Hebrew', sans-serif;
+  --font-jakarta: 'Plus Jakarta Sans', 'Noto Sans Hebrew', sans-serif;
 
   /* Border Radius */
   --radius-lg: var(--radius);
@@ -268,6 +272,22 @@ layer(base);
     font-optical-sizing: auto;
     font-style: normal;
   }
+
+  /* Improved Hebrew text rendering */
+  :lang(he),
+  [dir="rtl"] {
+    font-family: 'Noto Sans Hebrew', 'Inter', sans-serif;
+    font-feature-settings: "kern" 1;
+    text-rendering: optimizeLegibility;
+    line-height: 1.6;
+  }
+
+  /* Hebrew text in chat messages - optimal readability */
+  .hebrew-text,
+  [lang="he"] {
+    font-family: 'Noto Sans Hebrew', sans-serif;
+    letter-spacing: 0.01em;
+  }
 }
 
 :root {
@@ -298,6 +318,10 @@ layer(base);
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', 'Noto Sans Hebrew', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   /* ============================================
