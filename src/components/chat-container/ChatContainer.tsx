@@ -215,7 +215,7 @@ const ChatContainer: React.FC = () => {
               }
             : undefined
         }
-        assistantName="AI Assistant" // This could also come from assistant.name if preferred
+        assistantName={assistant?.name || 'AI Assistant'}
         onSendMessage={handleSubmit} // Use new handleSubmit
         onClear={handleClear} // Use new handleClear
         isLoading={isLoading}

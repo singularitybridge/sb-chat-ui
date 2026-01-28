@@ -1,6 +1,6 @@
 import React from 'react';
 import { Icon } from '@iconify/react';
-import { Badge } from './ui/badge';
+import { cn } from '@/lib/utils';
 
 interface ModelIndicatorProps {
   modelName: string;
@@ -10,8 +10,6 @@ interface ModelIndicatorProps {
 }
 
 const ProviderIcon = ({ provider, size = 16 }: { provider: string, size?: number }) => {
-  // Using simple-icons for all providers - they use currentColor
-  // which properly adapts to light/dark mode
   const iconMap: { [key: string]: string } = {
     openai: 'simple-icons:openai',
     gemini: 'simple-icons:googlegemini',
@@ -19,7 +17,6 @@ const ProviderIcon = ({ provider, size = 16 }: { provider: string, size?: number
   };
 
   const icon = iconMap[provider];
-
   if (!icon) return null;
 
   return <Icon icon={icon} width={size} height={size} className="inline-block" />;
@@ -70,27 +67,33 @@ export const ModelIndicator: React.FC<ModelIndicatorProps> = ({
   if (!modelInfo.name) return null;
 
   const sizeMap = {
-    small: { icon: 12, text: 'text-[10px]' },
-    medium: { icon: 16, text: 'text-sm' },
-    large: { icon: 20, text: 'text-base' }
+    small: { icon: 12, text: 'text-[11px]', height: 'h-5', px: 'px-2' },
+    medium: { icon: 14, text: 'text-xs', height: 'h-6', px: 'px-2.5' },
+    large: { icon: 16, text: 'text-sm', height: 'h-7', px: 'px-3' }
   };
 
   const sizeConfig = sizeMap[size];
 
   if (showBadge) {
     return (
-      <Badge
-        variant="success"
-        className={`${sizeConfig.text} ${className}`}
+      <span
+        className={cn(
+          'inline-flex items-center gap-1 rounded-full font-medium font-inter',
+          'bg-foreground/10 text-foreground/80 border border-foreground/20',
+          sizeConfig.text,
+          sizeConfig.height,
+          sizeConfig.px,
+          className
+        )}
       >
         <ProviderIcon provider={modelInfo.provider} size={sizeConfig.icon} />
         <span>{modelInfo.name}</span>
-      </Badge>
+      </span>
     );
   }
 
   return (
-    <div className={`flex items-center gap-1.5 ${sizeConfig.text} ${className}`}>
+    <div className={cn('flex items-center gap-1 text-muted-foreground', sizeConfig.text, className)}>
       <ProviderIcon provider={modelInfo.provider} size={sizeConfig.icon} />
       <span>{modelInfo.name}</span>
     </div>

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import * as LucideIcons from 'lucide-react';
+import { ChevronDown, ChevronRight, RefreshCw, Loader2, AlertCircle } from 'lucide-react';
 import { getMessageById } from '../../../services/api/assistantService';
-import { JsonViewer } from '../../sb-core-ui-kit/JsonViewer';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface ActionExecutionMessageProps {
   messageId: string;
@@ -36,68 +38,32 @@ interface FullMessageData {
 
 const mapIconName = (iconName: string): keyof typeof LucideIcons => {
   const pascalCase = iconName.split(/[-_\s]+/).map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join('');
-  
   const specialCases: { [key: string]: keyof typeof LucideIcons } = {
     'image': 'Image',
     'brain': 'Brain',
-    // Add more special cases here if needed
+    'search': 'Search',
+    'file': 'FileText',
+    'database': 'Database',
+    'calendar': 'Calendar',
+    'clock': 'Clock',
   };
-
   return (specialCases[iconName] || pascalCase) as keyof typeof LucideIcons;
 };
 
 const ActionExecutionMessage: React.FC<ActionExecutionMessageProps> = ({
   messageId,
-  status,  
+  status,
   serviceName,
   actionTitle,
-  actionDescription,
-  icon,  
+  icon,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [fullMessageData, setFullMessageData] = useState<FullMessageData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const getStatusStyle = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'completed':
-        return 'bg-success';
-      case 'failed':
-        return 'bg-destructive/10';
-      case 'started':
-        return 'bg-info';
-      default:
-        return 'bg-secondary';
-    }
-  };
-
   const mappedIconName = mapIconName(icon);
-  const IconComponent = (LucideIcons[mappedIconName] || LucideIcons.HelpCircle) as React.ComponentType<React.SVGProps<SVGSVGElement>>;
-
-  const handleExpand = async () => {
-    if (!isExpanded) { // Current state is collapsed, user is intending to expand
-      if (!fullMessageData) { // If no data is currently loaded for this message
-        setIsLoading(true);
-        setError(null);
-        try {
-          const data = await getMessageById(messageId);
-          setFullMessageData(data);
-        } catch (err) {
-          setError('Failed to load message details');
-          console.error('Error loading message details:', err);
-          // Consider not expanding if the load fails, or ensure error is shown clearly
-        }
-        setIsLoading(false);
-      }
-      setIsExpanded(true); // Set to expanded
-    } else { // Current state is expanded, user is intending to collapse
-      setIsExpanded(false); // Set to collapsed
-      setFullMessageData(null); // Clear the detailed data to free memory
-      // Optionally, reset error state if it was related to the load
-      // setError(null); 
-    }
-  };
+  const IconComponent = (LucideIcons[mappedIconName] || LucideIcons.Zap) as React.ComponentType<React.SVGProps<SVGSVGElement>>;
 
   const loadFullMessage = async () => {
     setIsLoading(true);
@@ -106,90 +72,161 @@ const ActionExecutionMessage: React.FC<ActionExecutionMessageProps> = ({
       const data = await getMessageById(messageId);
       setFullMessageData(data);
     } catch (err) {
-      setError('Failed to load message details');
+      setError('Failed to load');
       console.error('Error loading message details:', err);
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleToggle = async () => {
+    if (!isExpanded && !fullMessageData) {
+      await loadFullMessage();
+    }
+    setIsExpanded(!isExpanded);
+  };
+
   const handleReload = async (e: React.MouseEvent) => {
     e.stopPropagation();
     await loadFullMessage();
-    if (!isExpanded) {
-      setIsExpanded(true);
-    }
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+  };
+
+  // Status dot colors
+  const statusColors = {
+    started: 'bg-blue-500',
+    completed: 'bg-emerald-500',
+    failed: 'bg-red-500',
   };
 
   return (
-    <div className="mb-2 rtl:mr-11 ltr:ml-11 rtl:pl-2 ltr:pr-2">
-      <div className={`rounded-lg border ${getStatusStyle(status)} overflow-hidden w-[calc(100%-8px)]`}>
-        <div className="p-2 flex flex-col items-start w-full text-foreground">
-          <div className="flex items-center w-full justify-between gap-2">
-            <div className="flex items-center gap-2 min-w-0 flex-1">
-              <button
-                onClick={handleExpand}
-                className="p-1 rounded-full hover:bg-accent shrink-0"
-              >
-                <IconComponent className="w-4 h-4 shrink-0" />
-              </button>
-              <span className="font-medium text-sm truncate">{actionTitle}</span>
-            </div>
-            <div className="flex items-center gap-2 shrink-0">
-              <span className="text-xs px-2 py-1 rounded-full bg-info text-info-foreground whitespace-nowrap">{serviceName}</span>
-              <button
-                onClick={handleReload}
-                className="p-1 rounded-full hover:bg-accent shrink-0"
-                title="Reload"
-              >
-                <LucideIcons.RefreshCw className="w-4 h-4 shrink-0" />
-              </button>
-            </div>
-          </div>
-          <p className="text-xs mt-1 rtl:text-right ltr:text-left">{actionDescription}</p>
+    <div className="mb-1.5 ml-9 overflow-hidden">
+      {/* Header row */}
+      <div
+        className="flex items-center gap-2 py-1.5 px-2.5 rounded-lg bg-muted/50 hover:bg-muted/70 cursor-pointer transition-colors group"
+        onClick={handleToggle}
+      >
+        {/* Status dot */}
+        <span className={cn('w-2 h-2 rounded-full shrink-0', statusColors[status])} />
+
+        {/* Icon */}
+        <IconComponent className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+
+        {/* Title */}
+        <span className="text-[12px] text-foreground truncate font-inter flex-1 min-w-0">
+          {actionTitle}
+        </span>
+
+        {/* Service name */}
+        <span className="text-[11px] text-muted-foreground font-inter shrink-0">
+          {serviceName}
+        </span>
+
+        {/* Expand/Reload controls */}
+        <div className="flex items-center gap-1 shrink-0 opacity-50 group-hover:opacity-100 transition-opacity">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-5 w-5 p-0 text-muted-foreground hover:text-foreground"
+            onClick={handleReload}
+          >
+            <RefreshCw className={cn('w-3 h-3', isLoading && 'animate-spin')} />
+          </Button>
+          {isExpanded ? (
+            <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
+          ) : (
+            <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
+          )}
         </div>
       </div>
-      <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? 'max-h-[1000px]' : 'max-h-0'}`}>
-        <div className="px-4 py-2 rounded-b bg-secondary w-[calc(100%-24px)] mx-2 border border-border">
-          {isLoading && <p>Loading...</p>}
-          {error && <p className="text-destructive">{error}</p>}
+
+      {/* Expandable details - constrained width */}
+      {isExpanded && (
+        <div className="mt-1 ml-4 pl-3 border-l-2 border-border/50 py-2 overflow-hidden">
+          {isLoading && (
+            <div className="flex items-center gap-2 py-2 text-muted-foreground">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span className="text-[12px]">Loading...</span>
+            </div>
+          )}
+
+          {error && (
+            <div className="flex items-center gap-2 py-2 text-red-500">
+              <AlertCircle className="w-4 h-4" />
+              <span className="text-[12px]">{error}</span>
+              <button onClick={handleReload} className="text-[12px] underline">Retry</button>
+            </div>
+          )}
+
           {!isLoading && !error && fullMessageData && (
-            <div className="space-y-2">
-              <div className="border-b border-border pb-1 text-left">
-                <span className="text-xs font-normal">Message ID</span>
-                <p className="text-base">{fullMessageData._id}</p>
+            <div className="space-y-3 overflow-hidden">
+              {/* Info rows */}
+              <div className="space-y-1.5">
+                <InfoRow label="Action" value={fullMessageData.data.actionId} onCopy={copyToClipboard} />
+                <InfoRow label="Status" value={fullMessageData.data.status} onCopy={copyToClipboard} />
               </div>
-              <div className="border-b border-border pb-1 text-left">
-                <span className="text-xs font-normal">Action ID</span>
-                <p className="text-base">{fullMessageData.data.actionId}</p>
-              </div>
-              <div className="border-b border-border pb-1 text-left">
-                <span className="text-xs font-normal">Original Action ID</span>
-                <p className="text-base">{fullMessageData.data.originalActionId}</p>
-              </div>
-              <div className="border-b border-border pb-1 text-left">
-                <span className="text-xs font-normal">Status</span>
-                <p className="text-base">{fullMessageData.data.status}</p>
-              </div>
+
+              {/* Input */}
               {fullMessageData.data.input && (
-                <div className="border-b border-border pb-1 text-left">
-                  <span className="text-xs font-normal">Input</span>
-                  <div className="mt-1">
-                    <JsonViewer data={fullMessageData.data.input} maxHeight="200px" />
-                  </div>
-                </div>
+                <JsonBlock label="Input" data={fullMessageData.data.input} onCopy={copyToClipboard} />
               )}
+
+              {/* Output */}
               {fullMessageData.data.output && (
-                <div className="border-b border-border pb-1 text-left">
-                  <span className="text-xs font-normal">Output</span>
-                  <div className="mt-1">
-                    <JsonViewer data={fullMessageData.data.output} maxHeight="200px" />
-                  </div>
-                </div>
+                <JsonBlock label="Output" data={fullMessageData.data.output} onCopy={copyToClipboard} />
               )}
             </div>
           )}
         </div>
+      )}
+    </div>
+  );
+};
+
+// Info row component
+const InfoRow: React.FC<{
+  label: string;
+  value: string;
+  onCopy: (text: string) => void;
+}> = ({ label, value, onCopy }) => (
+  <div className="flex items-center gap-3 group text-[12px] min-w-0">
+    <span className="text-muted-foreground w-16 shrink-0">{label}</span>
+    <span className="text-foreground truncate font-mono text-[11px] min-w-0">{value}</span>
+    <button
+      className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-foreground transition-opacity shrink-0"
+      onClick={() => onCopy(value)}
+    >
+      <LucideIcons.Copy className="w-3 h-3" />
+    </button>
+  </div>
+);
+
+// JSON block component - with constrained width
+const JsonBlock: React.FC<{
+  label: string;
+  data: any;
+  onCopy: (text: string) => void;
+}> = ({ label, data, onCopy }) => {
+  const json = JSON.stringify(data, null, 2);
+  return (
+    <div className="space-y-1 overflow-hidden">
+      <div className="flex items-center justify-between">
+        <span className="text-[11px] text-muted-foreground font-medium">{label}</span>
+        <button
+          className="text-muted-foreground hover:text-foreground text-[10px] flex items-center gap-1"
+          onClick={() => onCopy(json)}
+        >
+          <LucideIcons.Copy className="w-3 h-3" />
+          Copy
+        </button>
+      </div>
+      <div className="rounded-lg bg-muted/50 border border-border/30 overflow-hidden">
+        <pre className="text-[11px] p-3 overflow-x-auto max-h-[200px] overflow-y-auto font-mono text-foreground/80 leading-relaxed whitespace-pre-wrap break-all">
+          {json}
+        </pre>
       </div>
     </div>
   );
