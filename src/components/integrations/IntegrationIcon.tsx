@@ -4,7 +4,6 @@ import {
   SiJira,
   SiLinear,
   SiMongodb,
-  SiTwilio,
   SiAmazonwebservices,
 } from 'react-icons/si';
 import { Icon } from '@iconify/react';
@@ -29,6 +28,7 @@ import {
   Inbox,
   Zap,
   Sparkles,
+  Code,
   type LucideIcon,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
@@ -56,17 +56,19 @@ const brandIcons: Record<string, React.ComponentType<{ className?: string }>> = 
   jira: SiJira,
   linear: SiLinear,
   mongodb: SiMongodb,
-  sendgrid: SiTwilio,
   aws: SiAmazonwebservices,
 };
 
-// Iconify icon names for services not in Simple Icons
+// Iconify icon names for services (Simple Icons)
 const iconifyIcons: Record<string, string> = {
   elevenlabs: 'simple-icons:elevenlabs',
   perplexity: 'simple-icons:perplexity',
   nylas: 'simple-icons:gmail', // Nylas is email, use Gmail as fallback
   anthropic: 'simple-icons:anthropic',
   gemini: 'simple-icons:googlegemini',
+  fly: 'simple-icons:flydotio',
+  sendgrid: 'simple-icons:sendgrid',
+  replicate: 'simple-icons:replicate',
 };
 
 // Lucide icons for generic purposes
@@ -91,31 +93,34 @@ const lucideIcons: Record<string, LucideIcon> = {
   inbox: Inbox,
   zap: Zap,
   sparkles: Sparkles,
+  code: Code,
 };
 
 // Map integration names to their preferred icon type
 const integrationIconMap: Record<string, { type: 'brand' | 'iconify' | 'lucide'; key: string }> = {
-  // Brand integrations (Simple Icons)
+  // Brand integrations (react-icons/si)
   openai: { type: 'brand', key: 'openai' },
   jira: { type: 'brand', key: 'jira' },
   linear: { type: 'brand', key: 'linear' },
   mongodb: { type: 'brand', key: 'mongodb' },
-  sendgrid: { type: 'brand', key: 'sendgrid' },
   aws_bedrock_kb: { type: 'brand', key: 'aws' },
 
-  // Iconify integrations (for icons not in react-icons)
+  // Iconify integrations (Simple Icons via Iconify)
   elevenlabs: { type: 'iconify', key: 'elevenlabs' },
   perplexity: { type: 'iconify', key: 'perplexity' },
   anthropic: { type: 'iconify', key: 'anthropic' },
   gemini: { type: 'iconify', key: 'gemini' },
+  fly: { type: 'iconify', key: 'fly' },
+  sendgrid: { type: 'iconify', key: 'sendgrid' },
+  replicate: { type: 'iconify', key: 'replicate' },
 
   // Lucide integrations
-  replicate: { type: 'lucide', key: 'cpu' },
   nylas: { type: 'lucide', key: 'mail' },
   photoroom: { type: 'lucide', key: 'image' },
   fluximage: { type: 'lucide', key: 'sparkles' },
   roomboss: { type: 'lucide', key: 'hotel' },
   curl: { type: 'lucide', key: 'square-terminal' },
+  opencode_sandbox: { type: 'lucide', key: 'code' },
   file_processing: { type: 'lucide', key: 'file' },
   session_query: { type: 'lucide', key: 'message-square' },
   ui_control: { type: 'lucide', key: 'monitor' },
@@ -135,12 +140,14 @@ const brandColors: Record<string, string> = {
   jira: 'text-[#0052CC]',
   linear: 'text-[#5E6AD2]',
   mongodb: 'text-[#47A248]',
-  sendgrid: 'text-[#1A82E2]',
+  sendgrid: 'text-[#1A82E2]', // SendGrid blue
   aws: 'text-[#FF9900]',
   elevenlabs: 'text-foreground',
   perplexity: 'text-[#20808d]',
   anthropic: 'text-[#D4A27F]', // Anthropic brand color (warm tan/beige)
   gemini: 'text-[#8E75B2]', // Google Gemini purple
+  fly: 'text-[#8B5CF6]', // Fly.io purple
+  replicate: 'text-foreground', // Replicate black
 };
 
 export const IntegrationIcon: React.FC<IntegrationIconProps> = ({
