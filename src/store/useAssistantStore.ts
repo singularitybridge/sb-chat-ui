@@ -82,7 +82,7 @@ export const useAssistantStore = create<AssistantStoreState>((set, get) => ({
     set({ isLoading: true });
     try {
       // Convert partial updates to required format for API
-      const updatesForAPI = updates as IAssistant & { voice?: string };
+      const updatesForAPI = updates as IAssistant;
       const updatedAssistant = await updateAssistant(assistantId, updatesForAPI);
       set(state => ({
         assistants: state.assistants.map(a => 

@@ -3,7 +3,6 @@ import { useChatStore } from '../../store/chatStore';
 import { useSessionStore } from '../../store/useSessionStore';
 import { useAudioStore } from '../../store/useAudioStore';
 import { useAssistantStore } from '../../store/useAssistantStore';
-import { useLanguageStore } from '../../store/useLanguageStore';
 import {
   EVENT_SET_ACTIVE_ASSISTANT,
   EVENT_ACTION_EXECUTION,
@@ -14,7 +13,6 @@ import { useEventEmitter } from '../../services/mittEmitter';
 import { IAssistant } from '../../types/entities';
 import { SBChatKitUI } from '../sb-chat-kit-ui/SBChatKitUI';
 import { Base64Attachment } from '../../utils/base64Utils';
-import { changeActiveSessionLanguage } from '../../services/api/sessionService';
 import { useIsCompactView } from '../../hooks/useMediaQuery';
 
 // ActionExecutionMessage interface might be needed if Pusher payload for EVENT_ACTION_EXECUTION is specific
@@ -55,9 +53,6 @@ const ChatContainer: React.FC = () => {
   // Assistant store selectors
   const { assistantsLoaded, getAssistantById } = useAssistantStore();
 
-  // Language store selectors
-  const { language } = useLanguageStore();
-
   const [assistant, setAssistant] = useState<IAssistant | undefined>();
 
   // Zustand session store selectors
@@ -75,15 +70,6 @@ const ChatContainer: React.FC = () => {
       setAssistant(undefined);
     }
   }, [assistantIdFromZustand, assistantsLoaded, getAssistantById]);
-
-  useEffect(() => {
-    const setSessionLanguage = async () => {
-      if (activeSession) {
-        await changeActiveSessionLanguage(language);
-      }
-    };
-    setSessionLanguage();
-  }, [activeSession, language]);
 
   useEffect(() => {
     // Don't load messages if we're in the process of clearing
@@ -137,7 +123,7 @@ const ChatContainer: React.FC = () => {
 
   // Submit message handler now calls Zustand action
   const handleSubmit = (messageText: string, attachments?: Base64Attachment[]) => {
-    const assistantInfo = assistant ? { _id: assistant._id, voice: assistant.voice, name: assistant.name } : undefined;
+    const assistantInfo = assistant ? { _id: assistant._id, name: assistant.name } : undefined;
     storeHandleSubmitMessage(messageText, assistantInfo, activeSession?._id, attachments);
   };
 

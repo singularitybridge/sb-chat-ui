@@ -7,7 +7,6 @@ import { ChatContainer } from '../../components/chat-container/ChatContainer';
 import { TextComponent } from '../../components/sb-core-ui-kit/TextComponent';
 import { IAssistant } from '../../types/entities';
 import { logger } from '../../services/LoggingService';
-import { changeActiveSessionLanguage } from '../../services/api/sessionService';
 import { useEmbedAuth } from '../../contexts/EmbedAuthContext';
 import { setGlobalEmbedApiKey } from '../../services/AxiosService';
 
@@ -78,49 +77,7 @@ const EmbedChatPage: React.FC = () => {
         // This ensures PusherManager and other dependents see a valid session ASAP.
         setActiveSession(workingSession);
 
-        // Step 2: Set language for the session to English if different
-        if (workingSession.language !== 'en') {
-          try {
-            // Call API to change language to English. We won't directly use its return value
-            // to reconstruct the whole session, to avoid issues if it's incomplete.
-            await changeActiveSessionLanguage('en'); 
-            
-            // If API call successful, assume language is updated on backend.
-            // Update our current workingSession's language property locally to English.
-            // The _id and assistantId remain from the valid workingSession.
-            workingSession.language = 'en';
-            
-            // Now, set this updated workingSession in the store.
-            // setActiveSession will validate it. Since _id and assistantId are from a previously
-            // validated session, and language is now explicitly set, it should be valid.
-            setActiveSession(workingSession); 
-
-            // Optionally, re-sync workingSession from store to be absolutely sure,
-            // though setActiveSession should make the store consistent with workingSession.
-            const storeSessionAfterLangUpdate = useSessionStore.getState().activeSession;
-            if (storeSessionAfterLangUpdate && storeSessionAfterLangUpdate._id) {
-                workingSession = storeSessionAfterLangUpdate;
-            } else {
-                // This would be unexpected if setActiveSession(workingSession) above worked.
-                logger.error('Session became null in store after updating language locally and setting.', { localWorkingSession: workingSession });
-                // This state will be caught by the check below.
-            }
-
-          } catch (langError) {
-            logger.error('API call to set session language failed.', langError);
-            // If API call fails, workingSession is not changed, and store's activeSession is also not changed by this block.
-            // No need to re-assign workingSession from store here, as no successful change was made by this block.
-          }
-        }
-
-        // Step 3: Change assistant if necessary
-        // Ensure workingSession is still valid after potential language change attempt
-        if (!workingSession || !workingSession._id) {
-            setError('Session became invalid after language update. Please try again.');
-            setIsSettingUp(false);
-            return;
-        }
-        
+        // Step 2: Change assistant if necessary
         if (workingSession.assistantId !== assistantIdFromParams) {
           await changeAssistant(assistantIdFromParams); // This updates the session in the store
           // Refresh workingSession from the store after assistant change

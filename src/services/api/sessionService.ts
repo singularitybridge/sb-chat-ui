@@ -25,28 +25,7 @@ export const changeSessionAssistant = async (
   }
 };
 
-export const changeSessionLanguage = (sessionId: string, language: string): Promise<ISession> =>
-  singleFlight(`PUT /session/${sessionId}/language`, () => // Keep for specific session ID updates
-    apiClient
-      .put(`/session/${sessionId}/language`, { language })
-      .then((res) => res.data)
-  );
-
-// New function for active session language change
-export const changeActiveSessionLanguage = (language: string): Promise<ISession> =>
-  singleFlight('PUT /session/language', () =>
-    apiClient
-      .put('/session/language', { language })
-      .then((res) => res.data)
-  );
-
-// New function to get active session language
-export const getActiveSessionLanguage = (): Promise<{ language: string }> =>
-  singleFlight('GET /session/language', () =>
-    apiClient.get('/session/language').then((res) => res.data)
-  );
-
-// New function to clear active session (ends current and starts a new one)
+// Clear active session (ends current and starts a new one)
 export const clearActiveSession = (): Promise<ISession> =>
   singleFlight('POST /session/clear', () =>
     apiClient.post('/session/clear').then((res) => res.data)

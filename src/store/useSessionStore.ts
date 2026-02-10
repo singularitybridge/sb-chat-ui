@@ -39,7 +39,6 @@ const retry = async <T>(
 export interface ISession {
   _id: string;
   assistantId: string;
-  language: string; // Assuming 'en' is a default, but it's required here
 }
 
 interface SessionStoreState {
@@ -82,9 +81,7 @@ export const useSessionStore = create<SessionStoreState>((set, get) => ({
         const sessionData: ISession = {
           _id: response._id,
           assistantId: response.assistantId,
-          language: response.language || 'en', // Default language if not present
         };
-        // Use the robust setActiveSession which validates and defaults language
         get().setActiveSession(sessionData);
         sessionToReturn = sessionData; // Set session to return
         set({ isApiKeyMissing: false, isLoadingSession: false });
@@ -94,9 +91,7 @@ export const useSessionStore = create<SessionStoreState>((set, get) => ({
         const sessionData: ISession = {
           _id: response.data._id,
           assistantId: response.data.assistantId,
-          language: response.data.language || 'en', // Default language
         };
-        // Use the robust setActiveSession
         get().setActiveSession(sessionData);
         sessionToReturn = sessionData; // Set session to return
         set({ isApiKeyMissing: false, isLoadingSession: false });
@@ -201,43 +196,16 @@ export const useSessionStore = create<SessionStoreState>((set, get) => ({
   },
   
   setActiveSession: (session: ISession | null) => {
-    if (session === null) {
+    if (!session) {
       set({ activeSession: null });
-    } else {
-      // Validate the session object before setting
-      // Re-use the isSession type guard logic or a similar check
-      const isValidSession = (s: any): s is ISession => 
-        s && typeof s._id === 'string' && s._id.length > 0 && // Ensure _id is not an empty string
-               typeof s.assistantId === 'string' && 
-               typeof s.language === 'string';
+      return;
+    }
 
-      if (isValidSession(session)) {
-        set({ activeSession: session });
-      } else {
-        const s = session as any; 
-        // Check if it's a potentially valid session missing only language or having an empty _id
-        if (s && typeof s._id === 'string' && typeof s.assistantId === 'string') {
-          if (s._id.length === 0) {
-            logger.warn('Attempted to set a session with an empty _id. Setting activeSession to null instead.', { sessionDetails: s });
-            set({ activeSession: null });
-          } else if (typeof s.language !== 'string' || s.language.length === 0) {
-            logger.warn('Session object missing or has empty language, defaulting to "en".', { sessionDetails: s });
-            const validSessionWithDefaultLanguage: ISession = { 
-              _id: s._id, 
-              assistantId: s.assistantId, 
-              language: 'en' 
-            };
-            set({ activeSession: validSessionWithDefaultLanguage });
-          } else {
-            // This case should ideally not be hit if isValidSession is comprehensive
-            logger.warn('Attempted to set an invalid session object (unknown reason). Setting activeSession to null instead.', { sessionDetails: s });
-            set({ activeSession: null });
-          }
-        } else {
-          logger.warn('Attempted to set a fundamentally invalid session object. Setting activeSession to null instead.', { sessionDetails: s });
-          set({ activeSession: null });
-        }
-      }
+    if (typeof session._id === 'string' && session._id.length > 0 && typeof session.assistantId === 'string') {
+      set({ activeSession: { _id: session._id, assistantId: session.assistantId } });
+    } else {
+      logger.warn('Attempted to set an invalid session object. Setting activeSession to null instead.', { sessionDetails: session });
+      set({ activeSession: null });
     }
   }
 }));

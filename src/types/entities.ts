@@ -33,8 +33,6 @@ export interface IAssistant {
   name: string;
   description: string;
   companyId: string;
-  voice: string;
-  language: string;
   llmModel: string;
   llmProvider: string;
   llmPrompt: string;
@@ -191,7 +189,6 @@ export enum OnboardingStatus {
 export interface ISession {
   _id: string;
   assistantId: string;
-  language: string;
 }
 
 // ============================================

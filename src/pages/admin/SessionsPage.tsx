@@ -14,10 +14,9 @@ const SessionsPage: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  const headers: (keyof ISession)[] = [ // Changed SessionKeys to keyof ISession
+  const headers: (keyof ISession)[] = [
     '_id',
     'assistantId',
-    'language', // Added language as it's part of ISession now
   ];
 
   const { changeAssistant } = useSessionStore.getState(); // Changed to useSessionStore
