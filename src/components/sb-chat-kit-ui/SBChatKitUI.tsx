@@ -46,12 +46,13 @@ interface SBChatKitUIProps {
     conversationStarters?: Array<{ key: string; value: string }>;
   };
   assistantName: string;
-  onSendMessage: (message: string, attachments?: Base64Attachment[]) => void;
-  onClear: () => void;
+  onSendMessage?: (message: string, attachments?: Base64Attachment[]) => void;
+  onClear?: () => void;
   className?: string;
   style?: React.CSSProperties;
   isLoading: boolean;
   compact?: boolean;
+  readOnly?: boolean;
 }
 
 // Group consecutive action_execution messages
@@ -61,16 +62,19 @@ interface MessageGroup {
   startIndex: number;
 }
 
+const noop = () => {};
+
 const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
   messages,
   assistant,
   assistantName,
-  onSendMessage,
-  onClear,
+  onSendMessage = noop,
+  onClear = noop,
   className = '',
   style = {},
   isLoading,
   compact = false,
+  readOnly = false,
 }) => {
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const [disabledMessages, setDisabledMessages] = useState<number[]>([]);
@@ -281,7 +285,7 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
       style={{ ...style }}
       className={`p-2 flex flex-col ${className} h-full w-full space-y-2`}
     >
-      {!chatStarted && assistant ? (
+      {!readOnly && !chatStarted && assistant ? (
         <DefaultChatView
           assistant={assistant}
           onSendMessage={handleSendMessage}
@@ -295,6 +299,7 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
             avatar={assistant?.avatar || ''}
             onClear={handleClearChat}
             compact={compact}
+            readOnly={readOnly}
           />
 
           <div className="grow overflow-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-300">
@@ -350,7 +355,7 @@ const SBChatKitUI: React.FC<SBChatKitUIProps> = ({
 
             <div ref={messagesEndRef} />
           </div>
-          <ChatInput onSendMessage={handleSendMessage} />
+          {!readOnly && <ChatInput onSendMessage={handleSendMessage} />}
         </>
       )}
     </div>

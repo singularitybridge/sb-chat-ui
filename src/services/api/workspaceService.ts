@@ -393,21 +393,24 @@ export const findDefaultEntryFile = async (
   scope: 'company' | 'session' | 'agent' | 'team' = 'agent'
 ): Promise<string | null> => {
   try {
-    // List all files in workspace with the specified scope
-    const listResponse = await listWorkspaceItems(scope, '', agentId, sessionId);
+    // List all files with metadata so the result shares cache with FinderLayout
+    const listResponse = await listWorkspaceItems(scope, '', agentId, sessionId, undefined, true);
 
-    if (!listResponse.success || listResponse.paths?.length === 0) {
+    // Extract paths from items (withMetadata response) or paths array
+    const paths = listResponse.items?.map(i => i.path) || listResponse.paths;
+
+    if (!listResponse.success || !paths || paths.length === 0) {
       return null;
     }
 
     // Priority 1: Look for README at root level first
-    const rootReadme = listResponse.paths?.find(p =>
+    const rootReadme = paths.find(p =>
       p === '/README.mdx' || p === '/README.md' || p === '/readme.mdx' || p === '/readme.md'
     );
     if (rootReadme) return rootReadme;
 
     // Priority 2: Look for index files at root level
-    const rootIndex = listResponse.paths?.find(p =>
+    const rootIndex = paths.find(p =>
       p === '/index.html' || p === '/index.mdx' || p === '/index.md'
     );
     if (rootIndex) return rootIndex;
@@ -423,7 +426,7 @@ export const findDefaultEntryFile = async (
     ];
 
     for (const preferredName of preferredNames) {
-      const found = listResponse.paths?.find(p =>
+      const found = paths.find(p =>
         p.toLowerCase().endsWith('/' + preferredName)
       );
       if (found) {
@@ -432,13 +435,13 @@ export const findDefaultEntryFile = async (
     }
 
     // Priority 4: If no preferred name found, look for any file in priority order: HTML > MDX > MD
-    const htmlFile = listResponse.paths?.find(p => p.toLowerCase().endsWith('.html'));
+    const htmlFile = paths.find(p => p.toLowerCase().endsWith('.html'));
     if (htmlFile) return htmlFile;
 
-    const mdxFile = listResponse.paths?.find(p => p.toLowerCase().endsWith('.mdx'));
+    const mdxFile = paths.find(p => p.toLowerCase().endsWith('.mdx'));
     if (mdxFile) return mdxFile;
 
-    const mdFile = listResponse.paths?.find(p => p.toLowerCase().endsWith('.md'));
+    const mdFile = paths.find(p => p.toLowerCase().endsWith('.md'));
     if (mdFile) return mdFile;
 
     return null;

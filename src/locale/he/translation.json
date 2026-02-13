@@ -537,5 +537,34 @@
     "assistants": "סוכנים",
     "teams": "צוותים",
     "workspace": "סביבת עבודה"
+  },
+  "SessionReview": {
+    "title": "סקירת שיחות",
+    "subtitle": "סקירה וניתוח שיחות סוכנים",
+    "backToSessions": "חזרה לשיחות",
+    "filters": {
+      "channel": "ערוץ",
+      "agent": "סוכן",
+      "status": "סטטוס",
+      "channelUserId": "מזהה משתמש ערוץ",
+      "allChannels": "כל הערוצים",
+      "allAgents": "כל הסוכנים",
+      "allStatuses": "הכל",
+      "active": "פעיל",
+      "inactive": "לא פעיל"
+    },
+    "table": {
+      "agentName": "סוכן",
+      "channel": "ערוץ",
+      "channelUserId": "מזהה משתמש",
+      "status": "סטטוס",
+      "messages": "הודעות",
+      "createdAt": "נוצר",
+      "lastActivity": "פעילות אחרונה"
+    },
+    "noSessions": "לא נמצאו שיחות",
+    "loading": "טוען שיחות...",
+    "messageCount": "{{count}} הודעות",
+    "sessionInfo": "פרטי שיחה"
   }
 }

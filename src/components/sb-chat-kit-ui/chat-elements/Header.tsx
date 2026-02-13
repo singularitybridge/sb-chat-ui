@@ -20,6 +20,7 @@ interface HeaderProps {
   avatar: string;
   onClear: () => void;
   compact?: boolean;
+  readOnly?: boolean;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -28,6 +29,7 @@ const Header: React.FC<HeaderProps> = ({
   avatar,
   onClear,
   compact = false,
+  readOnly = false,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [modelName, setModelName] = useState<string>('');
@@ -179,7 +181,7 @@ const Header: React.FC<HeaderProps> = ({
                   >
                     <Settings className="w-4 h-4" />
                   </Button>
-                  {!isInWorkspace && (
+                  {!isInWorkspace && !readOnly && (
                     <Button
                       variant="ghost"
                       size="icon-sm"
@@ -190,14 +192,16 @@ const Header: React.FC<HeaderProps> = ({
                       <Monitor className="w-4 h-4" />
                     </Button>
                   )}
-                  <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    onClick={onClear}
-                    aria-label="Clear chat"
-                  >
-                    <CircleFadingPlus className="w-4 h-4" />
-                  </Button>
+                  {!readOnly && (
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={onClear}
+                      aria-label="Clear chat"
+                    >
+                      <CircleFadingPlus className="w-4 h-4" />
+                    </Button>
+                  )}
                 </div>
               </div>
 
@@ -304,7 +308,7 @@ const Header: React.FC<HeaderProps> = ({
           >
             <Settings className="w-5 h-5" />
           </Button>
-          {!isInWorkspace && (
+          {!isInWorkspace && !readOnly && (
             <Button
               variant="ghost"
               size="icon"
@@ -315,14 +319,16 @@ const Header: React.FC<HeaderProps> = ({
               <Monitor className="w-5 h-5" />
             </Button>
           )}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onClear}
-            aria-label="Clear chat"
-          >
-            <CircleFadingPlus className="w-5 h-5" />
-          </Button>
+          {!readOnly && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClear}
+              aria-label="Clear chat"
+            >
+              <CircleFadingPlus className="w-5 h-5" />
+            </Button>
+          )}
         </div>
       </div>
 

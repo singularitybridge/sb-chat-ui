@@ -15,6 +15,8 @@ import { TeamsPage } from './pages/admin/TeamsPage';
 import { EditTeamPage } from './pages/admin/EditTeamPage';
 import { AddTeamPage } from './pages/admin/AddTeamPage';
 import { MemoryPage } from './pages/admin/MemoryPage'; // Added import for MemoryPage
+import { SessionsPage } from './pages/admin/SessionsPage';
+import { SessionReviewPage } from './pages/admin/SessionReviewPage';
 import { ApiKeysPage } from './pages/admin/ApiKeysPage';
 import { IntegrationsPage } from './pages/admin/IntegrationsPage';
 import { IntegrationDetailPage } from './pages/admin/IntegrationDetailPage';
@@ -176,6 +178,14 @@ export const browserRouter = createBrowserRouter(
           {
             path: 'memory', // Added route for MemoryPage
             element: <MemoryPage />,
+          },
+          {
+            path: 'sessions',
+            element: <SessionsPage />,
+          },
+          {
+            path: 'sessions/:sessionId',
+            element: <SessionReviewPage />,
           },
           {
             path: 'inbox',

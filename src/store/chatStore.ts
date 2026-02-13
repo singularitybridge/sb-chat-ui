@@ -11,21 +11,16 @@ import { emitter } from '../services/mittEmitter';
 import { EVENT_CHAT_SESSION_DELETED, EVENT_SET_ACTIVE_ASSISTANT } from '../utils/eventNames';
 import { useSessionStore } from './useSessionStore';
 import i18n from '../i18n';
-import { 
-  ChatMessage, 
-  ApiResponseMessage, 
+import {
+  ChatMessage,
+  ApiResponseMessage,
   AssistantInfo,
   Metadata,
-  FileMetadata // Added FileMetadata
 } from '../types/chat';
 import { messageCache } from '../utils/messageCache';
 import { logger } from '../services/LoggingService';
 import { Base64Attachment } from '../utils/base64Utils';
-
-// Helper function (can be moved to utils)
-const removeRAGCitations = (text: string): string => {
-  return text.replace(/【\d+:\d+†source】/g, '');
-};
+import { removeRAGCitations, mapApiMessageToChatMessage } from '../utils/messageTransform';
 
 interface ChatStoreState {
   messages: ChatMessage[];
@@ -68,45 +63,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
   abortController: null,
 
   _mapToChatMessage: (apiMessage: ApiResponseMessage): ChatMessage => {
-    const textValue = apiMessage.content?.[0]?.text?.value || 
-                      (apiMessage.role === 'system' ? `System: ${apiMessage.message_type}` : 'No content available');
-    
-    const mappedMetadata: Metadata = {
-      message_type: apiMessage.message_type,
-      ...(apiMessage.data || {})
-    };
-
-    if (apiMessage.message_type === 'action_execution' && apiMessage.data?.messageId) {
-      mappedMetadata.messageId = apiMessage.data.messageId;
-    }
-
-    // Extract fileMetadata if attachments exist
-    let fileMetadata: FileMetadata | undefined;
-    if (apiMessage.data?.attachments && Array.isArray(apiMessage.data.attachments) && apiMessage.data.attachments.length > 0) {
-      const attachment = apiMessage.data.attachments[0]; // Assuming one primary attachment for now
-      if (attachment.fileName && attachment.mimeType && attachment.url) { // Basic validation
-        fileMetadata = {
-          id: attachment.fileId || undefined, // fileId might be optional from backend
-          type: attachment.mimeType.startsWith('image/') ? 'image' : 'file',
-          url: attachment.url,
-          fileName: attachment.fileName,
-          fileSize: attachment.fileSize || attachment.size || 0, // Accommodate 'size' or 'fileSize'
-          mimeType: attachment.mimeType,
-          // gcpStorageUrl can be added if available and needed
-        };
-      }
-    }
-
-    const chatMessage = {
-      id: apiMessage.id,
-      content: removeRAGCitations(textValue),
-      role: apiMessage.role,
-      metadata: mappedMetadata,
-      createdAt: apiMessage.created_at,
-      fileMetadata, // Add the extracted fileMetadata
-    };
-  
-    return chatMessage;
+    return mapApiMessageToChatMessage(apiMessage);
   },
 
   loadMessages: async (activeSessionId) => {

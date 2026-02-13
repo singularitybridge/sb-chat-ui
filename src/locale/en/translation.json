@@ -516,5 +516,34 @@
     "assistants": "Assistants",
     "teams": "Teams",
     "workspace": "Workspace"
+  },
+  "SessionReview": {
+    "title": "Session Review",
+    "subtitle": "Review and analyze agent sessions",
+    "backToSessions": "Back to Sessions",
+    "filters": {
+      "channel": "Channel",
+      "agent": "Agent",
+      "status": "Status",
+      "channelUserId": "Channel User ID",
+      "allChannels": "All Channels",
+      "allAgents": "All Agents",
+      "allStatuses": "All",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "table": {
+      "agentName": "Agent",
+      "channel": "Channel",
+      "channelUserId": "User ID",
+      "status": "Status",
+      "messages": "Messages",
+      "createdAt": "Created",
+      "lastActivity": "Last Activity"
+    },
+    "noSessions": "No sessions found",
+    "loading": "Loading sessions...",
+    "messageCount": "{{count}} messages",
+    "sessionInfo": "Session Info"
   }
 }
