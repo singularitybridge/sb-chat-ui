@@ -74,6 +74,7 @@ const llmProviderOptions: SelectListOption[] = [
   { value: 'openai', label: 'OpenAI' },
   { value: 'google', label: 'Google' },
   { value: 'anthropic', label: 'Anthropic' },
+  { value: 'openrouter', label: 'OpenRouter' },
 ];
 
 interface ActionParameter {
