@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import Fuse from 'fuse.js';
 import { IAssistant, ITeam } from '../types/entities';
 import { WorkspaceSearchItem } from '../contexts/CommandPaletteContext';
@@ -16,11 +16,12 @@ interface UseUnifiedSearchOptions {
   assistants: IAssistant[];
   teams: ITeam[];
   workspaceItems: WorkspaceSearchItem[];
+  searchQuery: string;
+  vectorWorkspaceResults?: WorkspaceSearchItem[] | null;
 }
 
 export const useUnifiedSearch = (options: UseUnifiedSearchOptions) => {
-  const { assistants, teams, workspaceItems } = options;
-  const [searchQuery, setSearchQuery] = useState('');
+  const { assistants, teams, workspaceItems, searchQuery, vectorWorkspaceResults } = options;
 
   // Create Fuse instances for each entity type
   const assistantFuse = useMemo(
@@ -107,19 +108,27 @@ export const useUnifiedSearch = (options: UseUnifiedSearchOptions) => {
       score: result.score,
     }));
 
-    const workspaceResults = workspaceFuse.search(searchQuery).map((result, idx) => ({
-      id: `workspace-${result.item.agentId}-${idx}`,
-      type: 'workspace' as SearchResultType,
-      data: result.item,
-      score: result.score,
-    }));
+    // Use vector search results for workspace when available, otherwise fall back to Fuse.js
+    const workspaceResults = (vectorWorkspaceResults && vectorWorkspaceResults.length > 0)
+      ? vectorWorkspaceResults.map((item, idx) => ({
+          id: `workspace-vector-${item.agentId}-${idx}`,
+          type: 'workspace' as SearchResultType,
+          data: item,
+          score: 0, // Vector results are already ranked by relevance
+        }))
+      : workspaceFuse.search(searchQuery).map((result, idx) => ({
+          id: `workspace-${result.item.agentId}-${idx}`,
+          type: 'workspace' as SearchResultType,
+          data: result.item,
+          score: result.score,
+        }));
 
     // Combine and sort by score
     const combined = [...assistantResults, ...teamResults, ...workspaceResults];
     combined.sort((a, b) => (a.score || 0) - (b.score || 0));
 
     return combined;
-  }, [searchQuery, assistantFuse, teamFuse, workspaceFuse, assistants, teams, workspaceItems]);
+  }, [searchQuery, assistantFuse, teamFuse, workspaceFuse, assistants, teams, workspaceItems, vectorWorkspaceResults]);
 
   // Group results by type
   const groupedResults = useMemo(() => {
@@ -133,7 +142,5 @@ export const useUnifiedSearch = (options: UseUnifiedSearchOptions) => {
   return {
     results,
     groupedResults,
-    searchQuery,
-    setSearchQuery,
   };
 };

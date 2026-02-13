@@ -3,7 +3,6 @@ import { NewCompanyView } from '../pages/NewCompanyView';
 import { NewUserView } from '../pages/NewUserView';
 import { NewTeamView } from '../pages/NewTeamView';
 import { NewApiKeyView } from '../pages/NewApiKeyView';
-import OnboardingDialog from '../pages/admin/Onboarding';
 import { EditAssistantActionsDialog } from '../components';
 import {
   EVENT_SHOW_ADD_ASSISTANT_MODAL,
@@ -11,7 +10,6 @@ import {
   EVENT_SHOW_ADD_USER_MODAL,
   EVENT_SHOW_ADD_TEAM_MODAL,
   EVENT_SHOW_ADD_API_KEY_MODAL,
-  EVENT_SHOW_ONBOARDING_MODAL,
   EVENT_SHOW_EDIT_ASSISTANT_ACTIONS_MODAL,
   EventType,
 } from '../utils/eventNames';
@@ -50,13 +48,6 @@ const dialogComponentFactory = (
       return {
         title: eventData.title || i18n.t('dialogTitles.newUser'),
         component: React.createElement(NewUserView),
-        width: 'normal',
-      };
-
-    case EVENT_SHOW_ONBOARDING_MODAL:
-      return {
-        title: eventData.title || i18n.t('dialogTitles.onboarding'),
-        component: React.createElement(OnboardingDialog, { isOpen: true }),
         width: 'normal',
       };
 

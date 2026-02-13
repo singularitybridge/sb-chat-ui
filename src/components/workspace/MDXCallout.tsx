@@ -12,39 +12,39 @@ interface CalloutProps {
 const calloutConfig = {
   info: {
     icon: Info,
-    className: 'border-blue-200 bg-blue-50/50 dark:border-blue-900/30 dark:bg-blue-950/20',
-    iconClassName: 'text-blue-600 dark:text-blue-400',
-    titleClassName: 'text-blue-900 dark:text-blue-200',
+    className: 'border-l-zinc-300 bg-zinc-50 dark:border-l-zinc-600 dark:bg-[rgba(24,24,27,0.3)]',
+    iconClassName: 'text-zinc-400 dark:text-zinc-500',
+    titleClassName: 'text-zinc-700 dark:text-zinc-300',
   },
   warning: {
     icon: AlertTriangle,
-    className: 'border-yellow-200 bg-yellow-50/50 dark:border-yellow-900/30 dark:bg-yellow-950/20',
-    iconClassName: 'text-yellow-600 dark:text-yellow-400',
-    titleClassName: 'text-yellow-900 dark:text-yellow-200',
+    className: 'border-l-[#f59e0b] bg-[hsl(45_93%_97%)] dark:border-l-[#f59e0b] dark:bg-[hsl(45_30%_8%)]',
+    iconClassName: 'text-zinc-400 dark:text-zinc-500',
+    titleClassName: 'text-zinc-700 dark:text-zinc-300',
   },
   danger: {
     icon: AlertCircle,
-    className: 'border-red-200 bg-red-50/50 dark:border-red-900/30 dark:bg-red-950/20',
-    iconClassName: 'text-red-600 dark:text-red-400',
-    titleClassName: 'text-red-900 dark:text-red-200',
+    className: 'border-l-[#ef4444] bg-[hsl(0_93%_97%)] dark:border-l-[#ef4444] dark:bg-[hsl(0_30%_8%)]',
+    iconClassName: 'text-zinc-400 dark:text-zinc-500',
+    titleClassName: 'text-zinc-700 dark:text-zinc-300',
   },
   success: {
     icon: CheckCircle,
-    className: 'border-green-200 bg-green-50/50 dark:border-green-900/30 dark:bg-green-950/20',
-    iconClassName: 'text-green-600 dark:text-green-400',
-    titleClassName: 'text-green-900 dark:text-green-200',
+    className: 'border-l-[#22c55e] bg-[hsl(142_76%_97%)] dark:border-l-[#22c55e] dark:bg-[hsl(142_30%_8%)]',
+    iconClassName: 'text-zinc-400 dark:text-zinc-500',
+    titleClassName: 'text-zinc-700 dark:text-zinc-300',
   },
   tip: {
     icon: Lightbulb,
-    className: 'border-purple-200 bg-purple-50/50 dark:border-purple-900/30 dark:bg-purple-950/20',
-    iconClassName: 'text-purple-600 dark:text-purple-400',
-    titleClassName: 'text-purple-900 dark:text-purple-200',
+    className: 'border-l-purple-400 bg-purple-50/50 dark:border-l-purple-400 dark:bg-purple-950/20',
+    iconClassName: 'text-zinc-400 dark:text-zinc-500',
+    titleClassName: 'text-zinc-700 dark:text-zinc-300',
   },
   note: {
     icon: Zap,
-    className: 'border-border bg-secondary/50 dark:border-border dark:bg-secondary/30',
-    iconClassName: 'text-muted-foreground dark:text-muted-foreground',
-    titleClassName: 'text-foreground dark:text-foreground',
+    className: 'border-l-zinc-300 bg-zinc-50 dark:border-l-zinc-600 dark:bg-[rgba(24,24,27,0.3)]',
+    iconClassName: 'text-zinc-400 dark:text-zinc-500',
+    titleClassName: 'text-zinc-700 dark:text-zinc-300',
   },
 };
 
@@ -60,7 +60,7 @@ export const MDXCallout: React.FC<CalloutProps> = ({
   return (
     <div
       className={cn(
-        'my-6 flex gap-3 rounded-lg border p-4 transition-colors',
+        'my-6 flex gap-3 rounded-none rounded-r border-0 border-l-2 p-4 transition-colors',
         config.className,
         className
       )}
@@ -68,11 +68,11 @@ export const MDXCallout: React.FC<CalloutProps> = ({
       <Icon className={cn('h-5 w-5 mt-0.5 shrink-0', config.iconClassName)} aria-hidden="true" />
       <div className="flex-1 min-w-0">
         {title && (
-          <div className={cn('font-semibold mb-1', config.titleClassName)}>
+          <div className={cn('font-medium mb-1', config.titleClassName)}>
             {title}
           </div>
         )}
-        <div className="text-sm leading-relaxed text-foreground/80 dark:text-foreground/80">
+        <div className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
           {children}
         </div>
       </div>

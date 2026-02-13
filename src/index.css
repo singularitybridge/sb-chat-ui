@@ -6,6 +6,10 @@ layer(base);
 layer(base);
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap')
 layer(base);
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&display=swap')
+layer(base);
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap')
+layer(base);
 
 @import 'tailwindcss';
 @import 'tw-animate-css';

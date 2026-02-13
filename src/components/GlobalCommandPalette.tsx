@@ -33,12 +33,18 @@ export const GlobalCommandPalette: React.FC = () => {
     teams,
     workspaceItems,
     isLoadingWorkspace,
+    searchQuery,
+    setSearchQuery,
+    vectorResults,
+    isVectorSearching,
   } = useCommandPalette();
 
-  const { groupedResults, searchQuery, setSearchQuery } = useUnifiedSearch({
+  const { groupedResults } = useUnifiedSearch({
     assistants,
     teams,
     workspaceItems,
+    searchQuery,
+    vectorWorkspaceResults: vectorResults,
   });
 
   const handleSelectAssistant = useCallback(
@@ -98,7 +104,7 @@ export const GlobalCommandPalette: React.FC = () => {
   };
 
   return (
-    <CommandDialog open={open} onOpenChange={setOpen}>
+    <CommandDialog open={open} onOpenChange={setOpen} shouldFilter={false}>
       <CommandInput
         placeholder={t('CommandPalette.searchPlaceholder', 'Search assistants, teams, workspace...')}
         value={searchQuery}
@@ -201,8 +207,15 @@ export const GlobalCommandPalette: React.FC = () => {
             </div>
           </CommandGroup>
         )}
-        {!isLoadingWorkspace && groupedResults.workspace.length > 0 && (
-          <CommandGroup heading={t('CommandPalette.workspace', 'Workspace')}>
+        {!isLoadingWorkspace && (groupedResults.workspace.length > 0 || isVectorSearching) && (
+          <CommandGroup heading={
+            <span className="flex items-center gap-2">
+              {t('CommandPalette.workspace', 'Workspace')}
+              {isVectorSearching && (
+                <span className="inline-block animate-spin rounded-full h-3 w-3 border-b-2 border-muted-foreground" />
+              )}
+            </span>
+          }>
             {groupedResults.workspace.map((result) => {
               const item = result.data as WorkspaceSearchItem;
               return (

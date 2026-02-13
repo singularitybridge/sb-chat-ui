@@ -44,8 +44,8 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({ className }) => {
 
   return (
     <IconButton
-      className={`bg-amber-100 hover:bg-amber-200 dark:bg-amber-900/50 dark:hover:bg-amber-800/60 rounded-full w-9 h-9 flex items-center justify-center p-2 transition-colors ${className || ''}`}
-      icon={isDark ? <Sun className="w-5 h-5 text-amber-700 dark:text-amber-300" /> : <Moon className="w-5 h-5 text-amber-700 dark:text-amber-300" />}
+      className={`rounded-full w-9 h-9 flex items-center justify-center p-2 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 ${className || ''}`}
+      icon={isDark ? <Sun className="w-5 h-5 text-amber-600/70 dark:text-amber-300/60" /> : <Moon className="w-5 h-5 text-zinc-500 dark:text-zinc-400" />}
       onClick={toggleTheme}
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
     />

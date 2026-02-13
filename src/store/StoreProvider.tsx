@@ -7,7 +7,6 @@ import { useUserStore } from './useUserStore';
 import { useAssistantStore } from './useAssistantStore';
 import { useTeamStore } from './useTeamStore';
 import { useInboxStore } from './useInboxStore';
-import { useOnboardingStore } from './useOnboardingStore';
 import { useSessionStore } from './useSessionStore';
 
 interface StoreProviderProps {
@@ -50,7 +49,6 @@ export const useStores = () => {
     assistantStore: useAssistantStore(),
     teamStore: useTeamStore(),
     inboxStore: useInboxStore(),
-    onboardingStore: useOnboardingStore(),
     sessionStore: useSessionStore(),
     
     // Compatibility getters for easier migration

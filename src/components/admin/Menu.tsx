@@ -7,7 +7,6 @@ import LanguageToggle from '../LanguageToggle';
 import ThemeToggle from '../ThemeToggle';
 import { TextComponent } from '../sb-core-ui-kit/TextComponent';
 import LogoutButton from '../LogoutButton';
-import ShowOnboardingButton from '../ShowOnboardingButton';
 import { Button } from '../ui/button';
 import {
   Sheet,
@@ -100,7 +99,6 @@ export const Menu: React.FC = () => {
           <SessionView />
           <LanguageToggle />
           <ThemeToggle />
-          <ShowOnboardingButton />
           <LogoutButton />
         </div>
 
@@ -130,8 +128,7 @@ export const Menu: React.FC = () => {
                 </nav>
 
                 {/* Bottom Actions */}
-                <div className="mt-auto pt-4 border-t border-border flex items-center justify-between">
-                  <ShowOnboardingButton />
+                <div className="mt-auto pt-4 border-t border-border flex items-center justify-end">
                   <LogoutButton />
                 </div>
               </div>

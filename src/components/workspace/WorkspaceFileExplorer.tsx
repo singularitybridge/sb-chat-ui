@@ -265,13 +265,13 @@ export const WorkspaceFileExplorer: React.FC<WorkspaceFileExplorerProps> = ({
           // Folder header (non-clickable)
           <>
             <div
-              className="flex items-center gap-2 px-3 py-1 text-muted-foreground"
+              className="flex items-center gap-2 px-3 py-1 text-zinc-400 dark:text-zinc-600"
               style={{ paddingLeft: `${level * 16 + 12}px` }}
             >
-              <Folder className="h-4 w-4 text-muted-foreground" />
-              <span className="text-xs font-medium uppercase tracking-wide">{item.name}</span>
+              <Folder className="h-4 w-4 text-zinc-400 dark:text-zinc-600" />
+              <span className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] text-zinc-400 dark:text-zinc-600">{item.name}</span>
               {item.children && (
-                <span className="text-[10px] text-muted-foreground">({item.children.length})</span>
+                <span className="text-[10px] text-zinc-400 dark:text-zinc-600">({item.children.length})</span>
               )}
             </div>
             {/* Always render children */}
@@ -289,20 +289,20 @@ export const WorkspaceFileExplorer: React.FC<WorkspaceFileExplorerProps> = ({
               w-full flex items-center gap-2 px-3 py-1.5 text-left
               transition-all duration-150
               ${isSelected
-                ? 'bg-primary/10 text-primary'
-                : 'hover:bg-accent text-foreground'
+                ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 font-medium'
+                : 'hover:bg-zinc-50 dark:hover:bg-zinc-800/50 text-zinc-600 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200'
               }
             `}
             style={{ paddingLeft: `${level * 16 + 12}px` }}
           >
             <div className={`
               shrink-0
-              ${isSelected ? 'text-primary' : 'text-muted-foreground'}
+              ${isSelected ? 'text-zinc-900 dark:text-zinc-50' : 'text-zinc-400 dark:text-zinc-500'}
             `}>
               {getFileIcon(item.extension)}
             </div>
-            <span className="flex-1 text-sm truncate">{item.name}</span>
-            <span className="text-xs text-muted-foreground shrink-0">{formatDate(item.updatedAt)}</span>
+            <span className="flex-1 text-[0.8125rem] truncate">{item.name}</span>
+            <span className="text-xs text-zinc-400 dark:text-zinc-600 shrink-0">{formatDate(item.updatedAt)}</span>
           </button>
         )}
       </div>
@@ -335,7 +335,7 @@ export const WorkspaceFileExplorer: React.FC<WorkspaceFileExplorerProps> = ({
   const _totalFiles = countFiles(files);
 
   return (
-    <div className="h-full flex flex-col bg-background">
+    <div className="h-full flex flex-col bg-background font-['IBM_Plex_Sans',sans-serif]">
       {/* Search and Sort Controls */}
       <div className="px-4 py-4 border-b border-border">
         {/* Search */}
@@ -346,7 +346,7 @@ export const WorkspaceFileExplorer: React.FC<WorkspaceFileExplorerProps> = ({
             placeholder="Search files..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 text-sm border border-border rounded-lg focus:outline-hidden focus:ring-2 focus:ring-ring focus:border-transparent bg-secondary"
+            className="w-full pl-10 pr-4 py-2 text-[0.8125rem] border border-zinc-200 dark:border-zinc-800 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-ring focus:border-transparent bg-zinc-100 dark:bg-zinc-900"
           />
         </div>
 
@@ -358,8 +358,8 @@ export const WorkspaceFileExplorer: React.FC<WorkspaceFileExplorerProps> = ({
             className={`
               px-2.5 py-1 text-xs font-medium rounded-md flex items-center gap-1.5 transition-all
               ${sortBy === 'name'
-                ? 'bg-primary/10 text-primary shadow-sm'
-                : 'text-muted-foreground hover:bg-accent'
+                ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-sm'
+                : 'text-zinc-400 dark:text-zinc-500 hover:bg-zinc-50 dark:hover:bg-zinc-800/50'
               }
             `}
           >
@@ -374,8 +374,8 @@ export const WorkspaceFileExplorer: React.FC<WorkspaceFileExplorerProps> = ({
             className={`
               px-2.5 py-1 text-xs font-medium rounded-md flex items-center gap-1.5 transition-all
               ${sortBy === 'date'
-                ? 'bg-primary/10 text-primary shadow-sm'
-                : 'text-muted-foreground hover:bg-accent'
+                ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-sm'
+                : 'text-zinc-400 dark:text-zinc-500 hover:bg-zinc-50 dark:hover:bg-zinc-800/50'
               }
             `}
           >

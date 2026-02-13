@@ -89,7 +89,6 @@ const CodeSampleDialog: React.FC<CodeSampleDialogProps> = ({ isOpen, onClose }) 
       attachments = `,
     attachments: [
       {
-        fileId: 'file-123',  // Or use data field for base64
         data: 'base64_encoded_file_content', // Base64 without data URL prefix
         mimeType: 'image/png',
         fileName: 'screenshot.png'
@@ -228,7 +227,6 @@ sendMessage('Hello, how can you help me today?')
       attachments = `,
         'attachments': [
             {
-                'fileId': 'file-123',  # Or use data field for base64
                 'data': 'base64_encoded_file_content',  # Base64 without data URL prefix
                 'mimeType': 'image/png',
                 'fileName': 'screenshot.png'
@@ -350,7 +348,6 @@ print('Assistant:', response)`;
     if (enabledFeatures.has('file')) {
       payload.attachments = [
         {
-          fileId: 'file-123',  // Or use data field for base64
           data: 'base64_encoded_file_content',
           mimeType: 'image/png',
           fileName: 'screenshot.png'

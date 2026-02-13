@@ -1,15 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { ContentContainer } from '../components/ContentContainer';
 import { Menu } from '../components/admin/Menu';
 import { Outlet, useLocation } from 'react-router';
-import { useAuthStore } from '../store/useAuthStore';
-import { useOnboardingStore } from '../store/useOnboardingStore';
 import DynamicBackground, { setDynamicBackground } from '../components/DynamicBackground';
 
 const Admin: React.FC = () => {
   const location = useLocation();
-  const { isUserDataLoaded } = useAuthStore();
-  const { loadOnboardingStatus } = useOnboardingStore();
 
   // Check if we're on a workspace route
   const isWorkspacePage = location.pathname.includes('/workspace');
@@ -28,12 +24,6 @@ const Admin: React.FC = () => {
     ],
     'multiply'
   );
-
-  useEffect(() => {
-    if (isUserDataLoaded) {
-      loadOnboardingStatus();
-    }
-  }, [isUserDataLoaded, loadOnboardingStatus]);
 
   return (
     <div className="h-screen flex flex-col relative">

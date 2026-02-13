@@ -48,7 +48,6 @@ export interface ChatMessage {
 
 export interface AssistantInfo {
   _id: string;
-  voice?: string;
   name?: string;
 }
 

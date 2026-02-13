@@ -120,7 +120,7 @@ const integrationIconMap: Record<string, { type: 'brand' | 'iconify' | 'lucide';
   fluximage: { type: 'lucide', key: 'sparkles' },
   roomboss: { type: 'lucide', key: 'hotel' },
   curl: { type: 'lucide', key: 'square-terminal' },
-  opencode_sandbox: { type: 'lucide', key: 'code' },
+  golem: { type: 'lucide', key: 'code' },
   file_processing: { type: 'lucide', key: 'file' },
   session_query: { type: 'lucide', key: 'message-square' },
   ui_control: { type: 'lucide', key: 'monitor' },

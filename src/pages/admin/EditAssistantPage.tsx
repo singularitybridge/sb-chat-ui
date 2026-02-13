@@ -77,10 +77,6 @@ const EditAssistantPage: React.FC = () => {
     const fieldKeyString = String(field.key);
     let value = assistant ? (assistant as any)[fieldKeyString] : '';
 
-    if (field.key === 'voice') {
-      value = assistant ? assistant.voice : '';
-    }
-
     if (field.type === 'dropdown') {
       return {
         ...field,

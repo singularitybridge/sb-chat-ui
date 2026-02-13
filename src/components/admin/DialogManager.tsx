@@ -8,7 +8,6 @@ import {
   EVENT_SHOW_ADD_USER_MODAL,
   EVENT_SHOW_ADD_TEAM_MODAL,
   EVENT_SHOW_ADD_API_KEY_MODAL,
-  EVENT_SHOW_ONBOARDING_MODAL,
   EVENT_SHOW_EDIT_ASSISTANT_ACTIONS_MODAL,
   EventType,
 } from '../../utils/eventNames';
@@ -58,13 +57,6 @@ const DialogManager: React.FC = () => {
     EVENT_SHOW_ADD_USER_MODAL,
     (eventData: any) =>
       updateContent(EVENT_SHOW_ADD_USER_MODAL, eventData)
-  );
-
-  useEventEmitter(
-    EVENT_SHOW_ONBOARDING_MODAL,
-    (eventData: any) => {
-      updateContent(EVENT_SHOW_ONBOARDING_MODAL, eventData);
-    }
   );
 
   useEventEmitter(

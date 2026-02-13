@@ -8,12 +8,13 @@ import {
 import { getAssistantFieldConfigs, defaultAssistantFieldConfigs } from '../store/fieldConfigs/assistantFieldConfigs';
 import { useAssistantStore } from '../store/useAssistantStore';
 import { IAssistant } from '../types/entities';
-import { useEventEmitter } from '../services/mittEmitter';
-import { EVENT_SET_ASSISTANT_VALUES } from '../utils/eventNames';
+import { useEventEmitter, emitter } from '../services/mittEmitter';
+import { EVENT_SET_ASSISTANT_VALUES, EVENT_CLOSE_MODAL } from '../utils/eventNames';
 import AvatarSelector from '../components/AvatarSelector';
 import { TextComponent } from '../components/sb-core-ui-kit/TextComponent';
 import { useTranslation } from 'react-i18next';
 import LoadingButton from '../components/core/LoadingButton';
+import { toast } from 'react-toastify';
 
 const NewAssistantView: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -85,13 +86,19 @@ const NewAssistantView: React.FC = () => {
 
   const handleSubmit = async (values: FormValues) => {
     setIsLoading(true);
-    const assistantData = {
-      ...values,
-      avatarImage: selectedAvatarId,
-      language: 'en', // Default language (field removed from UI)
-    } as unknown as IAssistant;
-    await addAssistant(assistantData);
-    setIsLoading(false);
+    try {
+      const assistantData = {
+        ...values,
+        avatarImage: selectedAvatarId,
+      } as unknown as IAssistant;
+      await addAssistant(assistantData);
+      toast.success('Assistant created successfully');
+      emitter.emit(EVENT_CLOSE_MODAL);
+    } catch (error) {
+      toast.error('Failed to create assistant');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (isFieldConfigsLoading) {

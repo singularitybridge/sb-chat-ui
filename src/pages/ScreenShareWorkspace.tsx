@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router';
-import { User, Bot, RefreshCw, FileText, Trash2, PanelLeftClose, PanelLeft, Share2, FolderOpen, FolderClosed, Database, Sparkles, Monitor, ArrowLeft } from 'lucide-react';
+import { User, Bot, PanelLeftClose, PanelLeft, FolderOpen, FolderClosed, Database, Monitor, ArrowLeft } from 'lucide-react';
 import { useScreenShareStore } from '../store/useScreenShareStore';
 import { useChatStore } from '../store/chatStore';
 import { useSessionStore } from '../store/useSessionStore';
@@ -16,9 +16,7 @@ import { useUploadPreferencesStore } from '../store/useUploadPreferencesStore';
 import { initializeWebSocket, disconnectWebSocket } from '../utils/websocket';
 import { ContentPanel } from '../components/ui/content-panel';
 import { findDefaultEntryFile, getWorkspaceRawContent, deleteWorkspaceItem, getWorkspaceItem } from '../services/api/workspaceService';
-import { MarkdownRenderer } from '../components/workspace/MarkdownRenderer';
-import { WorkspaceFileExplorer } from '../components/workspace/WorkspaceFileExplorer';
-import { JSONViewer } from '../components/workspace/JSONViewer';
+import { FinderLayout } from '../components/workspace/finder/FinderLayout';
 import { workspaceReactiveApiScript } from '../utils/workspace-api';
 import WorkspaceEmbedDialog from '../components/WorkspaceEmbedDialog';
 import { MemoryPreviewDialog } from '../components/workspace/MemoryPreviewDialog';
@@ -230,11 +228,8 @@ const ScreenShareWorkspace: React.FC = () => {
   const [selectedFileContent, setSelectedFileContent] = useState<string | null>(null);
   const [selectedFileType, setSelectedFileType] = useState<string | null>(null);
   const [markdownViewMode, setMarkdownViewMode] = useState<'rendered' | 'raw'>('rendered'); // Toggle for MD/MDX files
-  const [fileExplorerKey, setFileExplorerKey] = useState(0); // Key to force re-render of file explorer
   const [isReloadingFile, setIsReloadingFile] = useState(false); // Loading state for file reload
   const [showEmbedDialog, setShowEmbedDialog] = useState(false); // Toggle for embed dialog
-  const [isHomePageMissing, setIsHomePageMissing] = useState(false); // True when on home page with no file
-  const [isCreatingHomePage, setIsCreatingHomePage] = useState(false); // Loading state for home page creation
   const [showMemoryDialog, setShowMemoryDialog] = useState(false); // Toggle for memory preview dialog
 
   // Refs
@@ -346,7 +341,7 @@ const ScreenShareWorkspace: React.FC = () => {
               setSelectedFilePath(finalPath);
               setSelectedFileContent(content);
               setSelectedFileType(extension);
-              setIsHomePageMissing(false);
+
             } catch (error) {
               console.error('Failed to load HTML file:', error);
             }
@@ -367,22 +362,16 @@ const ScreenShareWorkspace: React.FC = () => {
               setSelectedFilePath(finalPath);
               setSelectedFileContent(content);
               setSelectedFileType(extension);
-              setIsHomePageMissing(false); // File was found
             }
           }
         } else if (!urlFilePath) {
-          // No URL path and no default entry file - show welcome message
+          // No URL path and no default entry file
           setSelectedFilePath(null);
           setSelectedFileContent(null);
           setSelectedFileType(null);
-          setIsHomePageMissing(true);
-        } else {
-          // URL path specified but file not found
-          setIsHomePageMissing(false);
         }
       } catch (error) {
         console.error('Failed to load file:', error);
-        setIsHomePageMissing(false);
       }
     };
 
@@ -988,17 +977,10 @@ const ScreenShareWorkspace: React.FC = () => {
       setSelectedFileContent(null);
       setSelectedFileType(null);
 
-      // Trigger file explorer refresh
-      setFileExplorerKey(prev => prev + 1);
     } catch (error) {
       console.error('Failed to delete file:', error);
       alert('Failed to delete file. Please try again.');
     }
-  };
-
-  // Handle file deleted callback from explorer
-  const handleFileDeleted = () => {
-    setFileExplorerKey(prev => prev + 1);
   };
 
   // Handle file reload
@@ -1113,7 +1095,6 @@ const ScreenShareWorkspace: React.FC = () => {
             // Send message with screenshot
             const assistantInfo = currentAssistant ? {
               _id: currentAssistant._id,
-              voice: currentAssistant.voice,
               name: currentAssistant.name
             } : undefined;
 
@@ -1137,7 +1118,6 @@ const ScreenShareWorkspace: React.FC = () => {
           // Send message without screenshot on error
           const assistantInfo = currentAssistant ? {
             _id: currentAssistant._id,
-            voice: currentAssistant.voice,
             name: currentAssistant.name
           } : undefined;
 
@@ -1155,7 +1135,6 @@ const ScreenShareWorkspace: React.FC = () => {
 
       const assistantInfo = currentAssistant ? {
         _id: currentAssistant._id,
-        voice: currentAssistant.voice,
         name: currentAssistant.name
       } : undefined;
 
@@ -1184,80 +1163,6 @@ const ScreenShareWorkspace: React.FC = () => {
         currentAssistant._id,
         clearAndRenewActiveSession
       );
-    }
-  };
-
-  const handleCreateHomePage = async () => {
-    // For agent/session scope, need scope ID
-    if ((workspaceScope === 'agent' || workspaceScope === 'session') && !effectiveScopeId) return;
-
-    setIsCreatingHomePage(true);
-    try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-
-      // Determine workspace name based on scope
-      const workspaceName = workspaceScope === 'company'
-        ? 'Company'
-        : workspaceScope === 'session'
-          ? 'Session'
-          : currentAssistant?.name || 'AI';
-
-      // Default home page content
-      const defaultContent = `---
-title: ${workspaceName} Workspace
-description: Welcome to your AI workspace
----
-
-# Welcome to ${workspaceName} Workspace
-
-This is your workspace home page. You can use this space to organize your work, create documentation, and interact with your AI assistant.
-
-## Getting Started
-
-- Use the file explorer on the left to create and organize files
-- Create markdown files (.md/.mdx) for documentation
-- Create HTML files for interactive dashboards
-- All files are scoped to ${workspaceScope === 'company' ? 'your company' : workspaceScope === 'session' ? 'this session' : 'this assistant'}
-
-## Quick Actions
-
-Feel free to customize this page or create new files using the workspace!
-`;
-
-      // Create the home page file
-      const response = await fetch(`${API_URL}/api/workspace/add`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('userToken')}`,
-        },
-        body: JSON.stringify({
-          itemPath: '/README.mdx',
-          content: defaultContent,
-          scope: workspaceScope,
-          scopeId: effectiveScopeId,
-          metadata: {
-            title: `${workspaceName} Workspace`,
-            description: 'Workspace home page',
-            contentType: 'text/mdx',
-          }
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to create home page');
-      }
-
-      // Refresh file explorer and load the new file
-      setFileExplorerKey(prev => prev + 1);
-
-      // Reload the current location to load the new home page
-      window.location.reload();
-    } catch (error) {
-      console.error('Failed to create home page:', error);
-      alert('Failed to create home page. Please try again.');
-    } finally {
-      setIsCreatingHomePage(false);
     }
   };
 
@@ -1493,189 +1398,24 @@ Feel free to customize this page or create new files using the workspace!
 
             {/* Dynamic Content Area - Shows either Screen Preview or AI Workspace */}
             {showAIWorkspace ? (
-              // AI Workspace View - File Explorer + File Viewer
-              <div className="flex-1 flex overflow-hidden bg-secondary font-['Inter',sans-serif]">
-                {/* File Explorer Sidebar (with smooth animation) */}
-                <div
-                  className={cn(
-                    'w-64 md:w-80 border-r border-border bg-background transition-all duration-300 ease-in-out',
-                    // Desktop behavior
-                    'hidden md:block',
-                    panels.fileListPanel ? 'md:translate-x-0 md:opacity-100' : 'md:-translate-x-full md:opacity-0 md:pointer-events-none md:absolute',
-                    // Mobile: show as overlay when panel is open
-                    panels.fileListPanel ? '!block absolute md:relative z-10 h-full' : ''
-                  )}
-                  style={{ willChange: 'transform, opacity' }}
-                >
-                  {(workspaceScope === 'company' || effectiveScopeId) ? (
-                    <WorkspaceFileExplorer
-                      key={fileExplorerKey}
-                      agentId={workspaceScope === 'agent' ? effectiveScopeId : undefined}
-                      agentName={currentAssistant?.name}
-                      sessionId={activeSession?._id}
-                      scope={workspaceScope}
-                      selectedPath={selectedFilePath}
-                      onFileSelect={handleFileSelect}
-                      onFileDeleted={handleFileDeleted}
-                    />
-                  ) : (
-                    <div className="flex items-center justify-center h-full p-6">
-                      <p className="text-sm text-muted-foreground">
-                        {workspaceScope === 'agent' ? 'No assistant selected' : 'No scope ID available'}
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                {/* File Viewer */}
-                <div className="flex-1 flex flex-col overflow-hidden bg-background">
-                  {selectedFilePath && selectedFileContent ? (
-                    <>
-                      {/* File Header */}
-                      <div className="px-3 md:px-6 py-2 md:py-4 border-b border-border">
-                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
-                          <div className="flex items-center gap-2 min-w-0">
-                            <h3 className="text-xs md:text-sm font-semibold text-foreground truncate">
-                              {selectedFilePath}
-                            </h3>
-                            <span className="px-1.5 md:px-2 py-0.5 bg-secondary text-muted-foreground rounded text-[10px] md:text-xs font-medium shrink-0">
-                              {selectedFileType?.toUpperCase()}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-1.5 md:gap-2 flex-wrap">
-                            {/* Toggle for MD/MDX files */}
-                            {(selectedFileType === 'md' || selectedFileType === 'mdx') && (
-                              <button
-                                onClick={() => setMarkdownViewMode(prev => prev === 'rendered' ? 'raw' : 'rendered')}
-                                className="p-1.5 md:px-3 md:py-1 bg-secondary hover:bg-accent text-foreground rounded text-xs font-medium transition-colors flex items-center gap-1"
-                                title={markdownViewMode === 'rendered' ? 'Show Raw' : 'Show Rendered'}
-                              >
-                                <FileText className="h-3 w-3" />
-                                <span className="hidden md:inline">{markdownViewMode === 'rendered' ? 'Show Raw' : 'Show Rendered'}</span>
-                              </button>
-                            )}
-                            {/* Embed button for HTML/MDX/MD files */}
-                            {(selectedFileType === 'html' || selectedFileType === 'md' || selectedFileType === 'mdx') && (
-                              <button
-                                onClick={() => setShowEmbedDialog(true)}
-                                className="p-1.5 md:px-3 md:py-1 bg-violet/10 hover:bg-violet/20 text-violet rounded text-xs font-medium transition-colors flex items-center gap-1"
-                                title="Embed this file"
-                              >
-                                <Share2 className="h-3 w-3" />
-                                <span className="hidden md:inline">Embed</span>
-                              </button>
-                            )}
-                            {/* Reload button */}
-                            <button
-                              onClick={handleReloadFile}
-                              disabled={isReloadingFile}
-                              className="p-1.5 md:px-3 md:py-1 bg-primary/10 hover:bg-primary/20 text-primary rounded text-xs font-medium transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
-                              title="Reload file"
-                            >
-                              <RefreshCw className={`h-3 w-3 ${isReloadingFile ? 'animate-spin' : ''}`} />
-                              <span className="hidden md:inline">Reload</span>
-                            </button>
-                            {/* Delete button */}
-                            <button
-                              onClick={handleDeleteFile}
-                              className="p-1.5 md:px-3 md:py-1 bg-destructive/10 hover:bg-destructive/20 text-destructive rounded text-xs font-medium transition-colors flex items-center gap-1"
-                              title="Delete file"
-                            >
-                              <Trash2 className="h-3 w-3" />
-                              <span className="hidden md:inline">Delete</span>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* File Content */}
-                      <div className="flex-1 overflow-auto min-h-0">
-                        {selectedFileType === 'html' ? (
-                          <iframe
-                            srcDoc={injectWorkspaceAPIToHTML(selectedFileContent)}
-                            className="w-full h-full min-h-screen border-0"
-                            sandbox="allow-scripts allow-forms allow-same-origin"
-                            title="HTML Preview"
-                          />
-                        ) : (selectedFileType === 'md' || selectedFileType === 'mdx') ? (
-                          markdownViewMode === 'rendered' ? (
-                            <div className="p-4 md:p-8">
-                              <MarkdownRenderer content={selectedFileContent} />
-                            </div>
-                          ) : (
-                            <div className="p-3 md:p-6">
-                              <pre className="text-xs md:text-sm text-foreground bg-secondary rounded-lg p-3 md:p-4 overflow-auto whitespace-pre-wrap font-mono">
-                                {selectedFileContent}
-                              </pre>
-                            </div>
-                          )
-                        ) : (selectedFileType === 'png' || selectedFileType === 'jpg' || selectedFileType === 'jpeg' || selectedFileType === 'gif') ? (
-                          <div className="p-4 md:p-8 flex items-center justify-center">
-                            <img
-                              src={`data:image/${selectedFileType};base64,${selectedFileContent}`}
-                              alt={selectedFilePath}
-                              className="max-w-full h-auto rounded-lg shadow-lg"
-                            />
-                          </div>
-                        ) : selectedFileType === 'json' ? (
-                          <JSONViewer content={selectedFileContent} />
-                        ) : (
-                          <div className="p-3 md:p-6">
-                            <pre className="text-xs md:text-sm text-foreground whitespace-pre-wrap font-mono">
-                              {selectedFileContent}
-                            </pre>
-                          </div>
-                        )}
-                      </div>
-                    </>
-                  ) : isHomePageMissing ? (
-                    // Welcome message for missing home page
-                    <div className="flex-1 flex items-center justify-center p-4 md:p-8">
-                      <div className="text-center max-w-md">
-                        <div className="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-violet/10 rounded-full mb-4 md:mb-6">
-                          <Sparkles className="h-8 w-8 md:h-10 md:w-10 text-violet" />
-                        </div>
-                        <h3 className="text-lg md:text-xl font-semibold text-foreground mb-2 md:mb-3">Welcome to Your Workspace</h3>
-                        <p className="text-xs md:text-sm text-muted-foreground mb-4 md:mb-6 leading-relaxed">
-                          This workspace doesn&apos;t have a home page yet. Create one to get started with organizing your work,
-                          documenting projects, or building interactive dashboards.
-                        </p>
-                        <button
-                          onClick={handleCreateHomePage}
-                          disabled={isCreatingHomePage}
-                          className="px-4 md:px-6 py-2 md:py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg text-xs md:text-sm font-medium transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mx-auto"
-                        >
-                          {isCreatingHomePage ? (
-                            <>
-                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground"></div>
-                              Creating...
-                            </>
-                          ) : (
-                            <>
-                              <FileText className="h-4 w-4" />
-                              Create Home Page
-                            </>
-                          )}
-                        </button>
-                        <p className="text-[10px] md:text-xs text-muted-foreground mt-3 md:mt-4">
-                          This will create a README.mdx file at the root of your workspace
-                        </p>
-                      </div>
-                    </div>
-                  ) : (
-                    // No file selected
-                    <div className="flex-1 flex items-center justify-center p-4 md:p-8">
-                      <div className="text-center">
-                        <div className="inline-flex items-center justify-center w-12 h-12 md:w-16 md:h-16 bg-secondary rounded-full mb-3 md:mb-4">
-                          <FileText className="h-6 w-6 md:h-8 md:w-8 text-muted-foreground" />
-                        </div>
-                        <h3 className="text-xs md:text-sm font-medium text-foreground mb-1">No file selected</h3>
-                        <p className="text-[10px] md:text-xs text-muted-foreground">Select a file from the explorer to preview</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
+              // AI Workspace View - Finder Layout
+              <FinderLayout
+                agentId={workspaceScope === 'agent' ? effectiveScopeId : undefined}
+                sessionId={activeSession?._id}
+                scope={workspaceScope}
+                selectedFilePath={selectedFilePath}
+                selectedFileContent={selectedFileContent}
+                markdownViewMode={markdownViewMode}
+                isReloadingFile={isReloadingFile}
+                panels={panels}
+                onFileSelect={handleFileSelect}
+                onDeleteFile={handleDeleteFile}
+                onReloadFile={handleReloadFile}
+                onToggleMarkdownView={() => setMarkdownViewMode(prev => prev === 'rendered' ? 'raw' : 'rendered')}
+                onShowEmbedDialog={() => setShowEmbedDialog(true)}
+                onTogglePreviewPanel={() => togglePanel('previewPanel')}
+                injectWorkspaceAPIToHTML={injectWorkspaceAPIToHTML}
+              />
             ) : (
               // User Screen Preview
               <>

@@ -9,7 +9,6 @@ import {
 } from '../services/api/assistantService';
 import { emitter } from '../services/mittEmitter';
 import { EVENT_CHAT_SESSION_DELETED, EVENT_SET_ACTIVE_ASSISTANT } from '../utils/eventNames';
-import { TTSVoice } from '../services/api/voiceService';
 import { useSessionStore } from './useSessionStore';
 import i18n from '../i18n';
 import { 
@@ -19,7 +18,6 @@ import {
   Metadata,
   FileMetadata // Added FileMetadata
 } from '../types/chat';
-import { useAudioStore } from './useAudioStore';
 import { messageCache } from '../utils/messageCache';
 import { logger } from '../services/LoggingService';
 import { Base64Attachment } from '../utils/base64Utils';
@@ -373,13 +371,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
                       set({ isLoading: false });
                       newContent = removeRAGCitations(newContent);
                       
-                      // Play audio if enabled and voice is available and valid
-                      if (newContent.trim() && assistant.voice && ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'].includes(assistant.voice as TTSVoice)) {
-                        const audioStore = useAudioStore.getState();
-                        audioStore.playText(newContent, assistant.voice as TTSVoice).catch(error => 
-                          logger.error('Failed to play audio for streamed response', error)
-                        );
-                      }
+                      // Audio TTS removed — voice field no longer exists on assistants
                       break;
                   }
                   return { ...msg, content: newContent, metadata: newMetadata, isStreaming: newIsStreaming };

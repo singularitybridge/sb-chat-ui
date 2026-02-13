@@ -99,6 +99,47 @@ export const listWorkspaceItems = async (
 };
 
 /**
+ * Get the most recently updated workspace items
+ */
+export const getLatestWorkspaceItems = async (
+  scope: 'company' | 'session' | 'agent' | 'team' = 'company',
+  limit: number = 10,
+  agentId?: string,
+  sessionId?: string,
+  teamId?: string
+): Promise<WorkspaceListResponse> => {
+  const key = `workspace:latest:${scope}:${limit}:${agentId || ''}:${sessionId || ''}:${teamId || ''}`;
+
+  return singleFlight(
+    key,
+    async () => {
+      const headers: Record<string, string> = {
+        Authorization: `Bearer ${localStorage.getItem('userToken')}`,
+      };
+
+      if (sessionId) headers['x-session-id'] = sessionId;
+      if (agentId) headers['x-agent-id'] = agentId;
+      if (teamId) headers['x-team-id'] = teamId;
+
+      const params = new URLSearchParams({
+        scope,
+        limit: String(limit),
+        ...(agentId && { agentId }),
+        ...(teamId && { teamId }),
+      });
+
+      const response = await axios.get(
+        `${API_URL}/api/workspace/latest?${params.toString()}`,
+        { headers }
+      );
+
+      return response.data;
+    },
+    30000 // 30 second cache
+  );
+};
+
+/**
  * Get workspace item content
  */
 export const getWorkspaceItem = async (
@@ -405,4 +446,49 @@ export const findDefaultEntryFile = async (
     console.error('Error finding default entry file:', error);
     return null;
   }
+};
+
+/**
+ * Vector search workspace items using AI embeddings
+ */
+export interface VectorSearchResult {
+  path: string;
+  score: number;
+  snippet?: string;
+  metadata?: {
+    contentType?: string;
+    size?: number;
+    updatedAt?: Date | string;
+    [key: string]: any;
+  };
+}
+
+export const vectorSearchWorkspace = async (
+  query: string,
+  scope: 'company' | 'session' | 'agent' = 'agent',
+  agentId?: string,
+  sessionId?: string,
+  options?: { limit?: number; minScore?: number }
+): Promise<VectorSearchResult[]> => {
+  const headers: Record<string, string> = {
+    Authorization: `Bearer ${localStorage.getItem('userToken')}`,
+    'Content-Type': 'application/json',
+  };
+
+  if (sessionId) headers['x-session-id'] = sessionId;
+  if (agentId) headers['x-agent-id'] = agentId;
+
+  const response = await axios.post(
+    `${API_URL}/api/workspace/vector-search`,
+    {
+      query,
+      scopes: [scope],
+      agentIds: agentId ? [agentId] : undefined,
+      limit: options?.limit ?? 20,
+      minScore: options?.minScore ?? 0.5,
+    },
+    { headers }
+  );
+
+  return response.data?.results || response.data?.items || [];
 };

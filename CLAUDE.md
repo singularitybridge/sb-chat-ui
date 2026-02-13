@@ -265,6 +265,34 @@ A comprehensive code sample generator dialog accessible via a button in the chat
 - Test feature excludes file attachments for simplicity
 - Code samples are for stateless execute endpoint only (no session management)
 
+## Agent Hub Workspace — Knowledge Persistence Across Sessions
+
+**IMPORTANT:** Multiple Claude Code sessions run in parallel on the SB project. Use the Agent Hub workspace (via local MCP tools) to persist and retrieve knowledge so all sessions stay in sync.
+
+**MCP tools available:**
+- `mcp__agent-hub-sb__add_workspace_item` — Store a document
+- `mcp__agent-hub-sb__get_workspace_item` — Retrieve by path
+- `mcp__agent-hub-sb__vector_search_workspace` — Semantic search across all docs
+- `mcp__agent-hub-sb__list_workspace_items` — List items at a path/scope
+
+**When to use:**
+- **Before starting work:** Search workspace for existing plans, research, and decisions related to your task
+- **After completing research:** Store findings so other sessions can build on them
+- **When making decisions:** Check `/products/` and `/engineering/` for prior decisions and context
+- **Use vector search** to discover relevant docs (e.g., query "multi-channel identity" or "Herald messaging")
+
+**Workspace structure (company scope):**
+- `/engineering/plans/` — Implementation plans and proposals
+- `/engineering/` — Code review rules, dev vision, repo settings
+- `/products/shmutzi/` — Shmutzi product docs (vision, research, decisions, tasks)
+- `/products/agent-hub/` — Agent Hub product docs (features, tasks)
+
+**Best practices:**
+- Search before creating — avoid duplicates
+- Use markdown with clear title, date, status
+- Link related docs across the workspace
+- Store at `company` scope for shared knowledge
+
 ## Documentation Maintenance
 
 ### Updating Docs Before Pushing

@@ -92,43 +92,57 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
     <>
       <style dangerouslySetInnerHTML={{__html: `
         .workspace-markdown-content pre {
-          background-color: #0f172a !important;
-          border: 1px solid rgba(15, 23, 42, 0.5) !important;
-          border-radius: 0.5rem !important;
-          padding: 0.75rem !important;
+          background-color: #f0f0f3 !important;
+          border: none !important;
+          border-radius: 12px !important;
+          padding: 1.25rem 1.5rem !important;
           overflow-x: auto !important;
-          margin: 1rem 0 !important;
+          margin: 1.5rem 0 !important;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
+        }
+        .dark .workspace-markdown-content pre {
+          background-color: #111114 !important;
+          box-shadow: none !important;
         }
         .workspace-markdown-content pre code {
-          color: #f1f5f9 !important;
+          color: #3f3f46 !important;
           background-color: transparent !important;
-          font-family: 'JetBrains Mono', monospace !important;
+          font-family: 'JetBrains Mono', 'IBM Plex Mono', monospace !important;
           font-size: 13px !important;
           line-height: 1.75 !important;
           padding: 0 !important;
           border: none !important;
         }
+        .dark .workspace-markdown-content pre code {
+          color: #d4d4d8 !important;
+        }
         .workspace-markdown-content :not(pre) > code {
-          background-color: var(--color-slate-100, rgb(241 245 249)) !important;
-          color: var(--color-pink-600, rgb(219 39 119)) !important;
+          background-color: #ededf0 !important;
+          color: #4a4a52 !important;
           padding: 0.125rem 0.375rem !important;
           border-radius: 0.25rem !important;
           font-size: 13px !important;
-          font-family: 'JetBrains Mono', monospace !important;
+          font-family: 'JetBrains Mono', 'IBM Plex Mono', monospace !important;
           font-weight: 500 !important;
-          border: 1px solid var(--color-slate-200, rgb(226 232 240)) !important;
+          border: none !important;
         }
         .dark .workspace-markdown-content :not(pre) > code {
-          background-color: rgb(30 41 59) !important;
-          color: rgb(244 114 182) !important;
-          border: 1px solid rgb(51 65 85) !important;
+          background-color: #1c1c20 !important;
+          color: #b0b0bc !important;
+          border: none !important;
         }
         .workspace-markdown-content :not(pre) > code::before,
         .workspace-markdown-content :not(pre) > code::after {
           content: '' !important;
         }
+        .workspace-markdown-content a {
+          color: #6366f1 !important;
+        }
+        .dark .workspace-markdown-content a {
+          color: #a5b4fc !important;
+        }
       `}} />
-      <div className={`workspace-markdown-content prose prose-slate dark:prose-invert max-w-none font-['Inter',sans-serif] px-1 ${className}`} style={{
+      <div className={`workspace-markdown-content prose prose-zinc dark:prose-invert max-w-none font-['IBM_Plex_Sans',sans-serif] px-1 ${className}`} style={{
         fontSize: '16px',
         lineHeight: '1.75'
       }}>
@@ -144,22 +158,22 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
         components={{
           // Custom components for better styling with Inter font
           h1: ({ children }: any) => (
-            <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100 mb-5 mt-10 first:mt-0">
+            <h1 className="text-[1.875rem] font-medium tracking-tight text-zinc-900 dark:text-zinc-100 mb-5 mt-10 first:mt-0 leading-[1.2]">
               {children}
             </h1>
           ),
           h2: ({ children }: any) => (
-            <h2 className="text-2xl font-semibold text-slate-800 dark:text-slate-200 mb-4 mt-8 border-b border-slate-200 dark:border-slate-700 pb-2">
+            <h2 className="text-lg font-medium text-zinc-800 dark:text-zinc-200 mb-4 mt-12">
               {children}
             </h2>
           ),
           h3: ({ children }: any) => (
-            <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-200 mb-3 mt-6">
+            <h3 className="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3 mt-8">
               {children}
             </h3>
           ),
           h4: ({ children }: any) => (
-            <h4 className="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-2 mt-5">
+            <h4 className="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2 mt-6">
               {children}
             </h4>
           ),
@@ -184,10 +198,10 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
             );
 
             if (hasCodeBlock || hasBlockComponent) {
-              return <div className="text-slate-700 dark:text-slate-300 leading-relaxed mb-6">{children}</div>;
+              return <div className="text-zinc-500 dark:text-zinc-400 mb-6" style={{ lineHeight: '1.625' }}>{children}</div>;
             }
 
-            return <p className="text-slate-700 dark:text-slate-300 leading-relaxed mb-6">{children}</p>;
+            return <p className="text-zinc-500 dark:text-zinc-400 mb-6" style={{ lineHeight: '1.625' }}>{children}</p>;
           },
           a: ({ href, children, ...props }: any) => {
             // Check if this is a workspace file link (starts with /)
@@ -205,7 +219,8 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
                       window.loadWorkspaceFile(href);
                     }
                   }}
-                  className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline underline-offset-4 decoration-2 cursor-pointer font-medium transition-colors"
+                  className="cursor-pointer font-medium transition-colors hover:underline underline-offset-[3px]"
+                  style={{ color: '#6366f1' }}
                   {...props}
                 >
                   {children}
@@ -217,7 +232,8 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
             return (
               <a
                 href={href}
-                className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline underline-offset-4 decoration-2 font-medium transition-colors"
+                className="inline-flex items-center gap-1 font-medium transition-colors hover:underline underline-offset-[3px]"
+                style={{ color: '#6366f1' }}
                 target="_blank"
                 rel="noopener noreferrer"
                 {...props}
@@ -228,17 +244,17 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
             );
           },
           ul: ({ children }: any) => (
-            <ul className="list-disc list-outside space-y-2 mb-6 text-slate-700 dark:text-slate-300 pl-6 marker:text-slate-400">{children}</ul>
+            <ul className="list-disc list-outside space-y-2 mb-6 text-zinc-600 dark:text-zinc-300 pl-6 marker:text-zinc-400">{children}</ul>
           ),
           ol: ({ children }: any) => (
-            <ol className="list-decimal list-outside space-y-2 mb-6 text-slate-700 dark:text-slate-300 pl-6 marker:text-slate-500 marker:font-medium">{children}</ol>
+            <ol className="list-decimal list-outside space-y-2 mb-6 text-zinc-600 dark:text-zinc-300 pl-6 marker:text-zinc-400">{children}</ol>
           ),
           li: ({ children }: any) => (
             <li className="pl-2">{children}</li>
           ),
           blockquote: ({ children }: any) => (
-            <blockquote className="border-l-4 border-blue-500 dark:border-blue-400 pl-6 py-1 my-6 bg-blue-50/50 dark:bg-blue-950/20 rounded-r-lg">
-              <div className="text-slate-700 dark:text-slate-300 italic font-medium">
+            <blockquote className="border-l-2 border-zinc-300 dark:border-zinc-600 pl-6 py-1 my-6 bg-zinc-50 dark:bg-[rgba(24,24,27,0.3)]">
+              <div className="text-zinc-600 dark:text-zinc-400 italic">
                 {children}
               </div>
             </blockquote>
@@ -249,52 +265,53 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
             const match = /language-(\w+)/.exec(className || '');
             return isInline ? (
               <code
-                className="bg-slate-100 dark:bg-slate-800 text-pink-600 dark:text-pink-400 px-1.5 py-0.5 rounded text-[13px] font-['JetBrains_Mono',monospace] font-medium border border-slate-200 dark:border-slate-700"
+                className="px-1.5 py-0.5 rounded text-[13px] font-['JetBrains_Mono','IBM_Plex_Mono',monospace] font-medium"
+                style={{ backgroundColor: '#ededf0', color: '#4a4a52' }}
                 {...props}
               >
                 {children}
               </code>
             ) : (
-              <code className={`language-${match?.[1] || ''} font-['JetBrains_Mono',monospace] text-[13px] leading-relaxed`} {...props}>
+              <code className={`language-${match?.[1] || ''} font-['JetBrains_Mono','IBM_Plex_Mono',monospace] text-[13px] leading-relaxed`} {...props}>
                 {children}
               </code>
             );
           },
           pre: ({ children, ...props }: any) => (
-            <div className="not-prose relative my-4 group">
-              <pre className="bg-slate-900 text-slate-100 rounded-lg p-3 overflow-x-auto border border-slate-800/50" {...props}>
+            <div className="not-prose relative my-6 group">
+              <pre className="rounded-xl overflow-x-auto" style={{ backgroundColor: '#f0f0f3', padding: '1.25rem 1.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }} {...props}>
                 {children}
               </pre>
             </div>
           ),
           table: ({ children }: any) => (
-            <div className="overflow-x-auto my-8 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm">
-              <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+            <div className="overflow-x-auto my-8 rounded-lg border border-zinc-200 dark:border-zinc-800">
+              <table className="min-w-full divide-y divide-zinc-200 dark:divide-zinc-800">
                 {children}
               </table>
             </div>
           ),
           thead: ({ children }: any) => (
-            <thead className="bg-slate-50 dark:bg-slate-800">{children}</thead>
+            <thead style={{ backgroundColor: '#fafafa' }} className="dark:bg-zinc-900">{children}</thead>
           ),
           tbody: ({ children }: any) => (
-            <tbody className="bg-white dark:bg-slate-900 divide-y divide-slate-200 dark:divide-slate-700">{children}</tbody>
+            <tbody className="bg-white dark:bg-transparent divide-y divide-zinc-100 dark:divide-zinc-800">{children}</tbody>
           ),
-          tr: ({ children }: any) => <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">{children}</tr>,
+          tr: ({ children }: any) => <tr className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">{children}</tr>,
           th: ({ children }: any) => (
-            <th className="px-6 py-3.5 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+            <th className="px-6 py-3.5 text-left text-[0.8125rem] font-medium text-zinc-700 dark:text-zinc-400 uppercase tracking-wider">
               {children}
             </th>
           ),
           td: ({ children }: any) => (
-            <td className="px-6 py-4 text-sm text-slate-700 dark:text-slate-300">{children}</td>
+            <td className="px-6 py-4 text-sm text-zinc-600 dark:text-zinc-300 border-b border-zinc-100 dark:border-zinc-800">{children}</td>
           ),
-          hr: () => <hr className="my-10 border-slate-200 dark:border-slate-700" />,
+          hr: () => <hr className="my-10 border-zinc-200 dark:border-zinc-700" />,
           img: ({ src, alt }: any) => (
             <img
               src={src}
               alt={alt || ''}
-              className="max-w-full h-auto rounded-lg shadow-lg my-8 border border-slate-200 dark:border-slate-700"
+              className="max-w-full h-auto rounded-lg shadow-lg my-8 border border-zinc-200 dark:border-zinc-800"
             />
           ),
           // Custom button handler for workspace actions

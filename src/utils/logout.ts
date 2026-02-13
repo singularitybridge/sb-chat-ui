@@ -10,7 +10,6 @@ import { useCompanyStore } from '../store/useCompanyStore';
 import { useTeamStore } from '../store/useTeamStore';
 import { useUserStore } from '../store/useUserStore';
 import { useInboxStore } from '../store/useInboxStore';
-import { useOnboardingStore } from '../store/useOnboardingStore';
 import { useAuthStore } from '../store/useAuthStore';
 import { useScreenShareStore } from '../store/useScreenShareStore';
 import { useAudioStore } from '../store/useAudioStore';
@@ -86,9 +85,6 @@ export const clearAllStores = () => {
     inboxSessionsLoaded: false,
     isLoading: false,
   });
-
-  // Reset onboarding store
-  useOnboardingStore.getState().resetOnboarding();
 
   // Stop and clear screen share store - use stopSession() for proper cleanup
   const screenShareState = useScreenShareStore.getState();
