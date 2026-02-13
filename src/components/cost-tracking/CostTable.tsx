@@ -17,6 +17,7 @@ import {
   ArrowDownUp, 
   DollarSign, 
   Timer,
+  Wrench,
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
@@ -161,6 +162,23 @@ export const CostTable: React.FC<CostTableProps> = ({
           {formatDuration(row.getValue('duration'))}
         </div>
       ),
+    },
+    {
+      accessorKey: 'toolCalls',
+      header: () => (
+        <div className="flex items-center justify-end gap-2">
+          <Wrench className="h-4 w-4" />
+          Tools
+        </div>
+      ),
+      cell: ({ row }) => {
+        const count = row.getValue('toolCalls') as number;
+        return count > 0 ? (
+          <div className="text-right text-sm">{count}</div>
+        ) : (
+          <div className="text-right text-sm text-muted-foreground">—</div>
+        );
+      },
     },
     {
       accessorKey: 'requestType',
