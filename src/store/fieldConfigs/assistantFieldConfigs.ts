@@ -16,65 +16,58 @@ const sanitizeToUrlSafe = (value: string): string => {
     .replace(/^-|-$/g, '');         // Remove leading/trailing hyphens
 };
 
-// Models grouped by provider
-const openaiModels: SelectListOption[] = [
-  // GPT-5.x family (stable)
-  { value: 'gpt-5.2', label: 'GPT-5.2' },
-  { value: 'gpt-5.1', label: 'GPT-5.1' },
-  { value: 'gpt-5', label: 'GPT-5' },
-  { value: 'gpt-5-mini', label: 'GPT-5 Mini' },
-  { value: 'gpt-5-nano', label: 'GPT-5 Nano' },
-  // GPT-4.x family
-  { value: 'gpt-4.1', label: 'GPT-4.1' },
-  { value: 'gpt-4.1-mini', label: 'GPT-4.1 Mini' },
-  { value: 'gpt-4.1-nano', label: 'GPT-4.1 Nano' },
-];
+// --- Dynamic model fetching from API ---
 
-const googleModels: SelectListOption[] = [
-  // Gemini 3 (preview only - no stable version yet)
-  { value: 'gemini-3-pro-preview', label: 'Gemini 3 Pro (preview)' },
-  { value: 'gemini-3-flash-preview', label: 'Gemini 3 Flash (preview)' },
-  // Gemini 2.5 (stable)
-  { value: 'gemini-2.5-pro', label: 'Gemini 2.5 Pro' },
-  { value: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash' },
-  { value: 'gemini-2.5-flash-lite', label: 'Gemini 2.5 Flash-Lite' },
-  // Gemini 2.0 (legacy)
-  { value: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash' },
-];
+interface ModelsApiResponse {
+  providers: string[];
+  models: Record<string, Array<{ id: string; label: string; description: string }>>;
+  defaults: Record<string, string>;
+}
 
-const anthropicModels: SelectListOption[] = [
-  // Claude 4.5 (latest)
-  { value: 'claude-sonnet-4-5', label: 'Claude Sonnet 4.5' },
-  { value: 'claude-haiku-4-5', label: 'Claude Haiku 4.5' },
-  { value: 'claude-opus-4-5', label: 'Claude Opus 4.5' },
-  // Claude 4.1
-  { value: 'claude-opus-4-1', label: 'Claude Opus 4.1' },
-  // Claude 4
-  { value: 'claude-sonnet-4-0', label: 'Claude Sonnet 4' },
-  { value: 'claude-opus-4-0', label: 'Claude Opus 4' },
-  // Claude 3 (legacy)
-  { value: 'claude-3-haiku-20240307', label: 'Claude 3 Haiku' },
-];
+let modelsCache: ModelsApiResponse | null = null;
 
-// Combined list for fallback
-const llmModelOptions: SelectListOption[] = [
-  ...openaiModels,
-  ...googleModels,
-  ...anthropicModels,
-];
+/**
+ * Fetches available LLM models from the backend API.
+ * Cached after first successful fetch.
+ */
+const fetchModels = async (): Promise<ModelsApiResponse> => {
+  if (modelsCache) {
+    return modelsCache;
+  }
 
-// Models organized by provider for dependent dropdown
-export const modelsByProvider: Record<string, SelectListOption[]> = {
-  openai: openaiModels,
-  google: googleModels,
-  anthropic: anthropicModels,
+  try {
+    const response = await apiCaller.get<ModelsApiResponse>('/api/models');
+    modelsCache = response.data;
+    return modelsCache;
+  } catch (error) {
+    console.error('Error fetching models from API, using fallback:', error);
+    // Return fallback so the UI still works
+    return {
+      providers: ['openai', 'google', 'anthropic'],
+      models: {
+        openai: [
+          { id: 'gpt-5.1', label: 'GPT-5.1', description: 'GPT-5.1 model' },
+        ],
+        google: [
+          { id: 'gemini-3-flash-preview', label: 'Gemini 3 Flash (preview)', description: 'Fast' },
+        ],
+        anthropic: [
+          { id: 'claude-sonnet-4-5', label: 'Claude Sonnet 4.5', description: 'Balanced' },
+        ],
+      },
+      defaults: {
+        openai: 'gpt-5.1',
+        google: 'gemini-3-flash-preview',
+        anthropic: 'claude-sonnet-4-5',
+      },
+    };
+  }
 };
 
-// Default model for each provider
-export const defaultModelByProvider: Record<string, string> = {
-  openai: 'gpt-5.1',
-  google: 'gemini-3-flash-preview',
-  anthropic: 'claude-sonnet-4-5',
+const toSelectOptions = (
+  models: Array<{ id: string; label: string }>,
+): SelectListOption[] => {
+  return models.map((m) => ({ value: m.id, label: m.label }));
 };
 
 const llmProviderOptions: SelectListOption[] = [
@@ -159,7 +152,7 @@ export const fetchAllowedActionOptions = async (
 
 /**
  * Asynchronously generates the assistant field configurations.
- * This function fetches the allowed action options from the server based on the specified language.
+ * This function fetches the allowed action options and available models from the server.
  *
  * @param language - The language code to use for fetching action options (default: 'en')
  * @returns A promise that resolves to an array of FieldConfig objects
@@ -167,7 +160,23 @@ export const fetchAllowedActionOptions = async (
 export const getAssistantFieldConfigs = async (
   language: string = 'en'
 ): Promise<FieldConfig[]> => {
-  const allowedActionOptions = await fetchAllowedActionOptions(language);
+  const [allowedActionOptions, modelsData] = await Promise.all([
+    fetchAllowedActionOptions(language),
+    fetchModels(),
+  ]);
+
+  // Build model options from API response
+  const modelsByProvider: Record<string, SelectListOption[]> = {};
+  const allModelOptions: SelectListOption[] = [];
+
+  for (const provider of modelsData.providers) {
+    const providerModels = modelsData.models[provider] || [];
+    const options = toSelectOptions(providerModels);
+    modelsByProvider[provider] = options;
+    allModelOptions.push(...options);
+  }
+
+  const defaultModelByProvider = modelsData.defaults;
 
   return [
     {
@@ -201,8 +210,8 @@ export const getAssistantFieldConfigs = async (
       key: 'llmModel',
       label: 'LLM Model',
       type: 'dropdown',
-      value: 'gpt-5.1',
-      options: llmModelOptions,
+      value: defaultModelByProvider['openai'] || 'gpt-5.1',
+      options: allModelOptions,
       dependsOn: 'llmProvider',
       optionsByDependency: modelsByProvider,
       defaultByDependency: defaultModelByProvider,
@@ -249,7 +258,7 @@ export const getAssistantFieldConfigs = async (
 };
 
 /**
- * Default assistant field configurations without server-fetched action options.
+ * Default assistant field configurations without server-fetched data.
  * This can be used as a fallback when async loading is not possible or during initial renders.
  */
 export const defaultAssistantFieldConfigs: FieldConfig[] = [
@@ -272,28 +281,28 @@ export const defaultAssistantFieldConfigs: FieldConfig[] = [
   },
   {
     id: 'llmProvider',
-      key: 'llmProvider',
-      label: 'assistant.llmProvider',
-      type: 'dropdown',
-      value: 'openai',
-      options: llmProviderOptions,
-      visibility: { create: true, view: true, update: true },
-    },
-    {
-      id: 'llmModel',
-      key: 'llmModel',
-      label: 'LLM Model',
-      type: 'dropdown',
-      value: 'gpt-5.1',
-      options: llmModelOptions,
-      dependsOn: 'llmProvider',
-      optionsByDependency: modelsByProvider,
-      defaultByDependency: defaultModelByProvider,
-      visibility: { create: true, view: true, update: true },
-    },
-    {
-      id: 'llmPrompt',
-      key: 'llmPrompt',
+    key: 'llmProvider',
+    label: 'assistant.llmProvider',
+    type: 'dropdown',
+    value: 'openai',
+    options: llmProviderOptions,
+    visibility: { create: true, view: true, update: true },
+  },
+  {
+    id: 'llmModel',
+    key: 'llmModel',
+    label: 'LLM Model',
+    type: 'dropdown',
+    value: 'gpt-5.1',
+    options: [],
+    dependsOn: 'llmProvider',
+    optionsByDependency: {},
+    defaultByDependency: {},
+    visibility: { create: true, view: true, update: true },
+  },
+  {
+    id: 'llmPrompt',
+    key: 'llmPrompt',
     label: 'LLM Prompt',
     type: 'textarea',
     value: 'This is a new assistant.',
