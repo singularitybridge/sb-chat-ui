@@ -281,7 +281,8 @@ const AssistantsPage: React.FC = () => {
       });
   };
 
-  const extractIntegrationNames = (allowedActions: string[]): string[] => {
+  const extractIntegrationNames = (allowedActions?: string[]): string[] => {
+    if (!allowedActions) return [];
     return [...new Set(allowedActions.map((action) => action.split('.')[0]))];
   };
 
