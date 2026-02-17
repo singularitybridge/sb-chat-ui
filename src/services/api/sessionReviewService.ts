@@ -10,6 +10,7 @@ export interface EnrichedSession {
   messageCount: number;
   lastMessageAt: string | null;
   createdAt: string;
+  totalCost?: number;
 }
 
 export interface SessionListResponse {

@@ -13,12 +13,12 @@ import type {
 // Query keys for cache management
 export const costQueryKeys = {
   all: ['costs'] as const,
-  summary: (startDate?: string, endDate?: string, provider?: string) =>
-    [...costQueryKeys.all, 'summary', { startDate, endDate, provider }] as const,
+  summary: (startDate?: string, endDate?: string, provider?: string, sessionId?: string) =>
+    [...costQueryKeys.all, 'summary', { startDate, endDate, provider, sessionId }] as const,
   records: (filters: CostFilters) =>
     [...costQueryKeys.all, 'records', filters] as const,
-  daily: (days: number, startDate?: string, endDate?: string, provider?: string) =>
-    [...costQueryKeys.all, 'daily', { days, startDate, endDate, provider }] as const,
+  daily: (days: number, startDate?: string, endDate?: string, provider?: string, sessionId?: string) =>
+    [...costQueryKeys.all, 'daily', { days, startDate, endDate, provider, sessionId }] as const,
   byAssistant: (assistantId: string, startDate?: string, endDate?: string, limit?: number) =>
     [...costQueryKeys.all, 'byAssistant', { assistantId, startDate, endDate, limit }] as const,
   byModel: (model: string, startDate?: string, endDate?: string, limit?: number) =>
@@ -26,10 +26,10 @@ export const costQueryKeys = {
 };
 
 // Hook for fetching cost summary
-export const useCostSummary = (startDate?: string, endDate?: string, provider?: string) => {
+export const useCostSummary = (startDate?: string, endDate?: string, provider?: string, sessionId?: string) => {
   const query = useQuery({
-    queryKey: costQueryKeys.summary(startDate, endDate, provider),
-    queryFn: () => getCostSummary(startDate, endDate, provider),
+    queryKey: costQueryKeys.summary(startDate, endDate, provider, sessionId),
+    queryFn: () => getCostSummary(startDate, endDate, provider, sessionId),
     staleTime: 60_000, // 1 minute
     refetchInterval: 120_000, // Refetch every 2 minutes in background
   });
@@ -68,11 +68,12 @@ export const useDailyCosts = (
   days: number = 30,
   startDate?: string,
   endDate?: string,
-  provider?: string
+  provider?: string,
+  sessionId?: string
 ) => {
   const query = useQuery({
-    queryKey: costQueryKeys.daily(days, startDate, endDate, provider),
-    queryFn: () => getDailyCosts(days, startDate, endDate, provider),
+    queryKey: costQueryKeys.daily(days, startDate, endDate, provider, sessionId),
+    queryFn: () => getDailyCosts(days, startDate, endDate, provider, sessionId),
     staleTime: 60_000, // 1 minute
     refetchInterval: 120_000, // Refetch every 2 minutes in background
   });
@@ -132,9 +133,9 @@ export const useModelCosts = (
 
 // Combined hook for complete cost dashboard data
 export const useCostDashboard = (filters: CostFilters = {}) => {
-  const summary = useCostSummary(filters.startDate, filters.endDate, filters.provider);
+  const summary = useCostSummary(filters.startDate, filters.endDate, filters.provider, filters.sessionId);
   const records = useCostRecords({ ...filters, limit: filters.limit || 1000 });
-  const dailyCosts = useDailyCosts(30, filters.startDate, filters.endDate, filters.provider);
+  const dailyCosts = useDailyCosts(30, filters.startDate, filters.endDate, filters.provider, filters.sessionId);
 
   const isLoading = summary.loading || records.loading || dailyCosts.loading;
   const hasError = summary.error || records.error || dailyCosts.error;

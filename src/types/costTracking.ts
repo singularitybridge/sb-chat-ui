@@ -65,6 +65,7 @@ export interface CostFilters {
   model?: string;
   assistantId?: string;
   userId?: string;
+  sessionId?: string;
   startDate?: string;
   endDate?: string;
   limit?: number;

@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router';
 import * as Tabs from '@radix-ui/react-tabs';
 import {
   TrendingUp,
@@ -10,7 +11,8 @@ import {
   RefreshCw,
   Download,
   Filter,
-  List
+  List,
+  X
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { MetricsCards } from './MetricsCards';
@@ -73,17 +75,36 @@ export const CostTrackingDashboard: React.FC<CostTrackingDashboardProps> = ({
   renderFooter
 }) => {
   const { t } = useTranslation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState('overview');
   const [pageSize, setPageSize] = useState<number>(10);
 
+  // Read sessionId from URL params
+  const urlSessionId = searchParams.get('sessionId') || undefined;
+
   // Memoize default dates to prevent re-initialization on every render
   const defaultDates = useMemo(() => getDefaultDateRange(), []);
-  const [dateRange, setDateRange] = useState<{ start?: string; end?: string }>(defaultDates);
-  const [filters, setFilters] = useState<CostFilters>({
-    startDate: defaultDates.start,
-    endDate: defaultDates.end,
+  const [dateRange, setDateRange] = useState<{ start?: string; end?: string }>(
+    urlSessionId ? {} : defaultDates
+  );
+  const [filters, setFilters] = useState<CostFilters>(() => ({
+    ...(urlSessionId
+      ? { sessionId: urlSessionId }
+      : { startDate: defaultDates.start, endDate: defaultDates.end }),
     limit: 1000 // Increased limit for better pagination
-  });
+  }));
+
+  const clearSessionFilter = () => {
+    setFilters(prev => {
+      const { sessionId: _, ...rest } = prev;
+      return { ...rest, startDate: defaultDates.start, endDate: defaultDates.end };
+    });
+    setDateRange(defaultDates);
+    setSearchParams((prev: URLSearchParams) => {
+      prev.delete('sessionId');
+      return prev;
+    });
+  };
 
   // Fetch all dashboard data - TanStack Query handles background refetching automatically
   const {
@@ -181,6 +202,22 @@ export const CostTrackingDashboard: React.FC<CostTrackingDashboardProps> = ({
     <div className={`flex flex-col h-full overflow-hidden ${className}`}>
       {/* Main scrollable content */}
       <div className="flex-1 min-h-0 overflow-y-auto">
+        {/* Session Filter Banner */}
+        {filters.sessionId && (
+          <div className="flex items-center gap-2 mb-4">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-full bg-primary/10 text-primary border border-primary/20">
+              Session: {filters.sessionId.slice(0, 8)}
+              <button
+                onClick={clearSessionFilter}
+                className="hover:bg-primary/20 rounded-full p-0.5 transition-colors"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </span>
+            <span className="text-xs text-muted-foreground">Showing all-time costs for this session</span>
+          </div>
+        )}
+
         {/* Filters Section */}
         <div className="flex items-center gap-4 mb-6 flex-wrap">
           <div className="flex items-center gap-2">

@@ -52,8 +52,8 @@ api.interceptors.response.use(
 /**
  * Get cost summary with aggregated data
  */
-export const getCostSummary = async (startDate?: string, endDate?: string, provider?: string): Promise<CostSummary> => {
-  const key = `cost-summary-${startDate || 'all'}-${endDate || 'all'}-${provider || 'all'}`;
+export const getCostSummary = async (startDate?: string, endDate?: string, provider?: string, sessionId?: string): Promise<CostSummary> => {
+  const key = `cost-summary-${startDate || 'all'}-${endDate || 'all'}-${provider || 'all'}-${sessionId || 'all'}`;
 
   return singleFlight(
     key,
@@ -62,6 +62,7 @@ export const getCostSummary = async (startDate?: string, endDate?: string, provi
       if (startDate) params.startDate = startDate;
       if (endDate) params.endDate = endDate;
       if (provider) params.provider = provider;
+      if (sessionId) params.sessionId = sessionId;
 
       const response = await api.get<ApiResponse<CostSummary>>('/api/costs/summary', { params });
 
@@ -98,9 +99,10 @@ export const getDailyCosts = async (
   days: number = 30,
   startDate?: string,
   endDate?: string,
-  provider?: string
+  provider?: string,
+  sessionId?: string
 ): Promise<DailyCost[]> => {
-  const key = `daily-costs-${days}-${startDate || 'all'}-${endDate || 'all'}-${provider || 'all'}`;
+  const key = `daily-costs-${days}-${startDate || 'all'}-${endDate || 'all'}-${provider || 'all'}-${sessionId || 'all'}`;
 
   return singleFlight(
     key,
@@ -109,6 +111,7 @@ export const getDailyCosts = async (
       if (startDate) params.startDate = startDate;
       if (endDate) params.endDate = endDate;
       if (provider) params.provider = provider;
+      if (sessionId) params.sessionId = sessionId;
 
       const response = await api.get<ApiResponse<DailyCost[]>>('/api/costs/daily', { params });
 

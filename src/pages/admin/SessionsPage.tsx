@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import { Loader2 } from 'lucide-react';
+import { Loader2, DollarSign } from 'lucide-react';
 import { StickyFormLayout } from '../../components/admin/StickyFormLayout';
 import { Button } from '../../components/ui/button';
 import { useAssistantStore } from '../../store/useAssistantStore';
@@ -154,6 +154,9 @@ export const SessionsPage: React.FC = () => {
                     {t('SessionReview.table.status')}
                   </th>
                   <th className="py-3 text-sm font-medium text-muted-foreground rtl:text-right ltr:text-left">
+                    Cost
+                  </th>
+                  <th className="py-3 text-sm font-medium text-muted-foreground rtl:text-right ltr:text-left">
                     {t('SessionReview.table.messages')}
                   </th>
                   <th className="py-3 text-sm font-medium text-muted-foreground rtl:text-right ltr:text-left">
@@ -190,6 +193,22 @@ export const SessionsPage: React.FC = () => {
                       >
                         {session.active ? t('SessionReview.filters.active') : t('SessionReview.filters.inactive')}
                       </span>
+                    </td>
+                    <td
+                      className="py-3 text-sm cursor-pointer hover:text-primary transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/admin/costs?sessionId=${session.sessionId}`);
+                      }}
+                    >
+                      {session.totalCost && session.totalCost > 0 ? (
+                        <span className="inline-flex items-center gap-1 text-primary hover:underline">
+                          <DollarSign className="w-3 h-3" />
+                          {session.totalCost.toFixed(4)}
+                        </span>
+                      ) : (
+                        <span className="text-muted-foreground">&mdash;</span>
+                      )}
                     </td>
                     <td className="py-3 text-sm">{session.messageCount}</td>
                     <td className="py-3 text-sm text-muted-foreground">
