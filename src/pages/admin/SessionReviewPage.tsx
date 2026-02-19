@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { ArrowLeft, Loader2, DollarSign } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { SBChatKitUI } from '../../components/sb-chat-kit-ui/SBChatKitUI';
 import { getSessionById } from '../../services/api/sessionService';
 import { getSessionReviewMessages } from '../../services/api/sessionReviewService';
+import { getCostSummary } from '../../services/api/costTrackingService';
 import { mapApiMessageToChatMessage } from '../../utils/messageTransform';
 import { useAssistantStore } from '../../store/useAssistantStore';
 import { Avatar, AvatarStyles, getAvatarUrl } from '../../components/Avatar';
+import { ModelIndicator } from '../../components/ModelIndicator';
 import { ChatMessage } from '../../types/chat';
 import { format } from 'date-fns';
 
@@ -20,6 +22,7 @@ export const SessionReviewPage: React.FC = () => {
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [sessionData, setSessionData] = useState<any>(null);
+  const [sessionCost, setSessionCost] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,12 +39,14 @@ export const SessionReviewPage: React.FC = () => {
       setIsLoading(true);
       setError(null);
       try {
-        const [session, rawMessages] = await Promise.all([
+        const [session, rawMessages, costSummary] = await Promise.all([
           getSessionById(sessionId),
           getSessionReviewMessages(sessionId),
+          getCostSummary(undefined, undefined, undefined, sessionId).catch(() => null),
         ]);
 
         setSessionData(session);
+        setSessionCost(costSummary?.totalCost ?? null);
 
         // Transform and reverse (API returns newest-first)
         const transformed = rawMessages.map(mapApiMessageToChatMessage).reverse();
@@ -143,6 +148,20 @@ export const SessionReviewPage: React.FC = () => {
                 )}
                 {sessionData.channelUserId && (
                   <span>{t('SessionReview.table.channelUserId')}: {sessionData.channelUserId}</span>
+                )}
+                {assistant?.llmModel && (
+                  <span className="flex items-center gap-1">
+                    Model: <ModelIndicator modelName={assistant.llmModel} size="small" showBadge={false} />
+                  </span>
+                )}
+                {sessionCost !== null && sessionCost > 0 && (
+                  <span
+                    className="inline-flex items-center gap-1 cursor-pointer hover:text-primary transition-colors"
+                    onClick={() => navigate(`/admin/costs?sessionId=${sessionId}`)}
+                  >
+                    <DollarSign className="w-3 h-3" />
+                    Cost: ${sessionCost.toFixed(4)}
+                  </span>
                 )}
                 <span>{t('SessionReview.table.createdAt')}: {formatDate(sessionData.createdAt)}</span>
                 <span>{t('SessionReview.table.messages')}: {messages.length}</span>

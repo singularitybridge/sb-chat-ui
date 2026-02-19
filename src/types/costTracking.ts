@@ -24,6 +24,13 @@ export interface CostRecord {
   updatedAt: string;
 }
 
+export interface ToolCostSummary {
+  totalToolCost: number;
+  totalToolRequests: number;
+  byProvider: Record<string, { cost: number; requests: number; services: string[] }>;
+  byAssistant: Array<{ assistantId: string; assistantName?: string; cost: number; requests: number }>;
+}
+
 export interface CostSummary {
   totalCost: number;
   totalInputTokens: number;
@@ -51,6 +58,8 @@ export interface CostSummary {
     requests: number;
     tokens: number;
   }>;
+  toolCosts?: ToolCostSummary;
+  totalCombinedCost?: number;
 }
 
 export interface DailyCost {

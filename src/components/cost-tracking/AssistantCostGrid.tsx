@@ -1,8 +1,10 @@
 import React from 'react';
+import { useNavigate } from 'react-router';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Bot, DollarSign, BarChart3 } from 'lucide-react';
 import { CostSummary, CostRecord } from '../../types/costTracking';
 import { formatCost, formatDuration } from '../../services/api/costTrackingService';
+import { getAssistantUrl } from '../../utils/assistantUrlUtils';
 
 interface AssistantCostGridProps {
   summary: CostSummary | null;
@@ -25,6 +27,7 @@ export const AssistantCostGrid: React.FC<AssistantCostGridProps> = ({
   records,
   loading = false
 }) => {
+  const navigate = useNavigate();
   // Calculate assistant statistics from records
   const assistantStats: AssistantStats[] = React.useMemo(() => {
     if (!records || records.length === 0) return [];
@@ -171,9 +174,10 @@ export const AssistantCostGrid: React.FC<AssistantCostGridProps> = ({
             : 0;
 
           return (
-            <Card 
-              key={assistant.assistantId} 
+            <Card
+              key={assistant.assistantId}
               className="hover:shadow-lg transition-shadow cursor-pointer"
+              onClick={() => navigate(getAssistantUrl({ _id: assistant.assistantId, name: assistant.assistantName }))}
             >
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium truncate">

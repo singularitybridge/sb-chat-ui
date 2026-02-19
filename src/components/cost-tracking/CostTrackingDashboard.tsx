@@ -379,7 +379,7 @@ export const CostTrackingDashboard: React.FC<CostTrackingDashboardProps> = ({
               <span>•</span>
               <span>{totalRecordCount} records</span>
               <span>•</span>
-              <span>Total: {summary ? formatCost(summary.totalCost) : '$0.00'}</span>
+              <span>Total: {summary ? formatCost(summary.totalCombinedCost ?? summary.totalCost) : '$0.00'}</span>
             </div>
           </div>
         </div>

@@ -229,8 +229,17 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
 
             // Ensure initialValue is valid - fallback to field default or first option
             let initialValue = values[field.id] as string | number;
-            if (initialValue === undefined || initialValue === null || initialValue === '') {
-              initialValue = dropdownField.value || dropdownOptions[0]?.value || '';
+            const isValueInOptions = dropdownOptions.length > 0 &&
+              dropdownOptions.some(opt => String(opt.value) === String(initialValue));
+            if (!isValueInOptions || initialValue === undefined || initialValue === null || initialValue === '') {
+              const dependencyValue = dropdownField.dependsOn ? String(values[dropdownField.dependsOn] || '') : '';
+              const correctedValue = (dropdownField.defaultByDependency?.[dependencyValue]) ||
+                dropdownField.value || dropdownOptions[0]?.value || '';
+              if (correctedValue !== initialValue && dropdownOptions.length > 0) {
+                // Sync form state so saving won't persist the stale value
+                setTimeout(() => handleChange(field.id, correctedValue), 0);
+              }
+              initialValue = correctedValue;
             }
 
             return (

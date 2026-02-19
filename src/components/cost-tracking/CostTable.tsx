@@ -28,6 +28,8 @@ import { CostRecord } from '../../types/costTracking';
 import { formatCost, formatDuration, formatTokens } from '../../services/api/costTrackingService';
 import { format } from 'date-fns';
 import { ModelIndicator } from '../ModelIndicator';
+import { Link } from 'react-router';
+import { getAssistantUrl } from '../../utils/assistantUrlUtils';
 
 interface CostTableProps {
   data: CostRecord[];
@@ -79,14 +81,27 @@ export const CostTable: React.FC<CostTableProps> = ({
           <ArrowUpDown className="h-3 w-3" />
         </button>
       ),
-      cell: ({ row }) => (
-        <div className="flex items-center gap-2">
-          <Bot className="h-4 w-4 text-muted-foreground" />
-          <span className="text-sm font-medium">
-            {row.getValue('assistantName') || 'Unknown'}
-          </span>
-        </div>
-      ),
+      cell: ({ row }) => {
+        const assistantId = row.original.assistantId;
+        const assistantName = row.getValue('assistantName') as string;
+        return (
+          <div className="flex items-center gap-2">
+            <Bot className="h-4 w-4 text-muted-foreground" />
+            {assistantId ? (
+              <Link
+                to={getAssistantUrl({ _id: assistantId, name: assistantName })}
+                className="text-sm font-medium hover:text-primary hover:underline"
+              >
+                {assistantName || 'Unknown'}
+              </Link>
+            ) : (
+              <span className="text-sm font-medium">
+                {assistantName || 'Unknown'}
+              </span>
+            )}
+          </div>
+        );
+      },
     },
     {
       accessorKey: 'modelName',

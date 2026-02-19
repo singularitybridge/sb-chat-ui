@@ -11,6 +11,7 @@ export interface EnrichedSession {
   lastMessageAt: string | null;
   createdAt: string;
   totalCost?: number;
+  llmModel?: string | null;
 }
 
 export interface SessionListResponse {

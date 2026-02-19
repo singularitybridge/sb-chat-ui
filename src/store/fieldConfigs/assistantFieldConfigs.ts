@@ -5,15 +5,18 @@ import apiCaller from '../../services/AxiosService';
 
 /**
  * Transform function to sanitize name to URL-safe format.
- * Only allows lowercase letters, numbers, and hyphens.
+ * Only allows lowercase letters, numbers, hyphens, and underscores.
+ * Does NOT strip trailing hyphens — that would prevent the user from typing
+ * hyphens interactively (the character is always trailing at the keystroke).
+ * The backend validates the final value on save.
  */
 const sanitizeToUrlSafe = (value: string): string => {
   return value
     .toLowerCase()
     .replace(/\s+/g, '-')           // Replace spaces with hyphens
-    .replace(/[^a-z0-9-]/g, '')     // Remove any non-alphanumeric except hyphens
+    .replace(/[^a-z0-9_-]/g, '')    // Remove any non-alphanumeric except hyphens/underscores
     .replace(/-+/g, '-')            // Replace multiple hyphens with single
-    .replace(/^-|-$/g, '');         // Remove leading/trailing hyphens
+    .replace(/^-/, '');             // Remove leading hyphen only
 };
 
 // --- Dynamic model fetching from API ---
@@ -52,13 +55,13 @@ const fetchModels = async (): Promise<ModelsApiResponse> => {
           { id: 'gemini-3-flash-preview', label: 'Gemini 3 Flash (preview)', description: 'Fast' },
         ],
         anthropic: [
-          { id: 'claude-sonnet-4-5', label: 'Claude Sonnet 4.5', description: 'Balanced' },
+          { id: 'claude-sonnet-4-6', label: 'Claude Sonnet 4.6', description: 'Best speed/intelligence balance' },
         ],
       },
       defaults: {
         openai: 'gpt-5.1',
         google: 'gemini-3-flash-preview',
-        anthropic: 'claude-sonnet-4-5',
+        anthropic: 'claude-sonnet-4-6',
       },
     };
   }

@@ -69,24 +69,28 @@ export const useAssistantStore = create<AssistantStoreState>((set, get) => ({
   },
   
   updateAssistant: async (assistantId, updates) => {
+    // Resolve identifier (could be name or _id) to the actual assistant
+    const resolvedAssistant = get().getAssistantById(assistantId);
+    const actualId = resolvedAssistant?._id || assistantId;
+
     // Optimistic update
-    const previousAssistant = get().assistants.find(a => a._id === assistantId);
+    const previousAssistant = resolvedAssistant;
     if (previousAssistant) {
       set(state => ({
-        assistants: state.assistants.map(a => 
-          a._id === assistantId ? { ...a, ...updates } : a
+        assistants: state.assistants.map(a =>
+          a._id === actualId ? { ...a, ...updates } : a
         )
       }));
     }
-    
+
     set({ isLoading: true });
     try {
       // Convert partial updates to required format for API
       const updatesForAPI = updates as IAssistant;
       const updatedAssistant = await updateAssistant(assistantId, updatesForAPI);
       set(state => ({
-        assistants: state.assistants.map(a => 
-          a._id === assistantId ? updatedAssistant : a
+        assistants: state.assistants.map(a =>
+          a._id === actualId ? updatedAssistant : a
         ),
         isLoading: false
       }));
@@ -95,8 +99,8 @@ export const useAssistantStore = create<AssistantStoreState>((set, get) => ({
       // Rollback on error
       if (previousAssistant) {
         set(state => ({
-          assistants: state.assistants.map(a => 
-            a._id === assistantId ? previousAssistant : a
+          assistants: state.assistants.map(a =>
+            a._id === actualId ? previousAssistant : a
           ),
           isLoading: false
         }));

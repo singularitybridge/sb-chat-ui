@@ -5,6 +5,7 @@ import { Loader2, DollarSign } from 'lucide-react';
 import { StickyFormLayout } from '../../components/admin/StickyFormLayout';
 import { Button } from '../../components/ui/button';
 import { useAssistantStore } from '../../store/useAssistantStore';
+import { ModelIndicator } from '../../components/ModelIndicator';
 import {
   getSessionsList,
   EnrichedSession,
@@ -145,6 +146,9 @@ export const SessionsPage: React.FC = () => {
                     {t('SessionReview.table.agentName')}
                   </th>
                   <th className="py-3 text-sm font-medium text-muted-foreground rtl:text-right ltr:text-left">
+                    Model
+                  </th>
+                  <th className="py-3 text-sm font-medium text-muted-foreground rtl:text-right ltr:text-left">
                     {t('SessionReview.table.channel')}
                   </th>
                   <th className="py-3 text-sm font-medium text-muted-foreground rtl:text-right ltr:text-left">
@@ -175,6 +179,13 @@ export const SessionsPage: React.FC = () => {
                     onClick={() => navigate(`/admin/sessions/${session.sessionId}`)}
                   >
                     <td className="py-3 text-sm">{session.agentName}</td>
+                    <td className="py-3">
+                      {session.llmModel ? (
+                        <ModelIndicator modelName={session.llmModel} size="small" showBadge={false} />
+                      ) : (
+                        <span className="text-sm text-muted-foreground">&mdash;</span>
+                      )}
+                    </td>
                     <td className="py-3">
                       <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary font-medium">
                         {session.channel}

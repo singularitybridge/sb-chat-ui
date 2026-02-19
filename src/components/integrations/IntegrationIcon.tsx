@@ -63,7 +63,6 @@ const brandIcons: Record<string, React.ComponentType<{ className?: string }>> = 
 const iconifyIcons: Record<string, string> = {
   elevenlabs: 'simple-icons:elevenlabs',
   perplexity: 'simple-icons:perplexity',
-  nylas: 'simple-icons:gmail', // Nylas is email, use Gmail as fallback
   anthropic: 'simple-icons:anthropic',
   gemini: 'simple-icons:googlegemini',
   fly: 'simple-icons:flydotio',
@@ -115,7 +114,6 @@ const integrationIconMap: Record<string, { type: 'brand' | 'iconify' | 'lucide';
   replicate: { type: 'iconify', key: 'replicate' },
 
   // Lucide integrations
-  nylas: { type: 'lucide', key: 'mail' },
   photoroom: { type: 'lucide', key: 'image' },
   fluximage: { type: 'lucide', key: 'sparkles' },
   roomboss: { type: 'lucide', key: 'hotel' },

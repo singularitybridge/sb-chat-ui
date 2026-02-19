@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent } from '../ui/card';
-import { DollarSign, BarChart3, Hash, Zap, TrendingUp, TrendingDown } from 'lucide-react';
+import { DollarSign, BarChart3, Hash, Zap, TrendingUp, TrendingDown, Wrench, Calculator } from 'lucide-react';
 import { formatCost, formatTokens, formatDuration } from '../../services/api/costTrackingService';
 import { CostSummary } from '../../types/costTracking';
 
@@ -76,21 +76,40 @@ export const MetricsCards: React.FC<MetricsCardsProps> = ({ summary, loading = f
   const totalRequests = summary ? summary.totalRequests.toLocaleString() : '0';
   const totalTokens = summary ? formatTokens(summary.totalInputTokens + summary.totalOutputTokens) : '0';
   const avgDuration = summary ? formatDuration(summary.averageDuration) : '0s';
-  
+
   // Calculate cost per request
-  const costPerRequest = summary && summary.totalRequests > 0 
+  const costPerRequest = summary && summary.totalRequests > 0
     ? formatCost(summary.totalCost / summary.totalRequests)
     : '$0.00';
 
+  const hasToolCosts = summary?.toolCosts && summary.toolCosts.totalToolCost > 0;
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div className={`grid grid-cols-1 md:grid-cols-2 ${hasToolCosts ? 'lg:grid-cols-6' : 'lg:grid-cols-4'} gap-4 mb-6`}>
       <MetricCard
         icon={<DollarSign className="w-4 h-4 text-primary" />}
-        title="Total Cost"
+        title={hasToolCosts ? 'LLM Cost' : 'Total Cost'}
         value={totalCost}
         subtitle={`${costPerRequest} per request`}
         loading={loading}
       />
+      {hasToolCosts && (
+        <>
+          <MetricCard
+            icon={<Wrench className="w-4 h-4 text-orange-500" />}
+            title="Tool Cost"
+            value={formatCost(summary!.toolCosts!.totalToolCost)}
+            subtitle={`${summary!.toolCosts!.totalToolRequests} tool call${summary!.toolCosts!.totalToolRequests !== 1 ? 's' : ''}`}
+            loading={loading}
+          />
+          <MetricCard
+            icon={<Calculator className="w-4 h-4 text-green-600 dark:text-green-400" />}
+            title="Total Cost"
+            value={formatCost(summary!.totalCombinedCost!)}
+            loading={loading}
+          />
+        </>
+      )}
       <MetricCard
         icon={<BarChart3 className="w-4 h-4 text-primary" />}
         title="Total Requests"
